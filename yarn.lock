@@ -4342,6 +4342,13 @@
     prompts "^2.4.0"
     semver "^6.3.0"
 
+"@react-native-community/datetimepicker@6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-6.2.0.tgz#50bc629e70e4030c48205c01efbc65a8f35d82d4"
+  integrity sha512-w1ZS+wYO3qSASliRp+B7mPphOhtVm++rhSbj1WsgXdgLgDXSkDxpMnAXXQu9M0XdcgBwVJ6wDExeIwuzU5Jtfg==
+  dependencies:
+    invariant "^2.2.4"
+
 "@react-native-community/netinfo@9.3.0":
   version "9.3.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-9.3.0.tgz#9792c23341eab5c629566baee016146f4f3f6086"
@@ -8547,6 +8554,11 @@ react-native-codegen@^0.69.2:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
+react-native-currency-input@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-currency-input/-/react-native-currency-input-1.0.1.tgz#3118a0d5347dd29568c5031320dbeb34be43415c"
+  integrity sha512-1AbXXMAyNBEV2M0snh6e/B1w+rxRBgu9IARVaeF0tkUuaGX4kl/tQVXzyNa0fV2GX89U8Hyb0HaMvjaIZGniAA==
+
 react-native-dotenv@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/react-native-dotenv/-/react-native-dotenv-3.3.1.tgz#8f399cf28ca77d860d8e7f7323e439fa60a8ca0b"
@@ -8581,6 +8593,13 @@ react-native-iphone-x-helper@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
   integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
+
+react-native-modal-datetime-picker@^14.0.0:
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-modal-datetime-picker/-/react-native-modal-datetime-picker-14.0.0.tgz#ca2c81a275ee3a23d9ad02113e76ed243c90781e"
+  integrity sha512-orI0BMgX9uooSZWYIILmMaZXqi8Ebr0vqsLUFL03zORpv9NvkBlLMQ8dZVdDxWUc1Lbx/N5DJskC16AOypPy8Q==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-native-paper@^4.12.5:
   version "4.12.5"

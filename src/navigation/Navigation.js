@@ -21,10 +21,10 @@ import SignUpScreen from '../screens/Auth/SignUp';
 import ConfirmEmailScreen from '../screens/Auth/ConfirmEmail';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
 import NewPasswordScreen from '../screens/Auth/NewPassword';
-////import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
-////import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
-////import GroupDetailsScreen from '../screens/GroupDetailsScreen';
-////import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
+import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
+import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
+import GroupDetailsScreen from '../screens/GroupDetailsScreen';
+import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub } from 'aws-amplify';
@@ -69,8 +69,8 @@ function MeeterStack(props) {
                 // component={AuthDrawerComponent}
                 options={{ headerShown: false }}
             />
-            {/*//todo MeetingDetails stack */}
-            {/* <Stack.Screen
+
+            <Stack.Screen
                 name='MeetingDetails'
                 component={MeetingDetailsScreen}
                 options={({ navigation }) => ({
@@ -80,9 +80,9 @@ function MeeterStack(props) {
                     },
                     headerTintColor: 'white',
                 })}
-            /> */}
-            {/* //todo MeetingEdit stack */}
-            {/* <Stack.Screen
+            />
+
+            <Stack.Screen
                 name='MeetingEdit'
                 component={MeetingDetailsEditScreen}
                 options={({ navigation }) => ({
@@ -92,9 +92,9 @@ function MeeterStack(props) {
                     },
                     headerTintColor: 'white',
                 })}
-            /> */}
-            {/* //todo GroupDetails stack */}
-            {/* <Stack.Screen
+            />
+
+            <Stack.Screen
                 name='GroupDetails'
                 component={GroupDetailsScreen}
                 options={({ navigation }) => ({
@@ -104,9 +104,9 @@ function MeeterStack(props) {
                     },
                     headerTintColor: 'white',
                 })}
-            /> */}
-            {/* //todo GroupEdit stack */}
-            {/* <Stack.Screen
+            />
+
+            <Stack.Screen
                 name='GroupEdit'
                 component={GroupDetailsEditScreen}
                 options={({ navigation }) => ({
@@ -116,7 +116,7 @@ function MeeterStack(props) {
                     },
                     headerTintColor: 'white',
                 })}
-            /> */}
+            />
         </Stack.Navigator>
     );
 }

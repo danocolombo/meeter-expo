@@ -81,7 +81,7 @@ export function getToday() {
 //     );
 // }
 export function printObject(label, target) {
-    console.log(label, JSON.stringify(organizations, null, 2));
+    console.log(label, JSON.stringify(target, null, 2));
 }
 
 export const CONFIG = {

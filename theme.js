@@ -8,6 +8,7 @@ const darkColor = '#000';
 const lightColor = '#fff';
 const darkText = '#000';
 const lightText = '#fff';
+
 const theme = {
     ...DefaultTheme,
     // Specify custom property
@@ -46,12 +47,17 @@ const theme = {
         navActive: '#D61C4E',
         navInactive: '#8c8c8c',
         darkText: darkText,
+        black: '#000',
         lightText: lightText,
         editScreenHeader: '#293462',
         selected: '#293462',
         selectedText: '#fff',
         unSelected: '#8c8c8c',
         unSelectedText: '#fff',
+        navBarInactiveBackground: '#293462',
+        navBarInactiveText: '#FEDB39',
+        navBarActiveBackground: '#FEDB39',
+        navBarActiveText: '#000',
     },
     fonts: {
         regular: 16,
@@ -68,6 +74,7 @@ const theme = {
         scale: 30,
     },
     screenTitle: {
+        fontFamily: 'Roboto-Bold',
         fontSize: 28,
         fontWeight: '700',
         color: primaryColor,
@@ -75,6 +82,7 @@ const theme = {
         paddingTop: 20,
     },
     editScreenTitle: {
+        fontFamily: 'Roboto-Bold',
         fontSize: 28,
         fontWeight: '700',
         color: darkText,
@@ -83,18 +91,21 @@ const theme = {
         // paddingTop: 20,
     },
     subTitle: {
+        fontFamily: 'Roboto-Medium',
         fontSize: 24,
         fontWeight: '500',
         color: accentColor,
         textAlign: 'center',
     },
     subTitleSmall: {
+        fontFamily: 'Roboto-Medium',
         fontSize: 16,
         fontWeight: '500',
         color: accentColor,
         textAlign: 'center',
     },
     paragraph: {
+        fontFamily: 'Roboto-Thin',
         margin: 24,
         marginTop: 0,
         fontSize: 14,
@@ -117,6 +128,7 @@ const theme = {
         backgroundColor: primaryColor,
     },
     groupCardDetailsLabel: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 26,
         paddingLeft: 0,
         fontWeight: '400',
@@ -125,6 +137,7 @@ const theme = {
         color: lightText,
     },
     groupCardDetailsData: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 26,
         fontWeight: '200',
         paddingHorizontal: 5,
@@ -146,6 +159,7 @@ const theme = {
         textColor: darkText,
     },
     groupDetailsNotesText: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 24,
         color: lightText,
         fontWeight: '200',
@@ -157,11 +171,13 @@ const theme = {
         backgroundColor: primaryColor,
     },
     meetingCardActiveTypeText: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 26,
         fontWeight: '600',
         paddingLeft: 0,
     },
     meetingCardActiveTitleText: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 26,
         paddingLeft: 0,
         fontWeight: '600',
@@ -169,12 +185,14 @@ const theme = {
         letterSpacing: 0.5,
     },
     meetingCardActivePersonText: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 24,
         paddingLeft: 0,
         fontWeight: '400',
         letterSpacing: 0.5,
     },
     meetingCardActiveDateBall: {
+        fontFamily: 'Roboto-Regular',
         backgroundColor: accentColor,
         textColor: darkText,
     },
@@ -183,17 +201,20 @@ const theme = {
         backgroundColor: historyTileColor,
     },
     meetingCardHistoricTypeText: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 26,
         fontWeight: '600',
         paddingLeft: 20,
     },
     meetingCardHistoricTitleText: {
+        fontFamily: 'Roboto-Bold',
         fontSize: 26,
         paddingLeft: 20,
         fontWeight: '600',
         letterSpacing: 0.5,
     },
     meetingCardHistoricPersonText: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 24,
         paddingLeft: 20,
         fontWeight: '400',
@@ -207,11 +228,13 @@ const theme = {
         backgroundColor: accentColor,
     },
     meetingCardTypeText: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 26,
         fontWeight: '600',
         paddingLeft: 20,
     },
     meetingCardTitleText: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 26,
         paddingLeft: 20,
         fontWeight: '600',
@@ -220,6 +243,7 @@ const theme = {
         //borderColor: 'blue',
     },
     meetingCardPersonText: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 24,
         paddingLeft: 20,
         fontWeight: '400',
@@ -246,6 +270,7 @@ const theme = {
     meetingEditIOSDataCompContainer: { padding: 5 },
     meetingEditAndroidDataCompContainer: { padding: 1 },
     meetingEditInputLabel: {
+        fontFamily: 'Roboto-Regular',
         fontSize: 24,
         color: 'white',
         marginLeft: 10,
@@ -267,6 +292,7 @@ const theme = {
         paddingLeft: 'auto',
     },
     meetingEditMealLabelText: {
+        fontFamily: 'Roboto-Regular',
         color: 'white',
         fontSize: 24,
         textAlign: 'right',
@@ -284,6 +310,7 @@ const theme = {
         paddingRight: 'auto',
     },
     meetingEditMealNumberText: {
+        fontFamily: 'Roboto-Regular',
         color: 'white',
         fontSize: 24,
         textAlign: 'right',
@@ -301,16 +328,19 @@ const theme = {
     //   MEETING DETAILS
     meetingDetailsTypeContainer: {},
     detailsTitle: {
+        fontFamily: 'Roboto-Bold',
         color: lightText,
         fontSize: 24,
         marginLeft: 10,
     },
     detailsRowLabel: {
+        fontFamily: 'Roboto-Regular',
         color: lightText,
         fontSize: 24,
         fontWeight: '400',
     },
     detailsRowValue: {
+        fontFamily: 'Roboto-Regular',
         color: lightText,
         fontSize: 24,
         padding: 10,
@@ -348,11 +378,13 @@ const theme = {
         color: lightText,
     },
     groupListCardTitle: {
+        fontFamily: 'Roboto-Bold',
         color: darkText,
         fontWeight: '600',
         fontSize: 24,
     },
     groupListCardText: {
+        fontFamily: 'Roboto-Regular',
         color: darkText,
         fontSize: 20,
     },
@@ -367,11 +399,13 @@ const theme = {
         textAlign: 'center',
     },
     dateStackDay: {
+        fontFamily: 'Roboto-Regular',
         color: darkText,
         fontSize: 28,
         fontWeight: '900',
     },
     dateStackText: {
+        fontFamily: 'Roboto-Regular',
         color: darkText,
         fontSize: 14,
         fontWeight: '900',

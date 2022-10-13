@@ -1,11 +1,12 @@
 import React from 'react';
+import { View, Text, Button } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-//todo bottomnav
-//import MeetingsConfig from './BottomNav';
+
+import MeetingsConfig from './BottomNav';
 
 import LandingScreen from '../screens/LandingScreen';
 import ActiveScreen from '../screens/ActiveScreen';
@@ -75,13 +76,26 @@ const AuthDrawer = (navigation) => {
                     tabBarActiveTintColor: 'white',
                 })}
             />
-            {/*//todo Meetings Stack */}
-            {/* <Drawer.Screen
+
+            <Drawer.Screen
                 name='Meetings'
                 // component={() => <LandingScreen theme={props.theme} />}
                 component={MeetingsConfig}
                 options={({ navigation }) => ({
                     title: meeter.appName,
+                    // headerRight: () => (
+                    //     <>
+                    //         <Button
+                    //             onPress={() =>
+                    //                 navigation.navigate('MeeterEdit', {
+                    //                     meetingId: meeting.meetingId,
+                    //                 })
+                    //             }
+                    //             color='white'
+                    //             title='NEW'
+                    //         />
+                    //     </>
+                    // ),
                     drawerLabel: 'Meetings',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
@@ -93,7 +107,7 @@ const AuthDrawer = (navigation) => {
                     },
                     tabBarActiveTintColor: 'white',
                 })}
-            /> */}
+            />
             <Stack.Screen name='Logout' component={MeeterSignOut} />
         </Drawer.Navigator>
     );

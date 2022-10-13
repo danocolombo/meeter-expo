@@ -1,5 +1,6 @@
+import { useEffect, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Platform } from 'react-native';
 ////RB ---
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Navigation from './src/navigation/Navigation';
@@ -20,28 +21,28 @@ import { Amplify, Auth, Hub } from 'aws-amplify';
 const queryClient = new QueryClient();
 
 function App() {
-    // const [fontsLoaded] = useFonts({
-    //     'Merriweather-Bold': require('./assets/fonts/Merriweather-Bold.ttf'),
-    // });
+    const [fontsLoaded] = useFonts({
+        'Merriweather-Bold': require('./assets/fonts/Merriweather-Bold.ttf'),
+    });
 
-    // useEffect(() => {
-    //     async function prepare() {
-    //         await SplashScreen.preventAutoHideAsync();
-    //         await SplashScreen.hideAsync();
-    //     }
-    //     prepare();
-    // }, []);
+    useEffect(() => {
+        async function prepare() {
+            await SplashScreen.preventAutoHideAsync();
+            await SplashScreen.hideAsync();
+        }
+        prepare();
+    }, []);
 
-    // const onLayoutRootView = useCallback(async () => {
-    //     if (fontsLoaded) {
-    //         await SplashScreen.preventAutoHideAsync();
-    //         // await SplashScreen.hideAsync();
-    //     }
-    // }, [fontsLoaded]);
+    const onLayoutRootView = useCallback(async () => {
+        if (fontsLoaded) {
+            await SplashScreen.preventAutoHideAsync();
+            // await SplashScreen.hideAsync();
+        }
+    }, [fontsLoaded]);
 
-    // if (!fontsLoaded) {
-    //     return null;
-    // }
+    if (!fontsLoaded) {
+        return null;
+    }
 
     return (
         <Provider store={store}>

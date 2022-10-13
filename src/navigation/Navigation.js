@@ -69,7 +69,7 @@ function MeeterStack(props) {
                 // component={AuthDrawerComponent}
                 options={{ headerShown: false }}
             />
-            //todo MeetingDetails stack
+            {/*//todo MeetingDetails stack */}
             {/* <Stack.Screen
                 name='MeetingDetails'
                 component={MeetingDetailsScreen}
@@ -81,7 +81,7 @@ function MeeterStack(props) {
                     headerTintColor: 'white',
                 })}
             /> */}
-            //todo MeetingEdit stack
+            {/* //todo MeetingEdit stack */}
             {/* <Stack.Screen
                 name='MeetingEdit'
                 component={MeetingDetailsEditScreen}
@@ -93,7 +93,7 @@ function MeeterStack(props) {
                     headerTintColor: 'white',
                 })}
             /> */}
-            //todo GroupDetails stack
+            {/* //todo GroupDetails stack */}
             {/* <Stack.Screen
                 name='GroupDetails'
                 component={GroupDetailsScreen}
@@ -105,7 +105,7 @@ function MeeterStack(props) {
                     headerTintColor: 'white',
                 })}
             /> */}
-            //todo GroupEdit stack
+            {/* //todo GroupEdit stack */}
             {/* <Stack.Screen
                 name='GroupEdit'
                 component={GroupDetailsEditScreen}

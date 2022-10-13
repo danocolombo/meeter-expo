@@ -34,9 +34,9 @@ import {
 } from '../../features/systemSlice';
 import { getProfile } from '../../providers/users';
 import { loadActiveMeetings } from '../../features/meetingsSlice';
-import { getActiveMeetings } from '../../providers/rallies';
+import { getActiveMeetings } from '../../providers/meetings';
 import { getToday, printObject, dateNumToDateDash } from '../../utils/helpers';
-import { REGION } from '../../constants/regions';
+////import { REGION } from '../../constants/regions';
 const SignInScreen = () => {
     const [loading, setLoading] = useState(false);
     const { height } = useWindowDimensions();

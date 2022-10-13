@@ -75,7 +75,7 @@ const AuthDrawer = (navigation) => {
                     tabBarActiveTintColor: 'white',
                 })}
             />
-            //todo Meetings Stack
+            {/*//todo Meetings Stack */}
             {/* <Drawer.Screen
                 name='Meetings'
                 // component={() => <LandingScreen theme={props.theme} />}

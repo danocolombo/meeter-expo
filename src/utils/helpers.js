@@ -1,6 +1,6 @@
 import * as Crypto from 'expo-crypto';
 import { PHONE_REGX } from '../constants/meeter';
-import { format } from 'date-fns';
+////import { format } from 'date-fns';
 
 const SHORT_MONTH = {
     1: 'Jan',
@@ -69,17 +69,21 @@ export function getToday() {
     const target = yr + '-' + mn + '-' + da;
     return target;
 }
+// export function printObject(label, target) {
+//     const util = require('util');
+//     console.log(
+//         label,
+//         ':  \n' +
+//             util.inspect(target, {
+//                 showHidden: false,
+//                 depth: null,
+//             })
+//     );
+// }
 export function printObject(label, target) {
-    const util = require('util');
-    console.log(
-        label,
-        ':  \n' +
-            util.inspect(target, {
-                showHidden: false,
-                depth: null,
-            })
-    );
+    console.log(label, JSON.stringify(organizations, null, 2));
 }
+
 export const CONFIG = {
     headers: {
         'Content-type': 'application/json; charset=UTF-8',

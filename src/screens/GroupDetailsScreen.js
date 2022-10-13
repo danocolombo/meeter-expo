@@ -33,6 +33,10 @@ const GroupDetailsScreen = ({ route, navigation }) => {
     const meeter = useSelector((state) => state.system);
 
     useLayoutEffect(() => {
+        let headerLabelColor = '';
+        if (Platform.OS === 'ios') {
+            headerLabelColor = 'white';
+        }
         navigation.setOptions({
             title: meeter.appName,
             headerBackTitle: 'Back',
@@ -44,8 +48,8 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                             meeting: meeting,
                         })
                     }
-                    color={'white'}
-                    // color={mtrTheme.navButtonLight}
+                    // color='red'
+                    color={headerLabelColor}
                     title='Edit'
                 />
             ),

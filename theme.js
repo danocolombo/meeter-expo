@@ -1,6 +1,7 @@
 import { DefaultTheme } from 'react-native-paper';
 const primaryBackground = '#293462';
-const primaryColor = '#1CD6CE';
+//const primaryColor = '#1CD6CE';
+const primaryColor = '#CAEBF2';
 const accentColor = '#FEDB39';
 const alternateColor = '#D61C4E';
 const historyTileColor = '#fff';
@@ -294,7 +295,7 @@ const theme = {
     meetingEditMealLabelText: {
         fontFamily: 'Roboto-Regular',
         color: 'white',
-        fontSize: 24,
+        fontSize: 20,
         textAlign: 'right',
     },
     meetingEditMealInputContainer: {
@@ -302,26 +303,64 @@ const theme = {
         paddingRight: 'auto',
     },
     meetingEditMealContactRow: {
-        marginVertical: 5,
+        marginTop: 5,
         marginRight: 30,
+        marginBottom: 10,
     },
     meetingEditMealContactContainer: {
-        width: '60%',
+        width: '50%',
         paddingRight: 'auto',
     },
     meetingEditMealNumberText: {
         fontFamily: 'Roboto-Regular',
         color: 'white',
-        fontSize: 24,
+        fontSize: 20,
         textAlign: 'right',
     },
     meetingEditMealNumberContainer: {
-        width: '50%',
+        width: '55%',
         paddingRight: 'auto',
     },
     meetingEditNumberLabelContainer: {
         width: '50%',
         paddingLeft: 'auto',
+    },
+    meetingEditDeleteModalSurface: {
+        marginTop: 100,
+        marginHorizontal: 10,
+        padding: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        elevation: 5,
+    },
+    meetingEditDeleteModalTitle: {
+        fontFamily: 'Roboto-Bold',
+        color: 'white',
+        fontSize: 20,
+        fontWeight: '500',
+        textAlign: 'center',
+    },
+    meetingEditDeleteModalMeetingContainer: {
+        marginVertical: 20,
+    },
+    meetingEditDeleteModalMeetingDate: {
+        fontFamily: 'Roboto-Regular',
+        color: 'white',
+        fontSize: 20,
+        fontWeight: '500',
+        textAlign: 'center',
+    },
+    meetingEditDeleteModalMeetingText: {
+        fontFamily: 'Roboto-Regular',
+        color: 'white',
+        fontSize: 20,
+        fontWeight: '500',
+        textAlign: 'center',
+    },
+    meetingEditDeleteModalButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        marginVertical: 15,
     },
 
     meetingDetailsTypeContainer: {},

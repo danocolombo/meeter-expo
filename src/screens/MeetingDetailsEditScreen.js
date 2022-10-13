@@ -50,7 +50,7 @@ const MeetingDetailsEditScreen = ({ route }) => {
     const [modalMeetingDateVisible, setModalMeetingDateVisible] =
         useState(false);
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
-        useState(true);
+        useState(false);
     const [meetingDate, setMeetingDate] = useState();
     const dashDate =
         meeter.today.substr(0, 3) +
@@ -238,46 +238,54 @@ const MeetingDetailsEditScreen = ({ route }) => {
             meeting: meeting,
         });
     };
+    const handleDeleteConfirmClick = () => {};
     // printObject('MDS:58-->meeting:', meeting);
     return (
         <>
             <Modal visible={modalDeleteConfirmVisible} animationStyle='slide'>
                 <Surface
-                    style={[styles.modalSurface, { height: height * 0.8 }]}
+                    style={[
+                        mtrTheme.meetingEditDeleteModalSurface,
+                        { height: height * 0.8 },
+                    ]}
                 >
                     <View>
-                        <Text style={styles.modalTitle}>
-                            Confirm You Want To Delete
+                        <Text style={mtrTheme.meetingEditDeleteModalTitle}>
+                            Confirm Your Delete Request
                         </Text>
                     </View>
-                    <View style={{ marginVertical: 20 }}>
+                    <View
+                        style={mtrTheme.meetingEditDeleteModalMeetingContainer}
+                    >
                         <View>
                             <Text
-                                style={{ color: 'white', textAlign: 'center' }}
+                                style={
+                                    mtrTheme.meetingEditDeleteModalMeetingText
+                                }
                             >
                                 {values.meetingDate}
                             </Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <Text
-                                style={{ color: 'white', textAlign: 'center' }}
+                                style={
+                                    mtrTheme.meetingEditDeleteModalMeetingText
+                                }
                             >
                                 {values.meetingType}
                             </Text>
 
                             <Text
-                                style={{ color: 'white', textAlign: 'center' }}
+                                style={
+                                    mtrTheme.meetingEditDeleteModalMeetingText
+                                }
                             >
                                 {values.title}
                             </Text>
                         </View>
                     </View>
                     <View
-                        style={{
-                            flexDirection: 'row',
-
-                            justifyContent: 'space-evenly',
-                        }}
+                        style={mtrTheme.meetingEditDeleteModalButtonContainer}
                     >
                         <View style={{ width: width * 0.35, marginRight: 20 }}>
                             <CustomButton
@@ -288,7 +296,11 @@ const MeetingDetailsEditScreen = ({ route }) => {
                             />
                         </View>
                         <View style={{ width: width * 0.35, marginLeft: 20 }}>
-                            <CustomButton text='Yes, DELETE' bgColor='red' />
+                            <CustomButton
+                                text='Yes, DELETE'
+                                bgColor='red'
+                                fgColor='black'
+                            />
                         </View>
                     </View>
                 </Surface>
@@ -588,16 +600,17 @@ const MeetingDetailsEditScreen = ({ route }) => {
                             marginLeft: 20,
                         }}
                         textInputConfig={{
+                            fontFamily: 'Roboto-Thin',
                             backgroundColor: 'lightgrey',
                             paddingHorizontal: 10,
-                            fontSize: 24,
+                            fontSize: 20,
                             color: 'black',
                             value: values.notes,
                             capitalize: 'sentence',
                             autoCorrect: true,
                             marginHorizontal: 20,
                             placeholder: '',
-                            style: { color: 'white' },
+                            style: { color: 'black' },
                             fontWeight: '500',
                             letterSpacing: 0,
                             multiline: true,

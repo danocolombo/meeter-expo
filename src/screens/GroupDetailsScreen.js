@@ -144,8 +144,8 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                         <View
                             style={{
                                 margin: 4,
-                                borderWidth: 1,
-                                borderColor: '#FEDB39',
+                                // borderWidth: 1,
+                                // borderColor: '#FEDB39',
                                 width: 'auto',
                                 height: 'auto',
                             }}
@@ -153,8 +153,8 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                             <View
                                 style={{
                                     // margin: 2,
-                                    borderWidth: 1,
-                                    borderColor: '#D61C4E',
+                                    // borderWidth: 1,
+                                    // borderColor: '#D61C4E',
                                     width: 'auto',
                                     height: 'auto',
                                     paddingHorizontal: 0,
@@ -310,7 +310,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                 </View>
                             </View>
                         </View>
-                        <View style={styles.buttonContainer}>
+                        {/* <View style={styles.buttonContainer}>
                             <CustomButton
                                 text='DELETE'
                                 bgColor='red'
@@ -318,7 +318,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                 type='DELETE'
                                 onPress={handleDeleteClick}
                             />
-                        </View>
+                        </View> */}
                     </View>
                 </Surface>
             </View>

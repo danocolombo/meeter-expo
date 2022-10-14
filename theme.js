@@ -52,7 +52,7 @@ const theme = {
         lightText: lightText,
         editScreenHeader: '#293462',
         selected: '#293462',
-        selectedText: '#fff',
+        selectedText: '#000',
         unSelected: '#8c8c8c',
         unSelectedText: '#fff',
         navBarInactiveBackground: '#293462',
@@ -80,7 +80,7 @@ const theme = {
         fontWeight: '700',
         color: primaryColor,
         textAlign: 'center',
-        paddingTop: 20,
+        paddingTop: 10,
     },
     editScreenTitle: {
         fontFamily: 'Roboto-Bold',
@@ -124,6 +124,34 @@ const theme = {
     navButtonPrimary: {
         color: '#293462',
     },
+    //   GROUPEDITSCREEN
+    groupEditSurface: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: '100%',
+    },
+    groupEditFormContainer: {
+        width: '90%',
+    },
+    //   GROUP FORM
+    groupFormContainer: {
+        marginHorizontal: 5,
+        flex: 1,
+    },
+    groupFormGenderSelectorContainer: {
+        flexDirection: 'row',
+        marginHorizontal: 5,
+    },
+    groupFormRowStyle: {
+        marginTop: 5,
+    },
+    groupFormInputTitle: {
+        fontFamily: 'Roboto-Regular',
+        fontSize: 18,
+        fontWeight: '500',
+        color: 'white',
+    },
+
     //   GROUP DETAILS CARD
     groupCardPrimary: {
         backgroundColor: primaryColor,
@@ -284,7 +312,7 @@ const theme = {
         alignItems: 'center',
     },
     meetingEditMealRow: {
-        marginTop: 15,
+        marginTop: 1,
         marginVertical: 4,
         marginRight: 30,
     },

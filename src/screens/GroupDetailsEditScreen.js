@@ -3,6 +3,7 @@ import {
     View,
     Text,
     ImageBackground,
+    TouchableOpacity,
     StyleSheet,
     Image,
     ScrollView,
@@ -13,6 +14,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Surface, withTheme, useTheme } from 'react-native-paper';
 import { printObject, isDateDashBeforeToday } from '../utils/helpers';
 import MeetingListCard from '../components/Meeting.List.Card';
@@ -34,52 +36,31 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
         navigation.setOptions({
             title: meeter.appName,
             headerBackTitle: 'Cancel',
+            headerRight: () => (
+                <>
+                    <TouchableOpacity
+                        onPress={() => setModalDeleteConfirmVisible(true)}
+                    >
+                        <MaterialCommunityIcons
+                            name='delete-forever'
+                            size={30}
+                            color={mtrTheme.colors.critical}
+                        />
+                    </TouchableOpacity>
+                </>
+            ),
         });
     }, [navigation, group]);
     //printObject('GDES:39-->meeting:', meeting);
     return (
         <>
-            <ScrollView>
-                <Surface style={styles.surface}>
-                    <View
-                        style={{
-                            width: '95%',
-                            height: '100%',
-
-                            backgroundColor: 'white',
-                        }}
-                    >
-                        <View
-                            style={{
-                                margin: 4,
-                                borderWidth: 1,
-                                borderColor: 'black',
-                                width: 'auto',
-                                height: '100%',
-                            }}
-                        >
-                            <View
-                                style={{
-                                    margin: 2,
-                                    borderWidth: 1,
-                                    borderColor: 'black',
-                                    width: 'auto',
-                                    height: '100%',
-                                }}
-                            >
-                                <View>
-                                    <Text style={mtrTheme.editScreenTitle}>
-                                        GROUP DETAILS
-                                    </Text>
-                                </View>
-                                <View>
-                                    <GroupForm
-                                        group={group}
-                                        meeting={meeting}
-                                    />
-                                </View>
-                            </View>
-                        </View>
+            <ScrollView style={{ height: '100%' }}>
+                <Surface style={mtrTheme.groupEditSurface}>
+                    <View>
+                        <Text style={mtrTheme.screenTitle}>GROUP DETAILS</Text>
+                    </View>
+                    <View style={mtrTheme.groupEditFormContainer}>
+                        <GroupForm group={group} meeting={meeting} />
                     </View>
                 </Surface>
             </ScrollView>
@@ -87,23 +68,4 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
     );
 };
 export default withTheme(GroupDetailsEditScreen);
-const styles = StyleSheet.create({
-    surface: {
-        flex: 1,
-        alignItems: 'center',
-    },
-    firstRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 5,
-    },
-
-    dateWrapper: {
-        margin: 5,
-    },
-});
+const styles = StyleSheet.create({});

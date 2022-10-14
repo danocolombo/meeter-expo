@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import Input from './ui/Input';
+import { useTheme } from 'react-native-paper';
 import GenderSelectors from './GenderSelectors';
 import CustomButton from './ui/CustomButton';
 import NumberInput from './ui/NumberInput';
@@ -11,6 +12,7 @@ import { updateGroupValues, addGroupValues } from '../features/meetingsSlice';
 const GroupForm = ({ route, group, meeting }) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
     printObject('GF:11-->group', group);
     printObject('GF:16-->meeting:,', meeting);
@@ -84,185 +86,158 @@ const GroupForm = ({ route, group, meeting }) => {
     };
     //printObject('GF:79-->meeting', meeting);
     return (
-        <>
-            <View style={styles.formContainer}>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        marginHorizontal: 5,
-                    }}
-                >
-                    <GenderSelectors
-                        setPick={setGenderValue}
-                        pick={values.gender}
-                    />
-                </View>
-                <View>
-                    <NumberInput
-                        value={values.attendance}
-                        onAction={inputChangedHandler.bind(this, 'attendance')}
-                    />
-                </View>
-                <View style={styles.rowStyle}>
-                    <Input
-                        label='Group Title'
-                        labelStyle={{
-                            fontSize: 24,
-                            fontColor: 'black',
-                            marginLeft: 20,
-                        }}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            value: values.title,
-                            paddingHorizontal: 10,
-                            fontSize: 24,
-                            color: 'black',
-                            marginHorizontal: 20,
-                            placeholder: 'Group Title',
-                            style: { color: 'white' },
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'title'
-                            ),
-                        }}
-                    />
-                </View>
-                {!isTitleValid && (
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>minimum length = 3</Text>
-                    </View>
-                )}
-                <View style={styles.rowStyle}>
-                    <Input
-                        label='Location'
-                        labelStyle={{
-                            fontSize: 24,
-                            fontColor: 'black',
-                            marginLeft: 20,
-                        }}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 10,
-                            value: values.location,
-                            fontSize: 24,
-                            color: 'black',
-                            capitalize: 'words',
-                            marginHorizontal: 20,
-                            placeholder: 'where was group?',
-                            style: { color: 'white' },
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'location'
-                            ),
-                        }}
-                    />
-                </View>
-                {!isLocationValid && (
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>minimum length = 3</Text>
-                    </View>
-                )}
-                <View style={styles.rowStyle}>
-                    <Input
-                        label='Faciliatator'
-                        labelStyle={{
-                            fontSize: 24,
-                            fontColor: 'black',
-                            marginLeft: 20,
-                        }}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 10,
-                            fontSize: 24,
-                            value: values.facilitator,
-                            color: 'black',
-                            capitalize: 'words',
-                            marginHorizontal: 20,
-                            placeholder: 'who facilitated?',
-                            style: { color: 'white' },
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'facilitator'
-                            ),
-                        }}
-                    />
-                </View>
-                <View style={styles.rowStyle}>
-                    <Input
-                        label='Co-Faciliatator'
-                        labelStyle={{
-                            fontSize: 24,
-                            fontColor: 'black',
-                            marginLeft: 20,
-                        }}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 10,
-                            fontSize: 24,
-                            value: values.cofacilitator,
-                            color: 'black',
-                            capitalize: 'words',
-                            marginHorizontal: 20,
-                            placeholder: 'who co-facilitated?',
-                            style: { color: 'white' },
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'cofacilitator'
-                            ),
-                        }}
-                    />
-                </View>
-                <View style={styles.rowStyle}>
-                    <Input
-                        label='Notes'
-                        labelStyle={{
-                            fontSize: 24,
-                            fontColor: 'black',
-                            marginLeft: 20,
-                        }}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 10,
-                            fontSize: 24,
-                            color: 'black',
-                            value: values.notes,
-                            capitalize: 'sentence',
-                            autoCorrect: true,
-                            marginHorizontal: 20,
-                            placeholder: '',
-                            style: { color: 'white' },
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            multiline: true,
-                            minHeight: 100,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'notes'
-                            ),
-                        }}
-                    />
-                </View>
-
-                <View style={styles.buttonContainer}>
-                    <CustomButton
-                        text='SAVE'
-                        bgColor='blue'
-                        fgColor='white'
-                        type='PRIMARY'
-                        enabled={isTitleValid && isLocationValid}
-                        onPress={handleFormSubmit}
-                    />
-                </View>
+        <View style={mtrTheme.groupFormContainer}>
+            <View style={mtrTheme.groupFormGenderSelectorContainer}>
+                <GenderSelectors
+                    setPick={setGenderValue}
+                    pick={values.gender}
+                />
             </View>
-        </>
+            <View>
+                <NumberInput
+                    value={values.attendance}
+                    numberStyle={{ color: 'white' }}
+                    graphicStyle={{ color: 'white' }}
+                    onAction={inputChangedHandler.bind(this, 'attendance')}
+                />
+            </View>
+            <View style={mtrTheme.groupFormRowStyle}>
+                <Input
+                    label='Group Title'
+                    labelStyle={mtrTheme.groupFormInputTitle}
+                    textInputConfig={{
+                        backgroundColor: 'lightgrey',
+                        value: values.title,
+                        paddingHorizontal: 5,
+                        fontSize: 24,
+                        color: 'black',
+                        marginHorizontal: 0,
+                        placeholder: 'Group Title',
+                        style: { color: 'black' },
+                        fontWeight: '500',
+                        fontFamily: 'Roboto-Regular',
+                        letterSpacing: 0,
+                        onChangeText: inputChangedHandler.bind(this, 'title'),
+                    }}
+                />
+            </View>
+            {!isTitleValid && (
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>minimum length = 3</Text>
+                </View>
+            )}
+            <View style={mtrTheme.groupFormRowStyle}>
+                <Input
+                    label='Location'
+                    labelStyle={mtrTheme.groupFormInputTitle}
+                    textInputConfig={{
+                        backgroundColor: 'lightgrey',
+                        paddingHorizontal: 5,
+                        value: values.location,
+                        fontSize: 24,
+                        color: 'black',
+                        capitalize: 'words',
+                        marginHorizontal: 0,
+                        placeholder: 'where was group?',
+                        style: { color: 'black' },
+                        fontFamily: 'Roboto-Regular',
+                        fontWeight: '500',
+                        letterSpacing: 0,
+                        onChangeText: inputChangedHandler.bind(
+                            this,
+                            'location'
+                        ),
+                    }}
+                />
+            </View>
+            {!isLocationValid && (
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>minimum length = 3</Text>
+                </View>
+            )}
+            <View style={mtrTheme.groupFormRowStyle}>
+                <Input
+                    label='Faciliatator'
+                    labelStyle={mtrTheme.groupFormInputTitle}
+                    textInputConfig={{
+                        backgroundColor: 'lightgrey',
+                        paddingHorizontal: 5,
+                        fontSize: 24,
+                        value: values.facilitator,
+                        color: 'black',
+                        capitalize: 'words',
+                        marginHorizontal: 0,
+                        placeholder: 'who facilitated?',
+                        style: { color: 'black' },
+                        fontFamily: 'Roboto-Regular',
+                        fontWeight: '500',
+                        letterSpacing: 0,
+                        onChangeText: inputChangedHandler.bind(
+                            this,
+                            'facilitator'
+                        ),
+                    }}
+                />
+            </View>
+            <View style={mtrTheme.groupFormRowStyle}>
+                <Input
+                    label='Co-Faciliatator'
+                    labelStyle={mtrTheme.groupFormInputTitle}
+                    textInputConfig={{
+                        backgroundColor: 'lightgrey',
+                        paddingHorizontal: 5,
+                        fontSize: 24,
+                        value: values.cofacilitator,
+                        color: 'black',
+                        width: '100%',
+                        capitalize: 'words',
+                        marginHorizontal: 0,
+                        placeholder: 'who co-facilitated?',
+                        style: { color: 'black' },
+                        fontWeight: '500',
+                        letterSpacing: 0,
+                        onChangeText: inputChangedHandler.bind(
+                            this,
+                            'cofacilitator'
+                        ),
+                    }}
+                />
+            </View>
+            <View style={mtrTheme.groupFormRowStyle}>
+                <Input
+                    label='Notes'
+                    labelStyle={mtrTheme.groupFormInputTitle}
+                    textInputConfig={{
+                        backgroundColor: 'lightgrey',
+                        paddingHorizontal: 10,
+                        fontSize: 24,
+                        color: 'black',
+                        value: values.notes,
+                        capitalize: 'sentence',
+                        autoCorrect: true,
+                        marginHorizontal: 5,
+                        placeholder: '',
+                        style: { color: 'black' },
+                        fontWeight: '500',
+                        letterSpacing: 0,
+                        multiline: true,
+                        minHeight: 100,
+                        onChangeText: inputChangedHandler.bind(this, 'notes'),
+                    }}
+                />
+            </View>
+
+            <View style={styles.buttonContainer}>
+                <CustomButton
+                    text='SAVE'
+                    bgColor='blue'
+                    fgColor='white'
+                    type='PRIMARY'
+                    enabled={isTitleValid && isLocationValid}
+                    onPress={handleFormSubmit}
+                />
+            </View>
+        </View>
     );
 };
 

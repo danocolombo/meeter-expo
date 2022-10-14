@@ -30,10 +30,10 @@ function NumberInput({ value, numberStyle, graphicStyle, onAction }) {
             <View style={styles.rootContainer}>
                 <RoundedButton
                     title='-'
-                    size={25}
+                    size={30}
                     textStyle={[
                         {
-                            fontSize: 16,
+                            fontSize: 18,
                             alignItems: 'center',
                         },
                         numberStyle,
@@ -48,13 +48,15 @@ function NumberInput({ value, numberStyle, graphicStyle, onAction }) {
                 </View>
                 <RoundedButton
                     title='+'
-                    size={25}
+                    size={30}
                     style={{ borderColor: gsStyle }}
-                    textStyle={{
-                        color: gsStyle,
-                        fontSize: 16,
-                        alignItems: 'center',
-                    }}
+                    textStyle={[
+                        {
+                            fontSize: 18,
+                            alignItems: 'center',
+                        },
+                        numberStyle,
+                    ]}
                     onPress={increaseValue}
                 />
             </View>
@@ -72,6 +74,7 @@ const styles = StyleSheet.create({
     numberBox: {
         paddingHorizontal: 10,
         borderWidth: 1,
+        borderColor: 'white',
         marginLeft: 10,
         marginRight: 10,
         // backgroundColor: Colors.gray75,

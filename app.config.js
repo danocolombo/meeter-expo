@@ -3,7 +3,7 @@ module.exports = ({ config }) => {
     let ANDROID_version = 1;
     let COMBO_version = BASE_version + '-' + ANDROID_version.toString();
     console.log('NAME: ' + config.name); // prints 'My App'
-    console.log('COMBO_version: ' + COMBO_version);
+    console.log('COMBO_version: ' + COMBO_version) + '.rb002';
     return {
         ...config,
         version: BASE_version,

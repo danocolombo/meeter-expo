@@ -60,7 +60,7 @@ const LandingScreen = () => {
                 {activeMeetings.length > 0 && (
                     <>
                         <View style={{ marginTop: 10 }}>
-                            <Text style={styles.announcement}>
+                            <Text style={mtrTheme.landingAnnouncement}>
                                 Next Meeting...
                             </Text>
                         </View>

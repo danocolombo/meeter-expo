@@ -600,7 +600,6 @@ const MeetingDetailsEditScreen = ({ route }) => {
                             marginLeft: 20,
                         }}
                         textInputConfig={{
-                            fontFamily: 'Roboto-Thin',
                             backgroundColor: 'lightgrey',
                             paddingHorizontal: 10,
                             fontSize: 20,

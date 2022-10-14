@@ -98,6 +98,7 @@ const MeetingDetails = ({ route }) => {
                         {tmpMeeting.meetingType}
                     </Text>
                 </View>
+
                 <View style={styles.firstRow}>
                     <View style={styles.dateWrapper}>
                         {Platform.OS === 'ios' && (

@@ -117,6 +117,15 @@ const theme = {
     primaryButton: {
         fontWeight: '900',
     },
+    //   Landing Screen
+    landingAnnouncement: {
+        fontFamily: 'Roboto-Regular',
+        marginTop: 20,
+        color: 'white',
+        fontSize: 18,
+        fontWeight: '400',
+        textAlign: 'center',
+    },
     //   SCREEN NAVIGATION
     navButtonLight: {
         color: 'white',

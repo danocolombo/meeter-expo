@@ -17,7 +17,7 @@ const Selectors = ({
         backgroundColor: mtrTheme.colors.unSelected,
         alignSelf: 'flex-start',
         marginHorizontal: '1%',
-        marginBottom: 6,
+        marginBottom: 0,
         minWidth: '30%',
         textAlign: 'center',
     };
@@ -36,7 +36,7 @@ const Selectors = ({
     };
     return (
         <>
-            <View style={{ padding: 10, flex: 1 }}>
+            <View style={{ flex: 1 }}>
                 <View style={styles.row}>
                     {values.map((value) => (
                         <TouchableOpacity
@@ -70,7 +70,7 @@ const Selectors = ({
 const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
-        alignItems: 'center',
+        justifyContent: 'center',
         //flexWrap: "wrap",
     },
 });

@@ -71,15 +71,16 @@ const MeetingDetails = ({ route }) => {
         let hm = hMeetings.filter(
             (m) => m.meetingId === meetingPassedIn.meetingId
         );
-        if (hm.length > 0) {
-            printObject('historic:', hm);
+        if (Object.keys(hm).length !== 0) {
+            //if (hm.length > 0) {
+            printObject('historic meeting:', hm);
             dispatch(createTmp(hm));
         } else {
             let am = aMeetings.filter(
                 (m) => m.meetingId === meetingPassedIn.meetingId
             );
             if (am.length > 0) {
-                printObject('active:', am);
+                printObject('active meeting:', am);
                 dispatch(createTmp(am));
             }
         }

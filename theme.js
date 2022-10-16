@@ -56,8 +56,8 @@ const theme = {
         unSelected: '#8c8c8c',
         unSelectedText: '#fff',
         navBarInactiveBackground: '#293462',
-        navBarInactiveText: '#FEDB39',
-        navBarActiveBackground: '#FEDB39',
+        navBarInactiveText: '#CAEBF2',
+        navBarActiveBackground: '#CAEBF2',
         navBarActiveText: '#000',
     },
     fonts: {
@@ -134,23 +134,37 @@ const theme = {
         color: '#293462',
     },
     //   GROUPEDITSCREEN
+    // groupEditSurface: {
+    //     flexDirection: 'column',
+    //     alignItems: 'center',
+    //     width: '100%',
+    // },
+    // groupEditFormContainer: {
+    //     width: '90%',
+    // },
+    //   GROUP EDIT
     groupEditSurface: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-    },
-    groupEditFormContainer: {
-        width: '90%',
-    },
-    //   GROUP FORM
-    groupFormContainer: {
-        marginHorizontal: 5,
         flex: 1,
     },
-    groupFormGenderSelectorContainer: {
+    groupEditRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 0,
+        marginHorizontal: 10,
+    },
+
+    groupEditRowBasic: {
+        marginHorizontal: 20,
+        marginVertical: 5,
+    },
+
+    groupEditGenderSelectorContainer: {
         flexDirection: 'row',
         marginHorizontal: 5,
+        marginVertical: 10,
+        padding: 0,
     },
+
     groupFormRowStyle: {
         marginTop: 5,
     },

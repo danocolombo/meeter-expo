@@ -9,7 +9,7 @@ import {
 import React, { useLayoutEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { Surface, useTheme } from 'react-native-paper';
+import { Surface, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
@@ -19,25 +19,23 @@ const ActiveScreen = () => {
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
-            headerRight: () => (
-                <Button
-                    onPress={() =>
-                        navigation.navigate('MeeterEdit', {
-                            meetingId: meeting.meetingId,
-                        })
-                    }
-                    // color='white'
-                    title='NEW'
-                />
-            ),
         });
     }, [navigation, meeter]);
+    const handleNewRequest = () => {
+        navigation.navigate('MeetingNew');
+    };
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
                 <View>
                     <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
+                    <FAB
+                        icon='calendar-plus'
+                        style={styles.FAB}
+                        onPress={handleNewRequest}
+                    />
                 </View>
+
                 <View style={{ padding: 10 }}>
                     <Text style={mtrTheme.subTitleSmall}>
                         Click event for details.
@@ -74,5 +72,13 @@ const styles = StyleSheet.create({
         flex: 1,
         height: '100%',
         width: '100%',
+    },
+    FAB: {
+        position: 'absolute',
+        margin: 10,
+
+        right: 0,
+        bottom: -30,
+        backgroundColor: 'green',
     },
 });

@@ -13,7 +13,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { getHistoricMeetings } from '../features/meetingsSlice';
 
-const HistoricScreen = () => {
+const HistoricScreen = (props) => {
+    console.log(props.route.name);
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const mtrTheme = useTheme();

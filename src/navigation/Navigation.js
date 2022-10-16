@@ -23,6 +23,7 @@ import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
 import NewPasswordScreen from '../screens/Auth/NewPassword';
 import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
 import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
+import MeetingNewScreen from '../screens/MeetingNewScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 
@@ -85,6 +86,17 @@ function MeeterStack(props) {
             <Stack.Screen
                 name='MeetingEdit'
                 component={MeetingDetailsEditScreen}
+                options={({ navigation }) => ({
+                    title: 'Meeter',
+                    headerStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+                    headerTintColor: 'white',
+                })}
+            />
+            <Stack.Screen
+                name='MeetingNew'
+                component={MeetingNewScreen}
                 options={({ navigation }) => ({
                     title: 'Meeter',
                     headerStyle: {

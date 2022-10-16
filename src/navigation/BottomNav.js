@@ -7,7 +7,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import HistoricScreen from '../screens/HistoricScreen';
 import ActiveScreen from '../screens/ActiveScreen';
-import NewMeetingScreen from '../screens/NewMeetingScreen';
 import AdminScreen from '../screens/AdminScreen';
 import systemSlice from '../features/systemSlice';
 const BottomTab = createBottomTabNavigator();
@@ -19,23 +18,40 @@ const MeetingsConfig = () => {
     if (user.affiliations.active.role === 'director') {
         director = true;
     }
+
     return (
         <BottomTab.Navigator
             initialRouteName='ActiveMeetings'
-            screenOptions={{ headerShown: false }}
+            screenOptions={{
+                headerShown: false,
+                headerRight: () => (
+                    <Button
+                        onPress={() =>
+                            navigation.navigate('MeetingEdit', {
+                                meeting: meeting,
+                            })
+                        }
+                        // color='red'
+                        color={headerLabelColor}
+                        title='Edit'
+                    />
+                ),
+            }}
         >
             <BottomTab.Screen
                 name='HistoricMeetings'
+                id='HISTORY'
                 component={HistoricScreen}
                 options={{
                     title: appName,
+                    id: 'HISTORIC_MEETINGS',
                     tabBarLabel: ({ focused, color, fontSize }) => (
                         <Text
                             style={{
                                 color: focused
                                     ? mtrTheme.colors.navBarActiveText
                                     : mtrTheme.colors.navBarInactiveText,
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: '500',
                                 fontFamily: 'Roboto-Regular',
                             }}
@@ -50,7 +66,7 @@ const MeetingsConfig = () => {
                     tabBarIcon: ({ focused, color, size }) => (
                         <AntDesign
                             name='caretleft'
-                            size={24}
+                            size={14}
                             color={
                                 focused
                                     ? mtrTheme.colors.navBarActiveText
@@ -60,54 +76,21 @@ const MeetingsConfig = () => {
                     ),
                 }}
             />
-            <BottomTab.Screen
-                name='NewMeeting'
-                component={NewMeetingScreen}
-                options={{
-                    title: appName,
-                    tabBarLabel: ({ focused, color, fontSize, fontWeight }) => (
-                        <Text
-                            style={{
-                                color: focused
-                                    ? mtrTheme.colors.navBarActiveText
-                                    : mtrTheme.colors.navBarInactiveText,
-                                fontSize: 16,
-                                fontWeight: '500',
-                                fontFamily: 'Roboto-Regular',
-                            }}
-                        >
-                            ADD
-                        </Text>
-                    ),
-                    tabBarActiveBackgroundColor:
-                        mtrTheme.colors.navBarActiveBackground,
-                    tabBarInactiveBackgroundColor:
-                        mtrTheme.colors.navBarInactiveBackground,
-                    tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome
-                            name='calendar-plus-o'
-                            size={24}
-                            color={
-                                focused
-                                    ? mtrTheme.colors.navBarActiveText
-                                    : mtrTheme.colors.navBarInactiveText
-                            }
-                        />
-                    ),
-                }}
-            />
+
             <BottomTab.Screen
                 name='ActiveMeetings'
+                id='ACTIVE'
                 component={ActiveScreen}
                 options={{
                     title: appName,
+                    id: 'ACTIVE_MEETINGS',
                     tabBarLabel: ({ focused, color, size }) => (
                         <Text
                             style={{
                                 color: focused
                                     ? mtrTheme.colors.navBarActiveText
                                     : mtrTheme.colors.navBarInactiveText,
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: '500',
                                 fontFamily: 'Roboto-Regular',
                             }}
@@ -122,7 +105,7 @@ const MeetingsConfig = () => {
                     tabBarIcon: ({ focused, color, size }) => (
                         <AntDesign
                             name='caretright'
-                            size={24}
+                            size={14}
                             color={
                                 focused
                                     ? mtrTheme.colors.navBarActiveText

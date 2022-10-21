@@ -11,7 +11,12 @@ import {
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import {
+    useNavigation,
+    useIsFocused,
+    useNavigationState,
+    useFocusEffect,
+} from '@react-navigation/native';
 import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -46,13 +51,27 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
         groupId: group.groupId ? group.groupId : '0',
         gender: group.gender ? group.gender : 'x',
         title: group.title ? group.title : '',
-        attendance: group.attendance ? group.attendance : '0',
+        attendance: group.attendance ? parseInt(group.attendance) : 0,
         location: group.location ? group.location : '',
         facilitator: group.facilitator ? group.facilitator : '',
         cofacilitator: group.cofacilitator ? group.cofacilitator : '',
         notes: group.notes ? group.notes : '',
     });
-    printObject('start values', values);
+    const uns = useNavigationState((state) => state);
+    useFocusEffect(
+        React.useCallback(() => {
+            // alert(JSON.stringify(uns));
+            alert('GroupDetailsEditScreen: focused');
+            printObject('###EDIT:uns###', uns);
+            // Do something when the screen is focused
+            return () => {
+                alert('GroupDetailsEditScreen was unfocused');
+                // Do something when the screen is unfocused
+                // Useful for cleanup functions
+            };
+        }, [])
+    );
+    // printObject('start values', values);
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
@@ -104,7 +123,18 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
     }
     const handleFormSubmit = () => {
         printObject('submit values:', values);
+        if (values.groupId === '0') {
+            dispatch(addGroupValues(values));
+            navigation.goBack();
+        } else {
+            dispatch(updateGroupValues(values));
+            //navigation.goBack();
+            navigation.navigate('MeetingDetails', {
+                meeting: values,
+            });
+        }
         return;
+
         //   handle SAVE request
         if (values.groupId === undefined) {
             console.log('yep');

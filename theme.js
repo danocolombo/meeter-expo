@@ -376,6 +376,10 @@ const theme = {
         width: '50%',
         paddingLeft: 'auto',
     },
+    //   MEETING DELETE
+    meetingEditDeleteMondalText: {
+        color: 'white',
+    },
     meetingEditDeleteModalSurface: {
         marginTop: 100,
         marginHorizontal: 10,

@@ -86,6 +86,7 @@ const MeetingDetails = ({ route }) => {
         }
         dispatch(clearGroups());
         const groups = dispatch(getMeetingGroups(meeting.meetingId));
+        setDisplayGroups(groups);
     }, [route, isFocused]);
     // printObject('MDS:58-->meeting:', meeting);
     useEffect(() => {
@@ -257,9 +258,7 @@ const MeetingDetails = ({ route }) => {
                         </View>
                     </View>
                 </View>
-                {tmpMeeting?.meetingId && (
-                    <GroupList meetingId={tmpMeeting.meetingId} />
-                )}
+                <GroupList meetingId={tmpMeeting.meetingId} />
             </Surface>
         </>
     );

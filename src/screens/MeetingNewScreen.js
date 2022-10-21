@@ -10,8 +10,9 @@ import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Surface, useTheme } from 'react-native-paper';
 import MeetingForm from '../components/MeetingForm';
+import { addNewMeeting } from '../features/meetingsSlice';
 import { FlipInXDown } from 'react-native-reanimated';
-import { printObject } from '../utils/helpers';
+import { isDateDashBeforeToday, printObject } from '../utils/helpers';
 
 const MeetingNewScreen = (props) => {
     const navigation = useNavigation();
@@ -81,10 +82,12 @@ const MeetingNewScreen = (props) => {
     const handleUpdate = (values) => {
         console.log('handlePut received.');
         printObject('values', values);
-        // dispatch(updateMeetingValues(values));
-        // navigation.navigate('MeetingDetails', {
-        //     meeting: meeting,
-        // });
+        dispatch(addNewMeeting(values));
+        if (isDateDashBeforeToday(values.meetingDate)) {
+            navigation.navigate('HistoricMeeings');
+        } else {
+            navigation.navigate('ActiveMeetings');
+        }
     };
 
     return (

@@ -11,7 +11,12 @@ import {
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import {
+    useNavigation,
+    useIsFocused,
+    useFocusEffect,
+    useNavigationState,
+} from '@react-navigation/native';
 import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
 import { Surface, withTheme, useTheme } from 'react-native-paper';
@@ -31,7 +36,20 @@ const GroupDetailsScreen = ({ route, navigation }) => {
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
-
+    const uns = useNavigationState((state) => state);
+    useFocusEffect(
+        React.useCallback(() => {
+            // alert(JSON.stringify(uns));
+            alert('GroupDetailsScreen: focused');
+            printObject('###GROUP-DETAILS_uns###', uns);
+            // Do something when the screen is focused
+            return () => {
+                alert('GroupDetailsScreen was unfocused');
+                // Do something when the screen is unfocused
+                // Useful for cleanup functions
+            };
+        }, [])
+    );
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {

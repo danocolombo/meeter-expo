@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -39,7 +39,7 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
     const meeter = useSelector((state) => state.system);
 
     const { width } = useWindowDimensions();
-    const { height } = useWindowDimensions();
+
     const mtrTheme = useTheme();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
@@ -48,10 +48,9 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
     const groups = useSelector((state) => state.meetings.groups);
     const [modalMeetingDateVisible, setModalMeetingDateVisible] =
         useState(false);
-    const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
-        useState(false);
-    const [meetingDate, setMeetingDate] = useState();
 
+    const [meetingDate, setMeetingDate] = useState();
+    const meetingTypeRef = useRef(meeting.meetingType);
     const [values, setValues] = useState({
         childrenCount: meeting.childrenCount,
         transportationContact: meeting.transportationContact,
@@ -171,7 +170,6 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
         printObject('MDES:144-->newValues:', newValues);
         return;
     };
-    const onMeetingDateCancel = (data) => setModalMeetingDateVisible(false);
     const onMeetingDateConfirm = (data) => {
         FormatEventDate(data);
         setModalMeetingDateVisible(false);
@@ -181,6 +179,7 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
             ...values,
             meetingType: value,
         };
+        meetingTypeRef.current = value;
         setValues(newValues);
     };
     const handleFormSubmit = () => {
@@ -207,74 +206,10 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
         console.log('---------------------------');
         handleUpdate(values);
     };
-    const handleDeleteConfirmClick = () => {};
-
+    const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     // printObject('MDS:58-->meeting:', meeting);
     return (
         <>
-            <Modal visible={modalDeleteConfirmVisible} animationStyle='slide'>
-                <Surface
-                    style={[
-                        mtrTheme.meetingEditDeleteModalSurface,
-                        { height: height * 0.8 },
-                    ]}
-                >
-                    <View>
-                        <Text style={mtrTheme.meetingEditDeleteModalTitle}>
-                            Confirm Your Delete Request
-                        </Text>
-                    </View>
-                    <View
-                        style={mtrTheme.meetingEditDeleteModalMeetingContainer}
-                    >
-                        <View>
-                            <Text
-                                style={
-                                    mtrTheme.meetingEditDeleteModalMeetingText
-                                }
-                            >
-                                {values.meetingDate}
-                            </Text>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text
-                                style={
-                                    mtrTheme.meetingEditDeleteModalMeetingText
-                                }
-                            >
-                                {values.meetingType}
-                            </Text>
-
-                            <Text
-                                style={
-                                    mtrTheme.meetingEditDeleteModalMeetingText
-                                }
-                            >
-                                {values.title}
-                            </Text>
-                        </View>
-                    </View>
-                    <View
-                        style={mtrTheme.meetingEditDeleteModalButtonContainer}
-                    >
-                        <View style={{ width: width * 0.35, marginRight: 20 }}>
-                            <CustomButton
-                                text='No, cancel'
-                                onPress={() =>
-                                    setModalDeleteConfirmVisible(false)
-                                }
-                            />
-                        </View>
-                        <View style={{ width: width * 0.35, marginLeft: 20 }}>
-                            <CustomButton
-                                text='Yes, DELETE'
-                                bgColor='red'
-                                fgColor='black'
-                            />
-                        </View>
-                    </View>
-                </Surface>
-            </Modal>
             <Surface style={styles.surface}>
                 <View style={mtrTheme.meetingEditTypeSelectorRow}>
                     <TypeSelectors
@@ -282,7 +217,6 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
                         setPick={handleTypeChange}
                     />
                 </View>
-
                 <View style={mtrTheme.meetingEditFirstRow}>
                     <TouchableOpacity
                         onPress={() => setModalMeetingDateVisible(true)}
@@ -310,8 +244,7 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
                     </TouchableOpacity>
                     <View>
                         <View style={{ flexDirection: 'column' }}>
-                            {(meeting.meetingType === 'Lesson' ||
-                                meeting.meetingType === 'Testimony') && (
+                            {meetingTypeRef.current === 'Lesson' && (
                                 <Input
                                     label='Lesson'
                                     labelStyle={mtrTheme.meetingEditInputLabel}
@@ -334,7 +267,30 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
                                     }}
                                 />
                             )}
-                            {meeting.meetingType === 'Special' && (
+                            {meetingTypeRef.current === 'Testimony' && (
+                                <Input
+                                    label='Guest'
+                                    labelStyle={mtrTheme.meetingEditInputLabel}
+                                    textInputConfig={{
+                                        backgroundColor: 'white',
+                                        value: values.title,
+                                        paddingHorizontal: 1,
+                                        fontSize: 24,
+                                        color: 'black',
+                                        marginHorizontal: 10,
+                                        placeholder: 'Guest',
+                                        // style: { color: 'white' },
+                                        fontWeight: '300',
+                                        minWidth: '70%',
+                                        letterSpacing: 0,
+                                        onChangeText: inputChangedHandler.bind(
+                                            this,
+                                            'title'
+                                        ),
+                                    }}
+                                />
+                            )}
+                            {meetingTypeRef.current === 'Special' && (
                                 <Input
                                     label='Event Title'
                                     labelStyle={mtrTheme.meetingEditInputLabel}

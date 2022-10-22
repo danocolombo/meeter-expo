@@ -44,15 +44,15 @@ export const meetingsSlice = createSlice({
     name: 'meetings',
     initialState,
     reducers: {
-        loadActiveMeetings: (state, action) => {
-            state.activeMeetings = action.payload;
-            return state;
-        },
-        loadHistoricMeetings: (state, action) => {
-            // printObject('SLICE-action.payload:', action.payload);
-            state.historicMeetings = action.payload;
-            return state;
-        },
+        // loadActiveMeetings: (state, action) => {
+        //     state.activeMeetings = action.payload;
+        //     return state;
+        // },
+        // loadHistoricMeetings: (state, action) => {
+        //     // printObject('SLICE-action.payload:', action.payload);
+        //     state.historicMeetings = action.payload;
+        //     return state;
+        // },
         createTmp: (state, action) => {
             state.tmpMeeting = {};
             state.tmpMeeting = action.payload[0];
@@ -68,29 +68,28 @@ export const meetingsSlice = createSlice({
             state.meetings = action.payload;
             return state;
         },
-        getMeeting: (state, action) => {
-            //could be in historic or active
-            console.log(action.payload);
-            let returnValue = {};
-            let found = state.historicMeetings.filter(
-                (m) => m.meetingId === action.payload
-            );
-            console.log('size:', found.length);
-            if (found.length !== 0) {
-                printObject('meeting:', found);
-                returnValue = found[0];
-                printObject('returnValue', returnValue);
-                return state;
-            }
-            // if (found.length === 1) {
-            //     return found[0];
-            // } else {
-            //     let active = state.activeMeetings.filter(
-            //         (m) => m.meetingId === action.payload
-            //     );
-            //     return active[0];
-            // }
-        },
+        // getMeeting: (state, action) => {
+        //     //could be in historic or active
+        //     console.log(action.payload);
+        //     let returnValue = {};
+        //     let found = state.meetings.filter(
+        //         (m) => m.meetingId === action.payload
+        //     );
+
+        //     if (found.length !== 0) {
+        //         returnValue = found[0];
+        //         return state;
+        //     }
+
+        //     // if (found.length === 1) {
+        //     //     return found[0];
+        //     // } else {
+        //     //     let active = state.activeMeetings.filter(
+        //     //         (m) => m.meetingId === action.payload
+        //     //     );
+        //     //     return active[0];
+        //     // }
+        // },
 
         updateMeeting: (state, action) => {
             // this update could be in either the historic or the active.
@@ -114,9 +113,10 @@ export const meetingsSlice = createSlice({
 
             return state;
         },
-        addHistoricMeeting: (state, action) => {
-            let meetings = state.historicMeetings;
-            meetings.push(action.payload);
+        addMeeting: (state, action) => {
+            const newValue = action.payload;
+            let meetings = state.meetings;
+            meetings.push(newValue);
             function asc_sort(a, b) {
                 return (
                     new Date(a.meetingDate).getTime() -
@@ -124,22 +124,35 @@ export const meetingsSlice = createSlice({
                 );
             }
             let newBigger = meetings.sort(asc_sort);
-            state.historicMeetings = newBigger;
+            state.meetings = newBigger;
             return state;
         },
-        addActiveMeeting: (state, action) => {
-            let meetings = state.activeMeetings;
-            meetings.push(action.payload);
-            function asc_sort(a, b) {
-                return (
-                    new Date(a.meetingDate).getTime() -
-                    new Date(b.meetingDate).getTime()
-                );
-            }
-            let newBigger = meetings.sort(asc_sort);
-            state.activeMeetings = newBigger;
-            return state;
-        },
+        // addHistoricMeeting: (state, action) => {
+        //     let meetings = state.historicMeetings;
+        //     meetings.push(action.payload);
+        //     function asc_sort(a, b) {
+        //         return (
+        //             new Date(a.meetingDate).getTime() -
+        //             new Date(b.meetingDate).getTime()
+        //         );
+        //     }
+        //     let newBigger = meetings.sort(asc_sort);
+        //     state.historicMeetings = newBigger;
+        //     return state;
+        // },
+        // addActiveMeeting: (state, action) => {
+        //     let meetings = state.activeMeetings;
+        //     meetings.push(action.payload);
+        //     function asc_sort(a, b) {
+        //         return (
+        //             new Date(a.meetingDate).getTime() -
+        //             new Date(b.meetingDate).getTime()
+        //         );
+        //     }
+        //     let newBigger = meetings.sort(asc_sort);
+        //     state.activeMeetings = newBigger;
+        //     return state;
+        // },
         // addNewMeeting: (state, action) => {
         //     let meetings = state.meetings;
         //     meetings.push(action.payload);
@@ -264,12 +277,13 @@ export const meetingsSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-    loadActiveMeetings,
+    //loadActiveMeetings,
     loadHistoricMeetings,
     loadMeetings,
     getMeetings,
-    getMeeting,
+    //getMeeting,
     // addNewMeeting,
+    addMeeting,
     updateMeeting,
     deleteAMeeting,
     createTmp,
@@ -280,7 +294,7 @@ export const {
     addNewGroup,
     updateGroup,
     addActiveMeeting,
-    addHistoricMeeting,
+    //addHistoricMeeting,
     getGroup,
     logout,
 } = meetingsSlice.actions;
@@ -303,8 +317,16 @@ export const deleteMeeting = (meetingId, groups) => (dispatch) => {
         };
         let body = JSON.stringify(obj);
         let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
-        let res = await axios.post(api2use, body, config);
-        if (res.status === 200) {
+        let res;
+        try {
+            printObject('DELETE:', body);
+            res = await axios.post(api2use, body, config);
+            printObject('RESULTS:', res);
+        } catch (error) {
+            printObject('MS:324->error deleting meeting:', error);
+        }
+
+        if (res.status === '200') {
             console.log('delete-11-A');
             return true;
         } else {
@@ -313,7 +335,7 @@ export const deleteMeeting = (meetingId, groups) => (dispatch) => {
         }
     };
     const deleteThisGroup = async (groupId) => {
-        console.log('delete-4-A', g);
+        console.log('delete-4-A', groupId);
         let obj = {
             operation: 'deleteGroup',
             payload: {
@@ -324,12 +346,19 @@ export const deleteMeeting = (meetingId, groups) => (dispatch) => {
         };
         let body = JSON.stringify(obj);
         let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-        let res = await axios.post(api2use, body, config);
+        printObject('deleteGroup body:', body);
+        let res;
+        try {
+            res = await axios.post(api2use, body, config);
+        } catch (error) {
+            printObject('ERROR DELETING:', error);
+        }
+
         if (res.data.status === '200') {
-            console.log('delete-5-A', g);
+            console.log('delete-5-A', groupId);
             return true;
         } else {
-            console.log('delete-6-A', g);
+            console.log('delete-6-A', groupId);
             return false;
         }
     };
@@ -344,12 +373,17 @@ export const deleteMeeting = (meetingId, groups) => (dispatch) => {
             if (!success) {
                 groupDeleteSuccess = false;
                 console.log('delete-7-A');
+            } else {
+                console.log('delete-7-FAIL');
             }
         });
 
         if (groupDeleteSuccess !== false) {
+            console.log('367: groupDeleteSuccess');
             groupDeleteSuccess = true;
             dispatch(clearGroups());
+        } else {
+            console.log('371: groupDeleteSuccess false');
         }
     }
     if (groupDeleteSuccess) {
@@ -373,46 +407,6 @@ export const deleteMeeting = (meetingId, groups) => (dispatch) => {
     }
 };
 
-export const TOBEgetMeetingGroups = (meetingId) => (dispatch) => {
-    // this will get some remove data
-    const getData = async (meetingId) => {
-        dispatch(clearGroups());
-        let obj = {
-            operation: 'getGroupsByMeetingId',
-            payload: {
-                meetingId: meetingId,
-            },
-        };
-        let body = JSON.stringify(obj);
-        let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-        let res = await axios.post(api2use, body, config);
-
-        if (res?.data?.status === '200') {
-            const results = res.data.body;
-            let theGroups = [];
-            results.forEach((item) => {
-                theGroups.push(item);
-            });
-            function newDoubleSort(prop1, prop2) {
-                return function (a, b) {
-                    if (a[prop1] === b[prop1]) {
-                        return b[prop2] - a[prop2];
-                    }
-                    return a[prop1] > b[prop1] ? 1 : -1;
-                };
-            }
-            let doubleResults = theGroups.sort(
-                newDoubleSort('gender', 'title')
-            );
-            //printObject('groups:', doubleResults);
-            // let sortedGroups = theGroups.sort(asc_sort);
-            return doubleResults;
-        } else {
-            return [];
-        }
-    };
-    getData(meetingId);
-};
 export const getMeetingGroups = (meetingId) => (dispatch) => {
     // this will get some remove data
     const getData = async (meetingId) => {
@@ -468,38 +462,38 @@ export const updateMeetingValues = (values) => (dispatch) => {
     };
     updateData(values);
 };
-export const getAMeeting = (meetingId) => (dispatch) => {
-    const getIt = async (meetingId) => {
-        let mtg = dispatch(getMeeting(meetingId));
-        printObject('getAMeeting response:', mtg);
-        return mtg;
-    };
-    getIt(meetingId);
-};
-export const getHistoricMeetings = () => (dispatch) => {
-    var d = new Date();
-    let yesterday = getDateMinusDays(d, 1);
-    let twoMonthsAgo = getDateMinusDays(d, 120);
+// export const getAMeeting = (meetingId) => (dispatch) => {
+//     const getIt = async (meetingId) => {
+//         let mtg = dispatch(getMeeting(meetingId));
+//         printObject('getAMeeting response:', mtg);
+//         return mtg;
+//     };
+//     getIt(meetingId);
+// };
+// export const getHistoricMeetings = () => (dispatch) => {
+//     var d = new Date();
+//     let yesterday = getDateMinusDays(d, 1);
+//     let twoMonthsAgo = getDateMinusDays(d, 120);
 
-    const getData = async () => {
-        let obj = {
-            operation: 'getMeetingsBetweenDates',
-            payload: {
-                clientId: 'wbc',
-                startDate: twoMonthsAgo,
-                stopDate: yesterday,
-                direction: 'DESC',
-            },
-        };
-        let body = JSON.stringify(obj);
-        let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
-        let res = await axios.post(api2use, body, config);
-        const results = res.data.body.Items;
-        dispatch(loadHistoricMeetings(results));
-        return;
-    };
-    getData();
-};
+//     const getData = async () => {
+//         let obj = {
+//             operation: 'getMeetingsBetweenDates',
+//             payload: {
+//                 clientId: 'wbc',
+//                 startDate: twoMonthsAgo,
+//                 stopDate: yesterday,
+//                 direction: 'DESC',
+//             },
+//         };
+//         let body = JSON.stringify(obj);
+//         let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+//         let res = await axios.post(api2use, body, config);
+//         const results = res.data.body.Items;
+//         dispatch(loadHistoricMeetings(results));
+//         return;
+//     };
+//     getData();
+// };
 export const updateGroupValues = (values) => (dispatch) => {
     const saveGroupToDDB = async () => {
         let obj = {
@@ -559,7 +553,7 @@ export const deleteGroupEntry = (groupId) => (dispatch) => {
 export const addNewMeeting = (meeting) => (dispatch) => {
     // determine if the meeting is historic or active
     // meeting.meetingDate format is YYYY-MM-DD
-    const historic = isDateDashBeforeToday(meeting.meetingDate);
+    //const historic = isDateDashBeforeToday(meeting.meetingDate);
     const addMeetingToDB = async () => {
         let obj = {
             operation: 'putMeeting',
@@ -570,12 +564,14 @@ export const addNewMeeting = (meeting) => (dispatch) => {
         let body = JSON.stringify(obj);
         let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
         let res = await axios.post(api2use, body, config);
+        // have to pass response, so we always get the right DB values
+        addMeeting(res);
         //const results = res.data.body.Items;
-        if (historic) {
-            dispatch(addHistoricMeeting(meeting));
-        } else {
-            dispatch(addActiveMeeting(meeting));
-        }
+        //if (historic) {
+        // dispatch(addHistoricMeeting(meeting));
+        // } else {
+        //     dispatch(addActiveMeeting(meeting));
+        // }
 
         return;
     };

@@ -38,12 +38,7 @@ import {
     loadHistoricMeetings,
     loadMeetings,
 } from '../../features/meetingsSlice';
-import {
-    getActiveMeetings,
-    getHistoricMeetings,
-    getMeetingsOnAfterDate,
-    getSupportedMeetings,
-} from '../../providers/meetings';
+import { getSupportedMeetings } from '../../providers/meetings';
 import { getToday, printObject, dateNumToDateDash } from '../../utils/helpers';
 ////import { REGION } from '../../constants/regions';
 const SignInScreen = () => {

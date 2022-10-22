@@ -99,19 +99,17 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                     deleteGroups.push(g.groupId);
                 });
             }
-            // console.log('meetingId:', meeting.meetingId);
-            // console.log('deleteGroups:', deleteGroups);
-            let deleteRequest = dispatch(
-                deleteMeeting(meeting.meetingId, deleteGroups)
-            );
-            printObject('deleteRequest', deleteRequest);
-            console.log('back1');
+            //console.log('meetingId:', meeting.meetingId);
+            //console.log('deleteGroups:', deleteGroups);
+
+            dispatch(deleteMeeting(meeting.meetingId, deleteGroups));
+            console.log('handleDeleteConfirmClick complete.');
             navigation.dispatch(
                 StackActions.push('AuthenticatedDrawer', {
                     screen: 'Meetings',
                 })
             );
-        }, 1000);
+        }, 10);
         // navigation.dispatch(
         //     StackActions.push('AuthenticatedDrawer', {
         //         screen: 'Meetings',

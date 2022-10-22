@@ -29,12 +29,12 @@ const ActiveScreen = () => {
     useFocusEffect(
         React.useCallback(() => {
             // alert(JSON.stringify(uns));
-            alert('ActiveScree: focused');
+            // alert('ActiveScree: focused');
             printObject('###ACTIVE:uns###', uns);
             let currentMeetings = [];
             getSupportedMeetings(meeter.affiliation.toLowerCase())
                 .then((results) => {
-                    console.log('got results');
+                    //console.log('got results');
                     results.forEach((m) => {
                         currentMeetings.push(m);
                     });
@@ -64,7 +64,7 @@ const ActiveScreen = () => {
 
             // Do something when the screen is focused
             return () => {
-                alert('ActiveScreen was unfocused');
+                // alert('ActiveScreen was unfocused');
                 // Do something when the screen is unfocused
                 // Useful for cleanup functions
             };

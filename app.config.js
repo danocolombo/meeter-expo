@@ -2,9 +2,9 @@ module.exports = ({ config }) => {
     let BASE_version = '1.0.0';
     let ANDROID_version = 1;
     let COMBO_version =
-        BASE_version + '-' + ANDROID_version.toString() + '-EXPO:rb002';
+        BASE_version + '-' + ANDROID_version.toString() + '-EXPO.rb003';
     console.log('NAME: ' + config.name); // prints 'My App'
-    console.log('COMBO_version: ' + COMBO_version) + '.rb002';
+    console.log('COMBO_version: ' + COMBO_version);
     return {
         ...config,
         version: BASE_version,

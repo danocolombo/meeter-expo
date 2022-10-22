@@ -49,3 +49,24 @@ export async function getHistoricMeetings(affiliate, today) {
 
     return results;
 }
+export async function getSupportedMeetings(affiliate) {
+    //   we support 3 months in redux to start with
+    var d = new Date();
+    let threeMonthsAgo = getDateMinusDays(d, 90);
+
+    let obj = {
+        operation: 'getMeetingsOnAfterDate',
+        payload: {
+            clientId: affiliate.toLowerCase(),
+            date: threeMonthsAgo,
+            direction: 'DESC',
+        },
+    };
+    let body = JSON.stringify(obj);
+    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+    let res = await axios.post(api2use, body, config);
+
+    const results = res.data.body.Items;
+
+    return results;
+}

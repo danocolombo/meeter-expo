@@ -84,7 +84,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         console.log('handleUpdate received.');
         dispatch(updateMeetingValues(values));
         navigation.navigate('MeetingDetails', {
-            meeting: meeting,
+            meeting: values,
         });
     };
 

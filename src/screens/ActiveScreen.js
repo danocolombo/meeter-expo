@@ -16,39 +16,55 @@ import { useSelector } from 'react-redux';
 import { Surface, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { FontDisplay } from 'expo-font';
-import { printObject } from '../utils/helpers';
+import { dateNumToDateDash, printObject } from '../utils/helpers';
 import { current } from '@reduxjs/toolkit';
+import { getSupportedMeetings } from '../providers/meetings';
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const meeter = useSelector((state) => state.system);
-    const aMeetings = useSelector((state) => state.meetings.activeMeetings);
-    const [meetings, setMeetings] = useState([]);
+    const meetings = useSelector((state) => state.meetings.meetings);
+    const [displayMeetings, setDisplayMeetings] = useState([]);
     const uns = useNavigationState((state) => state);
     useFocusEffect(
         React.useCallback(() => {
             // alert(JSON.stringify(uns));
             alert('ActiveScree: focused');
             printObject('###ACTIVE:uns###', uns);
-            let currentMeeings = [];
-            aMeetings.map((m) => {
-                currentMeeings.push(m);
-            });
-            function quickSort(prop) {
-                return function (a, b) {
-                    if (a[prop] > b[prop]) {
-                        return 1;
-                    } else if (a[prop] < b[prop]) {
-                        return -1;
+            let currentMeetings = [];
+            getSupportedMeetings(meeter.affiliation.toLowerCase())
+                .then((results) => {
+                    console.log('got results');
+                    results.forEach((m) => {
+                        currentMeetings.push(m);
+                    });
+                    let targetDate = dateNumToDateDash(meeter.today);
+                    let filteredMeetings = currentMeetings.filter(
+                        (m) => m.meetingDate >= targetDate
+                    );
+                    printObject('filteredMeeings', filteredMeetings);
+                    function quickSort(prop) {
+                        return function (a, b) {
+                            if (a[prop] > b[prop]) {
+                                return 1;
+                            } else if (a[prop] < b[prop]) {
+                                return -1;
+                            }
+                            return 0;
+                        };
                     }
-                    return 0;
-                };
-            }
-            let sortedResults = currentMeeings.sort(quickSort('mtgCompKey'));
-            setMeetings(sortedResults);
+                    let sortedResults = filteredMeetings.sort(
+                        quickSort('mtgCompKey')
+                    );
+                    setDisplayMeetings(sortedResults);
+                })
+                .catch((error) => {
+                    printObject('ERROR GETTING SUPPORTED MEETINGS', error);
+                });
+
             // Do something when the screen is focused
             return () => {
-                alert('ActiveScree was unfocused');
+                alert('ActiveScreen was unfocused');
                 // Do something when the screen is unfocused
                 // Useful for cleanup functions
             };
@@ -108,7 +124,7 @@ const ActiveScreen = () => {
                 </View>
                 {meetings && (
                     <FlatList
-                        data={meetings}
+                        data={displayMeetings}
                         keyExtractor={(item) => item.meetingId}
                         renderItem={({ item }) => (
                             <MeetingListCard meeting={item} active={true} />

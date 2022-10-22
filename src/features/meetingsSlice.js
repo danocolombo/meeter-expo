@@ -95,36 +95,22 @@ export const meetingsSlice = createSlice({
         updateMeeting: (state, action) => {
             // this update could be in either the historic or the active.
             // probability is that it is in historic, do that first
-            let historic = false;
+            // let historic = false;
             const newValue = action.payload;
             //stort with historic
             let newMeetingList = [];
-            newMeetingList = state.historicMeetings.map((m) => {
+            newMeetingList = state.meetings.map((m) => {
                 if (m.meetingId === newValue.meetingId) {
-                    historic = true;
                     return newValue;
                 } else {
                     return m;
                 }
             });
-            if (!historic) {
-                newMeetingList = state.activeMeetings.map((m) => {
-                    if (m.meetingId === newValue.meetingId) {
-                        return newValue;
-                    } else {
-                        return m;
-                    }
-                });
-            }
             function asc_sort(a, b) {
                 return a.meetingDate - b.meetingDate;
             }
             let newBigger = newMeetingList.sort(asc_sort);
-            if (historic) {
-                state.historicMeetings = newBigger;
-            } else {
-                state.activeMeetings = newBigger;
-            }
+            state.meetings = newBigger;
 
             return state;
         },
@@ -476,7 +462,7 @@ export const updateMeetingValues = (values) => (dispatch) => {
         let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
         let res = await axios.post(api2use, body, config);
         const results = res.data.body;
-        dispatch(updateTmp(values));
+        //dispatch(updateTmp(values));
         dispatch(updateMeeting(values));
         return results;
     };

@@ -36,10 +36,13 @@ import { getProfile } from '../../providers/users';
 import {
     loadActiveMeetings,
     loadHistoricMeetings,
+    loadMeetings,
 } from '../../features/meetingsSlice';
 import {
     getActiveMeetings,
     getHistoricMeetings,
+    getMeetingsOnAfterDate,
+    getSupportedMeetings,
 } from '../../providers/meetings';
 import { getToday, printObject, dateNumToDateDash } from '../../utils/helpers';
 ////import { REGION } from '../../constants/regions';
@@ -232,31 +235,12 @@ const SignInScreen = () => {
                 console.log('OH SNAP\n', err);
             });
         let today = dateNumToDateDash(meeter.today);
-        getActiveMeetings(fullUserInfo.affiliations.active.value, today)
+        //   rb003 - changed from active/historic to one state for meetings
+        getSupportedMeetings(fullUserInfo.affiliations.active.value)
             .then((results) => {
-                dispatch(loadActiveMeetings(results));
-                console.log('actives loaded');
-                getHistoricMeetings(
-                    fullUserInfo.affiliations.active.value,
-                    today
-                )
-                    .then((results) => {
-                        dispatch(loadHistoricMeetings(results));
-                    })
-                    .catch((error) => {
-                        console.log('WE GOT ERROR GETTING HISTORIC MEETINGS');
-                        printObject('error', error);
-                        return;
-                    });
+                dispatch(loadMeetings(results));
             })
-            .catch((error) => {
-                console.log('WE GOT ERROR GETTING ACTIVE MEETINGS');
-                printObject('error', error);
-                return;
-            });
-
-        // dispatch(updateCurrentUser(fullUserInfo));
-
+            .catch((error) => printObject('242_ERROR', error));
         return;
     };
 

@@ -10,6 +10,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import theme from './theme';
+import { Amplify } from 'aws-amplify';
 import awsconfig from './src/aws-exports';
 Amplify.configure({
     ...awsconfig,
@@ -17,7 +18,7 @@ Amplify.configure({
         disabled: true,
     },
 });
-import { Amplify, Auth, Hub } from 'aws-amplify';
+import { Auth, Hub } from 'aws-amplify';
 const queryClient = new QueryClient();
 
 function App() {

@@ -1,8 +1,9 @@
 module.exports = ({ config }) => {
     let BASE_version = '1.0.0';
     let ANDROID_version = 1;
-    let COMBO_version =
-        BASE_version + '-' + ANDROID_version.toString() + '-EXPO.rb003';
+    let COMBO_version = BASE_version + '-' + ANDROID_version.toString();
+    let DESCRIPTION =
+        'expo/1.0.0 - rb003, lowercase meeter in package.json file';
     console.log('NAME: ' + config.name); // prints 'My App'
     console.log('COMBO_version: ' + COMBO_version);
     return {
@@ -49,6 +50,6 @@ module.exports = ({ config }) => {
         web: {
             favicon: './assets/favicon.png',
         },
-        description: COMBO_version,
+        description: DESCRIPTION,
     };
 };

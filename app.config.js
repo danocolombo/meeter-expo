@@ -2,6 +2,7 @@ module.exports = ({ config }) => {
     let BASE_version = '1.0.0';
     let ANDROID_version = 1;
     let COMBO_version = BASE_version + '-' + ANDROID_version.toString();
+    let DESCRIPTION = 'expo/1.0.0 - rb004 - added .easignore';
     console.log('NAME: ' + config.name); // prints 'My App'
     console.log('COMBO_version: ' + COMBO_version);
     return {
@@ -48,6 +49,6 @@ module.exports = ({ config }) => {
         web: {
             favicon: './assets/favicon.png',
         },
-        description: COMBO_version,
+        description: DESCRIPTION,
     };
 };

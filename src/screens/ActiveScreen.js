@@ -13,7 +13,7 @@ import {
     useNavigationState,
 } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { Surface, useTheme, FAB } from 'react-native-paper';
+import { Surface, ActivityIndicator, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { FontDisplay } from 'expo-font';
 import { dateNumToDateDash, printObject } from '../utils/helpers';
@@ -25,12 +25,14 @@ const ActiveScreen = () => {
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
     const [displayMeetings, setDisplayMeetings] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const uns = useNavigationState((state) => state);
     useFocusEffect(
         React.useCallback(() => {
             // alert(JSON.stringify(uns));
             // alert('ActiveScree: focused');
-            printObject('###ACTIVE:uns###', uns);
+            setIsLoading(true);
+            console.log('TRUE');
             let currentMeetings = [];
             getSupportedMeetings(meeter.affiliation.toLowerCase())
                 .then((results) => {
@@ -42,7 +44,7 @@ const ActiveScreen = () => {
                     let filteredMeetings = currentMeetings.filter(
                         (m) => m.meetingDate >= targetDate
                     );
-                    printObject('filteredMeeings', filteredMeetings);
+                    printObject('XXfilteredMeeings', filteredMeetings);
                     function quickSort(prop) {
                         return function (a, b) {
                             if (a[prop] > b[prop]) {
@@ -57,8 +59,12 @@ const ActiveScreen = () => {
                         quickSort('mtgCompKey')
                     );
                     setDisplayMeetings(sortedResults);
+                    setIsLoading(false);
+                    console.log('FALSE-1');
                 })
                 .catch((error) => {
+                    setIsLoading(false);
+                    console.log('FALSE-2');
                     printObject('ERROR GETTING SUPPORTED MEETINGS', error);
                 });
 
@@ -105,6 +111,10 @@ const ActiveScreen = () => {
     const handleNewRequest = () => {
         navigation.navigate('MeetingNew');
     };
+    if (isLoading) {
+        return <ActivityIndicator color={mtrTheme.colors.accent} size={40} />;
+    }
+
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>

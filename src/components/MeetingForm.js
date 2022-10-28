@@ -159,9 +159,9 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
         let mtgDateString =
             data.getFullYear() +
             '-' +
-            (data.getMonth() + 1) +
+            ('0' + (data.getMonth() + 1)).slice(-2) +
             '-' +
-            data.getDate();
+            ('0' + data.getDate()).slice(-2);
         const newValues = {
             ...values,
             meetingDate: mtgDateString,

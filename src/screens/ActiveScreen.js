@@ -112,7 +112,17 @@ const ActiveScreen = () => {
         navigation.navigate('MeetingNew');
     };
     if (isLoading) {
-        return <ActivityIndicator color={mtrTheme.colors.accent} size={40} />;
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator color={'blue'} size={80} />
+            </View>
+        );
     }
 
     return (

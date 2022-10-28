@@ -11,7 +11,7 @@ import React, {
     useState,
     useCallback,
 } from 'react';
-import { Surface, useTheme } from 'react-native-paper';
+import { Surface, useTheme, ActivityIndicator } from 'react-native-paper';
 import {
     useNavigation,
     useFocusEffect,
@@ -36,10 +36,12 @@ const HistoricScreen = (props) => {
     const hMeetings = useSelector((state) => state.meetings.historicMeetings);
     const [meetings, setMeetings] = useState([]);
     const uns = useNavigationState((state) => state);
+    const [isLoading, setIsLoading] = useState(false);
     useFocusEffect(
         useCallback(() => {
             // alert(JSON.stringify(uns));
             //alert('Historic: focused');
+            setIsLoading(true);
             printObject('###HISTORIC:uns###', uns);
             let currentMeetings = [];
             getSupportedMeetings(meeter.affiliation.toLowerCase())
@@ -79,7 +81,7 @@ const HistoricScreen = (props) => {
                 .catch((error) => {
                     printObject('ERROR GETTING SUPPORTED MEETINGS', error);
                 });
-
+            setIsLoading(false);
             // Do something when the screen is focused
             return () => {
                 //alert('ActiveScreen was unfocused');
@@ -153,7 +155,19 @@ const HistoricScreen = (props) => {
     //         };
     //     }, [])
     // );
-
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator color={'white'} size={80} />
+            </View>
+        );
+    }
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>

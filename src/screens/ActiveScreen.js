@@ -44,7 +44,7 @@ const ActiveScreen = () => {
                     let filteredMeetings = currentMeetings.filter(
                         (m) => m.meetingDate >= targetDate
                     );
-                    printObject('XXfilteredMeeings', filteredMeetings);
+                    printObject('XXfilteredMeetings', filteredMeetings);
                     function quickSort(prop) {
                         return function (a, b) {
                             if (a[prop] > b[prop]) {
@@ -130,11 +130,13 @@ const ActiveScreen = () => {
             <Surface style={mtrTheme.screenSurface}>
                 <View>
                     <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
-                    <FAB
-                        icon='calendar-plus'
-                        style={styles.FAB}
-                        onPress={handleNewRequest}
-                    />
+                    {meeter.userRole !== 'guest' && (
+                        <FAB
+                            icon='calendar-plus'
+                            style={styles.FAB}
+                            onPress={handleNewRequest}
+                        />
+                    )}
                 </View>
 
                 <View style={{ padding: 10 }}>

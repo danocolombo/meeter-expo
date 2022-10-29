@@ -204,7 +204,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                     {groups.length > 0
                         ? groups.map((g) => {
                               return (
-                                  <View>
+                                  <View key={g.groupId}>
                                       <Text
                                           style={
                                               mtrTheme.meetingEditDeleteModalMeetingText

@@ -32,6 +32,7 @@ import {
     isDateDashBeforeToday,
     dateNumToDateDash,
     todayMinus60,
+    dateDashToDateObject,
 } from '../utils/helpers';
 
 import TypeSelectors from './TypeSelectors';
@@ -50,6 +51,7 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
         useState(false);
 
     const [meetingDate, setMeetingDate] = useState();
+    const [dateValue, setDateValue] = useState();
     const meetingTypeRef = useRef(meeting.meetingType);
     const [values, setValues] = useState({
         childrenCount: meeting.childrenCount,
@@ -159,14 +161,19 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
         let mtgDateString =
             data.getFullYear() +
             '-' +
-            (data.getMonth() + 1) +
+            ('0' + (data.getMonth() + 1)).slice(-2) +
             '-' +
-            data.getDate();
+            ('0' + data.getDate()).slice(-2);
         const newValues = {
             ...values,
             meetingDate: mtgDateString,
         };
+        //====================================
+        // set the dateValue object as well.
+        setDateValue(tmp);
+        printObject('MF:173--dateValue', dateValue);
         setValues(newValues);
+
         printObject('MDES:144-->newValues:', newValues);
         return;
     };
@@ -208,6 +215,12 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     // printObject('MDS:58-->meeting:', meeting);
+    useEffect(() => {
+        printObject('MF:218-->values', values);
+        let dateObj = dateDashToDateObject(values.meetingDate);
+        setDateValue(dateObj);
+        printObject('MF:220-->dateObj', dateObj);
+    }, []);
     return (
         <>
             <Surface style={styles.surface}>
@@ -560,9 +573,9 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
                 </View>
                 <DateTimePickerModal
                     isVisible={modalMeetingDateVisible}
-                    date={meetingDate}
                     mode='date'
-                    value={meetingDate}
+                    date={dateValue}
+                    display='inline'
                     onConfirm={onMeetingDateConfirm}
                     onCancel={onMeetingDateCancel}
                 />

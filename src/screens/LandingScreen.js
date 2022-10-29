@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, {
+    useEffect,
+    useState,
+    useLayoutEffect,
+    useCallback,
+} from 'react';
 import {
     View,
     Text,
@@ -10,12 +15,21 @@ import {
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import {
+    useNavigation,
+    useIsFocused,
+    useFocusEffect,
+} from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import Logo from '../../assets/M-square.png';
 import CustomButton from '../components/ui/CustomButton';
 // import { Colors } from '../constants/colors';
-import { Surface, withTheme, useTheme } from 'react-native-paper';
+import {
+    Surface,
+    withTheme,
+    useTheme,
+    ActivityIndicator,
+} from 'react-native-paper';
 import { printObject } from '../utils/helpers';
 import MeetingListCard from '../components/Meeting.List.Card';
 
@@ -26,16 +40,46 @@ const LandingScreen = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
-    const activeMeetings = useSelector(
-        (state) => state.meetings.activeMeetings
+    const meetings = useSelector((state) =>
+        state.meetings.meetings.filter((m) => m.meetingDate >= meeter.today)
     );
-
+    const [nextMeeting, setNextMeeting] = useState(meetings[0]);
+    const [isLoading, setIsLoading] = useState(false);
     useLayoutEffect(() => {
         navigation.setOptions({
             title: '',
         });
     }, [navigation, meeter]);
+    useFocusEffect(
+        React.useCallback(() => {
+            setIsLoading(true);
+            let activeOnes = meetings.filter(
+                (m) => m.meetingDate >= meeter.today
+            );
+            activeOnes ? setNextMeeting(activeOnes[0]) : null;
 
+            // Do something when the screen is focused
+            setIsLoading(false);
+            return () => {
+                // alert('ActiveScreen was unfocused');
+                // Do something when the screen is unfocused
+                // Useful for cleanup functions
+            };
+        }, [])
+    );
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator color={'blue'} size={80} />
+            </View>
+        );
+    }
     return (
         <>
             <Surface style={styles.welcomeSurface}>
@@ -57,7 +101,7 @@ const LandingScreen = () => {
                     </Text>
                 </View>
 
-                {activeMeetings.length > 0 && (
+                {meetings.length > 0 && (
                     <>
                         <View style={{ marginTop: 10 }}>
                             <Text style={mtrTheme.landingAnnouncement}>

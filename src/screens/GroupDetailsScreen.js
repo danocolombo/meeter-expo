@@ -19,7 +19,12 @@ import {
 } from '@react-navigation/native';
 import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
-import { Surface, withTheme, useTheme } from 'react-native-paper';
+import {
+    Surface,
+    withTheme,
+    useTheme,
+    ActivityIndicator,
+} from 'react-native-paper';
 import { deleteGroupEntry } from '../features/meetingsSlice';
 import { printObject, isDateDashBeforeToday } from '../utils/helpers';
 import MeetingListCard from '../components/Meeting.List.Card';
@@ -28,28 +33,34 @@ import DateBall from '../components/ui/DateBall';
 import MeetingCardDate from '../components/ui/Meeting.Card.Date';
 import { Style } from 'domelementtype';
 const GroupDetailsScreen = ({ route, navigation }) => {
-    const group = route.params.group;
+    let routeGroup = route.params.group;
     const meeting = route.params.meeting;
     const mtrTheme = useTheme();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(false);
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
+    const groups = useSelector((state) => state.meetings.groups);
+    const [group, setGroup] = useState({});
     const uns = useNavigationState((state) => state);
-    useFocusEffect(
-        React.useCallback(() => {
-            // alert(JSON.stringify(uns));
-            // alert('GroupDetailsScreen: focused');
-            printObject('###GROUP-DETAILS_uns###', uns);
-            // Do something when the screen is focused
-            return () => {
-                // alert('GroupDetailsScreen was unfocused');
-                // Do something when the screen is unfocused
-                // Useful for cleanup functions
-            };
-        }, [])
-    );
+    useEffect(() => {
+        setIsLoading(true);
+        console.log('id:', route.params.group.groupId);
+        console.log('groups:', groups.length);
+
+        let grp = [];
+        groups.forEach((g) => {
+            if (g.groupId === route.params.group.groupId) {
+                grp.push(g);
+            }
+        });
+        printObject('grp value', grp);
+        setGroup(grp[0]);
+        setIsLoading(false);
+    }, [groups]);
+
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
@@ -63,8 +74,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                     <Button
                         onPress={() =>
                             navigation.navigate('GroupEdit', {
-                                group: group,
-                                meeting: meeting,
+                                groupId: route.params.group.groupId,
                             })
                         }
                         // color='red'
@@ -91,7 +101,19 @@ const GroupDetailsScreen = ({ route, navigation }) => {
         //     setShowConfirmDelete(false);
         navigation.navigate('MeetingDetails', { meeting, meeting });
     };
-    // printObject('GDS:63-->meeting', meeting);
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator color={'blue'} size={80} />
+            </View>
+        );
+    }
     return (
         <>
             <View style={{ flex: 1 }}>

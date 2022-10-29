@@ -164,7 +164,10 @@ const HistoricScreen = (props) => {
                     justifyContent: 'center',
                 }}
             >
-                <ActivityIndicator color={'white'} size={80} />
+                <ActivityIndicator
+                    color={mtrTheme.colors.background}
+                    size={80}
+                />
             </View>
         );
     }

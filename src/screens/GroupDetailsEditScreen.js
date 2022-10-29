@@ -23,7 +23,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import GenderSelectors from '../components/GenderSelectors';
 import NumberInput from '../components/ui/NumberInput';
 import Input from '../components/ui/Input';
-import { Surface, withTheme, useTheme } from 'react-native-paper';
+import {
+    Surface,
+    withTheme,
+    useTheme,
+    ActivityIndicator,
+} from 'react-native-paper';
 import { printObject, isDateDashBeforeToday } from '../utils/helpers';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { getMeetingGroups, clearGroups } from '../features/meetingsSlice';
@@ -33,45 +38,57 @@ import MeetingCardDate from '../components/ui/Meeting.Card.Date';
 import { Style } from 'domelementtype';
 import GroupForm from '../components/GroupForm';
 const GroupDetailsEditScreen = ({ route, navigation }) => {
-    const group = route.params.group;
-    const meeting = route.params.meeting;
+    const groupId = route.params.groupId;
     const mtrTheme = useTheme();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
+    const groups = useSelector((state) => state.meetings.groups);
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
+    const [isLoading, setIsLoading] = useState(false);
+    const [group, setGroup] = useState();
     const [isLocationValid, setIsLocationValid] = useState(
         group?.location?.length > 2 ? true : false
     );
     const [isTitleValid, setIsTitleValid] = useState(
         group?.title?.length > 2 ? true : false
     );
-    const [values, setValeus] = useState({
-        meetingId: meeting.meetingId,
-        groupId: group.groupId ? group.groupId : '0',
-        gender: group.gender ? group.gender : 'x',
-        title: group.title ? group.title : '',
-        attendance: group.attendance ? parseInt(group.attendance) : 0,
-        location: group.location ? group.location : '',
-        facilitator: group.facilitator ? group.facilitator : '',
-        cofacilitator: group.cofacilitator ? group.cofacilitator : '',
-        notes: group.notes ? group.notes : '',
+    const [values, setValues] = useState({
+        meetingId: group?.meetingId ? group.meetingId : '0',
+        groupId: group?.groupId ? group.groupId : '0',
+        gender: group?.gender ? group.gender : 'x',
+        title: group?.title ? group.title : '',
+        attendance: group?.attendance ? parseInt(group.attendance) : 0,
+        location: group?.location ? group.location : '',
+        facilitator: group?.facilitator ? group.facilitator : '',
+        cofacilitator: group?.cofacilitator ? group.cofacilitator : '',
+        notes: group?.notes ? group.notes : '',
     });
     const uns = useNavigationState((state) => state);
-    useFocusEffect(
-        React.useCallback(() => {
-            // alert(JSON.stringify(uns));
-            alert('GroupDetailsEditScreen: focused');
-            printObject('###EDIT:uns###', uns);
-            // Do something when the screen is focused
-            return () => {
-                alert('GroupDetailsEditScreen was unfocused');
-                // Do something when the screen is unfocused
-                // Useful for cleanup functions
-            };
-        }, [])
-    );
-    // printObject('start values', values);
+    useEffect(() => {
+        setIsLoading(true);
+        let grp = [];
+        groups.forEach((g) => {
+            if (g.groupId === groupId) {
+                grp.push(g);
+            }
+        });
+        printObject('grp value', grp);
+        setValues(grp[0]);
+        setGroup(grp[0]);
+        if (grp[0].title.length < 3) {
+            setIsTitleValid(false);
+        } else {
+            setIsTitleValid(true);
+        }
+        if (grp[0].location.length < 3) {
+            setIsLocationValid(false);
+        } else {
+            setIsLocationValid(true);
+        }
+        setIsLoading(false);
+    }, []);
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
@@ -92,7 +109,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
         });
     }, [navigation, group]);
     function setGenderValue(enteredValue) {
-        setValeus((curInputValues) => {
+        setValues((curInputValues) => {
             return {
                 ...curInputValues,
                 gender: enteredValue,
@@ -100,7 +117,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
         });
     }
     function inputChangedHandler(inputIdentifier, enteredValue) {
-        setValeus((curInputValues) => {
+        setValues((curInputValues) => {
             if (inputIdentifier === 'title') {
                 if (enteredValue.length < 3) {
                     setIsTitleValid(false);
@@ -154,7 +171,19 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
         color: 'black',
         marginHorizontal: 10,
     };
-    //printObject('GDES:39-->meeting:', meeting);
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator color={'blue'} size={80} />
+            </View>
+        );
+    }
     return (
         <>
             {/* <ScrollView style={{ height: '100%' }}> */}
@@ -186,7 +215,9 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                         label='Group Title'
                         labelStyle={mtrTheme.groupFormInputTitle}
                         textInputConfig={{
-                            backgroundColor: 'lightgrey',
+                            backgroundColor: isTitleValid
+                                ? 'lightgrey'
+                                : mtrTheme.colors.errorTextBox,
                             value: values.title,
                             paddingHorizontal: 5,
                             fontSize: 24,
@@ -205,8 +236,10 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                     />
                 </View>
                 {!isTitleValid && (
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>minimum length = 3</Text>
+                    <View style={mtrTheme.groupEditInputErrorContainer}>
+                        <Text style={mtrTheme.groupEditInputErrorText}>
+                            minimum length = 3
+                        </Text>
                     </View>
                 )}
                 <View style={mtrTheme.groupEditRowBasic}>
@@ -214,7 +247,9 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                         label='Location'
                         labelStyle={mtrTheme.groupFormInputTitle}
                         textInputConfig={{
-                            backgroundColor: 'lightgrey',
+                            backgroundColor: isLocationValid
+                                ? 'lightgrey'
+                                : mtrTheme.colors.errorTextBox,
                             paddingHorizontal: 5,
                             value: values.location,
                             fontSize: 24,
@@ -234,8 +269,10 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                     />
                 </View>
                 {!isLocationValid && (
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>minimum length = 3</Text>
+                    <View style={mtrTheme.groupEditInputErrorContainer}>
+                        <Text style={mtrTheme.groupEditInputErrorText}>
+                            minimum length = 3
+                        </Text>
                     </View>
                 )}
                 <View style={mtrTheme.groupEditRowBasic}>
@@ -319,7 +356,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                         bgColor={mtrTheme.colors.success}
                         fgColor='white'
                         type='PRIMARY'
-                        enabled={isTitleValid}
+                        enabled={isTitleValid && isLocationValid}
                         onPress={handleFormSubmit}
                     />
                 </View>

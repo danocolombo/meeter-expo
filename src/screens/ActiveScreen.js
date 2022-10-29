@@ -32,41 +32,32 @@ const ActiveScreen = () => {
             // alert(JSON.stringify(uns));
             // alert('ActiveScree: focused');
             setIsLoading(true);
-            console.log('TRUE');
+
             let currentMeetings = [];
-            getSupportedMeetings(meeter.affiliation.toLowerCase())
-                .then((results) => {
-                    //console.log('got results');
-                    results.forEach((m) => {
-                        currentMeetings.push(m);
-                    });
-                    let targetDate = dateNumToDateDash(meeter.today);
-                    let filteredMeetings = currentMeetings.filter(
-                        (m) => m.meetingDate >= targetDate
-                    );
-                    printObject('XXfilteredMeetings', filteredMeetings);
-                    function quickSort(prop) {
-                        return function (a, b) {
-                            if (a[prop] > b[prop]) {
-                                return 1;
-                            } else if (a[prop] < b[prop]) {
-                                return -1;
-                            }
-                            return 0;
-                        };
+
+            //console.log('got results');
+            meetings.forEach((m) => {
+                currentMeetings.push(m);
+            });
+            let targetDate = dateNumToDateDash(meeter.today);
+            let filteredMeetings = currentMeetings.filter(
+                (m) => m.meetingDate >= targetDate
+            );
+
+            function quickSort(prop) {
+                return function (a, b) {
+                    if (a[prop] > b[prop]) {
+                        return 1;
+                    } else if (a[prop] < b[prop]) {
+                        return -1;
                     }
-                    let sortedResults = filteredMeetings.sort(
-                        quickSort('mtgCompKey')
-                    );
-                    setDisplayMeetings(sortedResults);
-                    setIsLoading(false);
-                    console.log('FALSE-1');
-                })
-                .catch((error) => {
-                    setIsLoading(false);
-                    console.log('FALSE-2');
-                    printObject('ERROR GETTING SUPPORTED MEETINGS', error);
-                });
+                    return 0;
+                };
+            }
+            let sortedResults = filteredMeetings.sort(quickSort('mtgCompKey'));
+            setDisplayMeetings(sortedResults);
+            setIsLoading(false);
+            console.log('FALSE-1');
 
             // Do something when the screen is focused
             return () => {
@@ -120,7 +111,10 @@ const ActiveScreen = () => {
                     justifyContent: 'center',
                 }}
             >
-                <ActivityIndicator color={'blue'} size={80} />
+                <ActivityIndicator
+                    color={mtrTheme.colors.background}
+                    size={80}
+                />
             </View>
         );
     }

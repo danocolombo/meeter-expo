@@ -1,9 +1,10 @@
 import { DefaultTheme } from 'react-native-paper';
 const primaryBackground = '#293462';
-//const primaryColor = '#1CD6CE';
+const secondaryColor = '#1CD6CE';
 const primaryColor = '#CAEBF2';
 const accentColor = '#FEDB39';
 const alternateColor = '#D61C4E';
+const errorTextBox = '#ff9999';
 const historyTileColor = '#fff';
 const darkColor = '#000';
 const lightColor = '#fff';
@@ -44,6 +45,7 @@ const theme = {
         success: 'green',
         warning: 'yellow',
         critical: 'red',
+        errorTextBox: errorTextBox,
         notification: 'red',
         navActive: '#D61C4E',
         navInactive: '#8c8c8c',
@@ -126,6 +128,17 @@ const theme = {
         fontWeight: '400',
         textAlign: 'center',
     },
+    landingHeroMessageContainer: {
+        backgroundColor: secondaryColor,
+        margin: 20,
+        borderRadius: 10,
+        padding: 10,
+    },
+    landingHeroMessageText: {
+        fontFamily: 'Roboto-Regular',
+        fontSize: 20,
+        textAlign: 'center',
+    },
     //   SCREEN NAVIGATION
     navButtonLight: {
         color: 'white',
@@ -152,7 +165,14 @@ const theme = {
         marginTop: 0,
         marginHorizontal: 10,
     },
-
+    groupEditInputErrorContainer: {
+        marginHorizontal: 30,
+    },
+    groupEditInputErrorText: {
+        color: accentColor,
+        fontFamily: 'Roboto-MediumItalic',
+        fontSize: 18,
+    },
     groupEditRowBasic: {
         marginHorizontal: 20,
         marginVertical: 5,

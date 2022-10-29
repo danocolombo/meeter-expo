@@ -237,11 +237,9 @@ const SignInScreen = () => {
                 console.log('OH SNAP\n', err);
             });
         let today = dateNumToDateDash(meeter.today);
-        //   rb003 - changed from active/historic to one state for meetings
-        //   spirnt3 - default affiliations to wbc
         getSupportedMeetings(fullUserInfo.affiliations.active.value)
             .then((results) => {
-                if (results.statusCode === 200) {
+                if (results.length > 0) {
                     dispatch(loadMeetings(results));
                 }
             })

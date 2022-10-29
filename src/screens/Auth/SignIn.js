@@ -231,9 +231,12 @@ const SignInScreen = () => {
             });
         let today = dateNumToDateDash(meeter.today);
         //   rb003 - changed from active/historic to one state for meetings
+        //   spirnt3 - default affiliations to wbc
         getSupportedMeetings(fullUserInfo.affiliations.active.value)
             .then((results) => {
-                dispatch(loadMeetings(results));
+                if (results.statusCode === 200) {
+                    dispatch(loadMeetings(results));
+                }
             })
             .catch((error) => printObject('242_ERROR', error));
         return;

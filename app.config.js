@@ -1,5 +1,5 @@
 module.exports = ({ config }) => {
-    let BASE_version = '1.0.1';
+    let BASE_version = '1.0.2';
     let ANDROID_version = 1;
     let COMBO_version = BASE_version + '-' + ANDROID_version.toString();
     let DESCRIPTION = 'expo/1.0.0 - sprint2 - meeting work';

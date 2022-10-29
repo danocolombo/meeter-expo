@@ -40,11 +40,11 @@ const GroupDetailsScreen = ({ route, navigation }) => {
     useFocusEffect(
         React.useCallback(() => {
             // alert(JSON.stringify(uns));
-            alert('GroupDetailsScreen: focused');
+            // alert('GroupDetailsScreen: focused');
             printObject('###GROUP-DETAILS_uns###', uns);
             // Do something when the screen is focused
             return () => {
-                alert('GroupDetailsScreen was unfocused');
+                // alert('GroupDetailsScreen was unfocused');
                 // Do something when the screen is unfocused
                 // Useful for cleanup functions
             };
@@ -55,23 +55,25 @@ const GroupDetailsScreen = ({ route, navigation }) => {
         if (Platform.OS === 'ios') {
             headerLabelColor = 'white';
         }
-        navigation.setOptions({
-            title: meeter.appName,
-            headerBackTitle: 'Back',
-            headerRight: () => (
-                <Button
-                    onPress={() =>
-                        navigation.navigate('GroupEdit', {
-                            group: group,
-                            meeting: meeting,
-                        })
-                    }
-                    // color='red'
-                    color={headerLabelColor}
-                    title='Edit'
-                />
-            ),
-        });
+        if (meeter.userRole !== 'guest') {
+            navigation.setOptions({
+                title: meeter.appName,
+                headerBackTitle: 'Back',
+                headerRight: () => (
+                    <Button
+                        onPress={() =>
+                            navigation.navigate('GroupEdit', {
+                                group: group,
+                                meeting: meeting,
+                            })
+                        }
+                        // color='red'
+                        color={headerLabelColor}
+                        title='Edit'
+                    />
+                ),
+            });
+        }
     }, [navigation, meeter]);
     const handleDeleteClick = () => {
         dispatch(deleteGroupEntry(group.groupId));

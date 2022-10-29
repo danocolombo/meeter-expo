@@ -81,22 +81,29 @@ const MeetingDetails = ({ route }) => {
         if (Platform.OS === 'ios') {
             headerLabelColor = 'white';
         }
-        navigation.setOptions({
-            title: meeter.appName,
-            headerBackTitle: 'Back',
-            headerRight: () => (
-                <Button
-                    onPress={() =>
-                        navigation.navigate('MeetingEdit', {
-                            meeting: meetingPassedIn,
-                        })
-                    }
-                    // color='red'
-                    color={headerLabelColor}
-                    title='Edit'
-                />
-            ),
-        });
+        if (meeter.userRole !== 'guest') {
+            navigation.setOptions({
+                title: meeter.appName,
+                headerBackTitle: 'Back',
+                headerRight: () => (
+                    <Button
+                        onPress={() =>
+                            navigation.navigate('MeetingEdit', {
+                                meeting: meetingPassedIn,
+                            })
+                        }
+                        // color='red'
+                        color={headerLabelColor}
+                        title='Edit'
+                    />
+                ),
+            });
+        } else {
+            navigation.setOptions({
+                title: meeter.appName,
+                headerBackTitle: 'Back',
+            });
+        }
     }, [navigation, meeter]);
 
     // useEffect(() => {
@@ -260,37 +267,39 @@ const MeetingDetails = ({ route }) => {
                         >
                             Open-Share Groups
                         </Text>
-                        <View
-                            style={{
-                                justifyContent: 'center',
-                                marginLeft: 10,
-                            }}
-                        >
-                            <TouchableOpacity
-                                key={0}
-                                onPress={() =>
-                                    navigation.navigate('GroupEdit', {
-                                        group: {
-                                            groupId: '0',
-                                            meetingId:
-                                                meetingPassedIn.meetingId,
-                                            attendance: '0',
-                                            gender: 'x',
-                                        },
-                                        meeting: meetingPassedIn,
-                                    })
-                                }
-                                style={({ pressed }) =>
-                                    pressed && styles.pressed
-                                }
+                        {meeter.userRole !== 'guest' && (
+                            <View
+                                style={{
+                                    justifyContent: 'center',
+                                    marginLeft: 10,
+                                }}
                             >
-                                <FontAwesome5
-                                    name='plus-circle'
-                                    size={20}
-                                    color='white'
-                                />
-                            </TouchableOpacity>
-                        </View>
+                                <TouchableOpacity
+                                    key={0}
+                                    onPress={() =>
+                                        navigation.navigate('GroupEdit', {
+                                            group: {
+                                                groupId: '0',
+                                                meetingId:
+                                                    meetingPassedIn.meetingId,
+                                                attendance: '0',
+                                                gender: 'x',
+                                            },
+                                            meeting: meetingPassedIn,
+                                        })
+                                    }
+                                    style={({ pressed }) =>
+                                        pressed && styles.pressed
+                                    }
+                                >
+                                    <FontAwesome5
+                                        name='plus-circle'
+                                        size={20}
+                                        color='white'
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </View>
                 </View>
                 <GroupList meetingId={meetingPassedIn.meetingId} />

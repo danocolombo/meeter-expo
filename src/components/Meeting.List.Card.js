@@ -14,7 +14,7 @@ const MeetingListCard = ({ meeting, active }) => {
         // if the user is registered, take them to registerForm
 
         navigation.navigate('MeetingDetails', {
-            meeting: meeting,
+            meetingId: meeting.meetingId,
         });
     }
     return (

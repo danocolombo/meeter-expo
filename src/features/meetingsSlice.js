@@ -213,11 +213,14 @@ export const meetingsSlice = createSlice({
         },
         addNewGroup: (state, action) => {
             let grps = state.groups;
+            printObject('MS:216-->grps(before)', grps);
+            printObject('MS:217-->payload:', action.payload);
             grps.push(action.payload);
             function asc_sort(a, b) {
                 return a.gender - b.gender;
             }
             let newBigger = grps.sort(asc_sort);
+            printObject('MS:222-->(after)', newBigger);
             state.groups = newBigger;
             // return
             return state;
@@ -242,7 +245,7 @@ export const meetingsSlice = createSlice({
                 return g.groupId === newValue.groupId ? newValue : g;
             });
             printObject('newGroupList:', newGroupList);
-            state.meetings = newGroupList;
+            state.groups = newGroupList;
             return state;
         },
         clearGroups: (state) => {
@@ -524,14 +527,14 @@ export const addGroupValues = (values) => (dispatch) => {
         let api2use = process.env.AWS_API_ENDPOINT + '/groups';
         let res = await axios.post(api2use, body, config);
         // now take the response that has GroupId and save to redux
-        printObject('MS:288-->res', res);
+
         const results = res.data.Item;
         dispatch(addNewGroup(results));
         return;
     };
     saveGroupToDDB();
 };
-export const deleteGroupEntry = (groupId) => (dispatch) => {
+export const deleteIndividualGroup = (groupId) => (dispatch) => {
     const deleteGroupFromDDB = async () => {
         let obj = {
             operation: 'deleteGroup',

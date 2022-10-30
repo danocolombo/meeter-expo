@@ -54,45 +54,59 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
     const [dateValue, setDateValue] = useState();
     const meetingTypeRef = useRef(meeting.meetingType);
     const [values, setValues] = useState({
-        childrenCount: meeting.childrenCount,
-        transportationContact: meeting.transportationContact,
-        mealCount: meeting.mealCount,
-        meal: meeting.meal,
-        greeterContact2: meeting.greeterContact2,
-        nurseryCount: meeting.nurseryCount,
-        greeterContact1: meeting.greeterContact1,
-        securityContact: meeting.securityContact,
-        announcementsContact: meeting.announcementsContact,
-        attendanceCount: meeting.attendanceCount,
-        meetingId: meeting.meetingId,
-        mealContact: meeting.mealContact,
-        closingContact: meeting.closingContact,
-        notes: meeting.notes,
-        cafeCount: meeting.cafeCount,
-        youthCount: meeting.youthCount ? meeting.youthCount : 0,
-        cafeContact: meeting.cafeContact ? meeting.cafeContact : '',
-        setupContact: meeting.setupContact ? meeting.setupContact : '',
-        meetingDate: meeting.meetingDate ? meeting.meetingDate : dashDate,
-        clientId: meeting.clientId ? meeting.clientId : meeter.affiliation,
-        donations: meeting.donations ? meeting.donations : 0,
-        youthContact: meeting.youthContact ? meeting.youthContact : '',
-        nurseryContact: meeting.murseryContact ? meeting.nurseryContact : '',
-        cleanupContact: meeting.cleanupContact ? meeting.cleanupContact : '',
-        resourceContact: meeting.resourceContact ? meeting.resourceContact : '',
-        childrenContact: meeting.childrenContact ? meeting.childrenContact : '',
-        newcomersCount: meeting.newcomersCount ? meeting.newcomersCount : 0,
-        mtgCompKey: meeting.mtgCompKey ? meeting.mtgCompKey : mtgCompKey,
-        facilitatorContact: meeting.facilitatorContact
+        childrenCount: meeting?.childrenCount ? meeting.childrenCount : 0,
+        transportationContact: meeting?.transportationContact
+            ? meeting.transportationContact
+            : '',
+        mealCount: meeting?.mealCount ? meeting.mealCount : 0,
+        meal: meeting?.meal ? meeting.meal : '',
+        greeterContact2: meeting?.greeterContact2
+            ? meeting.greeterContact2
+            : '',
+        nurseryCount: meeting?.nurseryCount ? meeting.nurseryCount : 0,
+        greeterContact1: meeting?.greeterContact1
+            ? meeting.greeterContact1
+            : '',
+        securityContact: meeting?.securityContact
+            ? meeting.securityContact
+            : '',
+        announcementsContact: meeting?.announcementsContact
+            ? meeting.announcementsContact
+            : '',
+        attendanceCount: meeting?.attendanceCount ? meeting.attendanceCount : 0,
+        meetingId: meeting?.meetingId ? meeting.meetingId : meetingId,
+        mealContact: meeting?.mealContact ? meeting.mealContact : '',
+        closingContact: meeting?.closingContact ? meeting.closingContact : '',
+        notes: meeting?.notes ? meeting.notes : '',
+        cafeCount: meeting?.cafeCount ? meeting.cafeCount : 0,
+        youthCount: meeting?.youthCount ? meeting.youthCount : 0,
+        cafeContact: meeting?.cafeContact ? meeting.cafeContact : '',
+        setupContact: meeting?.setupContact ? meeting.setupContact : '',
+        meetingDate: meeting?.meetingDate ? meeting.meetingDate : dashDate,
+        clientId: meeting?.clientId ? meeting.clientId : meeter.affiliation,
+        donations: meeting?.donations ? meeting.donations : 0,
+        youthContact: meeting?.youthContact ? meeting.youthContact : '',
+        nurseryContact: meeting?.murseryContact ? meeting.nurseryContact : '',
+        cleanupContact: meeting?.cleanupContact ? meeting.cleanupContact : '',
+        resourceContact: meeting?.resourceContact
+            ? meeting.resourceContact
+            : '',
+        childrenContact: meeting?.childrenContact
+            ? meeting.childrenContact
+            : '',
+        newcomersCount: meeting?.newcomersCount ? meeting.newcomersCount : 0,
+        mtgCompKey: meeting?.mtgCompKey ? meeting.mtgCompKey : mtgCompKey,
+        facilitatorContact: meeting?.facilitatorContact
             ? meeting.facilitatorContact
             : '',
-        transportationCount: meeting.transportationCount
+        transportationCount: meeting?.transportationCount
             ? meeting.transportationContact
             : 0,
-        worship: meeting.worship ? meeting.worship : '',
-        avContact: meeting.avContact ? meeting.avContact : '',
-        supportContact: meeting.supportContact ? meeting.supportContact : '',
-        meetingType: meeting.meetingType ? meeting.meetingType : '',
-        title: meeting.title ? meeting.title : '',
+        worship: meeting?.worship ? meeting.worship : '',
+        avContact: meeting?.avContact ? meeting.avContact : '',
+        supportContact: meeting?.supportContact ? meeting.supportContact : '',
+        meetingType: meeting?.meetingType ? meeting.meetingType : '',
+        title: meeting?.title ? meeting.title : '',
     });
     // const [isTitleValid, setIsTitleValid] = useState(true);
     function inputChangedHandler(inputIdentifier, enteredValue) {
@@ -291,6 +305,7 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
                                         fontSize: 24,
                                         color: 'black',
                                         marginHorizontal: 10,
+                                        autoCapitalize: 'words',
                                         placeholder: 'Guest',
                                         // style: { color: 'white' },
                                         fontWeight: '300',

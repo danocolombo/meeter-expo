@@ -45,6 +45,7 @@ import {
     printObject,
     isDateDashBeforeToday,
     todayMinus60,
+    dateNumToDateDash,
 } from '../utils/helpers';
 import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
@@ -52,16 +53,19 @@ import TypeSelectors from '../components/TypeSelectors';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 //import MeetingDeleteModal from '../components/MeetingDeleteModal';
 const MeetingDetailsEditScreen = ({ route, navigation }) => {
-    const meeting = route.params.meeting;
+    const meetingId = route.params.meetingId;
+    console.log('MDES:56-->meetingId:', meetingId);
     const mtrTheme = useTheme();
     //const navigation = useNavigation();
     const dispatch = useDispatch();
     const { height, width } = useWindowDimensions();
     const meeter = useSelector((state) => state.system);
     const groups = useSelector((state) => state.meetings.groups);
+    const meetings = useSelector((state) => state.meetings.meetings);
+    const [meeting, setMeeting] = useState();
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
         useState(false);
-    const historic = isDateDashBeforeToday(meeting.meetingDate);
+    // const historic = isDateDashBeforeToday(meeting.meetingDate);
     const [isLoading, setIsLoading] = useState(false);
     const gender = {
         f: "Women's",
@@ -80,6 +84,21 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             ),
         });
     }, [navigation, meeter]);
+    useEffect(() => {
+        console.log('MDES:87-->MEETING-ID:', meetingId);
+        setIsLoading(true);
+        let today = dateNumToDateDash(meeter.today);
+        let mtg = [];
+        meetings.forEach((m) => {
+            if (m.meetingId === meetingId) {
+                mtg.push(m);
+            }
+        });
+        setMeeting(mtg[0]);
+        //const groups = dispatch(getMeetingGroups(meetingId));
+        //setDisplayGroups(groups);
+        setIsLoading(false);
+    }, []);
     const handleUpdate = (values) => {
         console.log('handleUpdate received.');
         dispatch(updateMeetingValues(values));
@@ -175,7 +194,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                                     mtrTheme.meetingEditDeleteModalMeetingText
                                 }
                             >
-                                {meeting.meetingDate}
+                                {meeting?.meetingDate}
                             </Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
@@ -184,7 +203,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                                     mtrTheme.meetingEditDeleteModalMeetingText
                                 }
                             >
-                                {meeting.meetingType}
+                                {meeting?.meetingType}
                             </Text>
 
                             <Text
@@ -192,7 +211,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                                     mtrTheme.meetingEditDeleteModalMeetingText
                                 }
                             >
-                                {meeting.title}
+                                {meeting?.title}
                             </Text>
                         </View>
                     </View>
@@ -239,7 +258,9 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                     </View>
                 </Surface>
             </Modal>
-            <MeetingForm meeting={meeting} handleUpdate={handleUpdate} />
+            {meeting?.meetingId && (
+                <MeetingForm meeting={meeting} handleUpdate={handleUpdate} />
+            )}
         </>
     );
 };

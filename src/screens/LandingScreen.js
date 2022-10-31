@@ -30,7 +30,7 @@ import {
     useTheme,
     ActivityIndicator,
 } from 'react-native-paper';
-import { printObject } from '../utils/helpers';
+import { dateNumToDateDash, printObject } from '../utils/helpers';
 import MeetingListCard from '../components/Meeting.List.Card';
 
 const LandingScreen = () => {
@@ -40,9 +40,8 @@ const LandingScreen = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
-    const meetings = useSelector((state) =>
-        state.meetings.meetings.filter((m) => m.meetingDate >= meeter.today)
-    );
+    const meetings = useSelector((state) => state.meetings.meetings);
+    const [activeMeeting, setActiveMeeting] = useState();
     const [nextMeeting, setNextMeeting] = useState(meetings[0]);
     const [isLoading, setIsLoading] = useState(false);
     useLayoutEffect(() => {
@@ -50,23 +49,30 @@ const LandingScreen = () => {
             title: '',
         });
     }, [navigation, meeter]);
-    useFocusEffect(
-        React.useCallback(() => {
-            setIsLoading(true);
-            let activeOnes = meetings.filter(
-                (m) => m.meetingDate >= meeter.today
-            );
-            activeOnes ? setNextMeeting(activeOnes[0]) : null;
-
-            // Do something when the screen is focused
-            setIsLoading(false);
-            return () => {
-                // alert('ActiveScreen was unfocused');
-                // Do something when the screen is unfocused
-                // Useful for cleanup functions
+    useEffect(() => {
+        setIsLoading(true);
+        // console.log('meetings = ', meetings.length);
+        let today = dateNumToDateDash(meeter.today);
+        console.log('meetings', meetings.length);
+        let activeOnes = meetings.filter((m) => m.meetingDate >= today);
+        function quickSort(prop) {
+            return function (a, b) {
+                if (a[prop] > b[prop]) {
+                    return 1;
+                } else if (a[prop] < b[prop]) {
+                    return -1;
+                }
+                return 0;
             };
-        }, [])
-    );
+        }
+        let sortedResults = activeOnes.sort(quickSort('mtgCompKey'));
+        console.log('actives:', activeOnes.length);
+        activeOnes ? setActiveMeeting(activeOnes[0]) : null;
+
+        // Do something when the screen is focused
+        setIsLoading(false);
+    }, [meetings]);
+
     if (isLoading) {
         return (
             <View
@@ -101,7 +107,7 @@ const LandingScreen = () => {
                     </Text>
                 </View>
 
-                {meetings.length > 0 && (
+                {activeMeeting && (
                     <>
                         <View style={{ marginTop: 10 }}>
                             <Text style={mtrTheme.landingAnnouncement}>
@@ -110,9 +116,18 @@ const LandingScreen = () => {
                         </View>
                         <View style={{ marginHorizontal: 20 }}>
                             <MeetingListCard
-                                meeting={activeMeetings[0]}
+                                meeting={activeMeeting}
                                 active={true}
                             />
+                        </View>
+                    </>
+                )}
+                {meeter?.affiliate?.heroMessage && (
+                    <>
+                        <View style={mtrTheme.landingHeroMessageContainer}>
+                            <Text style={mtrTheme.landingHeroMessageText}>
+                                {meeter.affiliate.heroMessage}
+                            </Text>
                         </View>
                     </>
                 )}

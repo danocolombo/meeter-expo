@@ -21,7 +21,7 @@ export async function getAffiliate(affiliate) {
     let obj = {
         operation: 'getAffiliate',
         payload: {
-            code: affiliate,
+            code: affiliate.toUpperCase(),
         },
     };
     let body = JSON.stringify(obj);

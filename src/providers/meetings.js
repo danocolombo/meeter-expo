@@ -70,3 +70,25 @@ export async function getSupportedMeetings(affiliate) {
 
     return results;
 }
+export async function deleteMeetingFromDDB(meetingId) {
+    console.log('M:74-->deleteMeeting DB call successful');
+    let obj = {
+        operation: 'deleteMeeting',
+        payload: {
+            Key: {
+                meetingId: meetingId,
+            },
+        },
+    };
+    let body = JSON.stringify(obj);
+    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+    let res = await axios.post(api2use, body, config);
+    if (res.status === 200) {
+        console.log('M:87-->deleteMeeting DB call successful');
+        return true;
+    } else {
+        console.log('M:90-->deleteMeeting DB call failed');
+        return false;
+    }
+    return results;
+}

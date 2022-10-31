@@ -16,6 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
 import { useDispatch, useSelector } from 'react-redux';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 // import { ALL_EVENTS } from '../../../../data/getRegionalEvents';
 import { updateCurrentUser } from '../../features/usersSlice';
 // import { getProfile } from '../../providers/users';
@@ -42,7 +43,8 @@ import { getSupportedMeetings } from '../../providers/meetings';
 import { getToday, printObject, dateNumToDateDash } from '../../utils/helpers';
 ////import { REGION } from '../../constants/regions';
 const SignInScreen = () => {
-    const [loading, setLoading] = useState(false);
+    const mtrTheme = useTheme();
+    const [isLoading, setIsLoading] = useState(false);
     const { height } = useWindowDimensions();
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -58,6 +60,7 @@ const SignInScreen = () => {
     // need this to pass the username on to forgot password
     const user = watch('username');
     const onSignInPressed = async (data) => {
+        setIsLoading(true);
         const { username, password } = data;
         //console.log(username, password);
         let alertPayload = {};
@@ -76,6 +79,7 @@ const SignInScreen = () => {
                             console.log(user);
                         })
                         .catch((e) => {
+                            setIsLoading(false);
                             const alertPayload = {
                                 msg: 'Authentication failed. Please check your credentials',
                                 alertType: 'danger',
@@ -118,9 +122,10 @@ const SignInScreen = () => {
             });
         // if we have error loaded, let's return
         if (alertPayload.msg) {
+            setIsLoading(false);
             Alert.alert(alertPayload.msg);
             alertPayload = {};
-            setLoading(false);
+
             return;
         }
         let currentUserInfo = {};
@@ -164,6 +169,7 @@ const SignInScreen = () => {
                     // no profile for uid
                     fullUserInfo = theUser;
                     fullUserInfo.profile = false;
+                    break;
                 default:
                     // we should get the error code, message and error
                     console.log('StatusCode: ', profileResponse.statusCode);
@@ -227,18 +233,18 @@ const SignInScreen = () => {
                 }
             })
             .catch((err) => {
+                setIsLoading(false);
                 console.log('OH SNAP\n', err);
             });
         let today = dateNumToDateDash(meeter.today);
-        //   rb003 - changed from active/historic to one state for meetings
-        //   spirnt3 - default affiliations to wbc
         getSupportedMeetings(fullUserInfo.affiliations.active.value)
             .then((results) => {
-                if (results.statusCode === 200) {
+                if (results.length > 0) {
                     dispatch(loadMeetings(results));
                 }
             })
             .catch((error) => printObject('242_ERROR', error));
+        setIsLoading(false);
         return;
     };
 
@@ -248,6 +254,22 @@ const SignInScreen = () => {
     const forgotPasswordPressed = () => {
         navigation.navigate('ForgotPassword', { user });
     };
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator
+                    color={mtrTheme.colors.background}
+                    size={80}
+                />
+            </View>
+        );
+    }
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.root}>
@@ -298,7 +320,7 @@ const SignInScreen = () => {
                 />
 
                 <CustomButton
-                    text={loading ? 'Loading...' : 'Sign In'}
+                    text={isLoading ? 'Loading...' : 'Sign In'}
                     onPress={handleSubmit(onSignInPressed)}
                 />
                 <CustomButton

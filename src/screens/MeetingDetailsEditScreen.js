@@ -28,6 +28,8 @@ import {
     clearGroups,
     updateMeetingValues,
     deleteMeeting,
+    deleteGroupList,
+    deleteMtg,
 } from '../features/meetingsSlice';
 import GroupList from '../components/GroupList';
 import NumberInput from '../components/ui/NumberInput';
@@ -45,6 +47,7 @@ import {
     printObject,
     isDateDashBeforeToday,
     todayMinus60,
+    dateNumToDateDash,
 } from '../utils/helpers';
 import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
@@ -52,16 +55,19 @@ import TypeSelectors from '../components/TypeSelectors';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 //import MeetingDeleteModal from '../components/MeetingDeleteModal';
 const MeetingDetailsEditScreen = ({ route, navigation }) => {
-    const meeting = route.params.meeting;
+    const meetingId = route.params.meetingId;
+    console.log('MDES:56-->meetingId:', meetingId);
     const mtrTheme = useTheme();
     //const navigation = useNavigation();
     const dispatch = useDispatch();
     const { height, width } = useWindowDimensions();
     const meeter = useSelector((state) => state.system);
     const groups = useSelector((state) => state.meetings.groups);
+    const meetings = useSelector((state) => state.meetings.meetings);
+    const [meeting, setMeeting] = useState();
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
         useState(false);
-    const historic = isDateDashBeforeToday(meeting.meetingDate);
+    // const historic = isDateDashBeforeToday(meeting.meetingDate);
     const [isLoading, setIsLoading] = useState(false);
     const gender = {
         f: "Women's",
@@ -80,6 +86,21 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             ),
         });
     }, [navigation, meeter]);
+    useEffect(() => {
+        console.log('MDES:87-->MEETING-ID:', meetingId);
+        setIsLoading(true);
+        let today = dateNumToDateDash(meeter.today);
+        let mtg = [];
+        meetings.forEach((m) => {
+            if (m.meetingId === meetingId) {
+                mtg.push(m);
+            }
+        });
+        setMeeting(mtg[0]);
+        //const groups = dispatch(getMeetingGroups(meetingId));
+        //setDisplayGroups(groups);
+        setIsLoading(false);
+    }, []);
     const handleUpdate = (values) => {
         console.log('handleUpdate received.');
         dispatch(updateMeetingValues(values));
@@ -90,26 +111,55 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
 
     const handleDeleteConfirmClick = () => {
         setIsLoading(true);
-        setTimeout(function () {
-            setIsLoading(false);
-            setModalDeleteConfirmVisible(false);
-            let deleteGroups = [];
-            if (groups.length > 0) {
-                groups.map((g) => {
-                    deleteGroups.push(g.groupId);
-                });
+        setModalDeleteConfirmVisible(false);
+        let noGroupsIssue = true;
+        let deleteGroups = [];
+        if (groups.length > 0) {
+            groups.map((g) => {
+                deleteGroups.push(g.groupId);
+            });
+            console.log('MDES:120-->BEFORE dispatch(deleteGroupList)');
+            noGroupsIssue = dispatch(deleteGroupList(deleteGroups));
+            console.log('MDES:122-->AFTER dispatch(deleteGroupList)');
+        }
+        console.log('MDES:125-->AFTER GROUPS');
+        if (noGroupsIssue) {
+            console.log('MDES:127-->noGroupsIssue is true');
+            let deleteRequest = dispatch(deleteMtg(meeting.BadgemeetingId));
+            if (deleteRequest) {
+                console.log('MDES:129-->deleteMtg true');
+            } else {
+                console.log('MDES:131-->deleteMtg false');
             }
-            //console.log('meetingId:', meeting.meetingId);
-            //console.log('deleteGroups:', deleteGroups);
+        } else {
+            console.log('MDES:134-->noGroupsIssue is false');
+        }
+        setIsLoading(false);
+    };
+    const OLDhandleDeleteConfirmClick = () => {
+        setIsLoading(true);
+        //setTimeout(function () {
 
-            dispatch(deleteMeeting(meeting.meetingId, deleteGroups));
-            console.log('handleDeleteConfirmClick complete.');
-            navigation.dispatch(
-                StackActions.push('AuthenticatedDrawer', {
-                    screen: 'Meetings',
-                })
-            );
-        }, 10);
+        setModalDeleteConfirmVisible(false);
+        let deleteGroups = [];
+        if (groups.length > 0) {
+            groups.map((g) => {
+                deleteGroups.push(g.groupId);
+            });
+        }
+        //console.log('meetingId:', meeting.meetingId);
+        //console.log('deleteGroups:', deleteGroups);
+        console.log('MDES:123-->BEFORE dispatch(deleteMeeting)');
+        dispatch(deleteMeeting(meeting.meetingId, deleteGroups));
+        console.log('MDES:125-->AFTER dispatch(deleteMeeting)');
+        console.log('handleDeleteConfirmClick complete.');
+        setIsLoading(false);
+        navigation.dispatch(
+            StackActions.push('AuthenticatedDrawer', {
+                screen: 'Meetings',
+            })
+        );
+        //}, 10);
         // navigation.dispatch(
         //     StackActions.push('AuthenticatedDrawer', {
         //         screen: 'Meetings',
@@ -117,27 +167,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         // );
         // navigation.goBack();
     };
-    const deleteCancelHandler = () => {
-        Alert.alert('new delete cancel');
-    };
-    const deleteConfirmHandler = () => {
-        Alert.alert('new delete confirm');
-        setIsLoading(true);
-        setTimeout(function () {
-            setIsLoading(false);
-            navigation.dispatch(
-                StackActions.push('AuthenticatedDrawer', {
-                    screen: 'Meetings',
-                })
-            );
-        }, 1000);
 
-        // navigation.dispatch(
-        //     StackActions.push('AuthenticatedDrawer', {
-        //         screen: 'Meetings',
-        //     })
-        // );
-    };
     if (isLoading) {
         return (
             <View
@@ -175,7 +205,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                                     mtrTheme.meetingEditDeleteModalMeetingText
                                 }
                             >
-                                {meeting.meetingDate}
+                                {meeting?.meetingDate}
                             </Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
@@ -184,7 +214,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                                     mtrTheme.meetingEditDeleteModalMeetingText
                                 }
                             >
-                                {meeting.meetingType}
+                                {meeting?.meetingType}
                             </Text>
 
                             <Text
@@ -192,7 +222,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                                     mtrTheme.meetingEditDeleteModalMeetingText
                                 }
                             >
-                                {meeting.title}
+                                {meeting?.title}
                             </Text>
                         </View>
                     </View>
@@ -239,7 +269,15 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                     </View>
                 </Surface>
             </Modal>
-            <MeetingForm meeting={meeting} handleUpdate={handleUpdate} />
+            {meeting?.meetingId && (
+                <MeetingForm
+                    meeting={meeting}
+                    handleUpdate={handleUpdate}
+                    handleDeleteRequest={() =>
+                        setModalDeleteConfirmVisible(true)
+                    }
+                />
+            )}
         </>
     );
 };

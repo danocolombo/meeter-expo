@@ -31,21 +31,34 @@ import {
 import GroupList from '../components/GroupList';
 import DateBall from '../components/ui/DateBall';
 import DateStack from '../components/ui/DateStack';
-import { Surface, withTheme, useTheme, Badge } from 'react-native-paper';
-import { printObject, isDateDashBeforeToday } from '../utils/helpers';
+import {
+    Surface,
+    withTheme,
+    useTheme,
+    Badge,
+    ActivityIndicator,
+} from 'react-native-paper';
+import {
+    printObject,
+    isDateDashBeforeToday,
+    dateNumToDateDash,
+} from '../utils/helpers';
 import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
-const MeetingDetails = ({ route }) => {
-    const meetingPassedIn = route.params.meeting;
-    printObject('meetingPassedIn', meetingPassedIn);
-    const [tmpMeeting, setTmpMeeting] = useState(meetingPassedIn);
+const MeetingDetails = (props) => {
+    const meetingId = props.route.params.meetingId;
+
+    // const [tmpMeeting, setTmpMeeting] = useState();
+    const [isLoading, setIsLoading] = useState(false);
     const mtrTheme = useTheme();
-    const mtg = useRef(meetingPassedIn);
+    const meetings = useSelector((state) => state.meetings.meetings);
+    const [meeting, setMeeting] = useState();
+    // const mtg = useRef(meetingPassedIn);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.users.currentUser);
     const groups = useSelector((state) => state.meetings.groups);
-
+    const [historic, setHistoric] = useState(false);
     // const hMeetings = useSelector((state) => state.meetings.historicMeetings);
     // const aMeetings = useSelector((state) => state.meetings.activeMeetings);
     const [displayGroups, setDisplayGroups] = useState([]);
@@ -56,26 +69,29 @@ const MeetingDetails = ({ route }) => {
     //     (state) => state.meetings.activeMeetings
     // );
     // determin if active or historic
-    const historic = isDateDashBeforeToday(tmpMeeting.meetingDate);
+    // const historic = isDateDashBeforeToday(tmpMeeting.meetingDate);
     const uns = useNavigationState((state) => state);
-    useFocusEffect(
-        React.useCallback(() => {
-            // alert(JSON.stringify(uns));
-            //alert('MeetingDetailsScreen: focused');
-            // printObject('###MeetingDetailsScreen:uns###', uns);
-            // printObject('###ROUTE###', route);
-            // mtg.current = meetingPassedIn;
-            const groups = dispatch(
-                getMeetingGroups(meetingPassedIn.meetingId)
-            );
-            setDisplayGroups(groups);
-            return () => {
-                // alert('ActiveScreen was unfocused');
-                // Do something when the screen is unfocused
-                // Useful for cleanup functions
-            };
-        }, [])
-    );
+    useEffect(() => {
+        console.log('MEETING-ID:', meetingId);
+        setIsLoading(true);
+        let today = dateNumToDateDash(meeter.today);
+        let mtg = [];
+        meetings.forEach((m) => {
+            if (m.meetingId === meetingId) {
+                mtg.push(m);
+                if (m.meetingDate < today) {
+                    setHistoric(true);
+                } else {
+                    setHistoric(false);
+                }
+            }
+        });
+        setMeeting(mtg[0]);
+        const groups = dispatch(getMeetingGroups(meetingId));
+        setDisplayGroups(groups);
+        setIsLoading(false);
+    }, []);
+
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
@@ -89,7 +105,7 @@ const MeetingDetails = ({ route }) => {
                     <Button
                         onPress={() =>
                             navigation.navigate('MeetingEdit', {
-                                meeting: meetingPassedIn,
+                                meetingId: meetingId,
                             })
                         }
                         // color='red'
@@ -131,12 +147,29 @@ const MeetingDetails = ({ route }) => {
     // useEffect(() => {
     //     setMeeting(tmpMeeting);
     // }, [tmpMeeting]);
+    if (isLoading || !meeting) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator
+                    color={mtrTheme.colors.background}
+                    size={80}
+                />
+            </View>
+        );
+    }
+
     return (
         <>
             <Surface style={styles.surface}>
                 <View>
                     <Text style={mtrTheme.screenTitle}>
-                        {meetingPassedIn.meetingType}
+                        {meeting?.meetingType}
                     </Text>
                 </View>
 
@@ -144,31 +177,29 @@ const MeetingDetails = ({ route }) => {
                     <View style={styles.dateWrapper}>
                         {Platform.OS === 'ios' && (
                             <View style={{ padding: 5 }}>
-                                <DateBall date={meetingPassedIn?.meetingDate} />
+                                <DateBall date={meeting?.meetingDate} />
                             </View>
                         )}
                         {Platform.OS === 'android' && (
                             <View style={{ padding: 1 }}>
-                                <DateStack
-                                    date={meetingPassedIn?.meetingDate}
-                                />
+                                <DateStack date={meeting?.meetingDate} />
                             </View>
                         )}
                     </View>
                     <View>
                         <View style={{ flexDirection: 'column' }}>
-                            {meetingPassedIn.meetingType === 'Lesson' && (
+                            {meeting.meetingType === 'Lesson' && (
                                 <View style={{ marginLeft: 10 }}>
                                     <Text style={mtrTheme.subTitle}>
-                                        {meetingPassedIn.title}
+                                        {meeting.title}
                                     </Text>
                                 </View>
                             )}
                             <View style={{ alignContent: 'flex-start' }}>
                                 <Text style={mtrTheme.detailsTitle}>
-                                    {meetingPassedIn.meetingType === 'Lesson'
-                                        ? meetingPassedIn.supportContact
-                                        : meetingPassedIn.title}
+                                    {meeting.meetingType === 'Lesson'
+                                        ? meeting.supportContact
+                                        : meeting.title}
                                 </Text>
                             </View>
                         </View>
@@ -182,13 +213,13 @@ const MeetingDetails = ({ route }) => {
                     </View>
                     <View style={{ marginHorizontal: 2 }}>
                         <Text style={mtrTheme.detailsRowValue}>
-                            {tmpMeeting.meal === '' ? 'TBD' : tmpMeeting.meal}
+                            {meeting.meal === '' ? 'TBD' : meeting.meal}
                         </Text>
                     </View>
                     {historic && (
                         <View style={{ marginLeft: 'auto', padding: 10 }}>
                             <Badge size={30} style={mtrTheme.detailsBadge}>
-                                {meetingPassedIn.mealCount}
+                                {meeting.mealCount}
                             </Badge>
                         </View>
                     )}
@@ -202,9 +233,9 @@ const MeetingDetails = ({ route }) => {
                         </View>
                         <View style={{ marginHorizontal: 2 }}>
                             <Text style={mtrTheme.detailsRowValue}>
-                                {meetingPassedIn.mealContact === ''
+                                {meeting.mealContact === ''
                                     ? 'TBD'
-                                    : meetingPassedIn.mealContact}
+                                    : meeting.mealContact}
                             </Text>
                         </View>
                     </View>
@@ -219,12 +250,12 @@ const MeetingDetails = ({ route }) => {
 
                         <View style={{ marginLeft: 'auto', padding: 10 }}>
                             <Badge size={30} style={mtrTheme.detailsBadge}>
-                                {meetingPassedIn.attendanceCount}
+                                {meeting.attendanceCount}
                             </Badge>
                         </View>
                     </View>
                 )}
-                {meetingPassedIn.newcomersCount > 0 && (
+                {meeting.newcomersCount > 0 && (
                     <View style={styles.row}>
                         <View style={{ marginLeft: 20 }}>
                             <Text style={mtrTheme.detailsRowLabel}>
@@ -234,7 +265,7 @@ const MeetingDetails = ({ route }) => {
 
                         <View style={{ marginLeft: 'auto', padding: 10 }}>
                             <Badge size={30} style={mtrTheme.detailsBadge}>
-                                {meetingPassedIn.newcomersCount}
+                                {meeting.newcomersCount}
                             </Badge>
                         </View>
                     </View>
@@ -278,14 +309,8 @@ const MeetingDetails = ({ route }) => {
                                     key={0}
                                     onPress={() =>
                                         navigation.navigate('GroupEdit', {
-                                            group: {
-                                                groupId: '0',
-                                                meetingId:
-                                                    meetingPassedIn.meetingId,
-                                                attendance: '0',
-                                                gender: 'x',
-                                            },
-                                            meeting: meetingPassedIn,
+                                            meetingId: meetingId,
+                                            groupId: '0',
                                         })
                                     }
                                     style={({ pressed }) =>
@@ -302,7 +327,8 @@ const MeetingDetails = ({ route }) => {
                         )}
                     </View>
                 </View>
-                <GroupList meetingId={meetingPassedIn.meetingId} />
+
+                <GroupList meetingId={meetingId} />
             </Surface>
         </>
     );

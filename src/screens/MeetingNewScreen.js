@@ -81,7 +81,7 @@ const MeetingNewScreen = (props) => {
     };
     const handleUpdate = (values) => {
         console.log('handlePut received.');
-        printObject('values', values);
+        printObject('MNS:84-->values', values);
         dispatch(addNewMeeting(values));
         if (isDateDashBeforeToday(values.meetingDate)) {
             navigation.navigate('HistoricMeeings');

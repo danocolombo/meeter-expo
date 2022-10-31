@@ -57,7 +57,7 @@ const ActiveScreen = () => {
             let sortedResults = filteredMeetings.sort(quickSort('mtgCompKey'));
             setDisplayMeetings(sortedResults);
             setIsLoading(false);
-            console.log('FALSE-1');
+            console.log('AS:60 --> DONE WITH useFocusEffect');
 
             // Do something when the screen is focused
             return () => {

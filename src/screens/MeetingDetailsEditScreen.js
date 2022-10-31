@@ -28,6 +28,8 @@ import {
     clearGroups,
     updateMeetingValues,
     deleteMeeting,
+    deleteGroupList,
+    deleteMtg,
 } from '../features/meetingsSlice';
 import GroupList from '../components/GroupList';
 import NumberInput from '../components/ui/NumberInput';
@@ -109,26 +111,55 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
 
     const handleDeleteConfirmClick = () => {
         setIsLoading(true);
-        setTimeout(function () {
-            setIsLoading(false);
-            setModalDeleteConfirmVisible(false);
-            let deleteGroups = [];
-            if (groups.length > 0) {
-                groups.map((g) => {
-                    deleteGroups.push(g.groupId);
-                });
+        setModalDeleteConfirmVisible(false);
+        let noGroupsIssue = true;
+        let deleteGroups = [];
+        if (groups.length > 0) {
+            groups.map((g) => {
+                deleteGroups.push(g.groupId);
+            });
+            console.log('MDES:120-->BEFORE dispatch(deleteGroupList)');
+            noGroupsIssue = dispatch(deleteGroupList(deleteGroups));
+            console.log('MDES:122-->AFTER dispatch(deleteGroupList)');
+        }
+        console.log('MDES:125-->AFTER GROUPS');
+        if (noGroupsIssue) {
+            console.log('MDES:127-->noGroupsIssue is true');
+            let deleteRequest = dispatch(deleteMtg(meeting.BadgemeetingId));
+            if (deleteRequest) {
+                console.log('MDES:129-->deleteMtg true');
+            } else {
+                console.log('MDES:131-->deleteMtg false');
             }
-            //console.log('meetingId:', meeting.meetingId);
-            //console.log('deleteGroups:', deleteGroups);
+        } else {
+            console.log('MDES:134-->noGroupsIssue is false');
+        }
+        setIsLoading(false);
+    };
+    const OLDhandleDeleteConfirmClick = () => {
+        setIsLoading(true);
+        //setTimeout(function () {
 
-            dispatch(deleteMeeting(meeting.meetingId, deleteGroups));
-            console.log('handleDeleteConfirmClick complete.');
-            navigation.dispatch(
-                StackActions.push('AuthenticatedDrawer', {
-                    screen: 'Meetings',
-                })
-            );
-        }, 10);
+        setModalDeleteConfirmVisible(false);
+        let deleteGroups = [];
+        if (groups.length > 0) {
+            groups.map((g) => {
+                deleteGroups.push(g.groupId);
+            });
+        }
+        //console.log('meetingId:', meeting.meetingId);
+        //console.log('deleteGroups:', deleteGroups);
+        console.log('MDES:123-->BEFORE dispatch(deleteMeeting)');
+        dispatch(deleteMeeting(meeting.meetingId, deleteGroups));
+        console.log('MDES:125-->AFTER dispatch(deleteMeeting)');
+        console.log('handleDeleteConfirmClick complete.');
+        setIsLoading(false);
+        navigation.dispatch(
+            StackActions.push('AuthenticatedDrawer', {
+                screen: 'Meetings',
+            })
+        );
+        //}, 10);
         // navigation.dispatch(
         //     StackActions.push('AuthenticatedDrawer', {
         //         screen: 'Meetings',
@@ -136,27 +167,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         // );
         // navigation.goBack();
     };
-    const deleteCancelHandler = () => {
-        Alert.alert('new delete cancel');
-    };
-    const deleteConfirmHandler = () => {
-        Alert.alert('new delete confirm');
-        setIsLoading(true);
-        setTimeout(function () {
-            setIsLoading(false);
-            navigation.dispatch(
-                StackActions.push('AuthenticatedDrawer', {
-                    screen: 'Meetings',
-                })
-            );
-        }, 1000);
 
-        // navigation.dispatch(
-        //     StackActions.push('AuthenticatedDrawer', {
-        //         screen: 'Meetings',
-        //     })
-        // );
-    };
     if (isLoading) {
         return (
             <View
@@ -259,7 +270,13 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                 </Surface>
             </Modal>
             {meeting?.meetingId && (
-                <MeetingForm meeting={meeting} handleUpdate={handleUpdate} />
+                <MeetingForm
+                    meeting={meeting}
+                    handleUpdate={handleUpdate}
+                    handleDeleteRequest={() =>
+                        setModalDeleteConfirmVisible(true)
+                    }
+                />
             )}
         </>
     );

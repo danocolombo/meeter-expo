@@ -7,6 +7,7 @@ import {
     getDateMinusDays,
     isDateDashBeforeToday,
 } from '../utils/helpers';
+import { deleteMeetingFromDDB } from '../providers/meetings';
 //   this is url for all meetings
 const config = {
     headers: {
@@ -115,6 +116,7 @@ export const meetingsSlice = createSlice({
         },
         addMeeting: (state, action) => {
             const newValue = action.payload;
+            printObject('MS:118-->', newValue);
             let meetings = state.meetings;
             meetings.push(newValue);
             function asc_sort(a, b) {
@@ -216,12 +218,18 @@ export const meetingsSlice = createSlice({
             printObject('MS:216-->grps(before)', grps);
             printObject('MS:217-->payload:', action.payload);
             grps.push(action.payload);
-            function asc_sort(a, b) {
-                return a.gender - b.gender;
+            function GetASCSortOrder(prop) {
+                return function (a, b) {
+                    if (a[prop] > b[prop]) {
+                        return 1;
+                    } else if (a[prop] < b[prop]) {
+                        return -1;
+                    }
+                    return 0;
+                };
             }
-            let newBigger = grps.sort(asc_sort);
-            printObject('MS:222-->(after)', newBigger);
-            state.groups = newBigger;
+            let newSortResults = grps.sort(GetASCSortOrder('gender'));
+            state.groups = newSortResults;
             // return
             return state;
         },
@@ -305,40 +313,9 @@ export const {
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched
-export const deleteMeeting = (meetingId, groups) => (dispatch) => {
-    // if there are groups, delete them first
-    console.log('delete-1');
-    const deleteThisMeeting = async (meetingId) => {
-        console.log('delete-10-A', meetingId);
-        let obj = {
-            operation: 'deleteMeeting',
-            payload: {
-                Key: {
-                    meetingId: meetingId,
-                },
-            },
-        };
-        let body = JSON.stringify(obj);
-        let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
-        let res;
-        try {
-            printObject('DELETE:', body);
-            res = await axios.post(api2use, body, config);
-            printObject('RESULTS:', res);
-        } catch (error) {
-            printObject('MS:324->error deleting meeting:', error);
-        }
-
-        if (res.status === '200') {
-            console.log('delete-11-A');
-            return true;
-        } else {
-            console.log('delete-12-A');
-            return false;
-        }
-    };
+export const deleteGroupList = (groups) => (dispatch) => {
     const deleteThisGroup = async (groupId) => {
-        console.log('delete-4-A', groupId);
+        printObject('MS:317-->groupId:', groupId);
         let obj = {
             operation: 'deleteGroup',
             payload: {
@@ -349,63 +326,230 @@ export const deleteMeeting = (meetingId, groups) => (dispatch) => {
         };
         let body = JSON.stringify(obj);
         let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-        printObject('deleteGroup body:', body);
-        let res;
-        try {
-            res = await axios.post(api2use, body, config);
-        } catch (error) {
-            printObject('ERROR DELETING:', error);
-        }
 
-        if (res.data.status === '200') {
-            console.log('delete-5-A', groupId);
-            return true;
-        } else {
-            console.log('delete-6-A', groupId);
+        try {
+            let res = await axios.post(api2use, body, config);
+            if (res.status === 200) {
+                console.log('MS:332-->deleteGroup:', groupId, ' SUCCESS');
+                return true;
+            } else {
+                console.log('MS:335-->deleteGroup:', groupId, ' FAILURE');
+                return false;
+            }
+        } catch (error) {
+            printObject('MS:339 --> ERROR DELETING:', error);
             return false;
         }
     };
     //   gitterdone
     let groupDeleteSuccess = true;
     if (groups.length > 0) {
-        groupDeleteSuccess = false;
-        console.log('delete-2-A');
+        groupDeleteSuccess = true;
+        console.log('MS:346-->deleting groups');
         groups.forEach((g) => {
-            console.log('delete-3-A');
-            let success = deleteThisGroup(g);
-            if (!success) {
-                groupDeleteSuccess = false;
-                console.log('delete-7-A');
-            } else {
-                console.log('delete-7-FAIL');
-            }
+            console.log('MS:348-->deleting: ', g.groupId);
+            deleteThisGroup(g)
+                .then((success) => {
+                    printObject('MS:351-->success', success);
+                    if (!success) {
+                        groupDeleteSuccess = false;
+                        console.log('MS:354-->failed to delete:', g.groupId);
+                    } else {
+                        console.log('MS:356--> success deleting ', g.groupId);
+                        // groupDeleteSuccess = true;
+                    }
+                })
+                .catch((error) => {
+                    printObject('MS:361-->deleteThisGroup FAIL:', error);
+                    console.warn('MS:362-->Error deleting group');
+                    groupDeleteSuccess = false;
+                });
         });
 
         if (groupDeleteSuccess !== false) {
-            console.log('367: groupDeleteSuccess');
+            console.log('MS:368-->groupDeleteSuccess');
             groupDeleteSuccess = true;
             dispatch(clearGroups());
         } else {
-            console.log('371: groupDeleteSuccess false');
+            console.log('MS:372 --> groupDeleteSuccess false');
+        }
+    }
+};
+export const deleteMtg = (meetingId) => (dispatch) => {
+    console.log('MS:379-->calling deleteMtg: ' + meetingId);
+    deleteMeetingFromDDB(meetingId)
+        .then((res) => {
+            console.log('MS:382-->deleteMeetingFromDDB success');
+            return true;
+        })
+        .catch((error) => {
+            console.log('MS:385-->deleteMeetingFromDDB failure');
+            return false;
+        });
+    // async function deleteThisMeeting(meetingId) {
+    //     //const deleteThisMeeting = async (meetingId) => {
+    //     console.log('MS:380-->deleteThisMeeting:', meetingId);
+    //     deleteMeetingFromDDB(meetingId);
+    //     try {
+    //         let obj = {
+    //             operation: 'deleteMeeting',
+    //             payload: {
+    //                 Key: {
+    //                     meetingId: meetingId,
+    //                 },
+    //             },
+    //         };
+    //         let body = JSON.stringify(obj);
+    //         let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+    //         let res;
+    //         res = await axios.post(api2use, body, config);
+    //         axios
+    //             .post(api2use, body, config)
+    //             .then((res) => {
+    //                 if (res.status === 200) {
+    //                     console.log(
+    //                         'MS:400-->deleteMeeting DB call successful'
+    //                     );
+    //                     return true;
+    //                 } else {
+    //                     console.log('MS:404-->deleteMeeting DB call failed');
+    //                     return false;
+    //                 }
+    //             })
+
+    //             .catch((error) => {
+    //                 printObject('MS:410->error deleting meeting:', error);
+    //             });
+    //     } catch (error) {
+    //         printObject('MS:413-->CATCH FAILURE');
+    //     }
+    // }
+    // deleteThisMeeting(meetingId)
+    //     .then((results) => {
+    //         printObject('MS:418--> deleteThisMeeting complete');
+    //     })
+    //     .catch((error) => {
+    //         printObject('MS:421 -> Error deleting meeting', error);
+    //     });
+    // console.log('MS:423-->AFTER deleteThisMeeting');
+    // return;
+};
+
+export const deleteMeeting = (meetingId, groups) => (dispatch) => {
+    // if there are groups, delete them first
+    console.log('MS:317 meetingId:' + meetingId + ' groups:' + groups);
+    async function deleteThisMeeting(meetingId) {
+        //const deleteThisMeeting = async (meetingId) => {
+        console.log('MS:320-->deleteThisMeeting:', meetingId);
+
+        try {
+            let obj = {
+                operation: 'deleteMeeting',
+                payload: {
+                    Key: {
+                        meetingId: meetingId,
+                    },
+                },
+            };
+            let body = JSON.stringify(obj);
+            let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+            let res;
+            res = await axios.post(api2use, body, config);
+            axios
+                .post(api2use, body, config)
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log(
+                            'MS:338-->deleteMeeting DB call successful'
+                        );
+                        return true;
+                    } else {
+                        console.log('MS:341-->deleteMeeting DB call failed');
+                        return false;
+                    }
+                })
+
+                .catch((error) => {
+                    printObject('MS:347->error deleting meeting:', error);
+                });
+        } catch (error) {
+            printObject('MS:350-->CATCH FAILURE');
+        }
+    }
+    const deleteThisGroup = async (groupId) => {
+        printObject('MS:346-->groupId:', groupId);
+        let obj = {
+            operation: 'deleteGroup',
+            payload: {
+                Key: {
+                    groupId: groupId,
+                },
+            },
+        };
+        let body = JSON.stringify(obj);
+        let api2use = process.env.AWS_API_ENDPOINT + '/groups';
+
+        try {
+            let res = await axios.post(api2use, body, config);
+            if (res.status === 200) {
+                console.log('MS:361-->deleteGroup:', groupId, ' SUCCESS');
+                return true;
+            } else {
+                console.log('MS:364-->deleteGroup:', groupId, ' FAILURE');
+                return false;
+            }
+        } catch (error) {
+            printObject('MS:368 --> ERROR DELETING:', error);
+        }
+    };
+    //   gitterdone
+    let groupDeleteSuccess = true;
+    if (groups.length > 0) {
+        groupDeleteSuccess = true;
+        console.log('MS:375-->deleting groups');
+        groups.forEach((g) => {
+            console.log('MS:377-->deleting: ', g.groupId);
+            deleteThisGroup(g)
+                .then((success) => {
+                    printObject('MS:382-->success', success);
+                    if (!success) {
+                        groupDeleteSuccess = false;
+                        console.log('MS:383-->failed to delete:', g.groupId);
+                    } else {
+                        console.log('MS:385--> success deleting ', g.groupId);
+                        // groupDeleteSuccess = true;
+                    }
+                })
+                .catch((error) => {
+                    printObject('MS:390-->deleteThisGroup FAIL:', error);
+                    console.warn('MS:391-->Error deleting group');
+                    groupDeleteSuccess = false;
+                });
+        });
+
+        if (groupDeleteSuccess !== false) {
+            console.log('MS:397-->groupDeleteSuccess');
+            groupDeleteSuccess = true;
+            dispatch(clearGroups());
+        } else {
+            console.log('MS:401 --> groupDeleteSuccess false');
         }
     }
     if (groupDeleteSuccess) {
         // delete redux groups
-        console.log('delete-8-A');
+        console.log('MS:407-->calling deleteThisMeeting: ' + meetingId);
 
         deleteThisMeeting(meetingId)
             .then((results) => {
-                printObject('deleteThisMeeeting::results', results);
-                dispatch(deleteAMeeting(meetingId));
-                console.log('deleteAMeeting complete');
+                printObject('MS:412--> deleteThisMeeting complete');
             })
             .catch((error) => {
-                printObject('Error deleting meeting', error);
+                printObject('MS:414 -> Error deleting meeting', error);
             });
-
+        console.log('MS:416-->AFTER deleteThisMeeting');
         return;
     } else {
-        console.log('delete-9-A');
+        console.log('MS:419--> groupDeleteSuccess is false');
         return false;
     }
 };
@@ -426,7 +570,19 @@ export const getMeetingGroups = (meetingId) => (dispatch) => {
 
         if (res?.data?.status === '200') {
             const results = res.data.body;
-            dispatch(loadGroups(results));
+
+            function GetASCSortOrder(prop) {
+                return function (a, b) {
+                    if (a[prop] > b[prop]) {
+                        return 1;
+                    } else if (a[prop] < b[prop]) {
+                        return -1;
+                    }
+                    return 0;
+                };
+            }
+            let newSortResults = results.sort(GetASCSortOrder('gender'));
+            dispatch(loadGroups(newSortResults));
             return results;
         } else {
             dispatch(clearGroups());
@@ -567,8 +723,10 @@ export const addNewMeeting = (meeting) => (dispatch) => {
         let body = JSON.stringify(obj);
         let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
         let res = await axios.post(api2use, body, config);
+        // printObject('MS:594-->res', res);
         // have to pass response, so we always get the right DB values
-        addMeeting(res);
+        dispatch(addMeeting(res.data));
+
         //const results = res.data.body.Items;
         //if (historic) {
         // dispatch(addHistoricMeeting(meeting));

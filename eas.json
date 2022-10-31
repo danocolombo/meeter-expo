@@ -11,7 +11,11 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "env": {
+        "AWS_API_ENDPOINT": "https://2byneyioe4.execute-api.us-east-1.amazonaws.com/dev"
+      }
+    }
   },
   "submit": {
     "production": {}

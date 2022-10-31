@@ -36,7 +36,7 @@ import {
 } from '../utils/helpers';
 
 import TypeSelectors from './TypeSelectors';
-const MeetingForm = ({ meeting, handleUpdate }) => {
+const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
     const meeter = useSelector((state) => state.system);
 
     const { width } = useWindowDimensions();
@@ -142,7 +142,7 @@ const MeetingForm = ({ meeting, handleUpdate }) => {
                 <>
                     {meeting.meetingId !== '0' && (
                         <TouchableOpacity
-                            onPress={() => setModalDeleteConfirmVisible(true)}
+                            onPress={() => handleDeleteRequest(true)}
                         >
                             <MaterialCommunityIcons
                                 name='delete-forever'

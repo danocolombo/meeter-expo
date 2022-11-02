@@ -3,60 +3,31 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity,
     useWindowDimensions,
-    Platform,
     Button,
-    Alert,
     Modal,
 } from 'react-native';
 import MeetingForm from '../components/MeetingForm';
-import Input from '../components/ui/Input';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
-// import * as Application from 'expo-application';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import CurrencyInput from 'react-native-currency-input';
-import { FontAwesome5 } from '@expo/vector-icons';
+
 import {
-    useNavigation,
-    useIsFocused,
-    StackActions,
-} from '@react-navigation/native';
-import {
-    getMeetingGroups,
-    clearGroups,
-    updateMeetingValues,
-    deleteMeeting,
+    updateMeeting,
     deleteGroupList,
     deleteMtg,
 } from '../features/meetingsSlice';
-import GroupList from '../components/GroupList';
-import NumberInput from '../components/ui/NumberInput';
-import DateBall from '../components/ui/DateBall';
-import DateStack from '../components/ui/DateStack';
 import CustomButton from '../components/ui/CustomButton';
 import {
     Surface,
     withTheme,
     useTheme,
-    Badge,
     ActivityIndicator,
 } from 'react-native-paper';
-import {
-    printObject,
-    isDateDashBeforeToday,
-    todayMinus60,
-    dateNumToDateDash,
-} from '../utils/helpers';
-import GroupListCard from '../components/Group.List.Card';
-import MeetingListCard from '../components/Meeting.List.Card';
-import TypeSelectors from '../components/TypeSelectors';
-import { DrawerContentScrollView } from '@react-navigation/drawer';
-//import MeetingDeleteModal from '../components/MeetingDeleteModal';
+import { printObject, dateNumToDateDash } from '../utils/helpers';
+import { updateMeetingDDB } from '../providers/meetings';
+
 const MeetingDetailsEditScreen = ({ route, navigation }) => {
     const meetingId = route.params.meetingId;
-    console.log('MDES:56-->meetingId:', meetingId);
+    // console.log('MDES:56-->meetingId:', meetingId);
     const mtrTheme = useTheme();
     //const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -87,7 +58,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         });
     }, [navigation, meeter]);
     useEffect(() => {
-        console.log('MDES:87-->MEETING-ID:', meetingId);
+        // console.log('MDES:87-->MEETING-ID:', meetingId);
         setIsLoading(true);
         let today = dateNumToDateDash(meeter.today);
         let mtg = [];
@@ -97,16 +68,26 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             }
         });
         setMeeting(mtg[0]);
-        //const groups = dispatch(getMeetingGroups(meetingId));
-        //setDisplayGroups(groups);
+
         setIsLoading(false);
     }, []);
     const handleUpdate = (values) => {
-        console.log('handleUpdate received.');
-        dispatch(updateMeetingValues(values));
-        navigation.navigate('MeetingDetails', {
-            meeting: values,
-        });
+        updateMeetingDDB(values)
+            .then((res) => {
+                printObject('updateMeetingDDB res:', res);
+                dispatch(updateMeeting(res));
+                // console.log('dispatch(updateMeeting) returned');
+                navigation.navigate('MeetingDetails', {
+                    meeting: res,
+                });
+                return;
+            })
+            .catch((err) => {
+                printObject('updateMeeting provider failed:', err);
+                console.warn('updateMeeting provider failed');
+
+                return;
+            });
     };
 
     const handleDeleteConfirmClick = () => {
@@ -135,37 +116,6 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             console.log('MDES:134-->noGroupsIssue is false');
         }
         setIsLoading(false);
-    };
-    const OLDhandleDeleteConfirmClick = () => {
-        setIsLoading(true);
-        //setTimeout(function () {
-
-        setModalDeleteConfirmVisible(false);
-        let deleteGroups = [];
-        if (groups.length > 0) {
-            groups.map((g) => {
-                deleteGroups.push(g.groupId);
-            });
-        }
-        //console.log('meetingId:', meeting.meetingId);
-        //console.log('deleteGroups:', deleteGroups);
-        console.log('MDES:123-->BEFORE dispatch(deleteMeeting)');
-        dispatch(deleteMeeting(meeting.meetingId, deleteGroups));
-        console.log('MDES:125-->AFTER dispatch(deleteMeeting)');
-        console.log('handleDeleteConfirmClick complete.');
-        setIsLoading(false);
-        navigation.dispatch(
-            StackActions.push('AuthenticatedDrawer', {
-                screen: 'Meetings',
-            })
-        );
-        //}, 10);
-        // navigation.dispatch(
-        //     StackActions.push('AuthenticatedDrawer', {
-        //         screen: 'Meetings',
-        //     })
-        // );
-        // navigation.goBack();
     };
 
     if (isLoading) {

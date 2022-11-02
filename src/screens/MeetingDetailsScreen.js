@@ -25,6 +25,7 @@ import {
 } from '@react-navigation/native';
 import {
     getMeetingGroups,
+    fetchSpecificMeeting,
     clearGroups,
     createTmp,
 } from '../features/meetingsSlice';
@@ -52,7 +53,8 @@ const MeetingDetails = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const mtrTheme = useTheme();
     const meetings = useSelector((state) => state.meetings.meetings);
-    const [meeting, setMeeting] = useState();
+    const meeting = useSelector((state) => state.meetings.tmpMeeting);
+    // const [meeting, setMeeting] = useState();
     // const mtg = useRef(meetingPassedIn);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
@@ -71,25 +73,61 @@ const MeetingDetails = (props) => {
     // determin if active or historic
     // const historic = isDateDashBeforeToday(tmpMeeting.meetingDate);
     const uns = useNavigationState((state) => state);
+    useFocusEffect(
+        React.useCallback(() => {
+            // alert(JSON.stringify(uns));
+            // alert('ActiveScree: focused');
+            dispatch(fetchSpecificMeeting(meetingId));
+            // console.log('MDS:78-->useFocusEffect');
+            // setIsLoading(true);
+            // let today = dateNumToDateDash(meeter.today);
+            // let mtg = [];
+            // meetings.forEach((m) => {
+            //     if (m.meetingId === meetingId) {
+            //         mtg.push(m);
+            //         if (m.meetingDate < today) {
+            //             setHistoric(true);
+            //         } else {
+            //             setHistoric(false);
+            //         }
+            //     }
+            // });
+            // console.log('MDS:89-->got meeting to set');
+            // setMeeting(mtg[0]);
+            //printObject('MDS:94-->mtg[0]:', mtg[0]);
+            console.log('MDS:89-->setMeeting complete');
+            const groups = dispatch(getMeetingGroups(meetingId));
+            setDisplayGroups(groups);
+            setIsLoading(false);
+            // Do something when the screen is focused
+            return () => {
+                // alert('ActiveScreen was unfocused');
+                // Do something when the screen is unfocused
+                // Useful for cleanup functions
+            };
+        }, [])
+    );
     useEffect(() => {
-        console.log('MEETING-ID:', meetingId);
-        setIsLoading(true);
-        let today = dateNumToDateDash(meeter.today);
-        let mtg = [];
-        meetings.forEach((m) => {
-            if (m.meetingId === meetingId) {
-                mtg.push(m);
-                if (m.meetingDate < today) {
-                    setHistoric(true);
-                } else {
-                    setHistoric(false);
-                }
-            }
-        });
-        setMeeting(mtg[0]);
-        const groups = dispatch(getMeetingGroups(meetingId));
-        setDisplayGroups(groups);
-        setIsLoading(false);
+        console.log('MDS:89-->useEffect::meetingId', meetingId);
+        // setIsLoading(true);
+        // let today = dateNumToDateDash(meeter.today);
+        // let mtg = [];
+        // meetings.forEach((m) => {
+        //     if (m.meetingId === meetingId) {
+        //         mtg.push(m);
+        //         if (m.meetingDate < today) {
+        //             setHistoric(true);
+        //         } else {
+        //             setHistoric(false);
+        //         }
+        //     }
+        // });
+        // console.log('MDS:89-->got meeting to set');
+        // setMeeting(mtg[0]);
+        // console.log('MDS:89-->setMeeting complete');
+        // const groups = dispatch(getMeetingGroups(meetingId));
+        // setDisplayGroups(groups);
+        // setIsLoading(false);
     }, []);
 
     useLayoutEffect(() => {

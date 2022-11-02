@@ -18,6 +18,7 @@ import MeetingListCard from '../components/Meeting.List.Card';
 import { FontDisplay } from 'expo-font';
 import { dateNumToDateDash, printObject } from '../utils/helpers';
 import { current } from '@reduxjs/toolkit';
+import ActiveList from '../components/ActiveList';
 import { getSupportedMeetings } from '../providers/meetings';
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
@@ -40,7 +41,7 @@ const ActiveScreen = () => {
                 currentMeetings.push(m);
             });
             let targetDate = dateNumToDateDash(meeter.today);
-            let filteredMeetings = currentMeetings.filter(
+            let filteredMeetings = meetings.filter(
                 (m) => m.meetingDate >= targetDate
             );
 
@@ -122,6 +123,9 @@ const ActiveScreen = () => {
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
+                <View>
+                    <ActiveList meetings={displayMeetings} />
+                </View>
                 <View>
                     <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
                     {meeter.userRole !== 'guest' && (

@@ -31,11 +31,12 @@ const GroupList = ({ meetingId }) => {
         //check for groups
         dispatch(clearGroups());
         setIsLoadiing(true);
-
+        console.log('BOOP');
         getGroups(meeting.meetingId);
         //dispatch(getMeetingGroups(meeting.meetingId));
 
         setIsLoadiing(false);
+        console.log('BOMB');
         // const count = historicMeetings.filter(
         //     (item) => item.meetingId !== '0'
         // ).length;

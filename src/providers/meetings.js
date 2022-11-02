@@ -8,6 +8,22 @@ const config = {
     },
 };
 
+export async function updateMeetingDDB(meeting) {
+    console.log('M:12-->meeting:', JSON.stringify(meeting));
+    let obj = {
+        operation: 'putMeeting',
+        payload: {
+            Item: meeting,
+        },
+    };
+    let body = JSON.stringify(obj);
+    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+
+    let res = await axios.post(api2use, body, config);
+    printObject('M:23-->res:', res);
+    var returnValue = res.data;
+    return returnValue;
+}
 export async function getActiveMeetings(affiliate, today) {
     // console.log('affiliate', affiliate);
     // console.log('today', today);

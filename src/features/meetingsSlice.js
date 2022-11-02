@@ -22,38 +22,42 @@ const initialState = {
     tmpMeeting: {},
     isLoading: false,
 };
-export const getAvailableMeetings = createAsyncThunk(
-    'meetings/getAvailableMeetings',
-    async ({ name, today }, thunkAPI) => {
-        try {
-            const getFilterDate = async () => {
-                return today;
-            };
 
-            return getFilterDate()
-                .then((d) => d)
-                .catch((e) => console.error('oops'));
-
-            // const resp = await axios(url);
-            // return resp.data;
-        } catch (error) {
-            return thunkAPI.rejectWithValue('MS:36-->>> something went wrong');
-        }
+export const fetchSpecificMeeting = createAsyncThunk(
+    'meetings/fetchSpecificMeeting',
+    async (meetingId) => {
+        let obj = {
+            operation: 'getMeetingById',
+            payload: {
+                meetingId: meetingId,
+            },
+        };
+        let body = JSON.stringify(obj);
+        let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+        return await axios
+            .post(api2use, body, config)
+            .then((res) => res.data.body)
+            .catch((err) => printObject('fetchSpecificMeeting error', err));
     }
 );
+
 export const meetingsSlice = createSlice({
     name: 'meetings',
     initialState,
+    extraReducers: {
+        [fetchSpecificMeeting.pending]: (state) => {
+            state.isLoadiing = true;
+        },
+        [fetchSpecificMeeting.fulfilled]: (state, action) => {
+            printObject('fulfilled meeting', action);
+            state.isLoading = false;
+            state.tmpMeeting = action.payload;
+        },
+        [fetchSpecificMeeting.rejected]: (state) => {
+            state.isLoading = false;
+        },
+    },
     reducers: {
-        // loadActiveMeetings: (state, action) => {
-        //     state.activeMeetings = action.payload;
-        //     return state;
-        // },
-        // loadHistoricMeetings: (state, action) => {
-        //     // printObject('SLICE-action.payload:', action.payload);
-        //     state.historicMeetings = action.payload;
-        //     return state;
-        // },
         createTmp: (state, action) => {
             state.tmpMeeting = {};
             state.tmpMeeting = action.payload[0];
@@ -69,49 +73,33 @@ export const meetingsSlice = createSlice({
             state.meetings = action.payload;
             return state;
         },
-        // getMeeting: (state, action) => {
-        //     //could be in historic or active
-        //     console.log(action.payload);
-        //     let returnValue = {};
-        //     let found = state.meetings.filter(
-        //         (m) => m.meetingId === action.payload
-        //     );
-
-        //     if (found.length !== 0) {
-        //         returnValue = found[0];
-        //         return state;
-        //     }
-
-        //     // if (found.length === 1) {
-        //     //     return found[0];
-        //     // } else {
-        //     //     let active = state.activeMeetings.filter(
-        //     //         (m) => m.meetingId === action.payload
-        //     //     );
-        //     //     return active[0];
-        //     // }
-        // },
 
         updateMeeting: (state, action) => {
             // this update could be in either the historic or the active.
             // probability is that it is in historic, do that first
             // let historic = false;
+            console.log('I-1');
             const newValue = action.payload;
+            console.log('I-2');
             //stort with historic
             let newMeetingList = [];
             newMeetingList = state.meetings.map((m) => {
+                console.log('I-3');
                 if (m.meetingId === newValue.meetingId) {
                     return newValue;
                 } else {
                     return m;
                 }
             });
+            console.log('I-4');
             function asc_sort(a, b) {
                 return a.meetingDate - b.meetingDate;
             }
+            console.log('I-5');
             let newBigger = newMeetingList.sort(asc_sort);
+            console.log('I-6');
             state.meetings = newBigger;
-
+            console.log('I-7');
             return state;
         },
         addMeeting: (state, action) => {
@@ -129,47 +117,7 @@ export const meetingsSlice = createSlice({
             state.meetings = newBigger;
             return state;
         },
-        // addHistoricMeeting: (state, action) => {
-        //     let meetings = state.historicMeetings;
-        //     meetings.push(action.payload);
-        //     function asc_sort(a, b) {
-        //         return (
-        //             new Date(a.meetingDate).getTime() -
-        //             new Date(b.meetingDate).getTime()
-        //         );
-        //     }
-        //     let newBigger = meetings.sort(asc_sort);
-        //     state.historicMeetings = newBigger;
-        //     return state;
-        // },
-        // addActiveMeeting: (state, action) => {
-        //     let meetings = state.activeMeetings;
-        //     meetings.push(action.payload);
-        //     function asc_sort(a, b) {
-        //         return (
-        //             new Date(a.meetingDate).getTime() -
-        //             new Date(b.meetingDate).getTime()
-        //         );
-        //     }
-        //     let newBigger = meetings.sort(asc_sort);
-        //     state.activeMeetings = newBigger;
-        //     return state;
-        // },
-        // addNewMeeting: (state, action) => {
-        //     let meetings = state.meetings;
-        //     meetings.push(action.payload);
-        //     // ascending sort
-        //     function asc_sort(a, b) {
-        //         return (
-        //             new Date(a.meetingDate).getTime() -
-        //             new Date(b.meetingDate).getTime()
-        //         );
-        //     }
-        //     let newBigger = meetings.sort(asc_sort);
-        //     state.meetings = newBigger;
-        //     // return
-        //     return state;
-        // },
+
         deleteAMeeting: (state, action) => {
             const smaller = state.meetings.filter(
                 (m) => m.mid !== action.payload.mid
@@ -270,20 +218,20 @@ export const meetingsSlice = createSlice({
             return state;
         },
     },
-    extraReducers: {
-        [getAvailableMeetings.pending]: (state) => {
-            state.isLoading = true;
-        },
-        [getAvailableMeetings.fulfilled]: (state, action) => {
-            // console.log(action);
-            state.isLoading = false;
-            // printObject('RS:223--> action', action);
-        },
-        [getAvailableMeetings.rejected]: (state, action) => {
-            console.log(action);
-            state.isLoading = false;
-        },
-    },
+    // extraReducers: {
+    //     [getSpecificMeeting.pending]: (state) => {
+    //         state.isLoading = true;
+    //     },
+    //     [getSpecificMeeting.fulfilled]: (state, action) => {
+    //         // console.log(action);
+    //         state.isLoading = false;
+    //         // printObject('RS:223--> action', action);
+    //     },
+    //     [getSpecificMeeting.rejected]: (state, action) => {
+    //         console.log(action);
+    //         state.isLoading = false;
+    //     },
+    // },
 });
 
 // Action creators are generated for each case reducer function
@@ -594,6 +542,7 @@ export const getMeetingGroups = (meetingId) => (dispatch) => {
 };
 export const updateMeetingValues = (values) => (dispatch) => {
     // always make sure that the mtgCompKey is equal to the meetingDate
+    console.log('A');
     let mDate = values.meetingDate;
     let mtgCompKey =
         values.clientId.toLowerCase() +
@@ -604,21 +553,38 @@ export const updateMeetingValues = (values) => (dispatch) => {
         '#' +
         mDate.substring(8, 10);
     values.mtgCompKey = mtgCompKey;
+    console.log('B');
     const updateData = async (values) => {
+        console.log('D');
         let obj = {
             operation: 'putMeeting',
             payload: {
                 Item: values,
             },
         };
+        console.log('E');
         let body = JSON.stringify(obj);
+        console.log('F');
         let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
-        let res = await axios.post(api2use, body, config);
-        const results = res.data.body;
-        //dispatch(updateTmp(values));
-        dispatch(updateMeeting(values));
-        return results;
+        console.log('G');
+
+        await axios
+            .post(api2use, body, config)
+            .then((res) => {
+                console.log('H');
+                // printObject('MS:617-->res:', res);
+                const results = res.data;
+                console.log('I');
+                //dispatch(updateTmp(values));
+                dispatch(updateMeeting(results));
+                console.log('J');
+                return results;
+            })
+            .catch((error) => {
+                printObject('MS:641', error);
+            });
     };
+    console.log('C');
     updateData(values);
 };
 // export const getAMeeting = (meetingId) => (dispatch) => {

@@ -3,10 +3,16 @@ import {
     Text,
     View,
     FlatList,
+    AppState,
     ViewBase,
     ImageBackground,
 } from 'react-native';
-import React, { useState, useLayoutEffect, useCallback } from 'react';
+import React, {
+    useState,
+    useLayoutEffect,
+    useEffect,
+    useCallback,
+} from 'react';
 import {
     useNavigation,
     useFocusEffect,
@@ -17,115 +23,30 @@ import { Surface, ActivityIndicator, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { FontDisplay } from 'expo-font';
 import { dateNumToDateDash, printObject } from '../utils/helpers';
+import { focusManager } from '@tanstack/react-query';
 import { current } from '@reduxjs/toolkit';
 import ActiveList from '../components/ActiveList';
 import { getSupportedMeetings } from '../providers/meetings';
 const ActiveScreen = () => {
+    const DANO = false;
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const meeter = useSelector((state) => state.system);
-    const meetings = useSelector((state) => state.meetings.meetings);
     const [displayMeetings, setDisplayMeetings] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const uns = useNavigationState((state) => state);
-    useFocusEffect(
-        React.useCallback(() => {
-            // alert(JSON.stringify(uns));
-            // alert('ActiveScree: focused');
-            setIsLoading(true);
 
-            let currentMeetings = [];
-
-            //console.log('got results');
-            meetings.forEach((m) => {
-                currentMeetings.push(m);
-            });
-            let targetDate = dateNumToDateDash(meeter.today);
-            let filteredMeetings = meetings.filter(
-                (m) => m.meetingDate >= targetDate
-            );
-
-            function quickSort(prop) {
-                return function (a, b) {
-                    if (a[prop] > b[prop]) {
-                        return 1;
-                    } else if (a[prop] < b[prop]) {
-                        return -1;
-                    }
-                    return 0;
-                };
-            }
-            let sortedResults = filteredMeetings.sort(quickSort('mtgCompKey'));
-            setDisplayMeetings(sortedResults);
-            setIsLoading(false);
-            console.log('AS:60 --> DONE WITH useFocusEffect');
-
-            // Do something when the screen is focused
-            return () => {
-                // alert('ActiveScreen was unfocused');
-                // Do something when the screen is unfocused
-                // Useful for cleanup functions
-            };
-        }, [])
-    );
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
         });
     }, [navigation, meeter]);
-    // useFocusEffect(
-    //     useCallback(() => {
-    // Do something when the screen is focused
-    //-----------------------------------------
-    // sort and load active meetings to FontDisplay
-    // let currentMeeings = [];
-    // aMeetings.map((m) => {
-    //     currentMeeings.push(m);
-    // });
-    // function quickSort(prop) {
-    //     return function (a, b) {
-    //         if (a[prop] > b[prop]) {
-    //             return 1;
-    //         } else if (a[prop] < b[prop]) {
-    //             return -1;
-    //         }
-    //         return 0;
-    //     };
-    // }
-    // let sortedResults = currentMeeings.sort(quickSort('mtgCompKey'));
-    // setMeetings(sortedResults);
-    // return () => {
-    // Do something when the screen is unfocused
-    // Useful for cleanup functions
-    //         };
-    //     }, [])
-    // );
+
     const handleNewRequest = () => {
         navigation.navigate('MeetingNew');
     };
-    if (isLoading) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <ActivityIndicator
-                    color={mtrTheme.colors.background}
-                    size={80}
-                />
-            </View>
-        );
-    }
 
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
-                <View>
-                    <ActiveList meetings={displayMeetings} />
-                </View>
                 <View>
                     <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
                     {meeter.userRole !== 'guest' && (
@@ -142,15 +63,9 @@ const ActiveScreen = () => {
                         Click event for details.
                     </Text>
                 </View>
-                {meetings && (
-                    <FlatList
-                        data={displayMeetings}
-                        keyExtractor={(item) => item.meetingId}
-                        renderItem={({ item }) => (
-                            <MeetingListCard meeting={item} active={true} />
-                        )}
-                    />
-                )}
+                <View>
+                    <ActiveList meetings={displayMeetings} />
+                </View>
             </Surface>
         </>
     );

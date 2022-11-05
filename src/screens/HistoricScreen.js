@@ -17,6 +17,7 @@ import {
     useFocusEffect,
     useNavigationState,
 } from '@react-navigation/native';
+import HistoryList from '../components/HistoryList';
 import { getSupportedMeetings } from '../providers/meetings';
 import { useSelector, useDispatch } from 'react-redux';
 import MeetingListCard from '../components/Meeting.List.Card';
@@ -90,87 +91,7 @@ const HistoricScreen = (props) => {
             };
         }, [])
     );
-    // const getMeeitngs = async () => {
-    //     let hMeetings = await getHistoricMeetings(
-    //         system.affiliation.toLowerCase(),
-    //         deleteGroup
-    //     );
-    // };
-    // useLayoutEffect(() => {
-    //     navigation.setOptions({
-    //         title: meeter.appName,
-    //         headerRight: () => (
-    //             <>
-    //                 <View>
-    //                     <Text style={{ color: 'white' }}>WHAT</Text>
-    //                 </View>
-    //                 <Button
-    //                     onPress={() =>
-    //                         navigation.navigate('MeeterEdit', {
-    //                             meetingId: meeting.meetingId,
-    //                         })
-    //                     }
-    //                     color='white'
-    //                     title='NEW'
-    //                 />
-    //             </>
-    //         ),
-    //     });
-    // }, [navigation, meeter]);
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         // Do something when the screen is focused
-    //         //-----------------------------------------
-    //         // sort and load active meetings to FontDisplay
-    //         //dispatch(getHistoricMeetings());
 
-    //         getHistoricMeetings(
-    //             meeter.affiliation.toLowerCase(),
-    //             meeter.today
-    //         ).then((tmp) => {
-    //             function quickSort(prop) {
-    //                 return function (b, a) {
-    //                     if (a[prop] > b[prop]) {
-    //                         return 1;
-    //                     } else if (a[prop] < b[prop]) {
-    //                         return -1;
-    //                     }
-    //                     return 0;
-    //                 };
-    //             }
-    //             let currentMeetings = [];
-    //             tmp.map((m) => {
-    //                 currentMeetings.push(m);
-    //             });
-
-    //             let sortedResults = currentMeetings.sort(
-    //                 quickSort('mtgCompKey')
-    //             );
-    //             setMeetings(sortedResults);
-    //         });
-
-    //         return () => {
-    //             // Do something when the screen is unfocused
-    //             // Useful for cleanup functions
-    //         };
-    //     }, [])
-    // );
-    if (isLoading) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <ActivityIndicator
-                    color={mtrTheme.colors.background}
-                    size={80}
-                />
-            </View>
-        );
-    }
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
@@ -182,15 +103,7 @@ const HistoricScreen = (props) => {
                         Click event for details.
                     </Text>
                 </View>
-                {hMeetings && (
-                    <FlatList
-                        data={meetings}
-                        keyExtractor={(item) => item.meetingId}
-                        renderItem={({ item }) => (
-                            <MeetingListCard meeting={item} active={false} />
-                        )}
-                    />
-                )}
+                <HistoryList />
             </Surface>
         </>
     );

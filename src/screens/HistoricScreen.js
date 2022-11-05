@@ -38,59 +38,59 @@ const HistoricScreen = (props) => {
     const [meetings, setMeetings] = useState([]);
     const uns = useNavigationState((state) => state);
     const [isLoading, setIsLoading] = useState(false);
-    useFocusEffect(
-        useCallback(() => {
-            // alert(JSON.stringify(uns));
-            //alert('Historic: focused');
-            setIsLoading(true);
-            printObject('###HISTORIC:uns###', uns);
-            let currentMeetings = [];
-            getSupportedMeetings(meeter.affiliation.toLowerCase())
-                .then((results) => {
-                    console.log('got results');
-                    results.forEach((m) => {
-                        currentMeetings.push(m);
-                    });
-                    let key =
-                        meeter.affiliation.toLowerCase() +
-                        '#' +
-                        meeter.today.substring(0, 4) +
-                        '#' +
-                        meeter.today.substring(4, 6) +
-                        '#' +
-                        meeter.today.substring(6, 8);
-                    // get yesterdays date
-                    let filteredMeetings = currentMeetings.filter(
-                        (m) => m.mtgCompKey < key
-                    );
-                    printObject('filteredMeeings', filteredMeetings);
-                    function quickSort(prop) {
-                        return function (b, a) {
-                            if (a[prop] > b[prop]) {
-                                return 1;
-                            } else if (a[prop] < b[prop]) {
-                                return -1;
-                            }
-                            return 0;
-                        };
-                    }
-                    let sortedResults = filteredMeetings.sort(
-                        quickSort('mtgCompKey')
-                    );
-                    setMeetings(sortedResults);
-                })
-                .catch((error) => {
-                    printObject('ERROR GETTING SUPPORTED MEETINGS', error);
-                });
-            setIsLoading(false);
-            // Do something when the screen is focused
-            return () => {
-                //alert('ActiveScreen was unfocused');
-                // Do something when the screen is unfocused
-                // Useful for cleanup functions
-            };
-        }, [])
-    );
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         // alert(JSON.stringify(uns));
+    //         //alert('Historic: focused');
+    //         setIsLoading(true);
+    //         printObject('###HISTORIC:uns###', uns);
+    //         let currentMeetings = [];
+    //         getSupportedMeetings(meeter.affiliation.toLowerCase())
+    //             .then((results) => {
+    //                 console.log('got results');
+    //                 results.forEach((m) => {
+    //                     currentMeetings.push(m);
+    //                 });
+    //                 let key =
+    //                     meeter.affiliation.toLowerCase() +
+    //                     '#' +
+    //                     meeter.today.substring(0, 4) +
+    //                     '#' +
+    //                     meeter.today.substring(4, 6) +
+    //                     '#' +
+    //                     meeter.today.substring(6, 8);
+    //                 // get yesterdays date
+    //                 let filteredMeetings = currentMeetings.filter(
+    //                     (m) => m.mtgCompKey < key
+    //                 );
+    //                 printObject('filteredMeeings', filteredMeetings);
+    //                 function quickSort(prop) {
+    //                     return function (b, a) {
+    //                         if (a[prop] > b[prop]) {
+    //                             return 1;
+    //                         } else if (a[prop] < b[prop]) {
+    //                             return -1;
+    //                         }
+    //                         return 0;
+    //                     };
+    //                 }
+    //                 let sortedResults = filteredMeetings.sort(
+    //                     quickSort('mtgCompKey')
+    //                 );
+    //                 setMeetings(sortedResults);
+    //             })
+    //             .catch((error) => {
+    //                 printObject('ERROR GETTING SUPPORTED MEETINGS', error);
+    //             });
+    //         setIsLoading(false);
+    //         // Do something when the screen is focused
+    //         return () => {
+    //             //alert('ActiveScreen was unfocused');
+    //             // Do something when the screen is unfocused
+    //             // Useful for cleanup functions
+    //         };
+    //     }, [])
+    // );
 
     return (
         <>
@@ -103,7 +103,7 @@ const HistoricScreen = (props) => {
                         Click event for details.
                     </Text>
                 </View>
-                <HistoryList />
+                <HistoryList clientId={meeter.affiliation} />
             </Surface>
         </>
     );

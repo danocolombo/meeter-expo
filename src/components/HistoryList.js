@@ -1,25 +1,22 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import {
-    FetchMeeting,
-    FetchActiveMeetings,
-    FetchHistoricMeetings,
-} from './common/hooks/meetingQueries';
+import { FetchHistoricMeetings } from './common/hooks/meetingQueries';
 import MeetingListCard from './Meeting.List.Card';
 import { printObject } from '../utils/helpers';
+import { useSelector } from 'react-redux';
 
-const HistoryList = () => {
+const HistoryList = ({ clientId }) => {
     let meetings = [];
     const { data, isError, isLoading, isFetching } = useQuery(
-        ['activeMeetings'],
-        () => FetchHistoricMeetings(),
+        ['historicMeetings'],
+        () => FetchHistoricMeetings(clientId),
         {
-            cacheTime: 2000,
+            cacheTime: 200,
         }
     );
-    printObject('AL:20-->isLoading', isLoading);
-    printObject('AL:21-->isFetching', isFetching);
+    printObject('HL:22-->isLoading', isLoading);
+    printObject('HL:23-->isFetching', isFetching);
     if (data) {
         meetings = data.body.Items;
     }

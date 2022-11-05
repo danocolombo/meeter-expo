@@ -1,63 +1,73 @@
 import axios from 'axios';
-import { printObject } from '../../../utils/helpers';
-
-async function FetchMeeting() {
-    const config = {
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        },
-    };
+import {
+    printObject,
+    getDateMinusDays,
+    getToday,
+} from '../../../utils/helpers';
+const config = {
+    headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+    },
+};
+async function FetchMeeting(meetingId) {
     let obj = {
         operation: 'getMeetingById',
         payload: {
-            meetingId: '9c9e330328ee5ebd0ffd4091d5fee38e',
+            meetingId: meetingId,
         },
     };
     let body = JSON.stringify(obj);
-    const api2use =
-        'https://2byneyioe4.execute-api.us-east-1.amazonaws.com/dev/meetings';
+    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
     const { data } = await axios.post(api2use, body, config);
     //printObject('DATA:', data);
     return data;
 }
-async function FetchActiveMeetings() {
-    const config = {
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        },
-    };
+async function FetchActiveMeetings(clientId) {
+    var client = clientId.toLowerCase();
+    var d = new Date();
+    const yr = parseInt(d.getFullYear());
+    let mo = parseInt(d.getMonth());
+    const da = parseInt(d.getDate());
+    const hr = parseInt(d.getHours());
+    const mi = parseInt(d.getMinutes());
+    //month and day lengths if applicable
+    mo = mo + 1;
+    const moFix = ('0' + mo.toString()).slice(-2);
+    const daFix = ('0' + da.toString()).slice(-2);
+    const today = yr.toString() + '-' + moFix + '-' + daFix;
+
     let obj = {
         operation: 'getMeetingsOnAfterDate',
         payload: {
-            clientId: 'wbc',
-            date: '2022-11-04',
+            clientId: client,
+            date: today,
             direction: 'ASC',
         },
     };
+    console.log(obj);
     let body = JSON.stringify(obj);
-    const api2use =
-        'https://2byneyioe4.execute-api.us-east-1.amazonaws.com/dev/meetings';
+    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
     const { data } = await axios.post(api2use, body, config);
     return data;
 }
-async function FetchHistoricMeetings() {
-    const config = {
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        },
-    };
+async function FetchHistoricMeetings(clientId) {
+    var client = clientId.toLowerCase();
+    var d = new Date();
+    let yesterday = getDateMinusDays(d, 1);
+    let twoMonthsAgo = getDateMinusDays(d, 120);
+
     let obj = {
         operation: 'getMeetingsBetweenDates',
         payload: {
-            clientId: 'wbc',
-            startDate: '2022-09-03',
-            stopDate: '2022-11-03',
+            clientId: client,
+            startDate: twoMonthsAgo,
+            stopDate: yesterday,
             direction: 'DESC',
         },
     };
+    console.log(obj);
     let body = JSON.stringify(obj);
-    const api2use =
-        'https://2byneyioe4.execute-api.us-east-1.amazonaws.com/dev/meetings';
+    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
     const { data } = await axios.post(api2use, body, config);
     return data;
 }

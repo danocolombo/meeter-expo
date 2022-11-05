@@ -8,11 +8,11 @@ import {
 import MeetingListCard from './Meeting.List.Card';
 import { printObject } from '../utils/helpers';
 
-const ActiveList = () => {
+const ActiveList = ({ clientId }) => {
     let meetings = [];
     const { data, isError, isLoading, isFetching } = useQuery(
         ['activeMeetings'],
-        () => FetchActiveMeetings(),
+        () => FetchActiveMeetings(clientId),
         {
             cacheTime: 2000,
         }

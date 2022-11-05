@@ -64,7 +64,7 @@ const ActiveScreen = () => {
                     </Text>
                 </View>
                 <View>
-                    <ActiveList meetings={displayMeetings} />
+                    <ActiveList clientId={meeter.affiliation} />
                 </View>
             </Surface>
         </>

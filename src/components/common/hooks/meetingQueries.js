@@ -71,4 +71,16 @@ async function FetchHistoricMeetings(clientId) {
     const { data } = await axios.post(api2use, body, config);
     return data;
 }
-export { FetchMeeting, FetchActiveMeetings, FetchHistoricMeetings };
+async function PutMeeting(values) {
+    let obj = {
+        operation: 'putMeeting',
+        payload: {
+            Item: values,
+        },
+    };
+    let body = JSON.stringify(obj);
+    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+    const { data } = await axios.post(api2use, body, config);
+    return data;
+}
+export { FetchMeeting, FetchActiveMeetings, FetchHistoricMeetings, PutMeeting };

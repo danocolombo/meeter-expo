@@ -32,7 +32,7 @@ const ActiveList = ({ clientId }) => {
     }, []);
     let meetings = [];
     const { data, isError, isLoading, isFetching } = useQuery(
-        ['activeMeetings'],
+        ['meetings', 'active'],
         () => FetchActiveMeetings(clientId),
         {
             refetchInterval: 60000,

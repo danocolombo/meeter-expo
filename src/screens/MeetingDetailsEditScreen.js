@@ -23,8 +23,9 @@ import {
     ActivityIndicator,
 } from 'react-native-paper';
 import { printObject, dateNumToDateDash } from '../utils/helpers';
+import { useMutation } from '@tanstack/react-query';
 import { updateMeetingDDB } from '../providers/meetings';
-
+import { DeleteMeeting } from '../components/common/hooks/meetingQueries';
 const MeetingDetailsEditScreen = ({ route, navigation }) => {
     const meetingId = route.params.meetingId;
     // console.log('MDES:56-->meetingId:', meetingId);
@@ -90,6 +91,19 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             });
     };
 
+    const mutation = useMutation({
+        mutationFn: (meetingId) => {
+            return (
+                DeleteMeeting(meetingId),
+                {
+                    onSuccess: () => {
+                        queryCache.invalidateQueries(['meetings', meetingId]);
+                    },
+                    enabled: true,
+                }
+            );
+        },
+    });
     const handleDeleteConfirmClick = () => {
         setIsLoading(true);
         setModalDeleteConfirmVisible(false);
@@ -106,7 +120,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         console.log('MDES:125-->AFTER GROUPS');
         if (noGroupsIssue) {
             console.log('MDES:127-->noGroupsIssue is true');
-            let deleteRequest = dispatch(deleteMtg(meeting.BadgemeetingId));
+            let deleteRequest = mutation.mutate(meetingId);
             if (deleteRequest) {
                 console.log('MDES:129-->deleteMtg true');
             } else {

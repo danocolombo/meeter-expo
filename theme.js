@@ -155,6 +155,37 @@ const theme = {
     // groupEditFormContainer: {
     //     width: '90%',
     // },
+
+    //   ----------------------------
+    //   PROFILE FORM
+    //   ----------------------------
+    profileFormRowStyle: {
+        flexDirection: 'row',
+        marginTop: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    profileFormInputTitle: {
+        fontFamily: 'Roboto-Regular',
+        fontSize: 18,
+        fontWeight: '500',
+
+        color: 'white',
+    },
+    profileFormSectionHeader: {
+        marginTop: 10,
+        color: accentColor,
+        fontSize: 26,
+        fontFamily: 'Roboto-Bold',
+        fontWeight: '600',
+    },
+    profileFormResidenceBorder: {
+        borderWidth: 1,
+        borderColor: 'white',
+        borderRadius: 10,
+        paddingBottom: 10,
+        marginHorizontal: 5,
+    },
     //   GROUP EDIT
     groupEditSurface: {
         flex: 1,

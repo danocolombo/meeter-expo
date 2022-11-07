@@ -83,4 +83,24 @@ async function PutMeeting(values) {
     const { data } = await axios.post(api2use, body, config);
     return data;
 }
-export { FetchMeeting, FetchActiveMeetings, FetchHistoricMeetings, PutMeeting };
+async function DeleteMeeting(meetingId) {
+    let obj = {
+        operation: 'deleteMeeting',
+        payload: {
+            Key: {
+                meetingId: meetingId,
+            },
+        },
+    };
+    let body = JSON.stringify(obj);
+    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+    const { data } = await axios.post(api2use, body, config);
+    return data;
+}
+export {
+    FetchMeeting,
+    FetchActiveMeetings,
+    FetchHistoricMeetings,
+    PutMeeting,
+    DeleteMeeting,
+};

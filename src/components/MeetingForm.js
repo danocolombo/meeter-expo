@@ -242,11 +242,8 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
             return (
                 PutMeeting(values),
                 {
-                    onSuccess: (data, variables) => {
-                        queryCache.invalidateQueries([
-                            'meetings',
-                            data.meetingId,
-                        ]);
+                    onSuccess: (meeting) => {
+                        queryCache.invalidateQueries(['meetings', 'active']);
                     },
                 }
             );

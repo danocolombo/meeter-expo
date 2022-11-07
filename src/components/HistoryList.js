@@ -1,5 +1,14 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native';
-import axios from 'axios';
+import { useCallback } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    FlatList,
+    Platform,
+    AppState,
+} from 'react-native';
+
+import { useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { FetchHistoricMeetings } from './common/hooks/meetingQueries';
 import MeetingListCard from './Meeting.List.Card';
@@ -7,8 +16,25 @@ import { printObject } from '../utils/helpers';
 import { useSelector } from 'react-redux';
 
 const HistoryList = ({ clientId }) => {
+    function onAppStateChange(status) {
+        if (Platform.OS !== 'web') {
+            focusManager.setFocused(status === 'active');
+        }
+    }
+    useFocusEffect(
+        useCallback(() => {
+            const subscription = AppState.addEventListener(
+                'change',
+                onAppStateChange
+            );
+            refetch();
+            printObject('HL:23-->REFETCH', null);
+
+            return () => subscription.remove();
+        }, [])
+    );
     let meetings = [];
-    const { data, isError, isLoading, isFetching } = useQuery(
+    const { data, isError, isLoading, isFetching, refetch } = useQuery(
         ['historicMeetings'],
         () => FetchHistoricMeetings(clientId),
         {

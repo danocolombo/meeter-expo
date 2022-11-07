@@ -56,7 +56,8 @@ const ProfileForm = ({ route, onCommit, onCancel }) => {
     printObject('HL:23-->isFetching', isFetching);
     printObject('data to work with...', data);
     if (data) {
-        //loadInitialData(data);
+        // setValues(data.body.Items[0]);
+        //inputChangedHandler('firstName', data.body.Items[0].firstName);
     }
 
     if (isLoading) {

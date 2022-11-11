@@ -1,10 +1,17 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import React, {
+    useEffect,
+    useCallback,
+    useState,
+    useLayoutEffect,
+    useRef,
+} from 'react';
 import {
     View,
     Text,
     Alert,
     Button,
     StyleSheet,
+    AppState,
     Modal,
     Image,
 } from 'react-native';
@@ -25,41 +32,49 @@ import {
     useTheme,
     ActivityIndicator,
 } from 'react-native-paper';
+import { useQuery } from '@tanstack/react-query';
 import { deleteGroupEntry } from '../features/meetingsSlice';
 import { printObject, isDateDashBeforeToday } from '../utils/helpers';
 import MeetingListCard from '../components/Meeting.List.Card';
+import { FetchGroup } from '../components/common/hooks/groupQueries';
 import { getMeetingGroups, clearGroups } from '../features/meetingsSlice';
 import DateBall from '../components/ui/DateBall';
 import MeetingCardDate from '../components/ui/Meeting.Card.Date';
 import { Style } from 'domelementtype';
+//   FUNCTION START
+//   ===============
 const GroupDetailsScreen = ({ route, navigation }) => {
-    let routeGroup = route.params.group;
+    let group = route.params.group;
+    let groupId = group?.groupId;
     const meeting = route.params.meeting;
+    printObject('<GDS:50-->group', group);
+    printObject('GDS:51-->meeting', meeting);
+    printObject('meetingDate:', meeting.meetingDate);
     const mtrTheme = useTheme();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const [isLoading, setIsLoading] = useState(false);
+
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
     const groups = useSelector((state) => state.meetings.groups);
-    const [group, setGroup] = useState({});
+    // const [group, setGroup] = useState({});
     const uns = useNavigationState((state) => state);
-    useEffect(() => {
-        setIsLoading(true);
-        console.log('id:', route.params.group.groupId);
-        console.log('groups:', groups.length);
+    // useEffect(() => {
+    //     setIsLoading(true);
+    //     console.log('id:', route.params.group.groupId);
+    //     console.log('groups:', groups.length);
 
-        let grp = [];
-        groups.forEach((g) => {
-            if (g.groupId === route.params.group.groupId) {
-                grp.push(g);
-            }
-        });
-        printObject('grp value', grp);
-        setGroup(grp[0]);
-        setIsLoading(false);
-    }, [groups]);
+    //     let grp = [];
+    //     groups.forEach((g) => {
+    //         if (g.groupId === route.params.group.groupId) {
+    //             grp.push(g);
+    //         }
+    //     });
+    //     printObject('grp value', grp);
+    //     setGroup(grp[0]);
+    //     setIsLoading(false);
+    // }, [groups]);
 
     useLayoutEffect(() => {
         let headerLabelColor = '';
@@ -74,7 +89,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                     <Button
                         onPress={() =>
                             navigation.navigate('GroupEdit', {
-                                groupId: route.params.group.groupId,
+                                groupId: groupId,
                             })
                         }
                         // color='red'
@@ -85,6 +100,33 @@ const GroupDetailsScreen = ({ route, navigation }) => {
             });
         }
     }, [navigation, meeter]);
+    function onAppStateChange(status) {
+        if (Platform.OS !== 'web') {
+            focusManager.setFocused(status === 'active');
+        }
+    }
+    useFocusEffect(
+        useCallback(() => {
+            const subscription = AppState.addEventListener(
+                'change',
+                onAppStateChange
+            );
+            refetch();
+            printObject('GDS:105-->REFETCH', null);
+
+            return () => subscription.remove();
+        }, [])
+    );
+
+    const { data, isError, error, isLoading, isFetching, refetch } = useQuery(
+        ['group', groupId],
+        () => FetchGroup(groupId),
+        {
+            refetchInterval: 60000,
+            cacheTime: 2000,
+            enabled: true,
+        }
+    );
     const handleDeleteClick = () => {
         dispatch(deleteGroupEntry(group.groupId));
         navigation.navigate('MeetingDetails', { meeting, meeting });
@@ -101,6 +143,11 @@ const GroupDetailsScreen = ({ route, navigation }) => {
         //     setShowConfirmDelete(false);
         navigation.navigate('MeetingDetails', { meeting, meeting });
     };
+    if (data) {
+        group = data.body;
+        printObject('GDS:148-->data.body', data.body);
+        printObject('GDS:149-->group:', group);
+    }
     if (isLoading) {
         return (
             <View
@@ -113,6 +160,9 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                 <ActivityIndicator color={'blue'} size={80} />
             </View>
         );
+    }
+    if (isError) {
+        console.error('Error getting group', error);
     }
     return (
         <>
@@ -207,6 +257,21 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                         GROUP DETAILS
                                     </Text>
                                 </View>
+                                <View style={{ alignItems: 'center' }}>
+                                    <Text
+                                        style={mtrTheme.groupCardDetailsLabel}
+                                    >
+                                        {meeting.meetingDate}
+                                    </Text>
+                                    <Text
+                                        style={mtrTheme.groupCardDetailsLabel}
+                                    >
+                                        {meeting.meetingType}
+                                        {' : '}
+                                        {meeting.title}
+                                    </Text>
+                                </View>
+
                                 <View style={mtrTheme.groupCardTopRow}>
                                     <View>
                                         <Text

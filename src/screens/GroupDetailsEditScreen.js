@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, {
+    useEffect,
+    useState,
+    useCallback,
+    useLayoutEffect,
+} from 'react';
 import {
     View,
     Text,
@@ -7,6 +12,7 @@ import {
     StyleSheet,
     Image,
     Modal,
+    AppState,
     useWindowDimensions,
     ScrollView,
 } from 'react-native';
@@ -19,9 +25,11 @@ import {
     useNavigationState,
     useFocusEffect,
 } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
 import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FetchGroup } from '../components/common/hooks/groupQueries';
 import GenderSelectors from '../components/GenderSelectors';
 import NumberInput from '../components/ui/NumberInput';
 import Input from '../components/ui/Input';
@@ -42,9 +50,11 @@ import DateBall from '../components/ui/DateBall';
 import MeetingCardDate from '../components/ui/Meeting.Card.Date';
 import { Style } from 'domelementtype';
 import GroupForm from '../components/GroupForm';
+//   FUNCTION START
+//   ================
 const GroupDetailsEditScreen = ({ route, navigation }) => {
     const groupId = route.params.groupId;
-    const meetingId = route.params.meetingId;
+    let group = {};
     const mtrTheme = useTheme();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
@@ -54,16 +64,11 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
     const meeter = useSelector((state) => state.system);
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
         useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [group, setGroup] = useState();
-    const [isLocationValid, setIsLocationValid] = useState(
-        group?.location?.length > 2 ? true : false
-    );
-    const [isTitleValid, setIsTitleValid] = useState(
-        group?.title?.length > 2 ? true : false
-    );
+
+    //const [group, setGroup] = useState();
+
     const [values, setValues] = useState({
-        meetingId: group?.meetingId ? group.meetingId : meetingId,
+        meetingId: group?.meetingId ? group.meetingId : '0',
         groupId: group?.groupId ? group.groupId : '0',
         gender: group?.gender ? group.gender : 'x',
         title: group?.title ? group.title : '',
@@ -74,31 +79,31 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
         notes: group?.notes ? group.notes : '',
     });
     const uns = useNavigationState((state) => state);
-    useEffect(() => {
-        setIsLoading(true);
-        if (groupId !== '0') {
-            let grp = [];
-            groups.forEach((g) => {
-                if (g.groupId === groupId) {
-                    grp.push(g);
-                }
-            });
-            printObject('grp value', grp);
-            setValues(grp[0]);
-            setGroup(grp[0]);
-            if (grp[0].title.length < 3) {
-                setIsTitleValid(false);
-            } else {
-                setIsTitleValid(true);
-            }
-            if (grp[0].location.length < 3) {
-                setIsLocationValid(false);
-            } else {
-                setIsLocationValid(true);
-            }
-        }
-        setIsLoading(false);
-    }, []);
+    // useEffect(() => {
+    //     setIsLoading(true);
+    //     if (groupId !== '0') {
+    //         let grp = [];
+    //         groups.forEach((g) => {
+    //             if (g.groupId === groupId) {
+    //                 grp.push(g);
+    //             }
+    //         });
+    //         printObject('grp value', grp);
+    //         setValues(grp[0]);
+    //         setGroup(grp[0]);
+    //         if (grp[0].title.length < 3) {
+    //             setIsTitleValid(false);
+    //         } else {
+    //             setIsTitleValid(true);
+    //         }
+    //         if (grp[0].location.length < 3) {
+    //             setIsLocationValid(false);
+    //         } else {
+    //             setIsLocationValid(true);
+    //         }
+    //     }
+    //     setIsLoading(false);
+    // }, []);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -119,6 +124,40 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
             ),
         });
     }, [navigation, group]);
+    function onAppStateChange(status) {
+        if (Platform.OS !== 'web') {
+            focusManager.setFocused(status === 'active');
+        }
+    }
+    useFocusEffect(
+        useCallback(() => {
+            const subscription = AppState.addEventListener(
+                'change',
+                onAppStateChange
+            );
+            refetch();
+            printObject('GDES:135-->REFETCH', null);
+
+            return () => subscription.remove();
+        }, [])
+    );
+    const { data, isError, error, isLoading, isFetching, refetch } = useQuery(
+        ['group', groupId],
+        () => FetchGroup(groupId),
+        {
+            refetchInterval: 60000,
+            cacheTime: 2000,
+            enabled: true,
+        }
+    );
+    if (data) {
+        group = data.body;
+        if (!values.title) {
+            setValues(group);
+        }
+        printObject('GDES:158-->data.body', data.body);
+        printObject('GDES:159-->group:', group);
+    }
     function setGenderValue(enteredValue) {
         setValues((curInputValues) => {
             return {
@@ -172,7 +211,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
         marginHorizontal: 10,
     };
     const handleDeleteConfirmClick = () => {
-        setIsLoading(true);
+        //setIsLoading(true);
         setTimeout(function () {
             setModalDeleteConfirmVisible(false);
             dispatch(deleteIndividualGroup(values.groupId));
@@ -189,6 +228,12 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
             // );
         }, 10);
     };
+    const [isLocationValid, setIsLocationValid] = useState(
+        group?.location?.length > 2 ? true : false
+    );
+    const [isTitleValid, setIsTitleValid] = useState(
+        group?.title?.length > 2 ? true : false
+    );
     if (isLoading) {
         return (
             <View
@@ -201,6 +246,9 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                 <ActivityIndicator color={'blue'} size={80} />
             </View>
         );
+    }
+    if (isError) {
+        console.error('Error getting group', error);
     }
     return (
         <>

@@ -1,10 +1,4 @@
-import {
-    StyleSheet,
-    Text,
-    View,
-    FlatList,
-    ImageBackground,
-} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, {
     useLayoutEffect,
     useEffect,
@@ -17,7 +11,7 @@ import {
     useFocusEffect,
     useNavigationState,
 } from '@react-navigation/native';
-import HistoryList from '../components/HistoryList';
+import ProfileForm from '../components/ProfileForm';
 import { getSupportedMeetings } from '../providers/meetings';
 import { useSelector, useDispatch } from 'react-redux';
 import MeetingListCard from '../components/Meeting.List.Card';
@@ -29,7 +23,7 @@ import {
     createMtgCompKey,
 } from '../utils/helpers';
 
-const HistoricScreen = (props) => {
+const ProfileScreen = (props) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const mtrTheme = useTheme();
@@ -91,25 +85,22 @@ const HistoricScreen = (props) => {
     //         };
     //     }, [])
     // );
-
+    const handleCommit = () => {};
+    const handleCancel = () => {};
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
                 <View>
-                    <Text style={mtrTheme.screenTitle}>HISTORIC</Text>
+                    <Text style={mtrTheme.screenTitle}>Profile Screen</Text>
                 </View>
-                <View style={{ padding: 10 }}>
-                    <Text style={mtrTheme.subTitleSmall}>
-                        Click event for details.
-                    </Text>
-                </View>
-                <HistoryList clientId={meeter.affiliation} />
+
+                <ProfileForm onCommit={handleCommit} onCancel={handleCancel} />
             </Surface>
         </>
     );
 };
 
-export default HistoricScreen;
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
     rootContainer: {

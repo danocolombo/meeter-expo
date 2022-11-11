@@ -1,8 +1,15 @@
 import { useEffect, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import NetInfo from '@react-native-community/netinfo';
 import { StyleSheet, Text, View, SafeAreaView, Platform } from 'react-native';
 ////RB ---
-import { QueryClient, QueryClientProvider } from 'react-query';
+import {
+    QueryClient,
+    QueryClientProvider,
+    onlineManager,
+    useOnlineManager,
+} from '@tanstack/react-query';
+// import NetInfo from '@react-native-community/netinfo';
 import Navigation from './src/navigation/Navigation';
 import { store } from './src/app/store';
 import { Provider, useSelector } from 'react-redux';
@@ -19,6 +26,16 @@ Amplify.configure({
     },
 });
 import { Auth, Hub } from 'aws-amplify';
+// onlineManager.setEventListener((setOnline) => {
+//     return NetInfo.addEventListener((state) => {
+//         setOnline(state.isConnected);
+//     });
+// });
+onlineManager.setEventListener((setOnline) => {
+    return NetInfo.addEventListener((state) => {
+        setOnline(!!state.isConnected);
+    });
+});
 const queryClient = new QueryClient();
 
 function App() {

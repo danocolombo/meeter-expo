@@ -155,6 +155,37 @@ const theme = {
     // groupEditFormContainer: {
     //     width: '90%',
     // },
+
+    //   ----------------------------
+    //   PROFILE FORM
+    //   ----------------------------
+    profileFormRowStyle: {
+        flexDirection: 'row',
+        marginTop: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    profileFormInputTitle: {
+        fontFamily: 'Roboto-Regular',
+        fontSize: 18,
+        fontWeight: '500',
+
+        color: 'white',
+    },
+    profileFormSectionHeader: {
+        marginTop: 10,
+        color: accentColor,
+        fontSize: 26,
+        fontFamily: 'Roboto-Bold',
+        fontWeight: '600',
+    },
+    profileFormResidenceBorder: {
+        borderWidth: 1,
+        borderColor: 'white',
+        borderRadius: 10,
+        paddingBottom: 10,
+        marginHorizontal: 5,
+    },
     //   GROUP EDIT
     groupEditSurface: {
         flex: 1,
@@ -452,6 +483,27 @@ const theme = {
         color: lightText,
         fontSize: 24,
         fontWeight: '400',
+    },
+    meetingDetailsNotesContainer: {
+        //flexDirection: 'column',
+        marginHorizontal: 10,
+        marginBottom: 15,
+        borderRadius: 5,
+        paddingHorizontal: 15,
+        backgroundColor: lightColor,
+        //justifyContent: 'center',
+    },
+    meeingDetailsNotesText: {
+        color: darkText,
+        fontFamily: 'Roboto-Regular',
+        fontSize: 24,
+    },
+    groupDetailsMealText: {
+        fontFamily: 'Roboto-Regular',
+        color: lightText,
+
+        fontSize: 24,
+        padding: 10,
     },
     detailsRowValue: {
         fontFamily: 'Roboto-Regular',

@@ -10,10 +10,13 @@ import {
     Text,
     StyleSheet,
     Button,
+    FlatList,
     TouchableOpacity,
+    useWindowDimensions,
     Platform,
+    AppState,
 } from 'react-native';
-
+import { useQuery } from '@tanstack/react-query';
 // import * as Application from 'expo-application';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -25,10 +28,12 @@ import {
 } from '@react-navigation/native';
 import {
     getMeetingGroups,
+    fetchSpecificMeeting,
     clearGroups,
     createTmp,
 } from '../features/meetingsSlice';
 import GroupList from '../components/GroupList';
+
 import DateBall from '../components/ui/DateBall';
 import DateStack from '../components/ui/DateStack';
 import {
@@ -43,55 +48,24 @@ import {
     isDateDashBeforeToday,
     dateNumToDateDash,
 } from '../utils/helpers';
+import { FetchMeeting } from '../components/common/hooks/meetingQueries';
+import { FetchGroups } from '../components/common/hooks/groupQueries';
 import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
+//   FUNCTION START
+//   ==============
 const MeetingDetails = (props) => {
     const meetingId = props.route.params.meetingId;
-
-    // const [tmpMeeting, setTmpMeeting] = useState();
-    const [isLoading, setIsLoading] = useState(false);
     const mtrTheme = useTheme();
-    const meetings = useSelector((state) => state.meetings.meetings);
-    const [meeting, setMeeting] = useState();
-    // const mtg = useRef(meetingPassedIn);
+    const [historic, setHistoric] = useState(false);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.users.currentUser);
-    const groups = useSelector((state) => state.meetings.groups);
-    const [historic, setHistoric] = useState(false);
-    // const hMeetings = useSelector((state) => state.meetings.historicMeetings);
-    // const aMeetings = useSelector((state) => state.meetings.activeMeetings);
     const [displayGroups, setDisplayGroups] = useState([]);
     const meeter = useSelector((state) => state.system);
-
     const navigation = useNavigation();
-    // const activeMeetings = useSelector(
-    //     (state) => state.meetings.activeMeetings
-    // );
-    // determin if active or historic
-    // const historic = isDateDashBeforeToday(tmpMeeting.meetingDate);
     const uns = useNavigationState((state) => state);
-    useEffect(() => {
-        console.log('MEETING-ID:', meetingId);
-        setIsLoading(true);
-        let today = dateNumToDateDash(meeter.today);
-        let mtg = [];
-        meetings.forEach((m) => {
-            if (m.meetingId === meetingId) {
-                mtg.push(m);
-                if (m.meetingDate < today) {
-                    setHistoric(true);
-                } else {
-                    setHistoric(false);
-                }
-            }
-        });
-        setMeeting(mtg[0]);
-        const groups = dispatch(getMeetingGroups(meetingId));
-        setDisplayGroups(groups);
-        setIsLoading(false);
-    }, []);
-
+    let meeting = {};
+    const { width } = useWindowDimensions();
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
@@ -121,33 +95,58 @@ const MeetingDetails = (props) => {
             });
         }
     }, [navigation, meeter]);
+    function onAppStateChange(status) {
+        if (Platform.OS !== 'web') {
+            focusManager.setFocused(status === 'active');
+        }
+    }
+    useFocusEffect(
+        useCallback(() => {
+            const subscription = AppState.addEventListener(
+                'change',
+                onAppStateChange
+            );
+            MEETING.refetch();
+            GROUPS.refetch();
+            printObject('MDS:63-->REFETCH', null);
 
-    // useEffect(() => {
-    //     let hm = hMeetings.filter(
-    //         (m) => m.meetingId === meetingPassedIn.meetingId
-    //     );
-    //     if (Object.keys(hm).length !== 0) {
-    //         //if (hm.length > 0) {
-    //         printObject('historic meeting:', hm);
-    //         dispatch(createTmp(hm));
-    //     } else {
-    //         let am = aMeetings.filter(
-    //             (m) => m.meetingId === meetingPassedIn.meetingId
-    //         );
-    //         if (am.length > 0) {
-    //             printObject('active meeting:', am);
-    //             dispatch(createTmp(am));
-    //         }
+            return () => subscription.remove();
+        }, [])
+    );
+    // const { data, isError, isLoading, isFetching, refetch } = useQuery(
+    //     ['meeting', meetingId],
+    //     () => FetchMeeting(meetingId),
+    //     {
+    //         refetchInterval: 60000,
+    //         cacheTime: 2000,
+    //         enabled: true,
     //     }
-    //     dispatch(clearGroups());
-    //     const groups = dispatch(getMeetingGroups(meeting.meetingId));
-    //     setDisplayGroups(groups);
-    // }, [route, isFocused]);
-    // printObject('MDS:58-->meeting:', meeting);
-    // useEffect(() => {
-    //     setMeeting(tmpMeeting);
-    // }, [tmpMeeting]);
-    if (isLoading || !meeting) {
+    // );
+    const MEETING = useQuery(
+        ['mtg', meetingId],
+        () => FetchMeeting(meetingId),
+        {
+            refetchInterval: 60000,
+            cacheTime: 2000,
+            enabled: true,
+        }
+    );
+    const GROUPS = useQuery(['grps', meetingId], () => FetchGroups(meetingId), {
+        refetchInterval: 60000,
+        cacheTime: 2000,
+        enabled: true,
+    });
+    //if (data) {
+    if (MEETING.data) {
+        printObject('DATA to use:', MEETING.data);
+        meeting = MEETING.data.body;
+    }
+    if (GROUPS.data) {
+        printObject('GROUPS!!!', GROUPS.data);
+    }
+    printObject('MDS:78-->isLoading', MEETING.isLoading);
+    printObject('MDS:79-->isFetching', MEETING.isFetching);
+    if (MEETING.isLoading) {
         return (
             <View
                 style={{
@@ -163,6 +162,13 @@ const MeetingDetails = (props) => {
             </View>
         );
     }
+    if (MEETING.isError) {
+        return (
+            <View>
+                <Text>Something went wrong</Text>
+            </View>
+        );
+    }
 
     return (
         <>
@@ -172,7 +178,6 @@ const MeetingDetails = (props) => {
                         {meeting?.meetingType}
                     </Text>
                 </View>
-
                 <View style={styles.firstRow}>
                     <View style={styles.dateWrapper}>
                         {Platform.OS === 'ios' && (
@@ -212,7 +217,12 @@ const MeetingDetails = (props) => {
                         </Text>
                     </View>
                     <View style={{ marginHorizontal: 2 }}>
-                        <Text style={mtrTheme.detailsRowValue}>
+                        <Text
+                            style={[
+                                mtrTheme.groupDetailsMealText,
+                                { maxWidth: width * 0.6 },
+                            ]}
+                        >
                             {meeting.meal === '' ? 'TBD' : meeting.meal}
                         </Text>
                     </View>
@@ -270,6 +280,13 @@ const MeetingDetails = (props) => {
                         </View>
                     </View>
                 )}
+                {meeting.notes && (
+                    <View style={mtrTheme.meetingDetailsNotesContainer}>
+                        <Text style={mtrTheme.meeingDetailsNotesText}>
+                            {meeting.notes}
+                        </Text>
+                    </View>
+                )}
                 <View
                     style={{
                         borderTopColor: 'yellow',
@@ -308,9 +325,8 @@ const MeetingDetails = (props) => {
                                 <TouchableOpacity
                                     key={0}
                                     onPress={() =>
-                                        navigation.navigate('GroupEdit', {
+                                        navigation.navigate('GroupNew', {
                                             meetingId: meetingId,
-                                            groupId: '0',
                                         })
                                     }
                                     style={({ pressed }) =>
@@ -327,8 +343,37 @@ const MeetingDetails = (props) => {
                         )}
                     </View>
                 </View>
-
-                <GroupList meetingId={meetingId} />
+                {GROUPS.data ? (
+                    <>
+                        <FlatList
+                            data={GROUPS.data.body}
+                            keyExtractor={(item) => item.groupId}
+                            persistentScrollbar={true}
+                            renderItem={({ item }) => (
+                                <GroupListCard group={item} meeting={meeting} />
+                            )}
+                            ListFooterComponent={<></>}
+                        />
+                    </>
+                ) : (
+                    <View>
+                        <Text>NO</Text>
+                    </View>
+                )}
+                {/* <GroupList meetingId={meetingId} /> */}
+                {/* <View>
+                    (GROUPS.data &&
+                    <FlatList
+                        data={GROUPS.data.body}
+                        keyExtractor={(item) => item.groupId}
+                        persistentScrollbar={true}
+                        renderItem={({ item }) => (
+                            <GroupListCard group={item} meeting={meeting} />
+                        )}
+                        ListFooterComponent={<></>}
+                    />
+                    }
+                </View> */}
             </Surface>
         </>
     );

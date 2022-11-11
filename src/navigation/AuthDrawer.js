@@ -11,6 +11,7 @@ import MeetingsConfig from './BottomNav';
 import LandingScreen from '../screens/LandingScreen';
 import ActiveScreen from '../screens/ActiveScreen';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
+import ProfileScreen from '../screens/ProfileScreen';
 
 //import { Colors } from '../constants/colors';
 import { printObject } from '../utils/helpers';
@@ -108,6 +109,7 @@ const AuthDrawer = (navigation) => {
                     tabBarActiveTintColor: 'white',
                 })}
             />
+            <Stack.Screen name='Profile' component={ProfileScreen} />
             <Stack.Screen name='Logout' component={MeeterSignOut} />
         </Drawer.Navigator>
     );

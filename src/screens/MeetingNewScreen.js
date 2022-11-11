@@ -1,26 +1,16 @@
-import {
-    StyleSheet,
-    Text,
-    View,
-    ViewBase,
-    ImageBackground,
-} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, { useLayoutEffect } from 'react';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Surface, useTheme } from 'react-native-paper';
 import MeetingForm from '../components/MeetingForm';
-import { addNewMeeting } from '../features/meetingsSlice';
-import { FlipInXDown } from 'react-native-reanimated';
+import { addMeeting } from '../features/meetingsSlice';
 import { isDateDashBeforeToday, printObject } from '../utils/helpers';
-
-const MeetingNewScreen = (props) => {
-    const navigation = useNavigation();
-    console.log(props.route.name);
-    // printObject('props', props);
+import { updateMeetingDDB } from '../providers/meetings';
+//   FUNCTION START
+//   ================
+const MeetingNewScreen = ({ route, navigation }) => {
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
-    const isFocused = useIsFocused();
     const meeter = useSelector((state) => state.system);
     var data = new Date();
     // printObject('data', data);
@@ -80,9 +70,23 @@ const MeetingNewScreen = (props) => {
         youthCount: 0,
     };
     const handleUpdate = (values) => {
-        console.log('handlePut received.');
-        printObject('MNS:84-->values', values);
-        dispatch(addNewMeeting(values));
+        // updateMeetingDDB(values)
+        //     .then((res) => {
+        //         printObject('MNS:73-->res:', res);
+        //         dispatch(addMeeting(res));
+        //         console.log('after dispatch(addMeeting)');
+        //         // console.log('dispatch(updateMeeting) returned');
+
+        //         return;
+        //     })
+        //     .catch((err) => {
+        //         printObject('updateMeeting provider failed:', err);
+        //         console.warn('updateMeeting provider failed');
+
+        //         return;
+        //     });
+
+        // dispatch(addNewMeeting(values));
         if (isDateDashBeforeToday(values.meetingDate)) {
             navigation.navigate('HistoricMeeings');
         } else {

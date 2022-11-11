@@ -1,21 +1,29 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, {
+    useEffect,
+    useState,
+    useLayoutEffect,
+    useCallback,
+    useRef,
+} from 'react';
 import {
     View,
     Text,
     StyleSheet,
     useWindowDimensions,
     Button,
+    AppState,
     Modal,
 } from 'react-native';
 import MeetingForm from '../components/MeetingForm';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { useQuery } from '@tanstack/react-query';
 import {
     updateMeeting,
     deleteGroupList,
     deleteMtg,
 } from '../features/meetingsSlice';
 import CustomButton from '../components/ui/CustomButton';
+import { useFocusEffect } from '@react-navigation/native';
 import {
     Surface,
     withTheme,
@@ -26,7 +34,13 @@ import { printObject, dateNumToDateDash } from '../utils/helpers';
 import { useMutation } from '@tanstack/react-query';
 import { updateMeetingDDB } from '../providers/meetings';
 import { DeleteMeeting } from '../components/common/hooks/meetingQueries';
+import { FetchMeeting } from '../components/common/hooks/meetingQueries';
+import { isDateDashBeforeToday } from '../utils/helpers';
+
+//    FUNCTION START
+//    ===============
 const MeetingDetailsEditScreen = ({ route, navigation }) => {
+    // const showModal = useRef(false);
     const meetingId = route.params.meetingId;
     // console.log('MDES:56-->meetingId:', meetingId);
     const mtrTheme = useTheme();
@@ -36,7 +50,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
     const meeter = useSelector((state) => state.system);
     const groups = useSelector((state) => state.meetings.groups);
     const meetings = useSelector((state) => state.meetings.meetings);
-    const [meeting, setMeeting] = useState();
+    //const [meeting, setMeeting] = useState();
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
         useState(false);
     // const historic = isDateDashBeforeToday(meeting.meetingDate);
@@ -45,6 +59,22 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         f: "Women's",
         m: "Men's",
     };
+    function onAppStateChange(status) {
+        if (Platform.OS !== 'web') {
+            focusManager.setFocused(status === 'active');
+        }
+    }
+    useFocusEffect(
+        useCallback(() => {
+            const subscription = AppState.addEventListener(
+                'change',
+                onAppStateChange
+            );
+            MEETING.refetch();
+
+            return () => subscription.remove();
+        }, [])
+    );
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
@@ -58,20 +88,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             ),
         });
     }, [navigation, meeter]);
-    useEffect(() => {
-        // console.log('MDES:87-->MEETING-ID:', meetingId);
-        setIsLoading(true);
-        let today = dateNumToDateDash(meeter.today);
-        let mtg = [];
-        meetings.forEach((m) => {
-            if (m.meetingId === meetingId) {
-                mtg.push(m);
-            }
-        });
-        setMeeting(mtg[0]);
 
-        setIsLoading(false);
-    }, []);
     const handleUpdate = (values) => {
         updateMeetingDDB(values)
             .then((res) => {
@@ -79,7 +96,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                 dispatch(updateMeeting(res));
                 // console.log('dispatch(updateMeeting) returned');
                 navigation.navigate('MeetingDetails', {
-                    meeting: res,
+                    meetingId: meetingId,
                 });
                 return;
             })
@@ -120,7 +137,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         console.log('MDES:125-->AFTER GROUPS');
         if (noGroupsIssue) {
             console.log('MDES:127-->noGroupsIssue is true');
-            let deleteRequest = mutation.mutate(meetingId);
+            let deleteRequest = mutation.mutate(meeting.meetingId);
             if (deleteRequest) {
                 console.log('MDES:129-->deleteMtg true');
             } else {
@@ -129,10 +146,35 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         } else {
             console.log('MDES:134-->noGroupsIssue is false');
         }
+
+        if (isDateDashBeforeToday(meeting.meetingDate)) {
+            navigation.navigate('HistoricMeeings');
+        } else {
+            navigation.navigate('ActiveMeetings');
+        }
         setIsLoading(false);
     };
-
-    if (isLoading) {
+    const MEETING = useQuery(
+        ['meeting', meetingId],
+        () => FetchMeeting(meetingId),
+        {
+            refetchInterval: 60000,
+            cacheTime: 2000,
+            enabled: true,
+        }
+    );
+    const flipModal = (v) => {
+        if (v) {
+            showModal = true;
+        } else {
+            showModal = false;
+        }
+    };
+    let meeting = {};
+    if (MEETING.data) {
+        meeting = MEETING.data.body;
+    }
+    if (MEETING.isLoading) {
         return (
             <View
                 style={{
@@ -145,6 +187,9 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                 <ActivityIndicator size={75} color='#293462' />
             </View>
         );
+    }
+    if (MEETING.isError) {
+        console.error('MEETING ERROR:', MEETING.error);
     }
     return (
         <>
@@ -217,9 +262,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                         <View style={{ width: width * 0.35, marginRight: 20 }}>
                             <CustomButton
                                 text='No, cancel'
-                                onPress={() =>
-                                    setModalDeleteConfirmVisible(false)
-                                }
+                                onPress={() => flipModal(false)}
                             />
                         </View>
                         <View style={{ width: width * 0.35, marginLeft: 20 }}>
@@ -227,7 +270,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                                 text='Yes, DELETE'
                                 bgColor='red'
                                 fgColor='black'
-                                onPress={() => handleDeleteConfirmClick()}
+                                onPress={() => flipModal(true)}
                             />
                         </View>
                     </View>

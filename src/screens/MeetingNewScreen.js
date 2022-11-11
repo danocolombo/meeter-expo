@@ -6,6 +6,8 @@ import MeetingForm from '../components/MeetingForm';
 import { addMeeting } from '../features/meetingsSlice';
 import { isDateDashBeforeToday, printObject } from '../utils/helpers';
 import { updateMeetingDDB } from '../providers/meetings';
+//   FUNCTION START
+//   ================
 const MeetingNewScreen = ({ route, navigation }) => {
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
@@ -68,28 +70,28 @@ const MeetingNewScreen = ({ route, navigation }) => {
         youthCount: 0,
     };
     const handleUpdate = (values) => {
-        updateMeetingDDB(values)
-            .then((res) => {
-                printObject('MNS:73-->res:', res);
-                dispatch(addMeeting(res));
-                console.log('after dispatch(addMeeting)');
-                // console.log('dispatch(updateMeeting) returned');
+        // updateMeetingDDB(values)
+        //     .then((res) => {
+        //         printObject('MNS:73-->res:', res);
+        //         dispatch(addMeeting(res));
+        //         console.log('after dispatch(addMeeting)');
+        //         // console.log('dispatch(updateMeeting) returned');
 
-                return;
-            })
-            .catch((err) => {
-                printObject('updateMeeting provider failed:', err);
-                console.warn('updateMeeting provider failed');
+        //         return;
+        //     })
+        //     .catch((err) => {
+        //         printObject('updateMeeting provider failed:', err);
+        //         console.warn('updateMeeting provider failed');
 
-                return;
-            });
+        //         return;
+        //     });
 
         // dispatch(addNewMeeting(values));
-        // if (isDateDashBeforeToday(values.meetingDate)) {
-        //     navigation.navigate('HistoricMeeings');
-        // } else {
-        //     navigation.navigate('ActiveMeetings');
-        // }
+        if (isDateDashBeforeToday(values.meetingDate)) {
+            navigation.navigate('HistoricMeeings');
+        } else {
+            navigation.navigate('ActiveMeetings');
+        }
     };
 
     return (

@@ -11,11 +11,17 @@ import { focusManager } from '@tanstack/react-query';
 import { useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { FetchActiveMeetings } from './common/hooks/meetingQueries';
-import { ActivityIndicator } from 'react-native-paper';
+import {
+    Surface,
+    withTheme,
+    useTheme,
+    ActivityIndicator,
+} from 'react-native-paper';
 import MeetingListCard from './Meeting.List.Card';
 import { printObject } from '../utils/helpers';
 
 const ActiveList = ({ clientId }) => {
+    const mtrTheme = useTheme();
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
@@ -56,7 +62,7 @@ const ActiveList = ({ clientId }) => {
                     justifyContent: 'center',
                 }}
             >
-                <ActivityIndicator color={'blue'} size={80} />
+                <ActivityIndicator color={mtrTheme.colors.accent} size={80} />
             </View>
         );
     }

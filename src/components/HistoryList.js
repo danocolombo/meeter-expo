@@ -7,7 +7,7 @@ import {
     Platform,
     AppState,
 } from 'react-native';
-
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { FetchHistoricMeetings } from './common/hooks/meetingQueries';
@@ -16,6 +16,7 @@ import { printObject } from '../utils/helpers';
 import { useSelector } from 'react-redux';
 
 const HistoryList = ({ clientId }) => {
+    const mtrTheme = useTheme();
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
@@ -50,8 +51,14 @@ const HistoryList = ({ clientId }) => {
 
     if (isLoading) {
         return (
-            <View>
-                <Text>Loading...</Text>
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator color={mtrTheme.colors.accent} size={80} />
             </View>
         );
     }

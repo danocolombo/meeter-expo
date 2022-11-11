@@ -3,7 +3,11 @@ import React from 'react';
 import { useTheme, withTheme, Surface, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { printObject } from '../utils/helpers';
+//   FUNCTION START
+//   ---------------
 const GroupListCard = ({ group, meeting }) => {
+    printObject('GLC:9-->group:', group);
+    printObject('GLC:10-->meeting:', meeting);
     const navigation = useNavigation();
     const mtrTheme = useTheme();
     function groupPressHandler() {

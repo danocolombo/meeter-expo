@@ -27,7 +27,7 @@ import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
 import MeetingNewScreen from '../screens/MeetingNewScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
-
+import GroupNewScreen from '../screens/GroupNewScreen';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub } from 'aws-amplify';
 const Stack = createNativeStackNavigator();
@@ -106,9 +106,9 @@ function MeeterStack(props) {
                     headerTintColor: 'white',
                 })}
             />
-            {/* <Stack.Screen
-                name='MeetingDelete'
-                component={MeetingDelete}
+            <Stack.Screen
+                name='GroupNew'
+                component={GroupNewScreen}
                 options={({ navigation }) => ({
                     title: 'Meeter',
                     headerStyle: {
@@ -116,7 +116,7 @@ function MeeterStack(props) {
                     },
                     headerTintColor: 'white',
                 })}
-            /> */}
+            />
 
             <Stack.Screen
                 name='GroupDetails'

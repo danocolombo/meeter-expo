@@ -484,6 +484,27 @@ const theme = {
         fontSize: 24,
         fontWeight: '400',
     },
+    meetingDetailsNotesContainer: {
+        //flexDirection: 'column',
+        marginHorizontal: 10,
+        marginBottom: 15,
+        borderRadius: 5,
+        paddingHorizontal: 15,
+        backgroundColor: lightColor,
+        //justifyContent: 'center',
+    },
+    meeingDetailsNotesText: {
+        color: darkText,
+        fontFamily: 'Roboto-Regular',
+        fontSize: 24,
+    },
+    groupDetailsMealText: {
+        fontFamily: 'Roboto-Regular',
+        color: lightText,
+
+        fontSize: 24,
+        padding: 10,
+    },
     detailsRowValue: {
         fontFamily: 'Roboto-Regular',
         color: lightText,

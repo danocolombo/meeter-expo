@@ -227,7 +227,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         printObject('newValues', newValues);
         console.log('---------------------------');
         mutation.mutate(values);
-        //handleUpdate(values);
+        handleUpdate(values);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     // printObject('MDS:58-->meeting:', meeting);
@@ -253,7 +253,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
     return (
         <>
             {mutation.isLoading ? (
-                'Adding todo...'
+                'Adding meeting...'
             ) : (
                 <>
                     {mutation.isError ? (
@@ -266,7 +266,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
 
                     {mutation.isSuccess ? (
                         <View>
-                            <Text>Todo added!</Text>
+                            <Text>Meeting added!</Text>
                         </View>
                     ) : null}
                     <Surface style={styles.surface}>

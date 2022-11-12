@@ -54,16 +54,16 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
         });
     }
 
-    useLayoutEffect(() => {
-        let headerLabelColor = '';
-        if (Platform.OS === 'ios') {
-            headerLabelColor = 'white';
-        }
-        navigation.setOptions({
-            title: meeter.appName,
-            headerBackTitle: 'Back',
-        });
-    }, [navigation, meeter]);
+    // useLayoutEffect(() => {
+    //     let headerLabelColor = '';
+    //     if (Platform.OS === 'ios') {
+    //         headerLabelColor = 'white';
+    //     }
+    //     navigation.setOptions({
+    //         // title: meeter.appName,
+    //         headerBackTitle: 'Back',
+    //     });
+    // }, [navigation, meeter]);
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');

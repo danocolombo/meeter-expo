@@ -34,12 +34,12 @@ const ProfileScreen = (props) => {
             return () => subscription.remove();
         }, [])
     );
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            //title: meeter.appName,
-            headerBackTitle: 'Back',
-        });
-    }, [navigation, meeter]);
+    // useLayoutEffect(() => {
+    //     navigation.setOptions({
+    //         //title: meeter.appName,
+    //         headerBackTitle: 'Back',
+    //     });
+    // }, [navigation, meeter]);
     const handleUpdate = (values) => {
         UpdateProfile(values)
             .then((res) => {

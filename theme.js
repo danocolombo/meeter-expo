@@ -493,10 +493,16 @@ const theme = {
         backgroundColor: lightColor,
         //justifyContent: 'center',
     },
-    meeingDetailsNotesText: {
+    meetingDetailsNotesText: {
         color: darkText,
         fontFamily: 'Roboto-Regular',
         fontSize: 24,
+    },
+    meetingDetailsGroupLoadingContainer: {},
+    meetingDetailsGroupLoadingText: {
+        color: lightText,
+        fontFamily: 'Roboto-Thin',
+        fontSize: 14,
     },
     groupDetailsMealText: {
         fontFamily: 'Roboto-Regular',

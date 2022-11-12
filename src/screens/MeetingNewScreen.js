@@ -5,7 +5,7 @@ import { Surface, useTheme } from 'react-native-paper';
 import MeetingForm from '../components/MeetingForm';
 import { addMeeting } from '../features/meetingsSlice';
 import { isDateDashBeforeToday, printObject } from '../utils/helpers';
-import { updateMeetingDDB } from '../providers/meetings';
+import { addMeetingDDB } from '../providers/meetings';
 //   FUNCTION START
 //   ================
 const MeetingNewScreen = ({ route, navigation }) => {
@@ -70,6 +70,26 @@ const MeetingNewScreen = ({ route, navigation }) => {
         youthCount: 0,
     };
     const handleUpdate = (values) => {
+        addMeetingDDB(values)
+            .then((res) => {
+                printObject('addMeetingDDB res:', res);
+                //dispatch(addMeeting(res));
+                // console.log('dispatch(updateMeeting) returned');
+
+                if (isDateDashBeforeToday(values.meetingDate)) {
+                    navigation.navigate('HistoricMeetings');
+                } else {
+                    navigation.navigate('ActiveMeetings');
+                }
+                return;
+            })
+            .catch((err) => {
+                printObject('addMeeting provider failed:', err);
+                console.warn('addMeeting provider failed');
+
+                return;
+            });
+
         // updateMeetingDDB(values)
         //     .then((res) => {
         //         printObject('MNS:73-->res:', res);
@@ -87,11 +107,6 @@ const MeetingNewScreen = ({ route, navigation }) => {
         //     });
 
         // dispatch(addNewMeeting(values));
-        if (isDateDashBeforeToday(values.meetingDate)) {
-            navigation.navigate('HistoricMeeings');
-        } else {
-            navigation.navigate('ActiveMeetings');
-        }
     };
 
     return (

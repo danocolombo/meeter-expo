@@ -79,7 +79,10 @@ const HistoryList = ({ clientId }) => {
                             data={meetings}
                             keyExtractor={(item) => item.meetingId}
                             renderItem={({ item }) => (
-                                <MeetingListCard meeting={item} active={true} />
+                                <MeetingListCard
+                                    meeting={item}
+                                    active={false}
+                                />
                             )}
                         />
                     )}

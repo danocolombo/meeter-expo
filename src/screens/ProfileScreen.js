@@ -1,92 +1,88 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, {
-    useLayoutEffect,
-    useEffect,
-    useState,
-    useCallback,
-} from 'react';
+import React, { useLayoutEffect, useCallback } from 'react';
+import { Text, View, AppState } from 'react-native';
 import { Surface, useTheme, ActivityIndicator } from 'react-native-paper';
-import {
-    useNavigation,
-    useFocusEffect,
-    useNavigationState,
-} from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
 import ProfileForm from '../components/ProfileForm';
-import { getSupportedMeetings } from '../providers/meetings';
-import { useSelector, useDispatch } from 'react-redux';
-import MeetingListCard from '../components/Meeting.List.Card';
-import { getHistoricMeetings } from '../providers/meetings';
-//import { getHistoricMeetings } from '../features/meetingsSlice';
-import {
-    printObject,
-    getDateMinusDays,
-    createMtgCompKey,
-} from '../utils/helpers';
+import { FetchProfile } from '../components/common/hooks/userQueries';
+import { printObject } from '../utils/helpers';
 
+//   FUNCTION START
+//   ==============
 const ProfileScreen = (props) => {
     const navigation = useNavigation();
-    const dispatch = useDispatch();
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
-    const hMeetings = useSelector((state) => state.meetings.historicMeetings);
-    const [meetings, setMeetings] = useState([]);
-    const uns = useNavigationState((state) => state);
-    const [isLoading, setIsLoading] = useState(false);
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         // alert(JSON.stringify(uns));
-    //         //alert('Historic: focused');
-    //         setIsLoading(true);
-    //         printObject('###HISTORIC:uns###', uns);
-    //         let currentMeetings = [];
-    //         getSupportedMeetings(meeter.affiliation.toLowerCase())
-    //             .then((results) => {
-    //                 console.log('got results');
-    //                 results.forEach((m) => {
-    //                     currentMeetings.push(m);
-    //                 });
-    //                 let key =
-    //                     meeter.affiliation.toLowerCase() +
-    //                     '#' +
-    //                     meeter.today.substring(0, 4) +
-    //                     '#' +
-    //                     meeter.today.substring(4, 6) +
-    //                     '#' +
-    //                     meeter.today.substring(6, 8);
-    //                 // get yesterdays date
-    //                 let filteredMeetings = currentMeetings.filter(
-    //                     (m) => m.mtgCompKey < key
-    //                 );
-    //                 printObject('filteredMeeings', filteredMeetings);
-    //                 function quickSort(prop) {
-    //                     return function (b, a) {
-    //                         if (a[prop] > b[prop]) {
-    //                             return 1;
-    //                         } else if (a[prop] < b[prop]) {
-    //                             return -1;
-    //                         }
-    //                         return 0;
-    //                     };
-    //                 }
-    //                 let sortedResults = filteredMeetings.sort(
-    //                     quickSort('mtgCompKey')
-    //                 );
-    //                 setMeetings(sortedResults);
-    //             })
-    //             .catch((error) => {
-    //                 printObject('ERROR GETTING SUPPORTED MEETINGS', error);
-    //             });
-    //         setIsLoading(false);
-    //         // Do something when the screen is focused
-    //         return () => {
-    //             //alert('ActiveScreen was unfocused');
-    //             // Do something when the screen is unfocused
-    //             // Useful for cleanup functions
-    //         };
-    //     }, [])
-    // );
-    const handleCommit = () => {};
-    const handleCancel = () => {};
+    const user = useSelector((state) => state.users.currentUser);
+    function onAppStateChange(status) {
+        if (Platform.OS !== 'web') {
+            focusManager.setFocused(status === 'active');
+        }
+    }
+    useFocusEffect(
+        useCallback(() => {
+            const subscription = AppState.addEventListener(
+                'change',
+                onAppStateChange
+            );
+            PROFILE.refetch();
+
+            return () => subscription.remove();
+        }, [])
+    );
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: meeter.appName,
+            headerBackTitle: 'Back',
+        });
+    }, [navigation, meeter]);
+    const handleUpdate = (values) => {
+        updateGroupDDB(values)
+            .then((res) => {
+                printObject('updateGroupDDB res:', res);
+
+                return;
+            })
+            .catch((err) => {
+                printObject('updateProfile provider failed:', err);
+                console.warn('updateProfile provider failed');
+
+                return;
+            });
+    };
+    const handleCancel = () => {
+        console.log('User Cancelled');
+    };
+    const PROFILE = useQuery(
+        ['profile', user.uid],
+        () => FetchProfile(user.uid),
+        {
+            cacheTime: 2000,
+            enabled: true,
+        }
+    );
+    let profile = {};
+    if (PROFILE.data) {
+        profile = PROFILE.data.body;
+    }
+    if (PROFILE.isLoading) {
+        return (
+            <View
+                style={{
+                    flexDirection: 'row',
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <ActivityIndicator size={75} color='#293462' />
+            </View>
+        );
+    }
+    if (PROFILE.isError) {
+        console.error('PROFILE ERROR:', PROFILE.error);
+    }
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
@@ -94,28 +90,14 @@ const ProfileScreen = (props) => {
                     <Text style={mtrTheme.screenTitle}>Profile Screen</Text>
                 </View>
 
-                <ProfileForm onCommit={handleCommit} onCancel={handleCancel} />
+                <ProfileForm
+                    profile={profile}
+                    handleUpdate={handleUpdate}
+                    onCancel={handleCancel}
+                />
             </Surface>
         </>
     );
 };
 
 export default ProfileScreen;
-
-const styles = StyleSheet.create({
-    rootContainer: {
-        flex: 1,
-    },
-    screenHeader: {
-        alignItems: 'center',
-    },
-    screenHeaderText: {
-        fontSize: 30,
-        fontWeight: 'bold',
-    },
-    bgImageContainer: {
-        flex: 1,
-        height: '100%',
-        width: '100%',
-    },
-});

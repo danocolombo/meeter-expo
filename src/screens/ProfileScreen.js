@@ -5,7 +5,10 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import ProfileForm from '../components/ProfileForm';
-import { FetchProfile } from '../components/common/hooks/userQueries';
+import {
+    FetchProfile,
+    UpdateProfile,
+} from '../components/common/hooks/userQueries';
 import { printObject } from '../utils/helpers';
 
 //   FUNCTION START
@@ -33,12 +36,12 @@ const ProfileScreen = (props) => {
     );
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: meeter.appName,
+            //title: meeter.appName,
             headerBackTitle: 'Back',
         });
     }, [navigation, meeter]);
     const handleUpdate = (values) => {
-        updateGroupDDB(values)
+        UpdateProfile(values)
             .then((res) => {
                 printObject('updateGroupDDB res:', res);
 
@@ -93,7 +96,7 @@ const ProfileScreen = (props) => {
                 <ProfileForm
                     profile={profile}
                     handleUpdate={handleUpdate}
-                    onCancel={handleCancel}
+                    handleCancel={handleCancel}
                 />
             </Surface>
         </>

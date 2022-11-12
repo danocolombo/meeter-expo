@@ -23,7 +23,7 @@ async function FetchProfile(userId) {
     const { data } = await axios.post(api2use, body, config);
     return data;
 }
-async function PutProfile(values) {
+async function UpdateProfile(values) {
     let obj = {
         operation: 'putProfile',
         payload: {
@@ -36,4 +36,4 @@ async function PutProfile(values) {
     return data;
 }
 
-export { FetchProfile, PutProfile };
+export { FetchProfile, UpdateProfile };

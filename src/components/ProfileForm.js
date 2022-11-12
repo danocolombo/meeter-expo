@@ -17,7 +17,7 @@ import { PutProfile } from './common/hooks/userQueries';
 import { useMutation } from '@tanstack/react-query';
 //   FUNCTION START
 //   ===============
-const ProfileForm = ({ profile, onCommit, onCancel }) => {
+const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     const navigation = useNavigation();
 
     const mtrTheme = useTheme();
@@ -77,7 +77,7 @@ const ProfileForm = ({ profile, onCommit, onCancel }) => {
         console.log('---------------------------');
         printObject('newValues', newValues);
         console.log('---------------------------');
-        mutation.mutate(values);
+        //mutation.mutate(values);
         handleUpdate(values);
     };
 

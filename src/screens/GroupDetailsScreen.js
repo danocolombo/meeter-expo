@@ -157,7 +157,10 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                     justifyContent: 'center',
                 }}
             >
-                <ActivityIndicator color={'blue'} size={80} />
+                <ActivityIndicator
+                    color={mtrTheme.colors.activityIndicator}
+                    size={80}
+                />
             </View>
         );
     }

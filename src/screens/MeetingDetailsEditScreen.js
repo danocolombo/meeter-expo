@@ -206,7 +206,10 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                     alignItems: 'center',
                 }}
             >
-                <ActivityIndicator size={75} color='#293462' />
+                <ActivityIndicator
+                    size={75}
+                    color={mtrTheme.colors.activityIndicator}
+                />
             </View>
         );
     }

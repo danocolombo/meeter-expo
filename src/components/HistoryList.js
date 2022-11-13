@@ -58,7 +58,10 @@ const HistoryList = ({ clientId }) => {
                     justifyContent: 'center',
                 }}
             >
-                <ActivityIndicator color={mtrTheme.colors.accent} size={80} />
+                <ActivityIndicator
+                    color={mtrTheme.colors.activityIndicator}
+                    size={80}
+                />
             </View>
         );
     }

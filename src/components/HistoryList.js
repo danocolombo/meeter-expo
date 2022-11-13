@@ -58,7 +58,10 @@ const HistoryList = ({ clientId }) => {
                     justifyContent: 'center',
                 }}
             >
-                <ActivityIndicator color={mtrTheme.colors.accent} size={80} />
+                <ActivityIndicator
+                    color={mtrTheme.colors.activityIndicator}
+                    size={80}
+                />
             </View>
         );
     }
@@ -79,7 +82,10 @@ const HistoryList = ({ clientId }) => {
                             data={meetings}
                             keyExtractor={(item) => item.meetingId}
                             renderItem={({ item }) => (
-                                <MeetingListCard meeting={item} active={true} />
+                                <MeetingListCard
+                                    meeting={item}
+                                    active={false}
+                                />
                             )}
                         />
                     )}

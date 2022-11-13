@@ -57,13 +57,15 @@ import MeetingListCard from '../components/Meeting.List.Card';
 const MeetingDetails = (props) => {
     const meetingId = props.route.params.meetingId;
     const mtrTheme = useTheme();
-    const [historic, setHistoric] = useState(false);
+
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const [displayGroups, setDisplayGroups] = useState([]);
     const meeter = useSelector((state) => state.system);
     const navigation = useNavigation();
     const uns = useNavigationState((state) => state);
+    let historic = false;
+
     let meeting = {};
     const { width } = useWindowDimensions();
     useLayoutEffect(() => {
@@ -113,15 +115,7 @@ const MeetingDetails = (props) => {
             return () => subscription.remove();
         }, [])
     );
-    // const { data, isError, isLoading, isFetching, refetch } = useQuery(
-    //     ['meeting', meetingId],
-    //     () => FetchMeeting(meetingId),
-    //     {
-    //         refetchInterval: 60000,
-    //         cacheTime: 2000,
-    //         enabled: true,
-    //     }
-    // );
+
     const MEETING = useQuery(
         ['mtg', meetingId],
         () => FetchMeeting(meetingId),
@@ -156,7 +150,7 @@ const MeetingDetails = (props) => {
                 }}
             >
                 <ActivityIndicator
-                    color={mtrTheme.colors.background}
+                    color={mtrTheme.colors.activityIndicator}
                     size={80}
                 />
             </View>
@@ -168,6 +162,9 @@ const MeetingDetails = (props) => {
                 <Text>Something went wrong</Text>
             </View>
         );
+    }
+    if (meeting) {
+        historic = isDateDashBeforeToday(meeting.meetingDate);
     }
 
     return (
@@ -356,8 +353,10 @@ const MeetingDetails = (props) => {
                         />
                     </>
                 ) : (
-                    <View>
-                        <Text>NO</Text>
+                    <View style={mtrTheme.meetingDetailsGroupLoadingText}>
+                        <Text style={mtrTheme.meetingDetailsGroupLoadingText}>
+                            Loading Groups...
+                        </Text>
                     </View>
                 )}
                 {/* <GroupList meetingId={meetingId} /> */}

@@ -33,8 +33,10 @@ import {
 import { printObject, dateNumToDateDash } from '../utils/helpers';
 import { useMutation } from '@tanstack/react-query';
 import { updateMeetingDDB } from '../providers/meetings';
-import { DeleteMeeting } from '../components/common/hooks/meetingQueries';
+//import { DeleteMeeting } from '../components/common/hooks/meetingQueries';
 import { FetchMeeting } from '../components/common/hooks/meetingQueries';
+import { deleteMeetingFromDDB } from '../providers/meetings';
+import { deleteGroupFromDDB } from '../providers/groups';
 import { isDateDashBeforeToday } from '../utils/helpers';
 
 //    FUNCTION START
@@ -108,21 +110,21 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             });
     };
 
-    const mutation = useMutation({
-        mutationFn: (meetingId) => {
-            return (
-                DeleteMeeting(meetingId),
-                {
-                    onSuccess: () => {
-                        queryCache.invalidateQueries(['meetings', meetingId]);
-                    },
-                    enabled: true,
-                }
-            );
-        },
-    });
+    // const mutation = useMutation({
+    //     mutationFn: (meetingId) => {
+    //         return (
+    //             DeleteMeeting(meetingId),
+    //             {
+    //                 onSuccess: () => {
+    //                     queryCache.invalidateQueries(['meetings', meetingId]);
+    //                 },
+    //                 enabled: true,
+    //             }
+    //         );
+    //     },
+    // });
     const handleDeleteConfirmClick = () => {
-        setIsLoading(true);
+        //setIsLoading(true);
         setModalDeleteConfirmVisible(false);
         let noGroupsIssue = true;
         let deleteGroups = [];
@@ -131,28 +133,54 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                 deleteGroups.push(g.groupId);
             });
             console.log('MDES:120-->BEFORE dispatch(deleteGroupList)');
+            //   NEED TO LOOP AND DELETE EACH GROUP
+            deleteGroups.forEach((dg) => {
+                deleteGroupFromDDB(dg)
+                    .then((res) => {
+                        console.log('Group ' + dg + ' deleted');
+                    })
+                    .catch((error) => {
+                        console.log('deleteGroupFromDDB failure:', error);
+                        noGroupsIssue = false;
+                    });
+            });
+
             noGroupsIssue = dispatch(deleteGroupList(deleteGroups));
             console.log('MDES:122-->AFTER dispatch(deleteGroupList)');
         }
         console.log('MDES:125-->AFTER GROUPS');
         if (noGroupsIssue) {
-            console.log('MDES:127-->noGroupsIssue is true');
-            let deleteRequest = mutation.mutate(meeting.meetingId);
-            if (deleteRequest) {
-                console.log('MDES:129-->deleteMtg true');
-            } else {
-                console.log('MDES:131-->deleteMtg false');
-            }
-        } else {
-            console.log('MDES:134-->noGroupsIssue is false');
-        }
+            console.log('MDES:153-->noGroupsIssue is true');
+            deleteMeetingFromDDB(meetingId)
+                .then((res) => {
+                    setModalDeleteConfirmVisible(false);
+                    printObject('deleteMeetingDDB success');
+                    //dispatch(updateMeeting(res));
+                    // console.log('dispatch(updateMeeting) returned');
+                    navigation.navigate('MeetingDetails', {
+                        meetingId: meetingId,
+                    });
+                    return;
+                })
+                .catch((err) => {
+                    setModalDeleteConfirmVisible(false);
+                    printObject('updateMeeting provider failed:', err);
+                    console.warn('updateMeeting provider failed');
 
-        if (isDateDashBeforeToday(meeting.meetingDate)) {
-            navigation.navigate('HistoricMeeings');
+                    return;
+                });
+            setModalDeleteConfirmVisible(false);
+            if (isDateDashBeforeToday(meeting.meetingDate)) {
+                navigation.navigate('HistoricMeetings');
+            } else {
+                navigation.navigate('ActiveMeetings');
+            }
+            return;
         } else {
-            navigation.navigate('ActiveMeetings');
+            console.log('MDES:177-->problems deleting groups');
+            console.warn('Errors deleting groups/meeting');
         }
-        setIsLoading(false);
+        return;
     };
     const MEETING = useQuery(
         ['meeting', meetingId],
@@ -163,13 +191,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             enabled: true,
         }
     );
-    const flipModal = (v) => {
-        if (v) {
-            showModal = true;
-        } else {
-            showModal = false;
-        }
-    };
+
     let meeting = {};
     if (MEETING.data) {
         meeting = MEETING.data.body;
@@ -184,7 +206,10 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                     alignItems: 'center',
                 }}
             >
-                <ActivityIndicator size={75} color='#293462' />
+                <ActivityIndicator
+                    size={75}
+                    color={mtrTheme.colors.activityIndicator}
+                />
             </View>
         );
     }
@@ -270,7 +295,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                                 text='Yes, DELETE'
                                 bgColor='red'
                                 fgColor='black'
-                                onPress={() => flipModal(true)}
+                                onPress={() => handleDeleteConfirmClick()}
                             />
                         </View>
                     </View>

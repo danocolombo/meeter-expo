@@ -9,36 +9,31 @@ const config = {
         'Content-type': 'application/json; charset=UTF-8',
     },
 };
-async function OriginalFetchMeeting(meetingId) {
+
+async function FetchProfile(userId) {
     let obj = {
-        operation: 'getMeetingById',
+        operation: 'fetchUser',
         payload: {
-            meetingId: '4cf80233e3bc4900df96e1b21d6fdc10',
+            userId: userId,
         },
     };
+
     let body = JSON.stringify(obj);
-    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+    let api2use = process.env.AWS_API_ENDPOINT + '/users';
     const { data } = await axios.post(api2use, body, config);
-    //printObject('DATA:', data);
     return data;
 }
-async function FetchProfile(clientId) {
-    var client = clientId.toLowerCase();
-    var d = new Date();
-    let yesterday = getDateMinusDays(d, 1);
-    let twoMonthsAgo = getDateMinusDays(d, 120);
-
+async function UpdateProfile(values) {
     let obj = {
-        operation: 'getUser',
+        operation: 'updateUser',
         payload: {
-            userId: clientId,
+            Item: values,
         },
     };
-    console.log(obj);
     let body = JSON.stringify(obj);
-    let api2use = process.env.AWS_API_ENDPOINT + '/user';
+    let api2use = process.env.AWS_API_ENDPOINT + '/users';
     const { data } = await axios.post(api2use, body, config);
     return data;
 }
 
-export { FetchProfile };
+export { FetchProfile, UpdateProfile };

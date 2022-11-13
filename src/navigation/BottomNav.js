@@ -36,6 +36,7 @@ const MeetingsConfig = () => {
                         title='Edit'
                     />
                 ),
+                // tabBarStyle: { backgroundColor: 'green' },
             }}
         >
             <BottomTab.Screen
@@ -48,9 +49,7 @@ const MeetingsConfig = () => {
                     tabBarLabel: ({ focused, color, fontSize }) => (
                         <Text
                             style={{
-                                color: focused
-                                    ? mtrTheme.colors.navBarActiveText
-                                    : mtrTheme.colors.navBarInactiveText,
+                                color: focused ? 'white' : 'black',
                                 fontSize: 14,
                                 fontWeight: '500',
                                 fontFamily: 'Roboto-Regular',
@@ -59,19 +58,13 @@ const MeetingsConfig = () => {
                             HISTORY
                         </Text>
                     ),
-                    tabBarActiveBackgroundColor:
-                        mtrTheme.colors.navBarActiveBackground,
-                    tabBarInactiveBackgroundColor:
-                        mtrTheme.colors.navBarInactiveBackground,
+                    tabBarActiveBackgroundColor: 'green',
+                    tabBarInactiveBackgroundColor: 'lightgrey',
                     tabBarIcon: ({ focused, color, size }) => (
                         <AntDesign
                             name='caretleft'
                             size={14}
-                            color={
-                                focused
-                                    ? mtrTheme.colors.navBarActiveText
-                                    : mtrTheme.colors.navBarInactiveText
-                            }
+                            color={focused ? 'white' : 'black'}
                         />
                     ),
                 }}
@@ -87,9 +80,7 @@ const MeetingsConfig = () => {
                     tabBarLabel: ({ focused, color, size }) => (
                         <Text
                             style={{
-                                color: focused
-                                    ? mtrTheme.colors.navBarActiveText
-                                    : mtrTheme.colors.navBarInactiveText,
+                                color: focused ? 'white' : 'black',
                                 fontSize: 14,
                                 fontWeight: '500',
                                 fontFamily: 'Roboto-Regular',
@@ -98,19 +89,13 @@ const MeetingsConfig = () => {
                             ACTIVE
                         </Text>
                     ),
-                    tabBarActiveBackgroundColor:
-                        mtrTheme.colors.navBarActiveBackground,
-                    tabBarInactiveBackgroundColor:
-                        mtrTheme.colors.navBarInactiveBackground,
+                    tabBarActiveBackgroundColor: 'green',
+                    tabBarInactiveBackgroundColor: 'lightgrey',
                     tabBarIcon: ({ focused, color, size }) => (
                         <AntDesign
                             name='caretright'
                             size={14}
-                            color={
-                                focused
-                                    ? mtrTheme.colors.navBarActiveText
-                                    : mtrTheme.colors.navBarInactiveText
-                            }
+                            color={focused ? 'white' : 'black'}
                         />
                     ),
                 }}

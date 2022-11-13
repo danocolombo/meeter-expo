@@ -5,9 +5,9 @@ import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+import { Ionicons } from '@expo/vector-icons';
 import MeetingsConfig from './BottomNav';
-
+import CustomDrawer from './CustomDrawer';
 import LandingScreen from '../screens/LandingScreen';
 import ActiveScreen from '../screens/ActiveScreen';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
@@ -57,7 +57,19 @@ const AuthDrawer = (navigation) => {
                     backgroundColor: mtrTheme.colors.background,
                 },
                 tabBarActiveTintColor: 'white',
+                drawerActiveBackgroundColor:
+                    mtrTheme.colors.navDrawerActiveBackground,
+                drawerActiveTintColor: mtrTheme.colors.navDrawerActiveTint,
+                drawerInactiveBackgroundColor:
+                    mtrTheme.colors.navDrawerInactiveBackground,
+                drawerInactiveTintColor: mtrTheme.colors.navDrawerInactiveTint,
+                drawerLabelStyle: {
+                    marginLeft: -25,
+                    fontFamily: 'Roboto-Medium',
+                    fontSize: 15,
+                },
             })}
+            drawerContent={(props) => <CustomDrawer {...props} />}
         >
             <Drawer.Screen
                 name='Landing'
@@ -66,6 +78,9 @@ const AuthDrawer = (navigation) => {
                 options={({ navigation }) => ({
                     title: meeter.appName,
                     drawerLabel: 'Main',
+                    drawerIcon: ({ color }) => (
+                        <Ionicons name='home-outline' size={22} color={color} />
+                    ),
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -98,6 +113,13 @@ const AuthDrawer = (navigation) => {
                     //     </>
                     // ),
                     drawerLabel: 'Meetings',
+                    drawerIcon: ({ color }) => (
+                        <Ionicons
+                            name='calendar-outline'
+                            size={22}
+                            color={color}
+                        />
+                    ),
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -109,8 +131,30 @@ const AuthDrawer = (navigation) => {
                     tabBarActiveTintColor: 'white',
                 })}
             />
-            <Stack.Screen name='Profile' component={ProfileScreen} />
-            <Stack.Screen name='Logout' component={MeeterSignOut} />
+            <Stack.Screen
+                name='Profile'
+                options={({ navigation }) => ({
+                    drawerLabel: 'Profile',
+                    title: meeter.appName,
+                    drawerIcon: ({ color }) => (
+                        <Ionicons
+                            name='person-outline'
+                            size={22}
+                            color={color}
+                        />
+                    ),
+                })}
+                component={ProfileScreen}
+            />
+            <Stack.Screen
+                name='Logout'
+                options={({ navigation }) => ({
+                    drawerIcon: ({ color }) => (
+                        <Ionicons name='exit-outline' size={22} color={color} />
+                    ),
+                })}
+                component={MeeterSignOut}
+            />
         </Drawer.Navigator>
     );
 };

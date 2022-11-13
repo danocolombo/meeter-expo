@@ -59,7 +59,7 @@ const GroupList = ({ meetingId }) => {
                 }}
             >
                 <ActivityIndicator
-                    color={mtrTheme.colors.background}
+                    color={mtrTheme.colors.activityIndicator}
                     size={80}
                 />
             </View>

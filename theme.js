@@ -3,6 +3,7 @@ const primaryBackground = '#293462';
 const secondaryColor = '#1CD6CE';
 const primaryColor = '#CAEBF2';
 const accentColor = '#FEDB39';
+const activityIndicator = '#293462';
 const alternateColor = '#D61C4E';
 const errorTextBox = '#ff9999';
 const historyTileColor = '#fff';
@@ -32,6 +33,7 @@ const theme = {
         // background color for elements containing content, such as cards
         surface: primaryBackground,
         text: '#eee',
+        activityIndicator: activityIndicator,
         //color for the disabled elements
         disabled: '#cccccc',
         //color for placeholder text, such as input placeholder
@@ -61,6 +63,10 @@ const theme = {
         navBarInactiveText: '#CAEBF2',
         navBarActiveBackground: '#CAEBF2',
         navBarActiveText: '#000',
+        navDrawerActiveBackground: '#D61C4E',
+        navDrawerActiveTint: '#fff',
+        navDrawerInactiveBackground: '#fff',
+        navDrawerInactiveTint: '#999',
     },
     fonts: {
         regular: 16,
@@ -159,6 +165,28 @@ const theme = {
     //   ----------------------------
     //   PROFILE FORM
     //   ----------------------------
+    profileMessageModalSurface: {
+        marginTop: 100,
+        marginHorizontal: 10,
+        borderRadius: 15,
+        padding: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        elevation: 5,
+    },
+    profileMessageModalTitle: {
+        fontFamily: 'Roboto-Bold',
+        color: 'white',
+        fontSize: 20,
+        fontWeight: '500',
+        textAlign: 'center',
+    },
+    profileMessageModalButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        marginVertical: 15,
+    },
+
     profileFormRowStyle: {
         flexDirection: 'row',
         marginTop: 5,
@@ -428,7 +456,7 @@ const theme = {
         paddingLeft: 'auto',
     },
     //   MEETING DELETE
-    meetingEditDeleteMondalText: {
+    meetingEditDeleteModalText: {
         color: 'white',
     },
     meetingEditDeleteModalSurface: {
@@ -493,10 +521,16 @@ const theme = {
         backgroundColor: lightColor,
         //justifyContent: 'center',
     },
-    meeingDetailsNotesText: {
+    meetingDetailsNotesText: {
         color: darkText,
         fontFamily: 'Roboto-Regular',
         fontSize: 24,
+    },
+    meetingDetailsGroupLoadingContainer: {},
+    meetingDetailsGroupLoadingText: {
+        color: lightText,
+        fontFamily: 'Roboto-Thin',
+        fontSize: 14,
     },
     groupDetailsMealText: {
         fontFamily: 'Roboto-Regular',

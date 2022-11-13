@@ -165,6 +165,28 @@ const theme = {
     //   ----------------------------
     //   PROFILE FORM
     //   ----------------------------
+    profileMessageModalSurface: {
+        marginTop: 100,
+        marginHorizontal: 10,
+        borderRadius: 15,
+        padding: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        elevation: 5,
+    },
+    profileMessageModalTitle: {
+        fontFamily: 'Roboto-Bold',
+        color: 'white',
+        fontSize: 20,
+        fontWeight: '500',
+        textAlign: 'center',
+    },
+    profileMessageModalButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        marginVertical: 15,
+    },
+
     profileFormRowStyle: {
         flexDirection: 'row',
         marginTop: 5,
@@ -434,7 +456,7 @@ const theme = {
         paddingLeft: 'auto',
     },
     //   MEETING DELETE
-    meetingEditDeleteMondalText: {
+    meetingEditDeleteModalText: {
         color: 'white',
     },
     meetingEditDeleteModalSurface: {

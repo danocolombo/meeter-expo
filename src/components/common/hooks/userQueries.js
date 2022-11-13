@@ -17,7 +17,7 @@ async function FetchProfile(userId) {
             userId: userId,
         },
     };
-    console.log(obj);
+
     let body = JSON.stringify(obj);
     let api2use = process.env.AWS_API_ENDPOINT + '/users';
     const { data } = await axios.post(api2use, body, config);
@@ -25,13 +25,13 @@ async function FetchProfile(userId) {
 }
 async function UpdateProfile(values) {
     let obj = {
-        operation: 'putProfile',
+        operation: 'updateUser',
         payload: {
             Item: values,
         },
     };
     let body = JSON.stringify(obj);
-    let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+    let api2use = process.env.AWS_API_ENDPOINT + '/users';
     const { data } = await axios.post(api2use, body, config);
     return data;
 }

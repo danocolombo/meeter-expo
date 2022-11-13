@@ -34,12 +34,12 @@ const ProfileScreen = (props) => {
             return () => subscription.remove();
         }, [])
     );
-    // useLayoutEffect(() => {
-    //     navigation.setOptions({
-    //         //title: meeter.appName,
-    //         headerBackTitle: 'Back',
-    //     });
-    // }, [navigation, meeter]);
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            //title: meeter.appName,
+            headerBackTitle: 'Back',
+        });
+    }, [navigation, meeter]);
     const handleUpdate = (values) => {
         UpdateProfile(values)
             .then((res) => {
@@ -61,7 +61,7 @@ const ProfileScreen = (props) => {
         ['profile', user.uid],
         () => FetchProfile(user.uid),
         {
-            cacheTime: 2000,
+            cacheTime: 300000, // 5 min
             enabled: true,
         }
     );

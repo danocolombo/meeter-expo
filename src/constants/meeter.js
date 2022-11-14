@@ -6,3 +6,19 @@ export const EVENT_STATUS = Object.freeze({
     PENDING: 'Pending',
     APPROVED: 'Approved',
 });
+export const DEFAULT_AFFILIATIONS = Object.freeze({
+    affiliations: {
+        active: {
+            label: 'Meeter Test System',
+            role: 'guest',
+            value: 'mtr',
+        },
+        options: [
+            {
+                label: 'Meeter Test System',
+                role: 'guest',
+                value: 'mtr',
+            },
+        ],
+    },
+});

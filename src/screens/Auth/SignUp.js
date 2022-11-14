@@ -42,12 +42,17 @@ const SignUpScreen = () => {
             return;
         }
         //setLoading(true);
-        const { username, password, email, name } = data;
+        const { username, password, email, firstName, lastName } = data;
         try {
             const response = await Auth.signUp({
                 username,
                 password,
-                attributes: { email, name, preferred_username: username },
+                attributes: {
+                    email,
+                    given_name: firstName,
+                    family_name: lastName,
+                    preferred_username: username,
+                },
             });
             console.log('response', response);
             navigation.navigate('ConfirmEmail', { username });
@@ -126,39 +131,38 @@ const SignUpScreen = () => {
                     <Text style={styles.title}>Create an account</Text>
 
                     <CustomInput
-                        name='name'
+                        name='firstName'
                         control={control}
-                        placeholder='Name'
+                        placeholder='First Name'
                         rules={{
-                            required: 'Name is required',
+                            required: 'First name is required',
                             minLength: {
-                                value: 4,
+                                value: 2,
                                 message:
-                                    'Name should be at least 4 characters long',
+                                    'First name should be at least 2 characters long',
                             },
                             maxLength: {
-                                value: 24,
+                                value: 12,
                                 message:
-                                    'Name should be max 24 characters long',
+                                    'First name should be max 12 characters long',
                             },
                         }}
                     />
-
                     <CustomInput
-                        name='username'
+                        name='lastName'
                         control={control}
-                        placeholder='Username'
+                        placeholder='Last Name'
                         rules={{
-                            required: 'Username is required',
+                            required: 'Last name is required',
                             minLength: {
                                 value: 4,
                                 message:
-                                    'Username should be at least 6 characters long',
+                                    'Last name should be at least 4 characters long',
                             },
                             maxLength: {
-                                value: 24,
+                                value: 15,
                                 message:
-                                    'Username should be max 24 characters long',
+                                    'Last name should be max 15 characters long',
                             },
                         }}
                     />
@@ -174,6 +178,26 @@ const SignUpScreen = () => {
                             },
                         }}
                     />
+                    <CustomInput
+                        name='username'
+                        control={control}
+                        placeholder='Username (used to login)'
+                        secureTextEntry={false}
+                        rules={{
+                            required: 'Username is required',
+                            minLength: {
+                                value: 4,
+                                message:
+                                    'Username should be at least 6 characters long',
+                            },
+                            maxLength: {
+                                value: 24,
+                                message:
+                                    'Username should be max 24 characters long',
+                            },
+                        }}
+                    />
+
                     <CustomInput
                         name='password'
                         control={control}

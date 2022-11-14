@@ -12,7 +12,7 @@ import {
 } from '../components/common/hooks/userQueries';
 import { updateCurrentUser } from '../features/usersSlice';
 import { printObject } from '../utils/helpers';
-
+import { DEFAULT_AFFILIATIONS } from '../constants/meeter';
 //   FUNCTION START
 //   ==============
 const ProfileScreen = (props) => {
@@ -46,7 +46,44 @@ const ProfileScreen = (props) => {
         });
     }, [navigation, meeter]);
     const handleUpdate = (values) => {
-        // printObject('PS:44--handleUpdate::values', values);
+        /*    ==================================
+        REQUIRED LAMBDA / DDB request
+        uid                 cognito
+        username            cognito
+        lastName            cognito
+        firstName            cognito
+        email               cognito
+        defaultClient       profile | 'mtr'
+        defaultClientId     profile | '88j16596c6382dee0d7a8dtc'
+        -------------------------------------*/
+        /*   ==================================
+        DESIRED SETTINGS / REQUIREMENTS
+        affiliations: {
+            active: {
+                label: "Meeter Test System",
+                role: "guest",
+                value: "mtr"
+            },
+            options: [
+                {
+                    label: "Meeter Test System",
+                    role: "guest",
+                    value: "mtr"
+                }
+            ]
+        }
+        =====================================*/
+
+        values.username = user.username;
+        if (!values.defaultClient) {
+            values.defaultClient = 'mtr';
+            values.defaultClientId = '88j16596c6382dee0d7a8dtc';
+        }
+        if (!values?.affiliations?.active?.value) {
+            // should never get here, but just in case
+            values.affiliations = DEFAULT_AFFILIATIONS.affiliations;
+        }
+        printObject('PS:71--handleUpdate::values(>>>DDB)', values);
         UpdateProfile(values)
             .then((res) => {
                 printObject('UpdateProfile res:', res);

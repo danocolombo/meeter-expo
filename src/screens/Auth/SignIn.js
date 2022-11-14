@@ -41,7 +41,8 @@ import {
 } from '../../features/meetingsSlice';
 import { getSupportedMeetings } from '../../providers/meetings';
 import { getToday, printObject, dateNumToDateDash } from '../../utils/helpers';
-////import { REGION } from '../../constants/regions';
+import { DEFAULT_AFFILIATIONS } from '../../constants/meeter';
+//   FUNCTION START
 const SignInScreen = () => {
     const mtrTheme = useTheme();
     const [isLoading, setIsLoading] = useState(false);
@@ -136,22 +137,24 @@ const SignInScreen = () => {
         await Auth.currentSession().then((data) => {
             currentSession = data;
         });
-        // printObject('currentUserInfo:', currentUserInfo);
-        // printObject('currentSession:', currentSession);
+        printObject('SI:139-->currentUserInfo:', currentUserInfo);
+        printObject('SI:140-->currentSession:', currentSession);
         //   ----------------------------------------------
         //   build theUser object
         //   ----------------------------------------------
         let i = currentSession?.idToken?.payload?.sub;
         let u = currentSession?.idToken?.payload['cognito:username'];
+        let fn = currentSession?.idToken?.payload?.given_name;
+        let ln = currentSession?.idToken?.payload?.family_name;
         let e = currentSession?.idToken?.payload?.email;
         let j = currentSession?.idToken?.jwtToken;
-        let g = currentSession?.idToken?.payload['cognito:groups'];
         let theUser = {};
         theUser.uid = i;
         theUser.username = u;
+        theUser.firstName = fn;
+        theUser.lastName = ln;
         theUser.email = e;
         theUser.jwtToken = j;
-        theUser.groups = g;
         //   ----------------------------------------------
         //   get user profile from DDB
         //   ----------------------------------------------
@@ -187,22 +190,13 @@ const SignInScreen = () => {
         //   get affiliate info from DDB
         //   ----------------------------------------------
         if (!fullUserInfo?.affiliations) {
-            let defaultAff = {
-                options: [
-                    {
-                        value: 'MTR',
-                        label: 'MTR Testing',
-                        role: 'guest',
-                    },
-                ],
-                active: {
-                    value: 'MTR',
-                    label: 'MTR Testing',
-                    role: 'guest',
-                },
+            // use default affiliations
+            fullUserInfo = {
+                ...fullUserInfo,
+                affiliations: DEFAULT_AFFILIATIONS.affiliations,
             };
-            fullUserInfo = { ...fullUserInfo, affiliations: defaultAff };
         }
+        printObject('SI:199-->fullUserInfo:', fullUserInfo);
         dispatch(updateCurrentUser(fullUserInfo));
         getAffiliate(fullUserInfo.affiliations.active.value)
             .then((response) => {

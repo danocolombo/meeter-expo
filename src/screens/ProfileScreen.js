@@ -83,7 +83,13 @@ const ProfileScreen = (props) => {
             // should never get here, but just in case
             values.affiliations = DEFAULT_AFFILIATIONS.affiliations;
         }
+        // clean the unwanted root values
+        delete values?.residenceStreet;
+        delete values?.residenceCity;
+        delete values?.residenceStateProv;
+        delete values?.residencePostalCode;
         printObject('PS:71--handleUpdate::values(>>>DDB)', values);
+        // return;
         UpdateProfile(values)
             .then((res) => {
                 printObject('UpdateProfile res:', res);

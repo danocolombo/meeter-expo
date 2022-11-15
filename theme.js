@@ -186,7 +186,12 @@ const theme = {
         justifyContent: 'space-evenly',
         marginVertical: 15,
     },
-
+    profileImageContainer: {
+        flexDirection: 'row',
+        marginVertical: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     profileFormRowStyle: {
         flexDirection: 'row',
         marginTop: 5,

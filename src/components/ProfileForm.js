@@ -1,5 +1,7 @@
 import React, { useState, useLayoutEffect, useCallback } from 'react';
 import {
+    ImageBackground,
+    Image,
     StyleSheet,
     Text,
     View,
@@ -225,7 +227,23 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                 'Adding meeting...'
             ) : ( */}
             <>
-                <View style={mtrTheme.profileFormRowStyle}>
+                <View style={mtrTheme.profileImageContainer}>
+                    <View>
+                        <Image
+                            source={require('../../assets/user-profile.jpeg')}
+                            style={{
+                                height: 80,
+                                width: 80,
+                                borderRadius: 40,
+                            }}
+                        />
+                        <Text style={{ color: mtrTheme.colors.accent }}>
+                            {user.firstName} {user.lastName}
+                        </Text>
+                    </View>
+                </View>
+
+                {/* <View style={mtrTheme.profileFormRowStyle}>
                     <View style={{ minWidth: '45%' }}>
                         <Input
                             label='First Name'
@@ -288,8 +306,8 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                             </View>
                         )}
                     </View>
-                </View>
-                <View style={mtrTheme.profileFormRowStyle}>
+                </View> */}
+                {/* <View style={mtrTheme.profileFormRowStyle}>
                     <View style={{ minWidth: '90%' }}>
                         <Input
                             label='Email'
@@ -315,7 +333,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                             }}
                         />
                     </View>
-                </View>
+                </View> */}
                 <View style={mtrTheme.profileFormRowStyle}>
                     <View style={{ minWidth: '90%' }}>
                         <Input

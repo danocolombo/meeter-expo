@@ -1,0 +1,14 @@
+{
+  "resourceName": "s3meeterexpostorage",
+  "bucketName": "meeter-expo-storage",
+  "policyUUID": "f533d540",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

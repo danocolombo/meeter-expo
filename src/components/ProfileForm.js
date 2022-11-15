@@ -24,31 +24,30 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     const user = useSelector((state) => state.users.currentUser);
     const { width } = useWindowDimensions();
     const [values, setValues] = useState({
-        uid: user?.userId,
-        username: profile.username ? profile.username : '',
-        firstName: profile.firstName ? profile.firstName : '',
-        lastName: profile.lastName ? profile.lastName : '',
-        login: profile.login ? profile.login : '',
-        email: profile.email ? profile.email : '',
-        phone: profile.phone ? profile.phone : '',
-        residenceStreet: profile.residence.street
+        uid: user?.uid,
+        username: profile?.username ? profile.username : user.userName,
+        firstName: profile?.firstName ? profile.firstName : user.firstName,
+        lastName: profile?.lastName ? profile.lastName : user.lastName,
+        email: profile?.email ? profile.email : user.email,
+        phone: profile?.phone ? profile.phone : '',
+        residenceStreet: profile?.residence?.street
             ? profile.residence.street
             : '',
-        residenceCity: profile.residence.city ? profile.residence.city : '',
-        residenceStateProv: profile.residence.stateProv
+        residenceCity: profile?.residence?.city ? profile.residence.city : '',
+        residenceStateProv: profile?.residence?.stateProv
             ? profile.residence.stateProv
             : '',
-        residencePostalCode: profile.residence.postalCode
+        residencePostalCode: profile?.residence?.postalCode
             ? profile.residence.postalCode
             : '',
-        birthday: profile.birthday ? profile.birthday : '',
-        shirt: profile.shirt ? profile.shirt : '',
+        birthday: profile?.birthday ? profile.birthday : '',
+        shirt: profile?.shirt ? profile.shirt : '',
     });
     const [isFirstNameValid, setIsFirstNameValid] = useState(
-        profile?.firstName?.length > 1 ? true : false
+        values.firstName?.length > 1 ? true : false
     );
     const [isLastNameValid, setIsLastNameValid] = useState(
-        profile?.lastName?.length > 2 ? true : false
+        values.lastName?.length > 2 ? true : false
     );
     function inputChangedHandler(inputIdentifier, enteredValue) {
         setValues((curInputValues) => {
@@ -207,18 +206,19 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                 value: values.email,
                                 paddingHorizontal: 5,
                                 marginRight: 5,
+                                enabled: false,
                                 fontSize: 24,
-                                color: 'black',
+                                color: mtrTheme.colors.unSelected,
                                 marginHorizontal: 0,
                                 placeholder: 'Email',
                                 style: { color: 'black' },
                                 fontWeight: '500',
                                 //fontFamily: 'Roboto-Regular',
                                 letterSpacing: 0,
-                                onChangeText: inputChangedHandler.bind(
-                                    this,
-                                    'email'
-                                ),
+                                // onChangeText: inputChangedHandler.bind(
+                                //     this,
+                                //     'email'
+                                // ),
                             }}
                         />
                     </View>
@@ -410,7 +410,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                 </View>
                 <View style={mtrTheme.profileFormRowStyle}>
                     <Text style={{ color: 'silver', fontSize: 12 }}>
-                        UID: {profile.uid}
+                        UID: {user?.uid}
                     </Text>
                 </View>
                 <View style={styles.buttonContainer}>

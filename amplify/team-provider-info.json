@@ -1,4 +1,25 @@
 {
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-meeterexpo-staging-230847-authRole",
+      "UnauthRoleArn": "arn:aws:iam::226036691416:role/amplify-meeterexpo-staging-230847-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::226036691416:role/amplify-meeterexpo-staging-230847-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-meeterexpo-staging-230847-deployment",
+      "UnauthRoleName": "amplify-meeterexpo-staging-230847-unauthRole",
+      "StackName": "amplify-meeterexpo-staging-230847",
+      "StackId": "arn:aws:cloudformation:us-east-1:226036691416:stack/amplify-meeterexpo-staging-230847/21221250-63a8-11ed-95d1-0e6ed4b5e6d9",
+      "AmplifyAppId": "d3faekfqt6h6ky"
+    },
+    "categories": {
+      "auth": {
+        "MeeterExpo": {}
+      },
+      "storage": {
+        "s3meeterexpostorage": {}
+      }
+    }
+  },
   "oneone": {
     "awscloudformation": {
       "AuthRoleName": "amplify-meetermobile-oneone-82333-authRole",

@@ -89,7 +89,7 @@ const ProfileScreen = (props) => {
         delete values?.residenceStateProv;
         delete values?.residencePostalCode;
         printObject('PS:71--handleUpdate::values(>>>DDB)', values);
-        // return;
+
         UpdateProfile(values)
             .then((res) => {
                 printObject('UpdateProfile res:', res);

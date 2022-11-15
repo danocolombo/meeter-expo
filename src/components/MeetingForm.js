@@ -160,6 +160,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
     }, [navigation, meeter]);
 
     const FormatEventDate = (data) => {
+        printObject('MF:163-->data', data);
         let dateString =
             data.getMonth() +
             1 +
@@ -172,6 +173,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         const mo = parseInt(data.getMonth());
         const da = parseInt(data.getDate());
         const tmp = new Date(yr, mo, da, 0, 0, 0);
+        printObject('MF:176-->tmp', tmp);
         // save the date value for control
         setMeetingDate(tmp);
         //make string to save in values.
@@ -181,6 +183,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
             ('0' + (data.getMonth() + 1)).slice(-2) +
             '-' +
             ('0' + data.getDate()).slice(-2);
+        printObject('MF:186-->mtgDateString', mtgDateString);
         const newValues = {
             ...values,
             meetingDate: mtgDateString,
@@ -188,10 +191,8 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         //====================================
         // set the dateValue object as well.
         setDateValue(tmp);
-        printObject('MF:173--dateValue', dateValue);
+        printObject('MF:194--newValues', newValues);
         setValues(newValues);
-
-        printObject('MDES:144-->newValues:', newValues);
         return;
     };
     const onMeetingDateConfirm = (data) => {

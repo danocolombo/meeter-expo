@@ -5,15 +5,17 @@ import {
     View,
     Alert,
     useWindowDimensions,
+    TouchableOpacity,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Dropdown } from 'react-native-element-dropdown';
 import Input from './ui/Input';
 import { useTheme } from 'react-native-paper';
 import CustomButton from './ui/CustomButton';
-import { printObject } from '../utils/helpers';
-import { STATESBY2 } from '../constants/meeter';
+import { printObject, dateDashToDateObject } from '../utils/helpers';
+import { STATESBY2, SHIRTSIZESBY2 } from '../constants/meeter';
 import { useMutation } from '@tanstack/react-query';
 
 //   FUNCTION START
@@ -22,9 +24,14 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     const navigation = useNavigation();
     const [stateValue, setStateValue] = useState(null);
     const [isStateFocus, setIsStateFocus] = useState(false);
+    const [isShirtFocus, setIsShirtFocus] = useState(false);
 
+    const [modalBirthDateVisible, setModalBirthDateVisible] = useState(false);
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
+    const [birthday, setBirthday] = useState();
+    console.log('birthday:', birthday);
+    console.log(typeof birthday);
     const user = useSelector((state) => state.users.currentUser);
     const { width } = useWindowDimensions();
     const [values, setValues] = useState({
@@ -53,6 +60,63 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     const [isLastNameValid, setIsLastNameValid] = useState(
         values.lastName?.length > 2 ? true : false
     );
+    useFocusEffect(
+        useCallback(() => {
+            printObject('useFocusEffect-->profile:', profile);
+            //let dateObj = dateDashToDateObject(values?.birthday);
+            //setBirthday(dateObj);
+            //setValues(profile);
+            let x = { ...values, ...profile };
+            setValues(x);
+            let dateObj = dateDashToDateObject(values?.birthday);
+
+            printObject('dateObj:', dateObj);
+            setBirthday(dateObj);
+        }, [])
+    );
+    const FormatBirthDate = (data) => {
+        printObject('PF:78-->data:', data);
+        let dateString =
+            data.getMonth() +
+            1 +
+            '-' +
+            data.getDate() +
+            '-' +
+            data.getFullYear() +
+            ' ';
+        const yr = parseInt(data.getFullYear());
+        const mo = parseInt(data.getMonth());
+        const da = parseInt(data.getDate());
+        const tmp = new Date(yr, mo, da, 0, 0, 0);
+        printObject('PF:93-->tmp', tmp);
+        //setBirthday(tmp);
+        //make string to save in values.
+        let mtgDateString =
+            data.getFullYear() +
+            '-' +
+            ('0' + (data.getMonth() + 1)).slice(-2) +
+            '-' +
+            ('0' + data.getDate()).slice(-2);
+        let dateObj = dateDashToDateObject(values?.birthday);
+        setBirthday(dateObj);
+        printObject('PF:102-->mtgDateString', mtgDateString);
+        const newValues = {
+            ...values,
+            birthday: mtgDateString,
+        };
+        printObject('PF:107--newValues', newValues);
+        setValues(newValues);
+        //setDateValue(tmp);
+
+        return;
+    };
+    const onBirthDateConfirm = (data) => {
+        FormatBirthDate(data);
+        setModalBirthDateVisible(false);
+    };
+    const onBirthDateCancel = () => {
+        setModalBirthDateVisible(false);
+    };
     function inputChangedHandler(inputIdentifier, enteredValue) {
         setValues((curInputValues) => {
             if (inputIdentifier === 'firstName') {
@@ -121,6 +185,13 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                 curInputValues = newValues;
                 return curInputValues;
             }
+            if (inputIdentifier === 'shirt') {
+                let shirt = enteredValue;
+                let newValues = { ...curInputValues, shirt };
+
+                curInputValues = newValues;
+                return curInputValues;
+            }
             return {
                 ...curInputValues,
                 [inputIdentifier]: enteredValue,
@@ -143,45 +214,10 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
             focusManager.setFocused(status === 'active');
         }
     }
-    useFocusEffect(
-        useCallback(() => {
-            printObject('useFocusEffect-->profile:', profile);
-            //setValues(profile);
-            let x = { ...values, ...profile };
-            setValues(x);
-        }, [])
-    );
+
     const handleFormSubmit = () => {
-        // need to rebuild the residence
-        // const res = {
-        //     street: values.residenceStreet,
-        //     city: values.residenceCity,
-        //     stateProv: values.residenceStateProv,
-        //     postalCode: values.residencePostalCode,
-        // };
-
-        // const newValues = {
-        //     ...values,
-        //     residence: res,
-        // };
-        // now remove the jwtoken
-        //delete newValues['jwtToken'];
-
         handleUpdate(values);
     };
-
-    // const mutation = useMutation({
-    //     mutationFn: (values) => {
-    //         return (
-    //             PutProfile(values),
-    //             {
-    //                 onSuccess: (profile) => {
-    //                     queryCache.invalidateQueries(['profile', user.uid]);
-    //                 },
-    //             }
-    //         );
-    //     },
-    // });
 
     return (
         <>
@@ -307,50 +343,66 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                     </View>
                 </View>
                 <View style={mtrTheme.profileFormRowStyle}>
-                    <View style={{ minWidth: '45%' }}>
-                        <Input
-                            label='Birthday'
-                            labelStyle={mtrTheme.profileFormInputTitle}
-                            textInputConfig={{
-                                backgroundColor: 'lightgrey',
-                                value: values.birthday,
-                                paddingHorizontal: 5,
-                                marginRight: 5,
-                                fontSize: 24,
-                                color: 'black',
-                                marginHorizontal: 0,
-                                placeholder: 'Birthday',
-                                style: { color: 'black' },
-                                fontWeight: '500',
-                                //fontFamily: 'Roboto-Regular',
-                                letterSpacing: 0,
-                                onChangeText: inputChangedHandler.bind(
-                                    this,
-                                    'birthday'
-                                ),
-                            }}
-                        />
+                    <View>
+                        <View>
+                            <Text style={mtrTheme.profileFormInputTitle}>
+                                Birthday
+                            </Text>
+                        </View>
+                        <TouchableOpacity
+                            onPress={() => setModalBirthDateVisible(true)}
+                        >
+                            <View style={{ minWidth: '45%' }}>
+                                <View
+                                    style={{
+                                        backgroundColor: 'lightgrey',
+                                        maxWidth: 150,
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            color: 'black',
+                                            fontSize: 24,
+                                            fontWeight: '500',
+                                            padding: 5,
+                                        }}
+                                    >
+                                        {values.birthday}
+                                    </Text>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
                     </View>
-                    <View style={{ minWidth: '45%' }}>
-                        <Input
-                            label='Shirt Size'
-                            labelStyle={mtrTheme.profileFormInputTitle}
-                            textInputConfig={{
-                                backgroundColor: 'lightgrey',
-                                value: values.shirt,
-                                paddingHorizontal: 5,
-                                fontSize: 24,
-                                color: 'black',
-
-                                placeholder: 'Shirt Size',
-                                style: { color: 'black' },
-                                fontWeight: '500',
-                                //fontFamily: 'Roboto-Regular',
-                                letterSpacing: 0,
-                                onChangeText: inputChangedHandler.bind(
-                                    this,
-                                    'shirt'
-                                ),
+                    <View style={{ marginRight: 10 }}>
+                        <View>
+                            <Text style={mtrTheme.profileFormInputTitle}>
+                                Shirt
+                            </Text>
+                        </View>
+                        <Dropdown
+                            style={[
+                                styles.dropdown,
+                                isStateFocus && { borderColor: 'blue' },
+                            ]}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            inputSearchStyle={styles.inputSearchStyle}
+                            containerStyle={styles.dropDownContainer}
+                            iconStyle={styles.iconStyle}
+                            data={SHIRTSIZESBY2}
+                            search
+                            maxHeight={300}
+                            labelField='label'
+                            valueField='value'
+                            placeholder={!isShirtFocus ? 'Shirt' : '...'}
+                            searchPlaceholder='Search...'
+                            value={values?.shirt}
+                            onFocus={() => setIsShirtFocus(true)}
+                            onBlur={() => setIsShirtFocus(false)}
+                            onChange={(item) => {
+                                inputChangedHandler('shirt', item.value),
+                                    //setStateValue(item.value);
+                                    setIsShirtFocus(false);
                             }}
                         />
                     </View>
@@ -498,6 +550,14 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                         onPress={handleFormSubmit}
                     />
                 </View>
+                <DateTimePickerModal
+                    isVisible={modalBirthDateVisible}
+                    mode='date'
+                    date={birthday}
+                    display='inline'
+                    onConfirm={onBirthDateConfirm}
+                    onCancel={onBirthDateCancel}
+                />
             </>
             {/* )} */}
         </>
@@ -541,12 +601,16 @@ const styles = StyleSheet.create({
         fontWeight: 500,
         fontSize: 30,
         backgroundColor: 'lightgrey',
-        marginVertical: 5,
+        marginVertical: 1,
         minWidth: 65,
         maxWidth: 65,
         borderWidth: 0.5,
         borderRadius: 1,
         paddingHorizontal: 2,
+        paddingVertical: 0,
+    },
+    dropDownContainer: {
+        fontSize: 4,
     },
     placeholderStyle: {
         fontSize: 16,
@@ -556,12 +620,8 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: 'black',
     },
-    iconStyle: {
-        width: 20,
-        height: 20,
-    },
     inputSearchStyle: {
-        height: 40,
+        //height: 40,
         fontSize: 16,
     },
 });

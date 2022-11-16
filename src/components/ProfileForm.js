@@ -14,7 +14,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Dropdown } from 'react-native-element-dropdown';
 import Input from './ui/Input';
-import { useTheme } from 'react-native-paper';
+import { useTheme, FAB } from 'react-native-paper';
 import CustomButton from './ui/CustomButton';
 import { printObject, dateDashToDateObject } from '../utils/helpers';
 import { STATESBY2, SHIRTSIZESBY2 } from '../constants/meeter';
@@ -246,6 +246,11 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                     }}
                                 />
                             </View>
+                            <FAB
+                                icon='image-edit-outline'
+                                style={styles.fab}
+                                onPress={() => console.log('Pressed')}
+                            />
                         </View>
                         <View style={{ paddingTop: 5 }}>
                             <Text style={{ color: mtrTheme.colors.accent }}>
@@ -662,5 +667,17 @@ const styles = StyleSheet.create({
         borderRadius: 999,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    fab: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        color: 'blue',
+        height: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        aspectRatio: 1,
+        //margin: 16,
+        right: 0,
+        bottom: 0,
     },
 });

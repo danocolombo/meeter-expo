@@ -229,17 +229,29 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
             <>
                 <View style={mtrTheme.profileImageContainer}>
                     <View>
-                        <Image
-                            source={require('../../assets/user-profile.jpeg')}
-                            style={{
-                                height: 80,
-                                width: 80,
-                                borderRadius: 40,
-                            }}
-                        />
-                        <Text style={{ color: mtrTheme.colors.accent }}>
-                            {user.firstName} {user.lastName}
-                        </Text>
+                        <View style={styles.profileImageFrame}>
+                            <View
+                                style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Image
+                                    source={require('../../assets/user-profile.jpeg')}
+                                    style={{
+                                        height: 80,
+                                        aspectRatio: 1,
+
+                                        borderRadius: 40,
+                                    }}
+                                />
+                            </View>
+                        </View>
+                        <View style={{ paddingTop: 5 }}>
+                            <Text style={{ color: mtrTheme.colors.accent }}>
+                                {user.firstName} {user.lastName}
+                            </Text>
+                        </View>
                     </View>
                 </View>
 
@@ -641,5 +653,14 @@ const styles = StyleSheet.create({
     inputSearchStyle: {
         //height: 40,
         fontSize: 16,
+    },
+    profileImageFrame: {
+        borderWidth: 1,
+        borderColor: 'lightgrey',
+        backgroundColor: 'black',
+        padding: 10,
+        borderRadius: 999,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });

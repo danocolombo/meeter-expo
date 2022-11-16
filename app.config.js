@@ -33,6 +33,7 @@ module.exports = ({ config }) => {
             bundleIdentifier: 'guru.fortson.meeter',
             infoPlist: {
                 // UIBackgroundModes: ['location', 'fetch'],
+                //NSCameraUsageDescription: 'for our profile picture',
             },
             config: {},
         },

@@ -216,6 +216,9 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
             focusManager.setFocused(status === 'active');
         }
     }
+    const handlePicChangeRequest = () => {
+        navigation.navigate('ProfilePic');
+    };
 
     const handleFormSubmit = () => {
         handleUpdate(values);
@@ -249,7 +252,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                             <FAB
                                 icon='image-edit-outline'
                                 style={styles.fab}
-                                onPress={() => console.log('Pressed')}
+                                onPress={() => handlePicChangeRequest()}
                             />
                         </View>
                         <View style={{ paddingTop: 5 }}>

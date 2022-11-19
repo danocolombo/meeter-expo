@@ -10,6 +10,7 @@ import {
     Text,
     StyleSheet,
     useWindowDimensions,
+    TouchableOpacity,
     Button,
     AppState,
     Modal,
@@ -31,6 +32,7 @@ import {
     ActivityIndicator,
 } from 'react-native-paper';
 import { printObject, dateNumToDateDash } from '../utils/helpers';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMutation } from '@tanstack/react-query';
 import { updateMeetingDDB } from '../providers/meetings';
 //import { DeleteMeeting } from '../components/common/hooks/meetingQueries';
@@ -81,13 +83,32 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         navigation.setOptions({
             title: meeter.appName,
             headerBackTitle: 'Cancel',
-            headerRight: () => (
-                <Button
-                    onPress={() => setModalDeleteConfirmVisible(true)}
-                    color='white'
-                    title='DELETE'
-                />
-            ),
+            // headerRight: () => (
+            //     <>
+            //         {meeting.meetingId !== '0' && (
+            //             <TouchableOpacity
+            //                 onPress={() =>
+            //                     navigation.navigate('DeleteConfirm', {
+            //                         meeting: meeting,
+            //                     })
+            //                 }
+            //             >
+            //                 <MaterialCommunityIcons
+            //                     name='delete-forever'
+            //                     size={30}
+            //                     color={mtrTheme.colors.critical}
+            //                 />
+            //             </TouchableOpacity>
+            //         )}
+            //     </>
+            // ),
+            // headerRight: () => (
+            //     <Button
+            //         onPress={() => setModalDeleteConfirmVisible(true)}
+            //         color='white'
+            //         title='DELETE'
+            //     />
+            // ),
         });
     }, [navigation, meeter]);
 

@@ -250,6 +250,19 @@ export function dateDashToDateObject(dateDash) {
     let newDate = new Date(datePart[0], datePart[1] - 1, datePart[2]);
     return newDate;
 }
+export function dateDashMadePretty(dateDash) {
+    if (!dateDash) {
+        return null;
+    }
+    let dashPos = dateDash.indexOf('-');
+    if (dashPos === -1) {
+        return null;
+    }
+    let datePart = dateDash.split('-');
+    let newDate = new Date(datePart[0], datePart[1] - 1, datePart[2]);
+    let prettyDate = newDate.toDateString();
+    return prettyDate;
+}
 export function isDateDashBeforeToday(dateDash) {
     // uses dashDate yyyy-mm-dd
     //check if we have any dashes

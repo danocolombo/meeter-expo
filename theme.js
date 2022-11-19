@@ -46,7 +46,7 @@ const theme = {
         landingAppName: '#FEDB39',
         success: 'green',
         warning: 'yellow',
-        critical: 'red',
+        critical: '#D61C4E',
         errorTextBox: errorTextBox,
         notification: 'red',
         navActive: '#D61C4E',

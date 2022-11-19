@@ -145,7 +145,11 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                 <>
                     {meeting.meetingId !== '0' && (
                         <TouchableOpacity
-                            onPress={() => handleDeleteRequest(true)}
+                            onPress={() =>
+                                navigation.navigate('DeleteConfirm', {
+                                    meeting: meeting,
+                                })
+                            }
                         >
                             <MaterialCommunityIcons
                                 name='delete-forever'

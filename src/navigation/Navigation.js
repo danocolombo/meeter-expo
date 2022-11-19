@@ -29,6 +29,7 @@ import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
 import ProfilePicScreen from '../screens/ProfilePicScreen';
+import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub } from 'aws-amplify';
 const Stack = createNativeStackNavigator();
@@ -145,6 +146,17 @@ function MeeterStack(props) {
             <Stack.Screen
                 name='ProfilePic'
                 component={ProfilePicScreen}
+                options={({ navigation }) => ({
+                    title: 'Meeter',
+                    headerStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+                    headerTintColor: 'white',
+                })}
+            />
+            <Stack.Screen
+                name='DeleteConfirm'
+                component={DeleteConfirmScreen}
                 options={({ navigation }) => ({
                     title: 'Meeter',
                     headerStyle: {

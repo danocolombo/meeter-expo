@@ -6,6 +6,7 @@ import {
     AppState,
     ViewBase,
     ImageBackground,
+    SafeAreaView,
 } from 'react-native';
 import React, {
     useState,

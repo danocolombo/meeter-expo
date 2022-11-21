@@ -192,6 +192,20 @@ const theme = {
         alignItems: 'center',
         justifyContent: 'center',
     },
+    profileImageFrame: {
+        borderWidth: 1,
+        borderColor: 'lightgrey',
+        backgroundColor: 'yellow',
+        padding: 10,
+        borderRadius: 999,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    profileImage: {
+        height: 80,
+        aspectRatio: 1,
+        borderRadius: 40,
+    },
     profileFormRowStyle: {
         flexDirection: 'row',
         marginTop: 5,

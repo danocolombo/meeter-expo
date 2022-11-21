@@ -38,7 +38,7 @@ import {
 import TypeSelectors from './TypeSelectors';
 import { useMutation, queryCache } from '@tanstack/react-query';
 import axios from 'axios';
-import { PutMeeting } from './common/hooks/meetingQueries';
+//import { PutMeeting } from './common/hooks/meetingQueries';
 const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
     const meeter = useSelector((state) => state.system);
 
@@ -229,20 +229,16 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         printObject('newValues', newValues);
         console.log('---------------------------');
         //   using react-query mutate to do insert
-        return useMutation((values) => PutMeeting(values), {
-            onSuccess: (data, variables) => {
-                queryCache.invalidateQueries(['meetings', data.meetingId]);
-            },
-        });
+        ?
         //handleUpdate(values);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     // printObject('MDS:58-->meeting:', meeting);
     useEffect(() => {
-        printObject('MF:218-->values', values);
+        printObject('MFM:218-->values', values);
         let dateObj = dateDashToDateObject(values.meetingDate);
         setDateValue(dateObj);
-        printObject('MF:220-->dateObj', dateObj);
+        printObject('MFM:220-->dateObj', dateObj);
     }, []);
     return (
         <>

@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import CustomButton from '../components/ui/CustomButton';
 import ProfileForm from '../components/ProfileForm';
+import { useAuthContext } from '../contexts/AuthContext';
+import { useSysContext } from '../contexts/SysContext';
 import {
     FetchProfile,
     UpdateProfile,
@@ -23,6 +25,9 @@ const ProfileScreen = (props) => {
     const meeter = useSelector((state) => state.system);
     const user = useSelector((state) => state.users.currentUser);
     const [showMessage, setShowMessage] = useState(false);
+    const { sub, profilePic } = useAuthContext();
+    const { systemDef } = useSysContext();
+
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
@@ -83,23 +88,24 @@ const ProfileScreen = (props) => {
             // should never get here, but just in case
             values.affiliations = DEFAULT_AFFILIATIONS.affiliations;
         }
+
         // clean the unwanted root values
         delete values?.residenceStreet;
         delete values?.residenceCity;
         delete values?.residenceStateProv;
         delete values?.residencePostalCode;
-        printObject('PS:71--handleUpdate::values(>>>DDB)', values);
+        // printObject('PS:71--handleUpdate::values(>>>DDB)', values);
 
         UpdateProfile(values)
             .then((res) => {
-                printObject('UpdateProfile res:', res);
+                // printObject('UpdateProfile res:', res);
                 let newReduxUser = {
                     ...values,
                     jwtToken: user.jwtToken,
                 };
                 dispatch(updateCurrentUser(newReduxUser));
-                printObject('newUser:', newReduxUser);
-                printObject('user.currentUser:', user);
+                // printObject('newUser:', newReduxUser);
+                // printObject('user.currentUser:', user);
 
                 setShowMessage(true);
                 return;
@@ -128,7 +134,24 @@ const ProfileScreen = (props) => {
     let profile = {};
     if (PROFILE.data) {
         profile = PROFILE.data.body;
-        console.log('data: profile copied');
+        //   add profilePic to profile
+        let pic;
+        if (profilePic) {
+            //   use user's profile pick
+            console.log('USE1:', profilePic);
+            pic = profilePic;
+        } else {
+            // printObject('WHAT?:', systemDef);
+            // console.log('-->', systemDef.defaultProfilePic);
+            // console.log('USE2:', systemDef.defaultProfilePic);
+            pic = systemDef.defaultProfilePic;
+        }
+        let updatedProfile = {
+            ...profile,
+            profilePic: pic,
+        };
+        profile = { ...updatedProfile };
+        // printObject('PS:139-->updatedProfile', updatedProfile);
     }
 
     if (PROFILE.isLoading) {

@@ -11,7 +11,13 @@ const AuthContextProvider = ({ children }) => {
     const sub = authUser?.attributes?.sub;
 
     useEffect(() => {
-        Auth.currentAuthenticatedUser({ bypassCache: true }).then(setAuthUser);
+        try {
+            Auth.currentAuthenticatedUser({ bypassCache: true })
+                .then(setAuthUser)
+                .catch((e) => printObject('system starting...'));
+        } catch (error) {
+            console.log('yep:', error.message);
+        }
     }, []);
 
     useEffect(() => {

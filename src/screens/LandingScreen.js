@@ -40,8 +40,7 @@ const LandingScreen = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const { sub } = useAuthContext();
-    const { systemDef } = useSysContext();
+
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
@@ -57,7 +56,7 @@ const LandingScreen = () => {
         setIsLoading(true);
         // console.log('meetings = ', meetings.length);
         let today = dateNumToDateDash(meeter.today);
-        console.log('meetings', meetings.length);
+        //console.log('meetings', meetings.length);
         let activeOnes = meetings.filter((m) => m.meetingDate >= today);
         function quickSort(prop) {
             return function (a, b) {
@@ -70,14 +69,14 @@ const LandingScreen = () => {
             };
         }
         let sortedResults = activeOnes.sort(quickSort('mtgCompKey'));
-        console.log('actives:', activeOnes.length);
+        //console.log('actives:', activeOnes.length);
         activeOnes ? setActiveMeeting(activeOnes[0]) : null;
 
         // Do something when the screen is focused
         setIsLoading(false);
     }, [meetings]);
-    printObject('CONTEXT:sub-->', sub);
-    printObject('SYSTEM-CONTEXT-->systemDef', systemDef);
+    // printObject('CONTEXT:sub-->', sub);
+    // printObject('SYSTEM-CONTEXT-->systemDef', systemDef);
     if (isLoading) {
         return (
             <View

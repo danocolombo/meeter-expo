@@ -233,16 +233,16 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         console.log('---------------------------');
         printObject('newValues', newValues);
         console.log('---------------------------');
-        mutation.mutate(values);
+        //mutation.mutate(values);
         handleUpdate(values);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     // printObject('MDS:58-->meeting:', meeting);
     useEffect(() => {
-        printObject('MF:218-->values', values);
+        //printObject('MF:218-->values', values);
         let dateObj = dateDashToDateObject(values.meetingDate);
         setDateValue(dateObj);
-        printObject('MF:220-->dateObj', dateObj);
+        //printObject('MF:220-->dateObj', dateObj);
     }, []);
     const mutation = useMutation({
         mutationFn: (values) => {

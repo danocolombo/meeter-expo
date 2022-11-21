@@ -32,8 +32,8 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
     const [birthday, setBirthday] = useState();
-    console.log('birthday:', birthday);
-    console.log(typeof birthday);
+    // console.log('birthday:', birthday);
+    // console.log(typeof birthday);
     const user = useSelector((state) => state.users.currentUser);
     const { width } = useWindowDimensions();
     const [values, setValues] = useState({
@@ -64,7 +64,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     );
     useFocusEffect(
         useCallback(() => {
-            printObject('useFocusEffect-->profile:', profile);
+            // printObject('useFocusEffect-->profile:', profile);
             //let dateObj = dateDashToDateObject(values?.birthday);
             //setBirthday(dateObj);
             //setValues(profile);
@@ -72,12 +72,12 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
             setValues(x);
             let dateObj = dateDashToDateObject(values?.birthday);
 
-            printObject('dateObj:', dateObj);
+            // printObject('dateObj:', dateObj);
             setBirthday(dateObj);
         }, [])
     );
     const FormatBirthDate = (data) => {
-        printObject('PF:78-->data:', data);
+        // printObject('PF:78-->data:', data);
         let dateString =
             data.getMonth() +
             1 +
@@ -90,7 +90,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
         const mo = parseInt(data.getMonth());
         const da = parseInt(data.getDate());
         const tmp = new Date(yr, mo, da, 0, 0, 0);
-        printObject('PF:93-->tmp', tmp);
+        // printObject('PF:93-->tmp', tmp);
         //setBirthday(tmp);
         //make string to save in values.
         let mtgDateString =
@@ -101,12 +101,12 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
             ('0' + data.getDate()).slice(-2);
         let dateObj = dateDashToDateObject(values?.birthday);
         setBirthday(dateObj);
-        printObject('PF:102-->mtgDateString', mtgDateString);
+        // printObject('PF:102-->mtgDateString', mtgDateString);
         const newValues = {
             ...values,
             birthday: mtgDateString,
         };
-        printObject('PF:107--newValues', newValues);
+        // printObject('PF:107--newValues', newValues);
         setValues(newValues);
         //setDateValue(tmp);
 
@@ -144,7 +144,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                     postalCode: values?.residence?.postalCode,
                 };
                 let newValues = { ...curInputValues, residence };
-                printObject('newValues', newValues);
+                //printObject('newValues', newValues);
                 curInputValues = newValues;
                 return curInputValues;
             }
@@ -157,7 +157,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                     postalCode: values?.residence?.postalCode,
                 };
                 let newValues = { ...curInputValues, residence };
-                printObject('newValues', newValues);
+                //printObject('newValues', newValues);
                 curInputValues = newValues;
                 return curInputValues;
             }
@@ -170,7 +170,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                     postalCode: values?.residence?.postalCode,
                 };
                 let newValues = { ...curInputValues, residence };
-                printObject('newValues', newValues);
+                //printObject('newValues', newValues);
                 curInputValues = newValues;
                 return curInputValues;
             }
@@ -183,7 +183,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                     postalCode: enteredValue,
                 };
                 let newValues = { ...curInputValues, residence };
-                printObject('newValues', newValues);
+                //printObject('newValues', newValues);
                 curInputValues = newValues;
                 return curInputValues;
             }
@@ -232,7 +232,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
             <>
                 <View style={mtrTheme.profileImageContainer}>
                     <View>
-                        <View style={styles.profileImageFrame}>
+                        <View style={mtrTheme.profileImageFrame}>
                             <View
                                 style={{
                                     alignItems: 'center',
@@ -240,13 +240,9 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                 }}
                             >
                                 <Image
-                                    source={require('../../assets/user-profile.jpeg')}
-                                    style={{
-                                        height: 80,
-                                        aspectRatio: 1,
-
-                                        borderRadius: 40,
-                                    }}
+                                    // source={require('../../assets/user-profile.jpeg')}
+                                    source={{ uri: profile.profilePic }}
+                                    style={mtrTheme.profileImage}
                                 />
                             </View>
                             <FAB
@@ -662,15 +658,7 @@ const styles = StyleSheet.create({
         //height: 40,
         fontSize: 16,
     },
-    profileImageFrame: {
-        borderWidth: 1,
-        borderColor: 'lightgrey',
-        backgroundColor: 'black',
-        padding: 10,
-        borderRadius: 999,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+
     fab: {
         position: 'absolute',
         backgroundColor: 'white',

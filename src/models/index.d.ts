@@ -13,7 +13,7 @@ type MeeterSystemMetaData = {
 type EagerUser = {
   readonly id: string;
   readonly sub?: string | null;
-  readonly pictureURI?: string | null;
+  readonly profilePic?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -21,7 +21,7 @@ type EagerUser = {
 type LazyUser = {
   readonly id: string;
   readonly sub?: string | null;
-  readonly pictureURI?: string | null;
+  readonly profilePic?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -37,7 +37,7 @@ type EagerMeeterSystem = {
   readonly version?: string | null;
   readonly ios_version?: string | null;
   readonly android_version?: string | null;
-  readonly defaultProfileUri?: string | null;
+  readonly defaultProfilePic?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -47,7 +47,7 @@ type LazyMeeterSystem = {
   readonly version?: string | null;
   readonly ios_version?: string | null;
   readonly android_version?: string | null;
-  readonly defaultProfileUri?: string | null;
+  readonly defaultProfilePic?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

@@ -17,8 +17,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "pictureURI": {
-                    "name": "pictureURI",
+                "profilePic": {
+                    "name": "profilePic",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -97,8 +97,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "defaultProfileUri": {
-                    "name": "defaultProfileUri",
+                "defaultProfilePic": {
+                    "name": "defaultProfilePic",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -150,5 +150,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.1",
-    "version": "883baf66aa7471af5bddd31c4149ac4e"
+    "version": "e85afa97b578cb0c18a18058f1f9b8a2"
 };

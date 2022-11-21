@@ -1,7 +1,7 @@
 type User @model @auth(rules: [{allow: public}]) {
   id: ID!
   sub: String
-  pictureURI: String
+  profilePic: String
 }
 
 type MeeterSystem @model @auth(rules: [{allow: public}]) {
@@ -9,6 +9,6 @@ type MeeterSystem @model @auth(rules: [{allow: public}]) {
   version: String
   ios_version: String
   android_version: String
-  defaultProfileUri: String
+  defaultProfilePic: String
 }
  

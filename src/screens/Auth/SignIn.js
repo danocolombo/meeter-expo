@@ -15,6 +15,8 @@ import CustomButton from '../../components/ui/Auth/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { useSysContext } from '../../contexts/SysContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 // import { ALL_EVENTS } from '../../../../data/getRegionalEvents';
@@ -50,6 +52,8 @@ const SignInScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);
+    const { profilePic } = useAuthContext();
+    const { defaultProfilePic } = useSysContext();
     const {
         control,
         handleSubmit,
@@ -137,8 +141,8 @@ const SignInScreen = () => {
         await Auth.currentSession().then((data) => {
             currentSession = data;
         });
-        printObject('SI:139-->currentUserInfo:', currentUserInfo);
-        printObject('SI:140-->currentSession:', currentSession);
+        //printObject('SI:139-->currentUserInfo:', currentUserInfo);
+        //printObject('SI:140-->currentSession:', currentSession);
         //   ----------------------------------------------
         //   build theUser object
         //   ----------------------------------------------
@@ -155,6 +159,13 @@ const SignInScreen = () => {
         theUser.lastName = ln;
         theUser.email = e;
         theUser.jwtToken = j;
+        //   ----------------------------------------------
+        //   get User info from Amplify
+        //   ----------------------------------------------
+
+        printObject('SI:163-->profilePic', profilePic);
+        printObject('SI:163-->defaultProfilePic', defaultProfilePic);
+
         //   ----------------------------------------------
         //   get user profile from DDB
         //   ----------------------------------------------
@@ -196,7 +207,7 @@ const SignInScreen = () => {
                 affiliations: DEFAULT_AFFILIATIONS.affiliations,
             };
         }
-        printObject('SI:199-->fullUserInfo:', fullUserInfo);
+        //printObject('SI:199-->fullUserInfo:', fullUserInfo);
         dispatch(updateCurrentUser(fullUserInfo));
         getAffiliate(fullUserInfo.affiliations.active.value)
             .then((response) => {

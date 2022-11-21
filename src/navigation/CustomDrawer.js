@@ -15,10 +15,14 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { usersSlice } from '../features/usersSlice';
+import { useAuthContext } from '../contexts/AuthContext';
+import { useSysContext } from '../contexts/SysContext';
 
 const CustomDrawer = (props) => {
     const mtrTheme = useTheme();
     const user = useSelector((state) => state.users.currentUser);
+    const { profilePic } = useAuthContext();
+    const { systemDef } = useSysContext();
     return (
         <View style={{ flex: 1 }}>
             <DrawerContentScrollView
@@ -32,7 +36,11 @@ const CustomDrawer = (props) => {
                     style={{ padding: 20, marginBottom: 10 }}
                 >
                     <Image
-                        source={require('../../assets/user-profile.jpeg')}
+                        source={{
+                            uri: profilePic
+                                ? profilePic
+                                : systemDef.defaultProfilePic,
+                        }}
                         style={{
                             height: 80,
                             width: 80,

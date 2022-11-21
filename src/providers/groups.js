@@ -6,6 +6,22 @@ const config = {
         'Content-type': 'application/json; charset=UTF-8',
     },
 };
+export async function deleteMeetingGroups(meetingId) {
+    let obj = {
+        operation: 'deleteMeetingGroups',
+        payload: {
+            Key: {
+                meetingId: meetingId,
+            },
+        },
+    };
+    let body = JSON.stringify(obj);
+    let api2use = process.env.AWS_API_ENDPOINT + '/groups';
+
+    let results = await axios.post(api2use, body, config);
+    // printObject('res:', res);
+    return results;
+}
 
 export async function getGroupsForMeeting(meetingId) {
     let obj = {
@@ -18,7 +34,7 @@ export async function getGroupsForMeeting(meetingId) {
     let api2use = process.env.AWS_API_ENDPOINT + '/groups';
 
     let res = await axios.post(api2use, body, config);
-    // printObject('res:', res);
+    //printObject('M37:res:', res);
     if (res?.data?.status === '200') {
         const results = res.data.body;
 
@@ -41,6 +57,7 @@ export async function deleteGroupFromDDB(groupId) {
     let body = JSON.stringify(obj);
     let api2use = process.env.AWS_API_ENDPOINT + '/groups';
     let res = await axios.post(api2use, body, config);
+    printObject('G:60-->res', res);
     if (res.status === 200) {
         console.log('G:45-->deleteGroup DB call successful');
         return true;

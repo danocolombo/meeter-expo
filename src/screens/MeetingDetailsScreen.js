@@ -132,14 +132,14 @@ const MeetingDetails = (props) => {
     });
     //if (data) {
     if (MEETING.data) {
-        printObject('DATA to use:', MEETING.data);
+        // printObject('DATA to use:', MEETING.data);
         meeting = MEETING.data.body;
     }
-    if (GROUPS.data) {
-        printObject('GROUPS!!!', GROUPS.data);
-    }
-    printObject('MDS:78-->isLoading', MEETING.isLoading);
-    printObject('MDS:79-->isFetching', MEETING.isFetching);
+    // if (GROUPS.data) {
+    //     printObject('GROUPS!!!', GROUPS.data);
+    // }
+    // printObject('MDS:78-->isLoading', MEETING.isLoading);
+    // printObject('MDS:79-->isFetching', MEETING.isFetching);
     if (MEETING.isLoading) {
         return (
             <View

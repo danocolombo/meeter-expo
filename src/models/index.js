@@ -4,8 +4,9 @@ import { schema } from './schema';
 
 
 
-const { Profile } = initSchema(schema);
+const { User, MeeterSystem } = initSchema(schema);
 
 export {
-  Profile
+  User,
+  MeeterSystem
 };

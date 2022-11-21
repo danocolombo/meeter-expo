@@ -1,7 +1,7 @@
 export const schema = {
     "models": {
-        "Profile": {
-            "name": "Profile",
+        "User": {
+            "name": "User",
             "fields": {
                 "id": {
                     "name": "id",
@@ -10,15 +10,15 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "uid": {
-                    "name": "uid",
+                "sub": {
+                    "name": "sub",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
-                "pictureURL": {
-                    "name": "pictureURL",
+                "profilePic": {
+                    "name": "profilePic",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -42,7 +42,87 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Profiles",
+            "pluralName": "Users",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "MeeterSystem": {
+            "name": "MeeterSystem",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "version": {
+                    "name": "version",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "ios_version": {
+                    "name": "ios_version",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "android_version": {
+                    "name": "android_version",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "defaultProfilePic": {
+                    "name": "defaultProfilePic",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "MeeterSystems",
             "attributes": [
                 {
                     "type": "model",
@@ -70,5 +150,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.1",
-    "version": "bb5c335a1f3f37d8aa6602af0605d199"
+    "version": "e85afa97b578cb0c18a18058f1f9b8a2"
 };

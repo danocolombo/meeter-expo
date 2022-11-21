@@ -9,7 +9,7 @@ import { logout as systemLogout } from '../../features/systemSlice';
 const MeeterSignOut = (props) => {
     const action = props?.action;
     const dispatch = useDispatch();
-    console.log('ACTION:', action);
+    //console.log('ACTION:', action);
     useEffect(() => {
         dispatch(logout());
         dispatch(meetingsSignout());

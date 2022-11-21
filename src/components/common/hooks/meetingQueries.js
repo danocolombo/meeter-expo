@@ -71,7 +71,7 @@ async function FetchHistoricMeetings(clientId) {
     const { data } = await axios.post(api2use, body, config);
     return data;
 }
-async function PutMeeting(values) {
+async function PutMeetingX(values) {
     let obj = {
         operation: 'putMeeting',
         payload: {
@@ -101,6 +101,6 @@ export {
     FetchMeeting,
     FetchActiveMeetings,
     FetchHistoricMeetings,
-    PutMeeting,
+    PutMeetingX,
     DeleteMeeting,
 };

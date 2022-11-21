@@ -145,7 +145,11 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                 <>
                     {meeting.meetingId !== '0' && (
                         <TouchableOpacity
-                            onPress={() => handleDeleteRequest(true)}
+                            onPress={() =>
+                                navigation.navigate('DeleteConfirm', {
+                                    meeting: meeting,
+                                })
+                            }
                         >
                             <MaterialCommunityIcons
                                 name='delete-forever'
@@ -160,6 +164,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
     }, [navigation, meeter]);
 
     const FormatEventDate = (data) => {
+        printObject('MF:163-->data', data);
         let dateString =
             data.getMonth() +
             1 +
@@ -172,6 +177,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         const mo = parseInt(data.getMonth());
         const da = parseInt(data.getDate());
         const tmp = new Date(yr, mo, da, 0, 0, 0);
+        printObject('MF:176-->tmp', tmp);
         // save the date value for control
         setMeetingDate(tmp);
         //make string to save in values.
@@ -181,6 +187,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
             ('0' + (data.getMonth() + 1)).slice(-2) +
             '-' +
             ('0' + data.getDate()).slice(-2);
+        printObject('MF:186-->mtgDateString', mtgDateString);
         const newValues = {
             ...values,
             meetingDate: mtgDateString,
@@ -188,10 +195,8 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         //====================================
         // set the dateValue object as well.
         setDateValue(tmp);
-        printObject('MF:173--dateValue', dateValue);
+        printObject('MF:194--newValues', newValues);
         setValues(newValues);
-
-        printObject('MDES:144-->newValues:', newValues);
         return;
     };
     const onMeetingDateConfirm = (data) => {
@@ -228,16 +233,16 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         console.log('---------------------------');
         printObject('newValues', newValues);
         console.log('---------------------------');
-        mutation.mutate(values);
+        //mutation.mutate(values);
         handleUpdate(values);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     // printObject('MDS:58-->meeting:', meeting);
     useEffect(() => {
-        printObject('MF:218-->values', values);
+        //printObject('MF:218-->values', values);
         let dateObj = dateDashToDateObject(values.meetingDate);
         setDateValue(dateObj);
-        printObject('MF:220-->dateObj', dateObj);
+        //printObject('MF:220-->dateObj', dateObj);
     }, []);
     const mutation = useMutation({
         mutationFn: (values) => {

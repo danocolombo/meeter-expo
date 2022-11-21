@@ -46,7 +46,7 @@ const theme = {
         landingAppName: '#FEDB39',
         success: 'green',
         warning: 'yellow',
-        critical: 'red',
+        critical: '#D61C4E',
         errorTextBox: errorTextBox,
         notification: 'red',
         navActive: '#D61C4E',
@@ -186,7 +186,26 @@ const theme = {
         justifyContent: 'space-evenly',
         marginVertical: 15,
     },
-
+    profileImageContainer: {
+        flexDirection: 'row',
+        marginVertical: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    profileImageFrame: {
+        borderWidth: 1,
+        borderColor: 'lightgrey',
+        backgroundColor: 'yellow',
+        padding: 10,
+        borderRadius: 999,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    profileImage: {
+        height: 80,
+        aspectRatio: 1,
+        borderRadius: 40,
+    },
     profileFormRowStyle: {
         flexDirection: 'row',
         marginTop: 5,

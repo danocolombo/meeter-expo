@@ -32,12 +32,16 @@ import {
 } from 'react-native-paper';
 import { dateNumToDateDash, printObject } from '../utils/helpers';
 import MeetingListCard from '../components/Meeting.List.Card';
+import { useAuthContext } from '../contexts/AuthContext';
+import { useSysContext } from '../contexts/SysContext';
 
 const LandingScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
+    const { sub } = useAuthContext();
+    const { systemDef } = useSysContext();
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
@@ -72,7 +76,8 @@ const LandingScreen = () => {
         // Do something when the screen is focused
         setIsLoading(false);
     }, [meetings]);
-
+    printObject('CONTEXT:sub-->', sub);
+    printObject('SYSTEM-CONTEXT-->systemDef', systemDef);
     if (isLoading) {
         return (
             <View

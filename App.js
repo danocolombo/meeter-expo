@@ -9,6 +9,8 @@ import {
     onlineManager,
     useOnlineManager,
 } from '@tanstack/react-query';
+import AuthContextProvider from './src/contexts/AuthContext';
+import SysContextProvider from './src/contexts/SysContext';
 // import NetInfo from '@react-native-community/netinfo';
 import Navigation from './src/navigation/Navigation';
 import { store } from './src/app/store';
@@ -76,19 +78,23 @@ function App() {
 
     return (
         <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-                <PaperProvider theme={theme}>
-                    <SafeAreaView
-                        style={
-                            Platform === 'ios'
-                                ? styles.containerIOS
-                                : styles.container
-                        }
-                    >
-                        <Navigation theme={theme} />
-                    </SafeAreaView>
-                </PaperProvider>
-            </QueryClientProvider>
+            <SysContextProvider>
+                <AuthContextProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <PaperProvider theme={theme}>
+                            <SafeAreaView
+                                style={
+                                    Platform === 'ios'
+                                        ? styles.containerIOS
+                                        : styles.container
+                                }
+                            >
+                                <Navigation theme={theme} />
+                            </SafeAreaView>
+                        </PaperProvider>
+                    </QueryClientProvider>
+                </AuthContextProvider>
+            </SysContextProvider>
         </Provider>
     );
 }

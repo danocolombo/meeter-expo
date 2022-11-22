@@ -230,9 +230,9 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
             newcomersCount: parseInt(values.newcomersCount),
         };
 
-        console.log('---------------------------');
-        printObject('newValues', newValues);
-        console.log('---------------------------');
+        // console.log('---------------------------');
+        // printObject('newValues', newValues);
+        // console.log('---------------------------');
         //mutation.mutate(values);
         handleUpdate(values);
     };

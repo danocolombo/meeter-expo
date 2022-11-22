@@ -12,6 +12,7 @@ import {
     StyleSheet,
     Image,
     Modal,
+    Alert,
     AppState,
     useWindowDimensions,
     ScrollView,
@@ -19,20 +20,18 @@ import {
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
 import { useSelector, useDispatch } from 'react-redux';
+import { focusManager } from '@tanstack/react-query';
 import {
     useNavigation,
     useIsFocused,
     useNavigationState,
     useFocusEffect,
 } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
+
 import CustomButton from '../components/ui/CustomButton';
-import { Badge } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { FetchGroup } from '../components/common/hooks/groupQueries';
-import GenderSelectors from '../components/GenderSelectors';
-import NumberInput from '../components/ui/NumberInput';
-import Input from '../components/ui/Input';
+
+import { upsertGroupToDDB } from '../providers/groups';
+
 import {
     Surface,
     withTheme,
@@ -53,8 +52,9 @@ import GroupForm from '../components/GroupForm';
 //   FUNCTION START
 //   ================
 const GroupDetailsEditScreen = ({ route, navigation }) => {
-    const groupId = route.params.groupId;
-    let group = {};
+    const group = route.params.group;
+    const meeting = route.params.meeting;
+    //let group = {};
     const mtrTheme = useTheme();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
@@ -67,61 +67,12 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
 
     //const [group, setGroup] = useState();
 
-    const [values, setValues] = useState({
-        meetingId: group?.meetingId ? group.meetingId : '0',
-        groupId: group?.groupId ? group.groupId : '0',
-        gender: group?.gender ? group.gender : 'x',
-        title: group?.title ? group.title : '',
-        attendance: group?.attendance ? parseInt(group.attendance) : 0,
-        location: group?.location ? group.location : '',
-        facilitator: group?.facilitator ? group.facilitator : '',
-        cofacilitator: group?.cofacilitator ? group.cofacilitator : '',
-        notes: group?.notes ? group.notes : '',
-    });
     const uns = useNavigationState((state) => state);
-    // useEffect(() => {
-    //     setIsLoading(true);
-    //     if (groupId !== '0') {
-    //         let grp = [];
-    //         groups.forEach((g) => {
-    //             if (g.groupId === groupId) {
-    //                 grp.push(g);
-    //             }
-    //         });
-    //         printObject('grp value', grp);
-    //         setValues(grp[0]);
-    //         setGroup(grp[0]);
-    //         if (grp[0].title.length < 3) {
-    //             setIsTitleValid(false);
-    //         } else {
-    //             setIsTitleValid(true);
-    //         }
-    //         if (grp[0].location.length < 3) {
-    //             setIsLocationValid(false);
-    //         } else {
-    //             setIsLocationValid(true);
-    //         }
-    //     }
-    //     setIsLoading(false);
-    // }, []);
 
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
             headerBackTitle: 'Cancel',
-            headerRight: () => (
-                <>
-                    <TouchableOpacity
-                        onPress={() => setModalDeleteConfirmVisible(true)}
-                    >
-                        <MaterialCommunityIcons
-                            name='delete-forever'
-                            size={30}
-                            color={mtrTheme.colors.critical}
-                        />
-                    </TouchableOpacity>
-                </>
-            ),
         });
     }, [navigation, group]);
     function onAppStateChange(status) {
@@ -129,80 +80,25 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
             focusManager.setFocused(status === 'active');
         }
     }
-    useFocusEffect(
-        useCallback(() => {
-            const subscription = AppState.addEventListener(
-                'change',
-                onAppStateChange
-            );
-            refetch();
-            printObject('GDES:135-->REFETCH', null);
 
-            return () => subscription.remove();
-        }, [])
-    );
-    const { data, isError, error, isLoading, isFetching, refetch } = useQuery(
-        ['group', groupId],
-        () => FetchGroup(groupId),
-        {
-            refetchInterval: 60000,
-            cacheTime: 2000,
-            enabled: true,
-        }
-    );
-    if (data) {
-        group = data.body;
-        if (!values.title) {
-            setValues(group);
-        }
-        printObject('GDES:158-->data.body', data.body);
-        printObject('GDES:159-->group:', group);
-    }
-    function setGenderValue(enteredValue) {
-        setValues((curInputValues) => {
-            return {
-                ...curInputValues,
-                gender: enteredValue,
-            };
-        });
-    }
-    function inputChangedHandler(inputIdentifier, enteredValue) {
-        setValues((curInputValues) => {
-            if (inputIdentifier === 'title') {
-                if (enteredValue.length < 3) {
-                    setIsTitleValid(false);
+    const handleUpdate = (values) => {
+        // printObject('GDS:86:', values);
+        upsertGroupToDDB(values)
+            .then((response) => {
+                // printObject('GDES:87-->response:', response);
+                if (response.status === 200) {
+                    // GOOD TO GO, GO BACK TO MEETING DETAILS
+                    navigation.navigate('MeetingDetails', meeting);
                 } else {
-                    setIsTitleValid(true);
+                    Alert.alert('Error handling your request');
+                    return;
                 }
-            }
-            if (inputIdentifier === 'location') {
-                if (enteredValue.length < 3) {
-                    setIsLocationValid(false);
-                } else {
-                    setIsLocationValid(true);
-                }
-            }
-            return {
-                ...curInputValues,
-                [inputIdentifier]: enteredValue,
-            };
-        });
-    }
-    const handleFormSubmit = () => {
-        if (values.groupId === '0') {
-            dispatch(addGroupValues(values));
-            navigation.goBack();
-            // navigation.navigate('MeetingDetails', {
-            //     meetingId: values.meetingId,
-            // });
-        } else {
-            dispatch(updateGroupValues(values));
-            navigation.goBack();
-            // navigation.navigate('MeetingDetails', {
-            //     meetingId: values.meetingId,
-            // });
-        }
+            })
+            .catch((e) => {
+                console.log('upsertGroupToDDB unexpected error:', e);
+            });
     };
+
     const inputStyle = {
         paddingLeft: 0,
         fontSize: 24,
@@ -228,31 +124,26 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
             // );
         }, 10);
     };
-    const [isLocationValid, setIsLocationValid] = useState(
-        group?.location?.length > 2 ? true : false
-    );
-    const [isTitleValid, setIsTitleValid] = useState(
-        group?.title?.length > 2 ? true : false
-    );
-    if (isLoading) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <ActivityIndicator
-                    color={mtrTheme.colors.activityIndicator}
-                    size={80}
-                />
-            </View>
-        );
-    }
-    if (isError) {
-        console.error('Error getting group', error);
-    }
+
+    // if (isLoading) {
+    //     return (
+    //         <View
+    //             style={{
+    //                 flex: 1,
+    //                 alignItems: 'center',
+    //                 justifyContent: 'center',
+    //             }}
+    //         >
+    //             <ActivityIndicator
+    //                 color={mtrTheme.colors.activityIndicator}
+    //                 size={80}
+    //             />
+    //         </View>
+    //     );
+    // }
+    // if (isError) {
+    //     console.error('Error getting group', error);
+    // }
     return (
         <>
             <Modal visible={modalDeleteConfirmVisible} animationStyle='slide'>
@@ -288,7 +179,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                                     justifyContent: 'center',
                                 }}
                             >
-                                {values.gender === 'f' ? (
+                                {group.gender === 'f' ? (
                                     <View>
                                         <Text
                                             style={
@@ -299,7 +190,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                                         </Text>
                                     </View>
                                 ) : null}
-                                {values.gender === 'm' ? (
+                                {group.gender === 'm' ? (
                                     <View>
                                         <Text
                                             style={
@@ -316,7 +207,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                                             mtrTheme.meetingEditDeleteModalMeetingText
                                         }
                                     >
-                                        {values.title}
+                                        {group.title}
                                     </Text>
                                 </View>
                             </View>
@@ -341,10 +232,10 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                                         mtrTheme.meetingEditDeleteModalMeetingText
                                     }
                                 >
-                                    {values.location}
+                                    {group.location}
                                 </Text>
                             </View>
-                            {values.facilitator && (
+                            {group.facilitator && (
                                 <View
                                     style={{
                                         flexDirection: 'row',
@@ -364,7 +255,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                                             mtrTheme.meetingEditDeleteModalMeetingText
                                         }
                                     >
-                                        {values.facilitator}
+                                        {group.facilitator}
                                     </Text>
                                 </View>
                             )}
@@ -393,180 +284,11 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
                 </Surface>
             </Modal>
             {/* <ScrollView style={{ height: '100%' }}> */}
-            <Surface style={mtrTheme.groupEditSurface}>
-                <View>
-                    <Text style={mtrTheme.screenTitle}>GROUP DETAILS</Text>
-                </View>
-                <View style={mtrTheme.groupEditRow}>
-                    <GenderSelectors
-                        setPick={setGenderValue}
-                        pick={values.gender}
-                    />
-                </View>
-                <View
-                    style={[
-                        mtrTheme.groupEditRowBasic,
-                        { marginTop: 15, marginBottom: 0 },
-                    ]}
-                >
-                    <NumberInput
-                        value={values.attendance}
-                        numberStyle={{ color: 'white' }}
-                        graphicStyle={{ color: 'white' }}
-                        onAction={inputChangedHandler.bind(this, 'attendance')}
-                    />
-                </View>
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Group Title'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: isTitleValid
-                                ? 'lightgrey'
-                                : mtrTheme.colors.errorTextBox,
-                            value: values.title,
-                            paddingHorizontal: 5,
-                            fontSize: 24,
-                            color: 'black',
-                            marginHorizontal: 0,
-                            placeholder: 'Group Title',
-                            style: { color: 'black' },
-                            fontWeight: '500',
-
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'title'
-                            ),
-                        }}
-                    />
-                </View>
-                {!isTitleValid && (
-                    <View style={mtrTheme.groupEditInputErrorContainer}>
-                        <Text style={mtrTheme.groupEditInputErrorText}>
-                            REQUIRED: minimum length = 3
-                        </Text>
-                    </View>
-                )}
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Location'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: isLocationValid
-                                ? 'lightgrey'
-                                : mtrTheme.colors.errorTextBox,
-                            paddingHorizontal: 5,
-                            value: values.location,
-                            fontSize: 24,
-                            color: 'black',
-                            capitalize: 'words',
-                            marginHorizontal: 0,
-                            placeholder: 'where was group?',
-                            style: { color: 'black' },
-
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'location'
-                            ),
-                        }}
-                    />
-                </View>
-                {!isLocationValid && (
-                    <View style={mtrTheme.groupEditInputErrorContainer}>
-                        <Text style={mtrTheme.groupEditInputErrorText}>
-                            REQUIRED: minimum length = 3
-                        </Text>
-                    </View>
-                )}
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Faciliatator'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 5,
-                            fontSize: 24,
-                            value: values.facilitator,
-                            color: 'black',
-                            capitalize: 'words',
-                            marginHorizontal: 0,
-                            placeholder: 'who facilitated?',
-                            style: { color: 'black' },
-
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'facilitator'
-                            ),
-                        }}
-                    />
-                </View>
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Co-Faciliatator'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 5,
-                            fontSize: 24,
-                            value: values.cofacilitator,
-                            color: 'black',
-                            width: '100%',
-                            capitalize: 'words',
-                            marginHorizontal: 0,
-                            placeholder: 'who co-facilitated?',
-                            style: { color: 'black' },
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'cofacilitator'
-                            ),
-                        }}
-                    />
-                </View>
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Notes'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 10,
-                            fontSize: 24,
-                            color: 'black',
-                            value: values.notes,
-                            capitalize: 'sentence',
-                            autoCorrect: true,
-                            marginHorizontal: 5,
-                            placeholder: '',
-                            style: { color: 'black' },
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            multiline: true,
-                            minHeight: 100,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'notes'
-                            ),
-                        }}
-                    />
-                </View>
-
-                <View style={{ marginTop: 10, marginHorizontal: 20 }}>
-                    <CustomButton
-                        text='SAVE'
-                        bgColor={mtrTheme.colors.success}
-                        fgColor='white'
-                        type='PRIMARY'
-                        enabled={isTitleValid && isLocationValid}
-                        onPress={handleFormSubmit}
-                    />
-                </View>
-            </Surface>
+            <GroupForm
+                group={group}
+                meeting={meeting}
+                handleUpdate={handleUpdate}
+            />
             {/* </ScrollView> */}
         </>
     );

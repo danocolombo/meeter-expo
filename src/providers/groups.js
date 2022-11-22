@@ -43,9 +43,23 @@ export async function getGroupsForMeeting(meetingId) {
         return [];
     }
 }
+export async function upsertGroupToDDB(group) {
+    // this takes the group and puts it in the database. Whether it
+    // is insert or update, uses the same API
+    let obj = {
+        operation: 'updateGroup',
+        payload: {
+            Item: group,
+        },
+    };
+    let body = JSON.stringify(obj);
+    let api2use = process.env.AWS_API_ENDPOINT + '/groups';
+    let res = await axios.post(api2use, body, config);
 
+    return res;
+}
 export async function deleteGroupFromDDB(groupId) {
-    console.log('G:32-->deleteGroup DB called');
+    //console.log('G:32-->deleteGroup DB called');
     let obj = {
         operation: 'deleteGroup',
         payload: {
@@ -57,13 +71,7 @@ export async function deleteGroupFromDDB(groupId) {
     let body = JSON.stringify(obj);
     let api2use = process.env.AWS_API_ENDPOINT + '/groups';
     let res = await axios.post(api2use, body, config);
-    printObject('G:60-->res', res);
-    if (res.status === 200) {
-        console.log('G:45-->deleteGroup DB call successful');
-        return true;
-    } else {
-        console.log('G:48-->deleteGroup DB call failed');
-        return false;
-    }
-    return results;
+    //printObject('G:60-->res', res);
+
+    return res;
 }

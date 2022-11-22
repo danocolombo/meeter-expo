@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import MeetingForm from '../components/MeetingForm';
 import { useSelector, useDispatch } from 'react-redux';
+import { focusManager } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
     updateMeeting,
@@ -83,32 +84,6 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         navigation.setOptions({
             title: meeter.appName,
             headerBackTitle: 'Cancel',
-            // headerRight: () => (
-            //     <>
-            //         {meeting.meetingId !== '0' && (
-            //             <TouchableOpacity
-            //                 onPress={() =>
-            //                     navigation.navigate('DeleteConfirm', {
-            //                         meeting: meeting,
-            //                     })
-            //                 }
-            //             >
-            //                 <MaterialCommunityIcons
-            //                     name='delete-forever'
-            //                     size={30}
-            //                     color={mtrTheme.colors.critical}
-            //                 />
-            //             </TouchableOpacity>
-            //         )}
-            //     </>
-            // ),
-            // headerRight: () => (
-            //     <Button
-            //         onPress={() => setModalDeleteConfirmVisible(true)}
-            //         color='white'
-            //         title='DELETE'
-            //     />
-            // ),
         });
     }, [navigation, meeter]);
 
@@ -131,19 +106,6 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             });
     };
 
-    // const mutation = useMutation({
-    //     mutationFn: (meetingId) => {
-    //         return (
-    //             DeleteMeeting(meetingId),
-    //             {
-    //                 onSuccess: () => {
-    //                     queryCache.invalidateQueries(['meetings', meetingId]);
-    //                 },
-    //                 enabled: true,
-    //             }
-    //         );
-    //     },
-    // });
     const handleDeleteConfirmClick = () => {
         //setIsLoading(true);
         setModalDeleteConfirmVisible(false);
@@ -326,9 +288,9 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                 <MeetingForm
                     meeting={meeting}
                     handleUpdate={handleUpdate}
-                    handleDeleteRequest={() =>
-                        setModalDeleteConfirmVisible(true)
-                    }
+                    // handleDeleteRequest={() =>
+                    //     setModalDeleteConfirmVisible(true)
+                    // }
                 />
             )}
         </>

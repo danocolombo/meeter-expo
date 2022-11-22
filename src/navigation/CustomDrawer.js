@@ -13,7 +13,7 @@ import {
     DrawerItemList,
 } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { usersSlice } from '../features/usersSlice';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useSysContext } from '../contexts/SysContext';
@@ -23,6 +23,15 @@ const CustomDrawer = (props) => {
     const user = useSelector((state) => state.users.currentUser);
     const { profilePic } = useAuthContext();
     const { systemDef } = useSysContext();
+    const [profilePicture, setProfilePicture] = useState(null);
+    useEffect(() => {
+        if (profilePic) {
+            setProfilePicture(profilePic);
+        } else if (systemDef?.defaultProfilePic) {
+            setProfilePicture(systemDef.defaultProfilePic);
+        }
+    }, [profilePic, systemDef]);
+
     return (
         <View style={{ flex: 1 }}>
             <DrawerContentScrollView
@@ -35,18 +44,20 @@ const CustomDrawer = (props) => {
                     source={require('../../assets/menu-bg.jpeg')}
                     style={{ padding: 20, marginBottom: 10 }}
                 >
-                    <Image
-                        source={{
-                            uri: profilePic
-                                ? profilePic
-                                : systemDef.defaultProfilePic,
-                        }}
-                        style={{
-                            height: 80,
-                            width: 80,
-                            borderRadius: 40,
-                        }}
-                    />
+                    {profilePicture && (
+                        <Image
+                            source={{
+                                uri: profilePic
+                                    ? profilePic
+                                    : systemDef.defaultProfilePic,
+                            }}
+                            style={{
+                                height: 80,
+                                width: 80,
+                                borderRadius: 40,
+                            }}
+                        />
+                    )}
                     <Text style={{ color: mtrTheme.colors.accent }}>
                         {user.firstName} {user.lastName}
                     </Text>

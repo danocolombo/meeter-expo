@@ -17,6 +17,7 @@ import {
     AppState,
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
+import { focusManager } from '@tanstack/react-query';
 // import * as Application from 'expo-application';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -135,11 +136,7 @@ const MeetingDetails = (props) => {
         // printObject('DATA to use:', MEETING.data);
         meeting = MEETING.data.body;
     }
-    // if (GROUPS.data) {
-    //     printObject('GROUPS!!!', GROUPS.data);
-    // }
-    // printObject('MDS:78-->isLoading', MEETING.isLoading);
-    // printObject('MDS:79-->isFetching', MEETING.isFetching);
+
     if (MEETING.isLoading) {
         return (
             <View
@@ -323,7 +320,7 @@ const MeetingDetails = (props) => {
                                     key={0}
                                     onPress={() =>
                                         navigation.navigate('GroupNew', {
-                                            meetingId: meetingId,
+                                            meeting,
                                         })
                                     }
                                     style={({ pressed }) =>

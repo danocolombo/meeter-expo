@@ -26,7 +26,7 @@ export async function updateMeetingDDB(meeting) {
 }
 export async function addMeetingDDB(meeting) {
     let ts = new Date();
-    printObject('M29:addMeetingDDB:', ts);
+    // printObject('M29:addMeetingDDB:', ts);
     //console.log('M:28-->meeting:', JSON.stringify(meeting));
     let obj = {
         operation: 'putMeeting',
@@ -36,10 +36,10 @@ export async function addMeetingDDB(meeting) {
     };
     let body = JSON.stringify(obj);
     let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
-    printObject('PUT body:', body);
+    // printObject('PUT body:', body);
     let res = await axios.post(api2use, body, config);
     ts = new Date();
-    printObject('M:42:addMeetingDDB:', ts);
+    // printObject('M:42:addMeetingDDB:', ts);
     // printObject('M:39-->res:', res);
     var returnValue = res.data;
     return returnValue;

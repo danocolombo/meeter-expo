@@ -503,6 +503,7 @@ export const deleteMeeting = (meetingId, groups) => (dispatch) => {
 };
 
 export const getMeetingGroups = (meetingId) => (dispatch) => {
+    console.log('MS:506--> SLICE');
     // this will get some remove data
     const getData = async (meetingId) => {
         dispatch(clearGroups());

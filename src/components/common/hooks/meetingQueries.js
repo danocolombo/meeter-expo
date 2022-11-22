@@ -44,7 +44,7 @@ async function FetchActiveMeetings(clientId) {
             direction: 'ASC',
         },
     };
-    console.log(obj);
+    //console.log(obj);
     let body = JSON.stringify(obj);
     let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
     const { data } = await axios.post(api2use, body, config);
@@ -65,7 +65,7 @@ async function FetchHistoricMeetings(clientId) {
             direction: 'DESC',
         },
     };
-    console.log(obj);
+    //console.log(obj);
     let body = JSON.stringify(obj);
     let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
     const { data } = await axios.post(api2use, body, config);

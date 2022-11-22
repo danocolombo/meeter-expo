@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useCallback, useState } from 'react';
 import { Text, View, AppState, useWindowDimensions, Modal } from 'react-native';
 import { Surface, useTheme, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { focusManager } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import CustomButton from '../components/ui/CustomButton';
@@ -24,7 +25,9 @@ const ProfileScreen = (props) => {
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);
     const user = useSelector((state) => state.users.currentUser);
+
     const [showMessage, setShowMessage] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const { sub, profilePic } = useAuthContext();
     const { systemDef } = useSysContext();
 
@@ -78,7 +81,7 @@ const ProfileScreen = (props) => {
             ]
         }
         =====================================*/
-
+        setIsSaving(true);
         values.username = user.username;
         if (!values.defaultClient) {
             values.defaultClient = 'mtr';
@@ -106,16 +109,19 @@ const ProfileScreen = (props) => {
                 dispatch(updateCurrentUser(newReduxUser));
                 // printObject('newUser:', newReduxUser);
                 // printObject('user.currentUser:', user);
-
+                setIsSaving(false);
                 setShowMessage(true);
                 return;
             })
             .catch((err) => {
+                setIsSaving(false);
+                Alert.alert('Error saving profile. Please try again later.');
                 printObject('updateProfile provider failed:', err);
                 console.warn('updateProfile provider failed');
 
                 return;
             });
+        setIsSaving(false);
     };
     const dismissMessage = () => {
         setShowMessage(false);
@@ -154,7 +160,7 @@ const ProfileScreen = (props) => {
         // printObject('PS:139-->updatedProfile', updatedProfile);
     }
 
-    if (PROFILE.isLoading) {
+    if (PROFILE.isLoading || isSaving) {
         return (
             <View
                 style={{

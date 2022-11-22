@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { focusManager } from '@tanstack/react-query';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -386,11 +387,13 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                         <TouchableOpacity
                             onPress={() => setModalBirthDateVisible(true)}
                         >
-                            <View style={{ minWidth: '45%' }}>
+                            <View style={{ minWidth: '50%' }}>
                                 <View
                                     style={{
                                         backgroundColor: 'lightgrey',
-                                        maxWidth: 150,
+                                        // maxWidth: 170,
+                                        // minWidth: 170,
+                                        marginRight: 10,
                                     }}
                                 >
                                     <Text
@@ -422,9 +425,13 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                             selectedTextStyle={styles.selectedTextStyle}
                             inputSearchStyle={styles.inputSearchStyle}
                             containerStyle={styles.dropDownContainer}
+                            itemContainerStyle={{
+                                paddingVertical: 0,
+                                marginVertical: 0,
+                            }}
                             iconStyle={styles.iconStyle}
                             data={SHIRTSIZESBY2}
-                            search
+                            search={false}
                             maxHeight={300}
                             labelField='label'
                             valueField='value'
@@ -523,7 +530,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                 inputSearchStyle={styles.inputSearchStyle}
                                 iconStyle={styles.iconStyle}
                                 data={STATESBY2}
-                                search
+                                search={false}
                                 maxHeight={300}
                                 labelField='label'
                                 valueField='value'
@@ -629,7 +636,7 @@ const styles = StyleSheet.create({
         letterSpacing: 0,
     },
     dropdown: {
-        height: 30,
+        height: 40,
         borderColor: 'gray',
         color: 'black',
         fontWeight: 500,

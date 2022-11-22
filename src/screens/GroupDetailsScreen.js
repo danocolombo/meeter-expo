@@ -2,6 +2,7 @@ import React, { useCallback, useLayoutEffect } from 'react';
 import { View, Text, Button, StyleSheet, AppState } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import { focusManager } from '@tanstack/react-query';
 import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
 import {

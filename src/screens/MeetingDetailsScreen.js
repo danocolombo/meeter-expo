@@ -17,6 +17,7 @@ import {
     AppState,
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
+import { focusManager } from '@tanstack/react-query';
 // import * as Application from 'expo-application';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';

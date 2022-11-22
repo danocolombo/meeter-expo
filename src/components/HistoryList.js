@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
+import { focusManager } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { FetchHistoricMeetings } from './common/hooks/meetingQueries';
 import MeetingListCard from './Meeting.List.Card';

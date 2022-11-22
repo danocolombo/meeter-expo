@@ -17,7 +17,7 @@ async function FetchGroups(meetingId) {
             meetingId: meetingId,
         },
     };
-    console.log(obj);
+    //console.log(obj);
     let body = JSON.stringify(obj);
     let api2use = process.env.AWS_API_ENDPOINT + '/groups';
     const { data } = await axios.post(api2use, body, config);
@@ -30,7 +30,7 @@ async function FetchGroup(groupId) {
             groupId: groupId,
         },
     };
-    console.log(obj);
+
     let body = JSON.stringify(obj);
     let api2use = process.env.AWS_API_ENDPOINT + '/groups';
     const { data } = await axios.post(api2use, body, config);

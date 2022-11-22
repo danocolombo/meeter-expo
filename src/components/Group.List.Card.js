@@ -6,8 +6,6 @@ import { printObject } from '../utils/helpers';
 //   FUNCTION START
 //   ---------------
 const GroupListCard = ({ group, meeting }) => {
-    printObject('GLC:9-->group:', group);
-    printObject('GLC:10-->meeting:', meeting);
     const navigation = useNavigation();
     const mtrTheme = useTheme();
     function groupPressHandler() {

@@ -53,7 +53,8 @@ import GroupForm from '../components/GroupForm';
 //   FUNCTION START
 //   ================
 const GroupNewScreen = ({ route, navigation }) => {
-    const meetingId = route.params.meetingId;
+    const meeting = route.params.meeting;
+    const meetingId = meeting.meetingId;
     let group = {};
     const mtrTheme = useTheme();
     const isFocused = useIsFocused();
@@ -175,19 +176,19 @@ const GroupNewScreen = ({ route, navigation }) => {
                 PutGroup(values),
                 {
                     onSuccess: (group) => {
-                        queryCache.invalidateQueries(['group', meetingId]);
+                        queryCache.invalidateQueries([
+                            'group',
+                            meeting.meetingId,
+                        ]);
                     },
                 }
             );
         },
     });
     const handleFormSubmit = () => {
-        printObject('GNS:173-->values', values);
+        //printObject('GNS:173-->values', values);
         mutation.mutate(values);
-        //dispatch(addGroupValues(values));
-        // navigation.navigate('MeetingDetails', {
-        //     meetingId: meetingId,
-        // });
+        navigation.navigate('MeetingDetails', meeting);
     };
     const inputStyle = {
         paddingLeft: 0,
@@ -225,9 +226,7 @@ const GroupNewScreen = ({ route, navigation }) => {
                     ) : null}
                     <Surface style={mtrTheme.groupEditSurface}>
                         <View>
-                            <Text style={mtrTheme.screenTitle}>
-                                GROUP DETAILS
-                            </Text>
+                            <Text style={mtrTheme.screenTitle}>NEW GROUP</Text>
                         </View>
                         <View style={mtrTheme.groupEditRow}>
                             <GenderSelectors

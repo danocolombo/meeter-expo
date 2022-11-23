@@ -132,6 +132,19 @@ const AuthDrawer = (navigation) => {
                 })}
             />
             <Stack.Screen
+                name='Groups'
+                options={({ navigation }) => ({
+                    drawerIcon: ({ color }) => (
+                        <Ionicons
+                            name='people-outline'
+                            size={22}
+                            color={color}
+                        />
+                    ),
+                })}
+                component={MeeterSignOut}
+            />
+            <Stack.Screen
                 name='Profile'
                 options={({ navigation }) => ({
                     drawerLabel: 'Profile',
@@ -145,15 +158,6 @@ const AuthDrawer = (navigation) => {
                     ),
                 })}
                 component={ProfileScreen}
-            />
-            <Stack.Screen
-                name='Logout'
-                options={({ navigation }) => ({
-                    drawerIcon: ({ color }) => (
-                        <Ionicons name='exit-outline' size={22} color={color} />
-                    ),
-                })}
-                component={MeeterSignOut}
             />
         </Drawer.Navigator>
     );

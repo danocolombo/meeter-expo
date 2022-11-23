@@ -52,7 +52,7 @@ const SignInScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);
-    const { profilePic } = useAuthContext();
+    const { userProfile } = useAuthContext();
     const { defaultProfilePic } = useSysContext();
     const {
         control,
@@ -163,7 +163,8 @@ const SignInScreen = () => {
         //   get User info from Amplify
         //   ----------------------------------------------
 
-        printObject('SI:163-->profilePic', profilePic);
+        printObject('SI:167-->userProfile.sub', userProfile.sub);
+        printObject('SI:167-->profilePic', userProfile.profilePic);
         printObject('SI:163-->defaultProfilePic', defaultProfilePic);
 
         //   ----------------------------------------------

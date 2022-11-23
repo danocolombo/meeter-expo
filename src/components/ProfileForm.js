@@ -24,6 +24,7 @@ import { useMutation } from '@tanstack/react-query';
 //   FUNCTION START
 //   ===============
 const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
+    printObject('PF:27-->profile(userProfile):', profile);
     const navigation = useNavigation();
     const [stateValue, setStateValue] = useState(null);
     const [isStateFocus, setIsStateFocus] = useState(false);
@@ -44,15 +45,15 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
         lastName: profile?.lastName ? profile.lastName : user.lastName,
         email: profile?.email ? profile.email : user.email,
         phone: profile?.phone ? profile.phone : '',
-        residenceStreet: profile?.residence?.street
-            ? profile.residence.street
+        residenceStreet: profile?.Residence?.street
+            ? profile.Residence.street
             : '',
-        residenceCity: profile?.residence?.city ? profile.residence.city : '',
-        residenceStateProv: profile?.residence?.stateProv
-            ? profile.residence.stateProv
+        residenceCity: profile?.Residence?.city ? profile.Residence.city : '',
+        residenceStateProv: profile?.Residence?.stateProv
+            ? profile.Residence.stateProv
             : '',
-        residencePostalCode: profile?.residence?.postalCode
-            ? profile.residence.postalCode
+        residencePostalCode: profile?.Residence?.postalCode
+            ? profile.Residence.postalCode
             : '',
         birthday: profile?.birthday ? profile.birthday : '',
         shirt: profile?.shirt ? profile.shirt : '',

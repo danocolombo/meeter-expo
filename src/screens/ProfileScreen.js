@@ -5,6 +5,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { focusManager } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector, useDispatch } from 'react-redux';
+
 import CustomButton from '../components/ui/CustomButton';
 import ProfileForm from '../components/ProfileForm';
 import { useAuthContext } from '../contexts/AuthContext';
@@ -25,7 +26,7 @@ const ProfileScreen = (props) => {
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);
     const user = useSelector((state) => state.users.currentUser);
-
+    const { userProfile } = useAuthContext();
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const { sub, profilePic } = useAuthContext();
@@ -221,7 +222,7 @@ const ProfileScreen = (props) => {
                 </View>
 
                 <ProfileForm
-                    profile={profile}
+                    profile={userProfile}
                     handleUpdate={handleUpdate}
                     handleCancel={handleCancel}
                 />

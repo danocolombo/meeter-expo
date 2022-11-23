@@ -17,6 +17,7 @@ import React, { useState, useEffect } from 'react';
 import { usersSlice } from '../features/usersSlice';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useSysContext } from '../contexts/SysContext';
+import { useNavigation } from '@react-navigation/native';
 
 const CustomDrawer = (props) => {
     const mtrTheme = useTheme();
@@ -24,6 +25,7 @@ const CustomDrawer = (props) => {
     const { profilePic } = useAuthContext();
     const { systemDef } = useSysContext();
     const [profilePicture, setProfilePicture] = useState(null);
+    const navigation = useNavigation();
     useEffect(() => {
         if (profilePic) {
             setProfilePicture(profilePic);
@@ -113,7 +115,9 @@ const CustomDrawer = (props) => {
                 }}
             >
                 <TouchableOpacity
-                    onPress={() => {}}
+                    onPress={() => {
+                        navigation.navigate('Logout');
+                    }}
                     style={{ paddingBottom: 15 }}
                 >
                     <View

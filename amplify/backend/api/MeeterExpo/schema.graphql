@@ -1,3 +1,48 @@
+type DefaultGroups @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  gender: String
+  title: String
+  location: String
+  facilitator: String
+  coFacilitator: String
+  affiliationID: ID! @index(name: "byAffiliation")
+}
+
+type Residence @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  street: String
+  city: String
+  stateProv: String
+  postalCode: String
+}
+
+type Affiliation @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  label: String
+  role: String
+  value: String
+  profileID: ID! @index(name: "byProfile")
+  DefaultGroups: [DefaultGroups] @hasMany(indexName: "byAffiliation", fields: ["id"])
+}
+
+type Profile @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  sub: String
+  firstName: String
+  lastName: String
+  email: String
+  phone: String
+  username: String
+  birthday: String
+  shirt: String
+  defaultClient: String
+  defaultClientId: String
+  activeAffiliate: String
+  Affiliations: [Affiliation] @hasMany(indexName: "byProfile", fields: ["id"])
+  Residence: Residence @hasOne
+  profilePic: String
+}
+
 type User @model @auth(rules: [{allow: public}]) {
   id: ID!
   sub: String

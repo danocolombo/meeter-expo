@@ -87,8 +87,8 @@ type EagerAffiliation = {
   readonly label?: string | null;
   readonly role?: string | null;
   readonly value?: string | null;
-  readonly profileID: string;
   readonly DefaultGroups?: (DefaultGroups | null)[] | null;
+  readonly profileID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -98,8 +98,8 @@ type LazyAffiliation = {
   readonly label?: string | null;
   readonly role?: string | null;
   readonly value?: string | null;
-  readonly profileID: string;
   readonly DefaultGroups: AsyncCollection<DefaultGroups>;
+  readonly profileID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -123,9 +123,9 @@ type EagerProfile = {
   readonly defaultClient?: string | null;
   readonly defaultClientId?: string | null;
   readonly activeAffiliate?: string | null;
-  readonly Affiliations?: (Affiliation | null)[] | null;
   readonly Residence?: Residence | null;
   readonly profilePic?: string | null;
+  readonly Affiliations?: (Affiliation | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly profileResidenceId?: string | null;
@@ -144,9 +144,9 @@ type LazyProfile = {
   readonly defaultClient?: string | null;
   readonly defaultClientId?: string | null;
   readonly activeAffiliate?: string | null;
-  readonly Affiliations: AsyncCollection<Affiliation>;
   readonly Residence: AsyncItem<Residence | undefined>;
   readonly profilePic?: string | null;
+  readonly Affiliations: AsyncCollection<Affiliation>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly profileResidenceId?: string | null;

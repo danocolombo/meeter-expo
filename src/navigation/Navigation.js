@@ -28,11 +28,13 @@ import MeetingNewScreen from '../screens/MeetingNewScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 // import ProfilePicScreen from '../screens/ProfilePicScreen';
 import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
 import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub } from 'aws-amplify';
+import MeeterSignOut from '../screens/Auth/MeeterSignOut';
 const Stack = createNativeStackNavigator();
 function MeeterStack(props) {
     const mtrTheme = useTheme();
@@ -169,6 +171,32 @@ function MeeterStack(props) {
             <Stack.Screen
                 name='DeleteGroupConfirm'
                 component={DeleteGroupConfirmScreen}
+                options={({ navigation }) => ({
+                    title: 'Meeter',
+                    headerStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+                    headerTintColor: 'white',
+                })}
+            />
+            <Stack.Screen
+                name='Profile'
+                options={({ navigation }) => ({
+                    drawerLabel: 'Profile',
+                    title: meeter.appName,
+                    drawerIcon: ({ color }) => (
+                        <Ionicons
+                            name='person-outline'
+                            size={22}
+                            color={color}
+                        />
+                    ),
+                })}
+                component={ProfileScreen}
+            />
+            <Stack.Screen
+                name='Logout'
+                component={MeeterSignOut}
                 options={({ navigation }) => ({
                     title: 'Meeter',
                     headerStyle: {

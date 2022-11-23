@@ -22,17 +22,17 @@ import { useNavigation } from '@react-navigation/native';
 const CustomDrawer = (props) => {
     const mtrTheme = useTheme();
     const user = useSelector((state) => state.users.currentUser);
-    const { profilePic } = useAuthContext();
+    //const { profilePic } = useAuthContext();
     const { systemDef } = useSysContext();
     const [profilePicture, setProfilePicture] = useState(null);
     const navigation = useNavigation();
-    useEffect(() => {
-        if (profilePic) {
-            setProfilePicture(profilePic);
-        } else if (systemDef?.defaultProfilePic) {
-            setProfilePicture(systemDef.defaultProfilePic);
-        }
-    }, [profilePic, systemDef]);
+    // useEffect(() => {
+    //     if (profilePic) {
+    //         setProfilePicture(profilePic);
+    //     } else if (systemDef?.defaultProfilePic) {
+    //         setProfilePicture(systemDef.defaultProfilePic);
+    //     }
+    // }, [profilePic, systemDef]);
 
     return (
         <View style={{ flex: 1 }}>
@@ -73,9 +73,42 @@ const CustomDrawer = (props) => {
             <View
                 style={{
                     paddingHorizontal: 20,
-
+                    paddingTop: 20,
                     borderTopWidth: 1,
                     borderTopColor: '#ccc',
+                }}
+            >
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Profile')}
+                    style={{ paddingBottom: 15 }}
+                >
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Ionicons
+                            name='person-outline'
+                            size={22}
+                            color={mtrTheme.colors.navDrawerInactiveTint}
+                        />
+                        <Text
+                            style={{
+                                paddingLeft: 5,
+                                color: mtrTheme.colors.navDrawerInactiveTint,
+                                fontFamily: 'Roboto-Medium',
+                                fontSize: 15,
+                            }}
+                        >
+                            Profile
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+            <View
+                style={{
+                    paddingHorizontal: 20,
                 }}
             >
                 <TouchableOpacity
@@ -115,9 +148,7 @@ const CustomDrawer = (props) => {
                 }}
             >
                 <TouchableOpacity
-                    onPress={() => {
-                        navigation.navigate('Logout');
-                    }}
+                    onPress={() => navigation.navigate('Logout')}
                     style={{ paddingBottom: 15 }}
                 >
                     <View

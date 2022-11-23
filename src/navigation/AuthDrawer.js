@@ -9,10 +9,12 @@ import { Ionicons } from '@expo/vector-icons';
 import MeetingsConfig from './BottomNav';
 import CustomDrawer from './CustomDrawer';
 import LandingScreen from '../screens/LandingScreen';
+import DefaultGroupsScreen from '../screens/DefaultGroupsScreen';
+import TeamScreen from '../screens/TeamScreen';
 import ActiveScreen from '../screens/ActiveScreen';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
 import ProfileScreen from '../screens/ProfileScreen';
-
+import { useAuthContext } from '../contexts/AuthContext';
 //import { Colors } from '../constants/colors';
 import { printObject } from '../utils/helpers';
 const Drawer = createDrawerNavigator();
@@ -20,10 +22,13 @@ const Stack = createNativeStackNavigator();
 
 const AuthDrawer = (navigation) => {
     const mtrTheme = useTheme();
+    const { userProfile } = useAuthContext();
+    //printObject('AD:26-->userProfile', userProfile);
     // printObject('mtrTheme:', mtrTheme);
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
-    // printObject('PF:17-->user', user);
+
+    // console.log('AD: affiliations:', user)
     let manager = false;
     if (
         user?.affiliations?.active?.role === 'lead' ||
@@ -142,9 +147,22 @@ const AuthDrawer = (navigation) => {
                         />
                     ),
                 })}
-                component={MeeterSignOut}
+                component={DefaultGroupsScreen}
             />
             <Stack.Screen
+                name='Team'
+                options={({ navigation }) => ({
+                    drawerIcon: ({ color }) => (
+                        <Ionicons
+                            name='people-outline'
+                            size={22}
+                            color={color}
+                        />
+                    ),
+                })}
+                component={TeamScreen}
+            />
+            {/* <Stack.Screen
                 name='Profile'
                 options={({ navigation }) => ({
                     drawerLabel: 'Profile',
@@ -158,7 +176,7 @@ const AuthDrawer = (navigation) => {
                     ),
                 })}
                 component={ProfileScreen}
-            />
+            /> */}
         </Drawer.Navigator>
     );
 };

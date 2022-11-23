@@ -26,10 +26,11 @@ const ProfileScreen = (props) => {
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);
     const user = useSelector((state) => state.users.currentUser);
-    const { userProfile } = useAuthContext();
+
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const { sub, profilePic } = useAuthContext();
+    const { userProfile, setUserProfile } = useAuthContext();
+    printObject('PS:33-->userProfile:\n', userProfile);
     const { systemDef } = useSysContext();
 
     function onAppStateChange(status) {
@@ -143,10 +144,10 @@ const ProfileScreen = (props) => {
         profile = PROFILE.data.body;
         //   add profilePic to profile
         let pic;
-        if (profilePic) {
+        if (userProfile.profilePic) {
             //   use user's profile pick
-            console.log('USE1:', profilePic);
-            pic = profilePic;
+            console.log('USE1:', userProfile.profilePic);
+            pic = userProfile.profilePic;
         } else {
             // printObject('WHAT?:', systemDef);
             // console.log('-->', systemDef.defaultProfilePic);

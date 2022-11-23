@@ -15,7 +15,7 @@ const MeeterSignOut = (props) => {
         dispatch(meetingsSignout());
         dispatch(profilesLogout());
         dispatch(systemLogout());
-        Auth.signOut();
+        Auth.signOut().then(() => console.log('Auth.signOut() complete'));
     }, []);
 
     return (

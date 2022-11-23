@@ -52,8 +52,9 @@ const SignInScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);
-    const { userProfile } = useAuthContext();
+    const { userProfile, authUser, authContextRefresh } = useAuthContext();
     const { defaultProfilePic } = useSysContext();
+
     const {
         control,
         handleSubmit,
@@ -94,7 +95,12 @@ const SignInScreen = () => {
                             // return;
                         });
                 } else {
-                    // console.log('the user is good...');
+                    //   The user is authenticated, refresh context
+                    authContextRefresh()
+                        .then(() => console.log('authContextRefresh success'))
+                        .catch((e) =>
+                            printObject('authContextRefresh failure', e)
+                        );
                 }
             })
             .catch((e) => {
@@ -163,8 +169,8 @@ const SignInScreen = () => {
         //   get User info from Amplify
         //   ----------------------------------------------
 
-        printObject('SI:167-->userProfile.sub', userProfile.sub);
-        printObject('SI:167-->profilePic', userProfile.profilePic);
+        // printObject('SI:167-->userProfile.sub', userProfile?.sub);
+        // printObject('SI:167-->profilePic', userProfile.profilePic);
         printObject('SI:163-->defaultProfilePic', defaultProfilePic);
 
         //   ----------------------------------------------

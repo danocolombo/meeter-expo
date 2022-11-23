@@ -10,6 +10,7 @@ import {
     ImageBackground,
     Image,
     StyleSheet,
+    Alert,
     FlatList,
 } from 'react-native';
 import Constants from 'expo-constants';
@@ -40,7 +41,8 @@ const LandingScreen = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-
+    const { userProfile, authUser, affiliations, isAuthComplete } =
+        useAuthContext();
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
@@ -75,8 +77,20 @@ const LandingScreen = () => {
         // Do something when the screen is focused
         setIsLoading(false);
     }, [meetings]);
+    // useEffect(() => {
+    //     if (!userProfile) {
+    //         Alert.alert('Please complete your profile');
+    //     }
+    // }, []);
+
     // printObject('CONTEXT:sub-->', sub);
     // printObject('SYSTEM-CONTEXT-->systemDef', systemDef);
+    if (affiliations) {
+        printObject('LS:82-->affiliations:', affiliations);
+    } else {
+        console.log('NO AFFILIATION');
+    }
+
     if (isLoading) {
         return (
             <View
@@ -93,6 +107,12 @@ const LandingScreen = () => {
             </View>
         );
     }
+    if (isAuthComplete) {
+        printObject('LS:109-->userProfile\n', userProfile);
+        printObject('LS:110-->authUser\n', authUser);
+        printObject('LS:111-->affiliations\n', affiliations);
+    }
+
     return (
         <>
             <Surface style={styles.welcomeSurface}>

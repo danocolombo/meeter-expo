@@ -214,13 +214,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "profileID": {
-                    "name": "profileID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
                 "DefaultGroups": {
                     "name": "DefaultGroups",
                     "isArray": true,
@@ -234,6 +227,13 @@ export const schema = {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "affiliationID"
                     }
+                },
+                "profileID": {
+                    "name": "profileID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -373,20 +373,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "Affiliations": {
-                    "name": "Affiliations",
-                    "isArray": true,
-                    "type": {
-                        "model": "Affiliation"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "profileID"
-                    }
-                },
                 "Residence": {
                     "name": "Residence",
                     "isArray": false,
@@ -407,6 +393,20 @@ export const schema = {
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
+                },
+                "Affiliations": {
+                    "name": "Affiliations",
+                    "isArray": true,
+                    "type": {
+                        "model": "Affiliation"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "profileID"
+                    }
                 },
                 "createdAt": {
                     "name": "createdAt",

@@ -21,8 +21,8 @@ type Affiliation @model @auth(rules: [{allow: public}]) {
   label: String
   role: String
   value: String
-  profileID: ID! @index(name: "byProfile")
   DefaultGroups: [DefaultGroups] @hasMany(indexName: "byAffiliation", fields: ["id"])
+  profileID: ID! @index(name: "byProfile")
 }
 
 type Profile @model @auth(rules: [{allow: public}]) {
@@ -38,9 +38,9 @@ type Profile @model @auth(rules: [{allow: public}]) {
   defaultClient: String
   defaultClientId: String
   activeAffiliate: String
-  Affiliations: [Affiliation] @hasMany(indexName: "byProfile", fields: ["id"])
   Residence: Residence @hasOne
   profilePic: String
+  Affiliations: [Affiliation] @hasMany(indexName: "byProfile", fields: ["id"])
 }
 
 type User @model @auth(rules: [{allow: public}]) {

@@ -4,7 +4,6 @@ import {
     Image,
     StyleSheet,
     Text,
-    TextInput,
     View,
     Alert,
     useWindowDimensions,
@@ -39,15 +38,6 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     // console.log(typeof birthday);
     const user = useSelector((state) => state.users.currentUser);
     const { width } = useWindowDimensions();
-    const [street, setStreet] = useState(profile?.Residence?.street || '');
-    const [city, setCity] = useState(profile?.Residence?.city || '');
-    const [stateProv, setStateProv] = useState(
-        profile?.Residence?.stateProv || ''
-    );
-    const [postalCode, setPostalCode] = useState(
-        profile?.Residence?.postalCode || ''
-    );
-
     const [values, setValues] = useState({
         uid: user?.uid,
         username: profile?.username ? profile.username : user.userName,
@@ -55,6 +45,16 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
         lastName: profile?.lastName ? profile.lastName : user.lastName,
         email: profile?.email ? profile.email : user.email,
         phone: profile?.phone ? profile.phone : '',
+        residenceStreet: profile?.Residence?.street
+            ? profile.Residence.street
+            : '',
+        residenceCity: profile?.Residence?.city ? profile.Residence.city : '',
+        residenceStateProv: profile?.Residence?.stateProv
+            ? profile.Residence.stateProv
+            : '',
+        residencePostalCode: profile?.Residence?.postalCode
+            ? profile.Residence.postalCode
+            : '',
         birthday: profile?.birthday ? profile.birthday : '',
         shirt: profile?.shirt ? profile.shirt : '',
     });
@@ -137,6 +137,58 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                     setIsLastNameValid(true);
                 }
             }
+            if (inputIdentifier === 'residenceStreet') {
+                //console.log('STATE:', enteredValue);
+                let residence = {
+                    street: enteredValue,
+                    city: values?.residence?.city,
+                    stateProv: values?.residence?.stateProv,
+                    postalCode: values?.residence?.postalCode,
+                };
+                let newValues = { ...curInputValues, residence };
+                //printObject('newValues', newValues);
+                curInputValues = newValues;
+                return curInputValues;
+            }
+            if (inputIdentifier === 'residenceCity') {
+                //console.log('STATE:', enteredValue);
+                let residence = {
+                    street: values?.residence?.street,
+                    city: enteredValue,
+                    stateProv: values?.residence?.stateProv,
+                    postalCode: values?.residence?.postalCode,
+                };
+                let newValues = { ...curInputValues, residence };
+                //printObject('newValues', newValues);
+                curInputValues = newValues;
+                return curInputValues;
+            }
+            if (inputIdentifier === 'stateProv') {
+                //console.log('STATE:', enteredValue);
+                let residence = {
+                    street: values?.residence?.street,
+                    city: values?.residence?.city,
+                    stateProv: enteredValue,
+                    postalCode: values?.residence?.postalCode,
+                };
+                let newValues = { ...curInputValues, residence };
+                //printObject('newValues', newValues);
+                curInputValues = newValues;
+                return curInputValues;
+            }
+            if (inputIdentifier === 'residencePostalCode') {
+                //console.log('STATE:', enteredValue);
+                let residence = {
+                    street: values?.residence?.street,
+                    city: values?.residence?.city,
+                    stateProv: values?.residence?.stateProv,
+                    postalCode: enteredValue,
+                };
+                let newValues = { ...curInputValues, residence };
+                //printObject('newValues', newValues);
+                curInputValues = newValues;
+                return curInputValues;
+            }
             if (inputIdentifier === 'shirt') {
                 let shirt = enteredValue;
                 let newValues = { ...curInputValues, shirt };
@@ -171,20 +223,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     };
 
     const handleFormSubmit = () => {
-        // add the residence info to values
-        const Residence = {
-            street: street,
-            city: city,
-            stateProv: stateProv,
-            postalCode: postalCode,
-        };
-        const newValues = {
-            ...values,
-            Residence,
-        };
-        printObject('PS:180-->newValues:', newValues);
-        return;
-        handleUpdate(newValues);
+        handleUpdate(values);
     };
 
     return (
@@ -221,6 +260,98 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                         </View>
                     </View>
                 </View>
+
+                {/* <View style={mtrTheme.profileFormRowStyle}>
+                    <View style={{ minWidth: '45%' }}>
+                        <Input
+                            label='First Name'
+                            labelStyle={mtrTheme.profileFormInputTitle}
+                            textInputConfig={{
+                                backgroundColor: 'lightgrey',
+                                value: values.firstName,
+                                paddingHorizontal: 5,
+                                marginRight: 5,
+                                fontSize: 24,
+                                color: mtrTheme.colors.unSelected,
+                                marginHorizontal: 0,
+                                enabled: false,
+                                placeholder: 'First Name',
+                                style: { color: 'black' },
+                                fontWeight: '500',
+                                //fontFamily: 'Roboto-Regular',
+                                letterSpacing: 0,
+                                // onChangeText: inputChangedHandler.bind(
+                                //     this,
+                                //     'firstName'
+                                // ),
+                            }}
+                        />
+                        {!isFirstNameValid && (
+                            <View style={styles.errorContainer}>
+                                <Text style={styles.errorText}>
+                                    minimum length: 2
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                    <View style={{ minWidth: '45%' }}>
+                        <Input
+                            label='Last Name'
+                            labelStyle={mtrTheme.profileFormInputTitle}
+                            textInputConfig={{
+                                backgroundColor: 'lightgrey',
+                                value: values.lastName,
+                                paddingHorizontal: 5,
+                                fontSize: 24,
+                                color: mtrTheme.colors.unSelected,
+                                enabled: false,
+                                placeholder: 'Last Name',
+                                style: { color: 'black' },
+                                fontWeight: '500',
+                                //fontFamily: 'Roboto-Regular',
+                                letterSpacing: 0,
+                                // onChangeText: inputChangedHandler.bind(
+                                //     this,
+                                //     'lastName'
+                                // ),
+                            }}
+                        />
+                        {!isLastNameValid && (
+                            <View style={styles.errorContainer}>
+                                <Text style={styles.errorText}>
+                                    minimum length: 2
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                </View> */}
+                {/* <View style={mtrTheme.profileFormRowStyle}>
+                    <View style={{ minWidth: '90%' }}>
+                        <Input
+                            label='Email'
+                            labelStyle={mtrTheme.profileFormInputTitle}
+                            textInputConfig={{
+                                backgroundColor: 'lightgrey',
+                                value: values.email,
+                                paddingHorizontal: 5,
+                                marginRight: 5,
+                                enabled: false,
+                                fontSize: 24,
+                                color: mtrTheme.colors.unSelected,
+                                marginHorizontal: 0,
+                                placeholder: 'Email',
+                                style: { color: 'black' },
+                                fontWeight: '500',
+                                //fontFamily: 'Roboto-Regular',
+                                letterSpacing: 0,
+                                // onChangeText: inputChangedHandler.bind(
+                                //     this,
+                                //     'email'
+                                // ),
+                            }}
+                        />
+                    </View>
+                </View> */}
                 <View style={mtrTheme.profileFormRowStyle}>
                     <View style={{ minWidth: '90%' }}>
                         <Input
@@ -328,41 +459,28 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                 <View style={mtrTheme.profileFormResidenceBorder}>
                     <View style={mtrTheme.profileFormRowStyle}>
                         <View style={{ minWidth: '90%' }}>
-                            <View>
-                                <View>
-                                    <Text
-                                        style={mtrTheme.profileFormInputTitle}
-                                    >
-                                        Street
-                                    </Text>
-                                </View>
-                                <View>
-                                    <TextInput
-                                        style={{
-                                            fontSize: 24,
-                                            color: 'black',
-                                            backgroundColor: 'lightgrey',
-                                            value: street,
-                                            paddingHorizontal: 5,
-                                            marginRight: 5,
-                                            fontSize: 24,
-                                            color: 'black',
-                                            marginHorizontal: 0,
-                                            fontWeight: '500',
-                                        }}
-                                        label='Street'
-                                        onChange={() => setStreet()}
-                                        fontSize={24}
-                                        color='black'
-                                        backgroundColor='lightgrey'
-                                        paddingHorizontal={5}
-                                        marginRight={5}
-                                        marginHorizontal={0}
-                                        placeholder='Street'
-                                        letterSpacing={0}
-                                    />
-                                </View>
-                            </View>
+                            <Input
+                                label='Street'
+                                labelStyle={mtrTheme.profileFormInputTitle}
+                                textInputConfig={{
+                                    backgroundColor: 'lightgrey',
+                                    value: values?.residence?.street,
+                                    paddingHorizontal: 5,
+                                    marginRight: 5,
+                                    fontSize: 24,
+                                    color: 'black',
+                                    marginHorizontal: 0,
+                                    placeholder: 'Street',
+                                    style: { color: 'black' },
+                                    fontWeight: '500',
+                                    //fontFamily: 'Roboto-Regular',
+                                    letterSpacing: 0,
+                                    onChangeText: inputChangedHandler.bind(
+                                        this,
+                                        'residenceStreet'
+                                    ),
+                                }}
+                            />
                         </View>
                     </View>
                     <View style={mtrTheme.profileFormRowStyle}>
@@ -372,7 +490,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                 labelStyle={mtrTheme.profileFormInputTitle}
                                 textInputConfig={{
                                     backgroundColor: 'lightgrey',
-                                    value: city,
+                                    value: values?.residence?.city,
                                     paddingHorizontal: 5,
                                     marginRight: 5,
                                     fontSize: 24,
@@ -383,7 +501,10 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                     fontWeight: '500',
                                     //fontFamily: 'Roboto-Regular',
                                     letterSpacing: 0,
-                                    onChangeText: () => setCity(),
+                                    onChangeText: inputChangedHandler.bind(
+                                        this,
+                                        'residenceCity'
+                                    ),
                                 }}
                             />
                         </View>
@@ -418,11 +539,14 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                     !isStateFocus ? 'Select State' : '...'
                                 }
                                 searchPlaceholder='Search...'
-                                value={stateProv}
+                                value={values?.residence?.stateProv}
                                 onFocus={() => setIsStateFocus(true)}
                                 onBlur={() => setIsStateFocus(false)}
                                 onChange={(item) => {
-                                    setStateProv(item),
+                                    inputChangedHandler(
+                                        'stateProv',
+                                        item.value
+                                    ),
                                         //setStateValue(item.value);
                                         setIsStateFocus(false);
                                 }}
@@ -434,7 +558,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                 labelStyle={mtrTheme.profileFormInputTitle}
                                 textInputConfig={{
                                     backgroundColor: 'lightgrey',
-                                    value: postalCode,
+                                    value: values?.residence?.postalCode,
                                     paddingHorizontal: 5,
                                     fontSize: 24,
                                     color: 'black',
@@ -444,7 +568,10 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                     fontWeight: '500',
                                     //fontFamily: 'Roboto-Regular',
                                     letterSpacing: 0,
-                                    // onChangeText: setPostalCode(this),
+                                    onChangeText: inputChangedHandler.bind(
+                                        this,
+                                        'residencePostalCode'
+                                    ),
                                 }}
                             />
                         </View>

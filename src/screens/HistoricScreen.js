@@ -20,6 +20,7 @@ import {
 import HistoryList from '../components/HistoryList';
 import { getSupportedMeetings } from '../providers/meetings';
 import { useSelector, useDispatch } from 'react-redux';
+import { useAuthContext } from '../contexts/AuthContext';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { getHistoricMeetings } from '../providers/meetings';
 //import { getHistoricMeetings } from '../features/meetingsSlice';
@@ -33,6 +34,7 @@ const HistoricScreen = (props) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const mtrTheme = useTheme();
+    const { userProfile } = useAuthContext();
     const meeter = useSelector((state) => state.system);
     const hMeetings = useSelector((state) => state.meetings.historicMeetings);
     const [meetings, setMeetings] = useState([]);
@@ -103,7 +105,9 @@ const HistoricScreen = (props) => {
                         Click event for details.
                     </Text>
                 </View>
-                <HistoryList clientId={meeter.affiliation} />
+                <HistoryList
+                    clientId={userProfile?.activeClientCode || 'mtr'}
+                />
             </Surface>
         </>
     );

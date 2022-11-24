@@ -41,6 +41,9 @@ type Profile @model @auth(rules: [{allow: public}]) {
   Residence: Residence @hasOne
   profilePic: String
   Affiliations: [Affiliation] @hasMany(indexName: "byProfile", fields: ["id"])
+  activeClientCode: String
+  activeClientRole: String
+  activeClientName: String
 }
 
 type User @model @auth(rules: [{allow: public}]) {

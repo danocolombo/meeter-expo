@@ -26,6 +26,7 @@ import MeetingListCard from '../components/Meeting.List.Card';
 import { FontDisplay } from 'expo-font';
 import { FetchActiveMeetings } from '../components/common/hooks/meetingQueries';
 import { dateNumToDateDash, printObject } from '../utils/helpers';
+import { useAuthContext } from '../contexts/AuthContext';
 import { focusManager } from '@tanstack/react-query';
 import { current } from '@reduxjs/toolkit';
 //   FUNCTION START
@@ -33,6 +34,7 @@ import { current } from '@reduxjs/toolkit';
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
+    const { userProfile } = useAuthContext();
     const meeter = useSelector((state) => state.system);
     const [displayMeetings, setDisplayMeetings] = useState([]);
 
@@ -62,11 +64,12 @@ const ActiveScreen = () => {
             return () => subscription.remove();
         }, [])
     );
-
+    printObject('AS:67--> userProffile:\n', userProfile);
+    printObject('AS:68-->meeter.affiliation', meeter.affiliation);
     let meetings = [];
     const { data, isError, isLoading, isFetching, refetch } = useQuery(
         ['meetings', 'active'],
-        () => FetchActiveMeetings(meeter.affiliation),
+        () => FetchActiveMeetings(userProfile?.activeClientCode || 'mtr'),
         {
             refetchInterval: 60000,
             cacheTime: 2000,

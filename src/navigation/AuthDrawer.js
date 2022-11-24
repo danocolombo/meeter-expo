@@ -136,32 +136,36 @@ const AuthDrawer = (navigation) => {
                     tabBarActiveTintColor: 'white',
                 })}
             />
-            <Stack.Screen
-                name='Groups'
-                options={({ navigation }) => ({
-                    drawerIcon: ({ color }) => (
-                        <Ionicons
-                            name='people-outline'
-                            size={22}
-                            color={color}
-                        />
-                    ),
-                })}
-                component={DefaultGroupsScreen}
-            />
-            <Stack.Screen
-                name='Team'
-                options={({ navigation }) => ({
-                    drawerIcon: ({ color }) => (
-                        <Ionicons
-                            name='people-outline'
-                            size={22}
-                            color={color}
-                        />
-                    ),
-                })}
-                component={TeamScreen}
-            />
+            {userProfile?.activeClientRole === 'superuser' && (
+                <Stack.Screen
+                    name='Groups'
+                    options={({ navigation }) => ({
+                        drawerIcon: ({ color }) => (
+                            <Ionicons
+                                name='people-outline'
+                                size={22}
+                                color={color}
+                            />
+                        ),
+                    })}
+                    component={DefaultGroupsScreen}
+                />
+            )}
+            {userProfile?.activeClientRole === 'superuser' && (
+                <Stack.Screen
+                    name='Team'
+                    options={({ navigation }) => ({
+                        drawerIcon: ({ color }) => (
+                            <Ionicons
+                                name='people-outline'
+                                size={22}
+                                color={color}
+                            />
+                        ),
+                    })}
+                    component={TeamScreen}
+                />
+            )}
             {/* <Stack.Screen
                 name='Profile'
                 options={({ navigation }) => ({

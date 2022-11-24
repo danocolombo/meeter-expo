@@ -408,6 +408,27 @@ export const schema = {
                         "associatedWith": "profileID"
                     }
                 },
+                "activeClientCode": {
+                    "name": "activeClientCode",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "activeClientRole": {
+                    "name": "activeClientRole",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "activeClientName": {
+                    "name": "activeClientName",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -607,5 +628,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.1",
-    "version": "032351a3411eea341ef56d2d1f3f11cc"
+    "version": "ab42fd26df7ca3d272a81060c713b4e0"
 };

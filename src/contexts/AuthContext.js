@@ -95,6 +95,10 @@ const AuthContextProvider = ({ children }) => {
                                             cognitoUser?.attributes
                                                 ?.family_name,
                                         email: cognitoUser?.attributes?.email,
+                                        defaultClient: 'mtr',
+                                        activeClientCode: 'mtr',
+                                        activeClientRole: 'guest',
+                                        activeClientName: 'Meeter Test Client',
                                     };
                                     printObject(
                                         'AC:100-->createdProfile:\n',

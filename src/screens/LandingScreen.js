@@ -35,6 +35,7 @@ import { dateNumToDateDash, printObject } from '../utils/helpers';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useSysContext } from '../contexts/SysContext';
+import { useAffiliationContext } from '../contexts/AffiliationContext';
 
 const LandingScreen = () => {
     const mtrTheme = useTheme();
@@ -43,17 +44,23 @@ const LandingScreen = () => {
     const dispatch = useDispatch();
     const { userProfile, authUser, affiliations, isAuthComplete } =
         useAuthContext();
+    const { userAffiliations, refreshAffiliations } = useAffiliationContext();
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
     const [activeMeeting, setActiveMeeting] = useState();
     const [nextMeeting, setNextMeeting] = useState(meetings[0]);
     const [isLoading, setIsLoading] = useState(false);
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title: '',
         });
     }, [navigation, meeter]);
+    useEffect(() => {
+        refreshAffiliations(userProfile.id);
+    }, []);
+
     useEffect(() => {
         setIsLoading(true);
         // console.log('meetings = ', meetings.length);
@@ -112,7 +119,7 @@ const LandingScreen = () => {
         printObject('LS:110-->authUser\n', authUser);
         printObject('LS:111-->affiliations\n', affiliations);
     }
-
+    printObject('LS:123-->userAffiliations:\n', userAffiliations);
     return (
         <>
             <Surface style={styles.welcomeSurface}>

@@ -126,6 +126,9 @@ type EagerProfile = {
   readonly Residence?: Residence | null;
   readonly profilePic?: string | null;
   readonly Affiliations?: (Affiliation | null)[] | null;
+  readonly activeClientCode?: string | null;
+  readonly activeClientRole?: string | null;
+  readonly activeClientName?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly profileResidenceId?: string | null;
@@ -147,6 +150,9 @@ type LazyProfile = {
   readonly Residence: AsyncItem<Residence | undefined>;
   readonly profilePic?: string | null;
   readonly Affiliations: AsyncCollection<Affiliation>;
+  readonly activeClientCode?: string | null;
+  readonly activeClientRole?: string | null;
+  readonly activeClientName?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly profileResidenceId?: string | null;

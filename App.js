@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-query';
 import AuthContextProvider from './src/contexts/AuthContext';
 import SysContextProvider from './src/contexts/SysContext';
+import AffiliationProvider from './src/contexts/AffiliationContext';
 // import NetInfo from '@react-native-community/netinfo';
 import Navigation from './src/navigation/Navigation';
 import { store } from './src/app/store';
@@ -80,19 +81,21 @@ function App() {
         <Provider store={store}>
             <SysContextProvider>
                 <AuthContextProvider>
-                    <QueryClientProvider client={queryClient}>
-                        <PaperProvider theme={theme}>
-                            <SafeAreaView
-                                style={
-                                    Platform === 'ios'
-                                        ? styles.containerIOS
-                                        : styles.container
-                                }
-                            >
-                                <Navigation theme={theme} />
-                            </SafeAreaView>
-                        </PaperProvider>
-                    </QueryClientProvider>
+                    <AffiliationProvider>
+                        <QueryClientProvider client={queryClient}>
+                            <PaperProvider theme={theme}>
+                                <SafeAreaView
+                                    style={
+                                        Platform === 'ios'
+                                            ? styles.containerIOS
+                                            : styles.container
+                                    }
+                                >
+                                    <Navigation theme={theme} />
+                                </SafeAreaView>
+                            </PaperProvider>
+                        </QueryClientProvider>
+                    </AffiliationProvider>
                 </AuthContextProvider>
             </SysContextProvider>
         </Provider>

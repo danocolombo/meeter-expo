@@ -17,6 +17,7 @@ import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useSysContext } from '../../contexts/SysContext';
+import { useAffiliationContext } from '../../contexts/AffiliationContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 // import { ALL_EVENTS } from '../../../../data/getRegionalEvents';
@@ -53,6 +54,7 @@ const SignInScreen = () => {
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);
     const { userProfile, authUser, authContextRefresh } = useAuthContext();
+    const { refreshAffiliations, userAffiliations } = useAffiliationContext();
     const { defaultProfilePic } = useSysContext();
 
     const {
@@ -98,6 +100,19 @@ const SignInScreen = () => {
                     //   The user is authenticated, refresh context
                     authContextRefresh()
                         .then(() => console.log('authContextRefresh success'))
+                        .then(() => {
+                            if (userProfile?.id) {
+                                refreshAffiliations(userProfile.id);
+                                printObject(
+                                    'SI:107-->refreshAffiliations(userProfile.id)',
+                                    userProfile?.id
+                                );
+                                printObject(
+                                    'SI:110-->userAffiliations:\n',
+                                    userAffiliations
+                                );
+                            }
+                        })
                         .catch((e) =>
                             printObject('authContextRefresh failure', e)
                         );
@@ -168,10 +183,9 @@ const SignInScreen = () => {
         //   ----------------------------------------------
         //   get User info from Amplify
         //   ----------------------------------------------
-
-        // printObject('SI:167-->userProfile.sub', userProfile?.sub);
+        printObject('SI:186-->userProfile', userProfile);
         // printObject('SI:167-->profilePic', userProfile.profilePic);
-        printObject('SI:163-->defaultProfilePic', defaultProfilePic);
+        // printObject('SI:163-->defaultProfilePic', defaultProfilePic);
 
         //   ----------------------------------------------
         //   get user profile from DDB
@@ -214,6 +228,9 @@ const SignInScreen = () => {
                 affiliations: DEFAULT_AFFILIATIONS.affiliations,
             };
         }
+        //   ==============================================
+        //todo      IF WE HAVE AMPLIFY, OVERRIDE AFFILIATES
+        //   ==============================================
         //printObject('SI:199-->fullUserInfo:', fullUserInfo);
         dispatch(updateCurrentUser(fullUserInfo));
         getAffiliate(fullUserInfo.affiliations.active.value)
@@ -249,7 +266,9 @@ const SignInScreen = () => {
                 console.log('OH SNAP\n', err);
             });
         let today = dateNumToDateDash(meeter.today);
-        getSupportedMeetings(fullUserInfo.affiliations.active.value)
+        //  getSupportedMeetings(fullUserInfo.affiliations.active.value)
+        console.log('SI:270-->activeClientCode:', userProfile.activeClientCode);
+        getSupportedMeetings(userProfile?.activeClientCode || 'mtr')
             .then((results) => {
                 if (results.length > 0) {
                     dispatch(loadMeetings(results));

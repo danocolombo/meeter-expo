@@ -39,8 +39,8 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     // console.log(typeof birthday);
     const user = useSelector((state) => state.users.currentUser);
     const { width } = useWindowDimensions();
-    const [street, setStreet] = useState(profile?.Residence?.street || '');
-    const [city, setCity] = useState(profile?.Residence?.city || '');
+    //const [street, setStreet] = useState(profile?.Residence?.street || '');
+
     const [stateProv, setStateProv] = useState(
         profile?.Residence?.stateProv || ''
     );
@@ -53,6 +53,8 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
         username: profile?.username ? profile.username : user.userName,
         firstName: profile?.firstName ? profile.firstName : user.firstName,
         lastName: profile?.lastName ? profile.lastName : user.lastName,
+        street: profile?.Residence?.street ? profile.Residence.street : '',
+        city: profile?.Residence?.city ? profile.Residence.city : '',
         email: profile?.email ? profile.email : user.email,
         phone: profile?.phone ? profile.phone : '',
         birthday: profile?.birthday ? profile.birthday : '',
@@ -328,41 +330,28 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                 <View style={mtrTheme.profileFormResidenceBorder}>
                     <View style={mtrTheme.profileFormRowStyle}>
                         <View style={{ minWidth: '90%' }}>
-                            <View>
-                                <View>
-                                    <Text
-                                        style={mtrTheme.profileFormInputTitle}
-                                    >
-                                        Street
-                                    </Text>
-                                </View>
-                                <View>
-                                    <TextInput
-                                        style={{
-                                            fontSize: 24,
-                                            color: 'black',
-                                            backgroundColor: 'lightgrey',
-                                            value: street,
-                                            paddingHorizontal: 5,
-                                            marginRight: 5,
-                                            fontSize: 24,
-                                            color: 'black',
-                                            marginHorizontal: 0,
-                                            fontWeight: '500',
-                                        }}
-                                        label='Street'
-                                        onChange={() => setStreet()}
-                                        fontSize={24}
-                                        color='black'
-                                        backgroundColor='lightgrey'
-                                        paddingHorizontal={5}
-                                        marginRight={5}
-                                        marginHorizontal={0}
-                                        placeholder='Street'
-                                        letterSpacing={0}
-                                    />
-                                </View>
-                            </View>
+                            <Input
+                                label='Street'
+                                labelStyle={mtrTheme.profileFormInputTitle}
+                                textInputConfig={{
+                                    backgroundColor: 'lightgrey',
+                                    value: values.street,
+                                    paddingHorizontal: 5,
+                                    marginRight: 5,
+                                    fontSize: 24,
+                                    color: 'black',
+                                    marginHorizontal: 0,
+                                    placeholder: 'Street',
+                                    style: { color: 'black' },
+                                    fontWeight: '500',
+                                    //fontFamily: 'Roboto-Regular',
+                                    letterSpacing: 0,
+                                    onChangeText: inputChangedHandler.bind(
+                                        this,
+                                        'street'
+                                    ),
+                                }}
+                            />
                         </View>
                     </View>
                     <View style={mtrTheme.profileFormRowStyle}>
@@ -372,7 +361,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                 labelStyle={mtrTheme.profileFormInputTitle}
                                 textInputConfig={{
                                     backgroundColor: 'lightgrey',
-                                    value: city,
+                                    value: values.city,
                                     paddingHorizontal: 5,
                                     marginRight: 5,
                                     fontSize: 24,
@@ -383,7 +372,10 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                     fontWeight: '500',
                                     //fontFamily: 'Roboto-Regular',
                                     letterSpacing: 0,
-                                    onChangeText: () => setCity(),
+                                    onChangeText: inputChangedHandler.bind(
+                                        this,
+                                        'city'
+                                    ),
                                 }}
                             />
                         </View>

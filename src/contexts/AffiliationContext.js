@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState, useContext } from 'react';
 import { DataStore } from 'aws-amplify';
-import { Affiliation } from '../models';
+import { Affiliations } from '../models';
 import { printObject } from '../utils/helpers';
 
 const AffiliationContext = createContext({});
@@ -10,7 +10,7 @@ const AffiliationContextProvider = ({ children }) => {
     const [userAffiliations, setUserAffiliations] = useState(null);
 
     const refreshAffiliations = async (profileId) => {
-        DataStore.query(Affiliation, (affs) =>
+        DataStore.query(Affiliations, (affs) =>
             affs.profileID('eq', profileId)
         ).then(setUserAffiliations);
     };

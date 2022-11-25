@@ -13,7 +13,13 @@
     },
     "categories": {
       "auth": {
-        "MeeterExpo": {}
+        "MeeterExpo": {},
+        "meeterexpo": {
+          "userPoolId": "us-east-1_LecNXt66q",
+          "userPoolName": "Meeter",
+          "webClientId": "3tn2h8s0mv2d342i1ovkr6qrd5",
+          "nativeClientId": "3tn2h8s0mv2d342i1ovkr6qrd5"
+        }
       },
       "storage": {
         "s3meeterexpostorage": {}

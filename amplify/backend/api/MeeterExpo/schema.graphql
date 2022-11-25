@@ -1,3 +1,26 @@
+type System @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  version: String
+  ios_version: String
+  android_version: String
+  defaultProfilePicture: String
+}
+
+type Affiliations @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  role: String
+  status: String
+  userID: ID! @index(name: "byUser")
+  Organization: Organization @hasOne
+}
+
+type Organization @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  code: String
+  heroMessage: String
+}
+
 type DefaultGroups @model @auth(rules: [{allow: public}]) {
   id: ID!
   gender: String
@@ -5,7 +28,6 @@ type DefaultGroups @model @auth(rules: [{allow: public}]) {
   location: String
   facilitator: String
   coFacilitator: String
-  affiliationID: ID! @index(name: "byAffiliation")
 }
 
 type Residence @model @auth(rules: [{allow: public}]) {
@@ -14,15 +36,6 @@ type Residence @model @auth(rules: [{allow: public}]) {
   city: String
   stateProv: String
   postalCode: String
-}
-
-type Affiliation @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  label: String
-  role: String
-  value: String
-  DefaultGroups: [DefaultGroups] @hasMany(indexName: "byAffiliation", fields: ["id"])
-  profileID: ID! @index(name: "byProfile")
 }
 
 type Profile @model @auth(rules: [{allow: public}]) {
@@ -38,9 +51,7 @@ type Profile @model @auth(rules: [{allow: public}]) {
   defaultClient: String
   defaultClientId: String
   activeAffiliate: String
-  Residence: Residence @hasOne
   profilePic: String
-  Affiliations: [Affiliation] @hasMany(indexName: "byProfile", fields: ["id"])
   activeClientCode: String
   activeClientRole: String
   activeClientName: String
@@ -49,7 +60,18 @@ type Profile @model @auth(rules: [{allow: public}]) {
 type User @model @auth(rules: [{allow: public}]) {
   id: ID!
   sub: String
-  profilePic: String
+  firstName: String
+  lastName: String
+  username: String
+  phone: String
+  email: String
+  birthday: String
+  shirt: String
+  picture: String
+  DefaultOrg: Organization @hasOne
+  ActiveOrg: Organization @hasOne
+  Affiliations: [Affiliations] @hasMany(indexName: "byUser", fields: ["id"])
+  Residence: Residence @hasOne
 }
 
 type MeeterSystem @model @auth(rules: [{allow: public}]) {

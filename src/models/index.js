@@ -4,12 +4,14 @@ import { schema } from './schema';
 
 
 
-const { DefaultGroups, Residence, Affiliation, Profile, User, MeeterSystem } = initSchema(schema);
+const { System, Affiliations, Organization, DefaultGroups, Residence, Profile, User, MeeterSystem } = initSchema(schema);
 
 export {
+  System,
+  Affiliations,
+  Organization,
   DefaultGroups,
   Residence,
-  Affiliation,
   Profile,
   User,
   MeeterSystem

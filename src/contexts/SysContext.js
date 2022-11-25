@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState, useContext } from 'react';
 import { DataStore } from 'aws-amplify';
-import { MeeterSystem } from '../models';
+import { System } from '../models';
 import { printObject } from '../utils/helpers';
 
 const SysContext = createContext({});
@@ -9,7 +9,7 @@ const SysContextProvider = ({ children }) => {
     const [systemDef, setSystemDef] = useState(null);
 
     useEffect(() => {
-        DataStore.query(MeeterSystem).then((vers) => setSystemDef(vers[0]));
+        DataStore.query(System).then((vers) => setSystemDef(vers[0]));
     }, []);
     //printObject('AuthContext-->authUser:', authUser);
     return (

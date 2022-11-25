@@ -10,6 +10,7 @@ import {
     useOnlineManager,
 } from '@tanstack/react-query';
 import AuthContextProvider from './src/contexts/AuthContext';
+import UserContextProvider from './src/contexts/UserContext';
 import SysContextProvider from './src/contexts/SysContext';
 import AffiliationProvider from './src/contexts/AffiliationContext';
 // import NetInfo from '@react-native-community/netinfo';
@@ -81,21 +82,23 @@ function App() {
         <Provider store={store}>
             <SysContextProvider>
                 <AuthContextProvider>
-                    <AffiliationProvider>
-                        <QueryClientProvider client={queryClient}>
-                            <PaperProvider theme={theme}>
-                                <SafeAreaView
-                                    style={
-                                        Platform === 'ios'
-                                            ? styles.containerIOS
-                                            : styles.container
-                                    }
-                                >
-                                    <Navigation theme={theme} />
-                                </SafeAreaView>
-                            </PaperProvider>
-                        </QueryClientProvider>
-                    </AffiliationProvider>
+                    <UserContextProvider>
+                        <AffiliationProvider>
+                            <QueryClientProvider client={queryClient}>
+                                <PaperProvider theme={theme}>
+                                    <SafeAreaView
+                                        style={
+                                            Platform === 'ios'
+                                                ? styles.containerIOS
+                                                : styles.container
+                                        }
+                                    >
+                                        <Navigation theme={theme} />
+                                    </SafeAreaView>
+                                </PaperProvider>
+                            </QueryClientProvider>
+                        </AffiliationProvider>
+                    </UserContextProvider>
                 </AuthContextProvider>
             </SysContextProvider>
         </Provider>

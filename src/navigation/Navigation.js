@@ -35,9 +35,12 @@ import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub } from 'aws-amplify';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
+import { printObject } from '../utils/helpers';
+import { useAuthContext } from '../contexts/AuthContext';
 const Stack = createNativeStackNavigator();
 function MeeterStack(props) {
     const mtrTheme = useTheme();
+    const { authUser } = useAuthContext();
     const meeter = useSelector((state) => state.system);
     const [userCheck, setUserCheck] = useState(undefined);
     const checkUser = async () => {
@@ -210,9 +213,11 @@ function MeeterStack(props) {
 }
 //   --------- Navigation !!!!! ----------------
 function Navigation() {
-    const user = useSelector((state) => state.users.currentUser);
+    const { authUser, jwtToken, setJwtToken } = useAuthContext();
+    const user = authUser;
     const [userCheck, setUserCheck] = useState(undefined);
-    const checkUser = async () => {
+
+    const ORIGINAL_checkUser = async () => {
         try {
             const authUser = await Auth.currentAuthenticatedUser({
                 bypassCache: true,
@@ -222,9 +227,24 @@ function Navigation() {
             setUserCheck(null);
         }
     };
+    const checkUser = async () => {
+        try {
+            const authUser = await Auth.currentAuthenticatedUser({
+                bypassCache: true,
+            });
+            setUserCheck(authUser);
+            setJwtToken(authUser?.signInUserSession?.accessToken?.jwtToken);
+        } catch (e) {
+            setUserCheck(null);
+        }
+    };
 
     useEffect(() => {
-        checkUser();
+        checkUser()
+            .then(() => {
+                // printObject('NAV:249__>authUser:', authUser);
+            })
+            .catch((e) => printObject('failure checkingUser:', e));
     }, []);
 
     // this is as listener to the Amplify hub (events)
@@ -241,11 +261,12 @@ function Navigation() {
         Hub.listen('auth', listener);
         return () => Hub.remove('auth', listener);
     }, []);
+
     return (
         <NavigationContainer>
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
-                    {user?.jwtToken ? (
+                    {jwtToken ? (
                         <Stack.Screen
                             name='MeeterStack'
                             component={MeeterStack}

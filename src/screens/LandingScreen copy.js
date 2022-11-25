@@ -34,21 +34,18 @@ import {
 import { dateNumToDateDash, printObject } from '../utils/helpers';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { useAuthContext } from '../contexts/AuthContext';
-import { useUserContext } from '../contexts/UserContext';
 import { useSysContext } from '../contexts/SysContext';
 import { useAffiliationContext } from '../contexts/AffiliationContext';
 
-//      ====================================
-//      FUNCTION START
 const LandingScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const { loadUserProfile, userProfile, currentRole } = useUserContext();
-    //const { authUser, cognitoSub } = useAuthContext();
-    const { heroMessage } = useSysContext();
-
+    const { userProfile, authUser, affiliations, isAuthComplete } =
+        useAuthContext();
+    const { userAffiliations, refreshAffiliations } = useAffiliationContext();
+    const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
     const [activeMeeting, setActiveMeeting] = useState();
@@ -61,11 +58,46 @@ const LandingScreen = () => {
         });
     }, [navigation, meeter]);
     useEffect(() => {
-        setIsLoading(true);
-        loadUserProfile();
-        //todo: load the system context
-        setIsLoading(false);
+        refreshAffiliations(userProfile.id);
     }, []);
+
+    useEffect(() => {
+        setIsLoading(true);
+        // console.log('meetings = ', meetings.length);
+        let today = dateNumToDateDash(meeter.today);
+        //console.log('meetings', meetings.length);
+        let activeOnes = meetings.filter((m) => m.meetingDate >= today);
+        function quickSort(prop) {
+            return function (a, b) {
+                if (a[prop] > b[prop]) {
+                    return 1;
+                } else if (a[prop] < b[prop]) {
+                    return -1;
+                }
+                return 0;
+            };
+        }
+        let sortedResults = activeOnes.sort(quickSort('mtgCompKey'));
+        //console.log('actives:', activeOnes.length);
+        activeOnes ? setActiveMeeting(activeOnes[0]) : null;
+
+        // Do something when the screen is focused
+        setIsLoading(false);
+    }, [meetings]);
+    // useEffect(() => {
+    //     if (!userProfile) {
+    //         Alert.alert('Please complete your profile');
+    //     }
+    // }, []);
+
+    // printObject('CONTEXT:sub-->', sub);
+    // printObject('SYSTEM-CONTEXT-->systemDef', systemDef);
+    if (affiliations) {
+        printObject('LS:82-->affiliations:', affiliations);
+    } else {
+        console.log('NO AFFILIATION');
+    }
+
     if (isLoading) {
         return (
             <View
@@ -82,7 +114,12 @@ const LandingScreen = () => {
             </View>
         );
     }
-    printObject('LS:85__> userProfile:\n', userProfile);
+    if (isAuthComplete) {
+        printObject('LS:109-->userProfile\n', userProfile);
+        printObject('LS:110-->authUser\n', authUser);
+        printObject('LS:111-->affiliations\n', affiliations);
+    }
+    printObject('LS:123-->userAffiliations:\n', userAffiliations);
     return (
         <>
             <Surface style={styles.welcomeSurface}>
@@ -100,7 +137,7 @@ const LandingScreen = () => {
                             color: mtrTheme.colors.landingAppName,
                         }}
                     >
-                        {userProfile?.ActiveOrg?.name}
+                        {meeter.affiliateTitle}
                     </Text>
                 </View>
 
@@ -119,11 +156,11 @@ const LandingScreen = () => {
                         </View>
                     </>
                 )}
-                {userProfile?.ActiveOrg?.heroMessage && (
+                {meeter?.affiliate?.heroMessage && (
                     <>
                         <View style={mtrTheme.landingHeroMessageContainer}>
                             <Text style={mtrTheme.landingHeroMessageText}>
-                                {userProfile?.ActiveOrg?.heroMessage}
+                                {meeter.affiliate.heroMessage}
                             </Text>
                         </View>
                     </>

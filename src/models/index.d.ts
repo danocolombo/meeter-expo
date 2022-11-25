@@ -1,6 +1,6 @@
 import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncItem } from "@aws-amplify/datastore";
 
 type SystemMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
@@ -66,8 +66,8 @@ type EagerAffiliations = {
   readonly id: string;
   readonly role?: string | null;
   readonly status?: string | null;
-  readonly userID: string;
   readonly Organization?: Organization | null;
+  readonly userID?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly affiliationsOrganizationId?: string | null;
@@ -77,8 +77,8 @@ type LazyAffiliations = {
   readonly id: string;
   readonly role?: string | null;
   readonly status?: string | null;
-  readonly userID: string;
   readonly Organization: AsyncItem<Organization | undefined>;
+  readonly userID?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly affiliationsOrganizationId?: string | null;
@@ -229,7 +229,6 @@ type EagerUser = {
   readonly picture?: string | null;
   readonly DefaultOrg?: Organization | null;
   readonly ActiveOrg?: Organization | null;
-  readonly Affiliations?: (Affiliations | null)[] | null;
   readonly Residence?: Residence | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -251,7 +250,6 @@ type LazyUser = {
   readonly picture?: string | null;
   readonly DefaultOrg: AsyncItem<Organization | undefined>;
   readonly ActiveOrg: AsyncItem<Organization | undefined>;
-  readonly Affiliations: AsyncCollection<Affiliations>;
   readonly Residence: AsyncItem<Residence | undefined>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;

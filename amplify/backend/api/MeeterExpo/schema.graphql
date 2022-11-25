@@ -11,8 +11,8 @@ type Affiliations @model @auth(rules: [{allow: public}]) {
   id: ID!
   role: String
   status: String
-  userID: ID! @index(name: "byUser")
   Organization: Organization @hasOne
+  userID: String
 }
 
 type Organization @model @auth(rules: [{allow: public}]) {
@@ -71,7 +71,6 @@ type User @model @auth(rules: [{allow: public}]) {
   picture: String
   DefaultOrg: Organization @hasOne
   ActiveOrg: Organization @hasOne
-  Affiliations: [Affiliations] @hasMany(indexName: "byUser", fields: ["id"])
   Residence: Residence @hasOne
 }
 
@@ -81,4 +80,5 @@ type MeeterSystem @model @auth(rules: [{allow: public}]) {
   ios_version: String
   android_version: String
   defaultProfilePic: String
-} 
+}
+ 

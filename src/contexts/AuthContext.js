@@ -170,6 +170,16 @@ const AuthContextProvider = ({ children }) => {
             (profiles) => setUserProfile(profiles[0])
         );
     };
+
+    const checkAllAuth = async () => {
+        Auth.currentAuthenticatedUser((res) =>
+            printObject('AC:176__> currentAuthenticatedUser', res)
+        ).catch((e) => printObject('currentAuthenticatedUser error', e));
+        Auth.currentSession((res) =>
+            printObject('AC:179__> currentSession', res)
+        );
+    };
+
     //printObject('AuthContext-->authUser:', authUser);
     return (
         <AuthContext.Provider
@@ -179,6 +189,7 @@ const AuthContextProvider = ({ children }) => {
                 loadCognitoInfo,
                 setJwtToken,
                 jwtToken,
+                checkAllAuth,
             }}
         >
             {children}

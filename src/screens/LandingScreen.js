@@ -47,6 +47,7 @@ const LandingScreen = () => {
     const dispatch = useDispatch();
     const { loadUserProfile, userProfile, currentRole } = useUserContext();
     const { meeter } = useSysContext();
+    printObject('LS:50__> meeter:', meeter);
     //const { authUser, cognitoSub } = useAuthContext();
     const { heroMessage } = useSysContext();
 

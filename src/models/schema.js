@@ -111,13 +111,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "userID": {
-                    "name": "userID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
                 "Organization": {
                     "name": "Organization",
                     "isArray": false,
@@ -131,6 +124,13 @@ export const schema = {
                         "associatedWith": "id",
                         "targetName": "affiliationsOrganizationId"
                     }
+                },
+                "userID": {
+                    "name": "userID",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -162,15 +162,6 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byUser",
-                        "fields": [
-                            "userID"
-                        ]
-                    }
                 },
                 {
                     "type": "auth",
@@ -688,20 +679,6 @@ export const schema = {
                         "targetName": "userActiveOrgId"
                     }
                 },
-                "Affiliations": {
-                    "name": "Affiliations",
-                    "isArray": true,
-                    "type": {
-                        "model": "Affiliations"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "userID"
-                    }
-                },
                 "Residence": {
                     "name": "Residence",
                     "isArray": false,
@@ -863,5 +840,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.1",
-    "version": "abdc467e4d10eab170ae92380f1bd589"
+    "version": "0aaa270450cb7e53f736addd6a6c190f"
 };

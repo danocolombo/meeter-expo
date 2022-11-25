@@ -40,7 +40,7 @@ import { useAuthContext } from '../contexts/AuthContext';
 const Stack = createNativeStackNavigator();
 function MeeterStack(props) {
     const mtrTheme = useTheme();
-    const { authUser } = useAuthContext();
+    const { authUser, checkAllAuth } = useAuthContext();
     const meeter = useSelector((state) => state.system);
     const [userCheck, setUserCheck] = useState(undefined);
     const checkUser = async () => {
@@ -217,16 +217,16 @@ function Navigation() {
     const user = authUser;
     const [userCheck, setUserCheck] = useState(undefined);
 
-    const ORIGINAL_checkUser = async () => {
-        try {
-            const authUser = await Auth.currentAuthenticatedUser({
-                bypassCache: true,
-            });
-            setUserCheck(authUser);
-        } catch (e) {
-            setUserCheck(null);
-        }
-    };
+    // const ORIGINAL_checkUser = async () => {
+    //     try {
+    //         const authUser = await Auth.currentAuthenticatedUser({
+    //             bypassCache: true,
+    //         });
+    //         setUserCheck(authUser);
+    //     } catch (e) {
+    //         setUserCheck(null);
+    //     }
+    // };
     const checkUser = async () => {
         try {
             const authUser = await Auth.currentAuthenticatedUser({

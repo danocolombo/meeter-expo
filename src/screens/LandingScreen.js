@@ -46,10 +46,10 @@ const LandingScreen = () => {
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const { loadUserProfile, userProfile, currentRole } = useUserContext();
+    const { meeter } = useSysContext();
     //const { authUser, cognitoSub } = useAuthContext();
     const { heroMessage } = useSysContext();
 
-    const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
     const [activeMeeting, setActiveMeeting] = useState();
     const [nextMeeting, setNextMeeting] = useState(meetings[0]);

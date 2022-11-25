@@ -17,6 +17,8 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Dropdown } from 'react-native-element-dropdown';
 import Input from './ui/Input';
 import { useTheme, FAB } from 'react-native-paper';
+import { useSysContext } from '../contexts/SysContext';
+import { useUserContext } from '../contexts/UserContext';
 import CustomButton from './ui/CustomButton';
 import { printObject, dateDashToDateObject } from '../utils/helpers';
 import { STATESBY2, SHIRTSIZESBY2 } from '../constants/meeter';
@@ -24,22 +26,16 @@ import { useMutation } from '@tanstack/react-query';
 
 //   FUNCTION START
 //   ===============
-const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
-    printObject('PF:27-->profile(userProfile):', profile);
+const ProfileForm = ({ profile: notUsed, handleUpdate, handleCancel }) => {
     const navigation = useNavigation();
-    const [stateValue, setStateValue] = useState(null);
+    const { meeter } = useSysContext();
+    const { userProfile: profile } = useUserContext();
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isShirtFocus, setIsShirtFocus] = useState(false);
-
     const [modalBirthDateVisible, setModalBirthDateVisible] = useState(false);
+    const [birthDay, setBirthday] = useState(profile.birthday);
     const mtrTheme = useTheme();
-    const meeter = useSelector((state) => state.system);
-    const [birthday, setBirthday] = useState();
-    // console.log('birthday:', birthday);
-    // console.log(typeof birthday);
-    const user = useSelector((state) => state.users.currentUser);
     const { width } = useWindowDimensions();
-    //const [street, setStreet] = useState(profile?.Residence?.street || '');
 
     const [stateProv, setStateProv] = useState(
         profile?.Residence?.stateProv || ''
@@ -47,18 +43,19 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     const [postalCode, setPostalCode] = useState(
         profile?.Residence?.postalCode || ''
     );
-
+    printObject('PF:43__> meeter:', meeter);
     const [values, setValues] = useState({
-        uid: user?.uid,
-        username: profile?.username ? profile.username : user.userName,
-        firstName: profile?.firstName ? profile.firstName : user.firstName,
-        lastName: profile?.lastName ? profile.lastName : user.lastName,
+        uid: profile.id,
+        username: profile?.username ? profile.username : '',
+        firstName: profile?.firstName ? profile.firstName : '',
+        lastName: profile?.lastName ? profile.lastName : '',
         street: profile?.Residence?.street ? profile.Residence.street : '',
         city: profile?.Residence?.city ? profile.Residence.city : '',
-        email: profile?.email ? profile.email : user.email,
+        email: profile?.email ? profile.email : '',
         phone: profile?.phone ? profile.phone : '',
         birthday: profile?.birthday ? profile.birthday : '',
         shirt: profile?.shirt ? profile.shirt : '',
+        picture: meeter?.defaultProfilePicture,
     });
     const [isFirstNameValid, setIsFirstNameValid] = useState(
         values.firstName?.length > 1 ? true : false
@@ -72,8 +69,8 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
             //let dateObj = dateDashToDateObject(values?.birthday);
             //setBirthday(dateObj);
             //setValues(profile);
-            let x = { ...values, ...profile };
-            setValues(x);
+            // let x = { ...values, ...profile };
+            // setValues(x);
             let dateObj = dateDashToDateObject(values?.birthday);
 
             // printObject('dateObj:', dateObj);
@@ -188,7 +185,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
         return;
         handleUpdate(newValues);
     };
-
+    printObject('PF:192__> values:', values);
     return (
         <>
             {/* {mutation.isLoading ? (
@@ -206,7 +203,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                             >
                                 <Image
                                     // source={require('../../assets/user-profile.jpeg')}
-                                    source={{ uri: profile.profilePic }}
+                                    source={{ uri: values.picture }}
                                     style={mtrTheme.profileImage}
                                 />
                             </View>
@@ -218,7 +215,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                         </View>
                         <View style={{ paddingTop: 5 }}>
                             <Text style={{ color: mtrTheme.colors.accent }}>
-                                {user.firstName} {user.lastName}
+                                {profile.firstName} {profile.lastName}
                             </Text>
                         </View>
                     </View>
@@ -444,7 +441,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                 </View>
                 <View style={mtrTheme.profileFormRowStyle}>
                     <Text style={{ color: 'silver', fontSize: 12 }}>
-                        UID: {user?.uid}
+                        UID: {profile?.uid}
                     </Text>
                 </View>
                 <View style={styles.buttonContainer}>
@@ -460,7 +457,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                 <DateTimePickerModal
                     isVisible={modalBirthDateVisible}
                     mode='date'
-                    date={birthday}
+                    date={values?.birthday}
                     display='inline'
                     onConfirm={onBirthDateConfirm}
                     onCancel={onBirthDateCancel}

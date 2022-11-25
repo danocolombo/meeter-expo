@@ -2,7 +2,7 @@ module.exports = ({ config }) => {
     let BASE_version = '1.0.10';
     let ANDROID_version = 1;
     let COMBO_version = BASE_version + '-' + ANDROID_version.toString();
-    let DESCRIPTION = 'expo/1.0.1 - sprint9';
+    let DESCRIPTION = 'expo/1.0.2 - sprint10';
     console.log('NAME: ' + config.name); // prints 'My App'
     console.log('COMBO_version: ' + COMBO_version);
     return {

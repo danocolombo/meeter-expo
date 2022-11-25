@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import CustomButton from '../components/ui/CustomButton';
 import ProfileForm from '../components/ProfileForm';
-import { useAuthContext } from '../contexts/AuthContext';
+import { useUserContext } from '../contexts/UserContext';
 import { useSysContext } from '../contexts/SysContext';
 import {
     FetchProfile,
@@ -17,21 +17,17 @@ import {
 import { updateCurrentUser } from '../features/usersSlice';
 import { printObject } from '../utils/helpers';
 import { DEFAULT_AFFILIATIONS } from '../constants/meeter';
+
 //   FUNCTION START
 //   ==============
 const ProfileScreen = (props) => {
     const { height, width } = useWindowDimensions();
     const navigation = useNavigation();
     const mtrTheme = useTheme();
-    const dispatch = useDispatch();
-    const meeter = useSelector((state) => state.system);
-    const user = useSelector((state) => state.users.currentUser);
-
+    const { meeter } = useSysContext();
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const { userProfile, setUserProfile } = useAuthContext();
-    printObject('PS:33-->userProfile:\n', userProfile);
-    const { systemDef } = useSysContext();
+    const { userProfile, setUserProfile } = useUserContext();
 
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
@@ -44,8 +40,6 @@ const ProfileScreen = (props) => {
                 'change',
                 onAppStateChange
             );
-            PROFILE.refetch();
-            console.log('PROFILE refetched');
             return () => subscription.remove();
         }, [])
     );
@@ -56,33 +50,6 @@ const ProfileScreen = (props) => {
         });
     }, [navigation, meeter]);
     const handleUpdate = (values) => {
-        /*    ==================================
-        REQUIRED LAMBDA / DDB request
-        uid                 cognito
-        username            cognito
-        lastName            cognito
-        firstName            cognito
-        email               cognito
-        defaultClient       profile | 'mtr'
-        defaultClientId     profile | '88j16596c6382dee0d7a8dtc'
-        -------------------------------------*/
-        /*   ==================================
-        DESIRED SETTINGS / REQUIREMENTS
-        affiliations: {
-            active: {
-                label: "Meeter Test System",
-                role: "guest",
-                value: "mtr"
-            },
-            options: [
-                {
-                    label: "Meeter Test System",
-                    role: "guest",
-                    value: "mtr"
-                }
-            ]
-        }
-        =====================================*/
         setIsSaving(true);
         values.username = user.username;
         if (!values.defaultClient) {
@@ -131,67 +98,9 @@ const ProfileScreen = (props) => {
     const handleCancel = () => {
         console.log('User Cancelled');
     };
-    const PROFILE = useQuery(
-        ['profile', user.uid],
-        () => FetchProfile(user.uid),
-        {
-            cacheTime: 300000, // 5 min
-            enabled: true,
-        }
-    );
-    let profile = {};
-    if (PROFILE.data) {
-        profile = PROFILE.data.body;
-        //   add profilePic to profile
-        let pic;
-        if (userProfile.profilePic) {
-            //   use user's profile pick
-            console.log('USE1:', userProfile.profilePic);
-            pic = userProfile.profilePic;
-        } else {
-            // printObject('WHAT?:', systemDef);
-            // console.log('-->', systemDef.defaultProfilePic);
-            // console.log('USE2:', systemDef.defaultProfilePic);
-            pic = systemDef.defaultProfilePic;
-        }
-        let updatedProfile = {
-            ...profile,
-            profilePic: pic,
-        };
-        profile = { ...updatedProfile };
-        // printObject('PS:139-->updatedProfile', updatedProfile);
-    }
-
-    if (PROFILE.isLoading || isSaving) {
-        return (
-            <View
-                style={{
-                    flexDirection: 'row',
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-            >
-                <ActivityIndicator
-                    size={75}
-                    color={mtrTheme.colors.activityIndicator}
-                />
-            </View>
-        );
-    }
-    if (PROFILE.isError) {
-        console.error('PROFILE ERROR:', PROFILE.error);
-    }
 
     return (
         <>
-            {PROFILE.isRefetching ? (
-                <View>
-                    <Text style={{ color: mtrTheme.colors.accent }}>
-                        refetching...
-                    </Text>
-                </View>
-            ) : null}
             <Modal visible={showMessage} animationStyle='slide'>
                 <Surface
                     style={[

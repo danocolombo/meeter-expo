@@ -7,13 +7,16 @@ import {
 } from 'react-native';
 import React, { useLayoutEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { useSysContext } from '../contexts/SysContext';
+import { useUserContext } from '../contexts/UserContext';
 import { useSelector } from 'react-redux';
 import { Surface, useTheme } from 'react-native-paper';
 
 const AdminScreen = () => {
     const navigation = useNavigation();
     const mtrTheme = useTheme();
-    const meeter = useSelector((state) => state.system);
+    const { meeter } = useSysContext();
+    const { userProfile } = useUserContext();
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,

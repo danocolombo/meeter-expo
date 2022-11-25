@@ -29,13 +29,14 @@ import { dateNumToDateDash, printObject } from '../utils/helpers';
 import { useAuthContext } from '../contexts/AuthContext';
 import { focusManager } from '@tanstack/react-query';
 import { current } from '@reduxjs/toolkit';
+import { useSysContext } from '../contexts/SysContext';
 //   FUNCTION START
 //   ===============
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const { userProfile } = useAuthContext();
-    const meeter = useSelector((state) => state.system);
+    const { meeter } = useSysContext();
     const [displayMeetings, setDisplayMeetings] = useState([]);
 
     useLayoutEffect(() => {
@@ -69,7 +70,7 @@ const ActiveScreen = () => {
     let meetings = [];
     const { data, isError, isLoading, isFetching, refetch } = useQuery(
         ['meetings', 'active'],
-        () => FetchActiveMeetings(userProfile?.activeClientCode || 'mtr'),
+        () => FetchActiveMeetings(userProfile?.ActiveOrg.code || 'mtr'),
         {
             refetchInterval: 60000,
             cacheTime: 2000,

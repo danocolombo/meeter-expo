@@ -40,6 +40,7 @@ type EagerSystem = {
   readonly ios_version?: string | null;
   readonly android_version?: string | null;
   readonly defaultProfilePicture?: string | null;
+  readonly appName?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -50,6 +51,7 @@ type LazySystem = {
   readonly ios_version?: string | null;
   readonly android_version?: string | null;
   readonly defaultProfilePicture?: string | null;
+  readonly appName?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState, useContext } from 'react';
-import * as queries from '../corinthQL/queries';
+import * as queries from '../jerichoQL/queries';
 import { MEETER_DEFAULTS } from '../constants/meeter';
 import { API } from 'aws-amplify';
 import {

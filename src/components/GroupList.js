@@ -25,18 +25,18 @@ const GroupList = ({ meetingId }) => {
             focusManager.setFocused(status === 'active');
         }
     }
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         const subscription = AppState.addEventListener(
-    //             'change',
-    //             onAppStateChange
-    //         );
-    //         refetch();
-    //         printObject('GL:35-->REFETCH', null);
+    useFocusEffect(
+        useCallback(() => {
+            const subscription = AppState.addEventListener(
+                'change',
+                onAppStateChange
+            );
+            refetch();
+            printObject('GL:35-->REFETCH', null);
 
-    //         return () => subscription.remove();
-    //     }, [])
-    // );
+            return () => subscription.remove();
+        }, [])
+    );
     const { data, isError, isLoading, isFetching, refetch } = useQuery(
         ['groups', meetingId],
         () => FetchGroupsForMeeting(meetingId),

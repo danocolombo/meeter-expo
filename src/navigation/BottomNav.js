@@ -12,10 +12,10 @@ import systemSlice from '../features/systemSlice';
 const BottomTab = createBottomTabNavigator();
 const MeetingsConfig = () => {
     const mtrTheme = useTheme();
-    const {userProfile} = useUserContext()
+    const { userProfile } = useUserContext();
     const { appName } = useSelector((state) => state.system);
     let director = false;
-    if (userProfile?.ActiveOrg?..affiliations.active.role === 'director') {
+    if (userProfile?.ActiveOrg?.affiliations.active.role === 'director') {
         director = true;
     }
 

@@ -33,6 +33,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { PutGroup } from '../components/common/hooks/groupQueries';
 import GenderSelectors from '../components/GenderSelectors';
 import NumberInput from '../components/ui/NumberInput';
+import { useUserContext } from '../contexts/UserContext';
 import Input from '../components/ui/Input';
 import {
     Surface,
@@ -56,6 +57,7 @@ import GroupForm from '../components/GroupForm';
 const GroupNewScreen = ({ route, navigation }) => {
     const meeting = route.params.meeting;
     const meetingId = meeting.meetingId;
+    const { userProfile } = useUserContext();
     let group = {};
     const mtrTheme = useTheme();
     const isFocused = useIsFocused();
@@ -81,7 +83,7 @@ const GroupNewScreen = ({ route, navigation }) => {
     const daFix = ('0' + da.toString()).slice(-2);
     const today = yr.toString() + '-' + moFix + '-' + daFix;
     const compKey =
-        meeter.affiliation.toLowerCase() +
+        userProfile?.activeSession.organization.code.toLowerCase() +
         '#' +
         yr.toString() +
         '#' +

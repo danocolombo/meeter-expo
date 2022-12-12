@@ -76,10 +76,12 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                 onAppStateChange
             );
             MEETING.refetch();
+            printObject('AL:42-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])
     );
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,

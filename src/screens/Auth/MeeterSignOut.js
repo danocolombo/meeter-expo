@@ -7,18 +7,28 @@ import { logout } from '../../features/usersSlice';
 import { logout as meetingsSignout } from '../../features/meetingsSlice';
 import { logout as profilesLogout } from '../../features/profilesSlice';
 import { logout as systemLogout } from '../../features/systemSlice';
+import { printObject } from '../../utils/helpers';
 const MeeterSignOut = (props) => {
-    const { setJwtToken } = useAuthContext();
+    const { setJwtToken, clearAuthUser } = useAuthContext();
     const action = props?.action;
     const dispatch = useDispatch();
     //console.log('ACTION:', action);
     useEffect(() => {
-        dispatch(logout());
-        dispatch(meetingsSignout());
-        dispatch(profilesLogout());
-        dispatch(systemLogout());
-        Auth.signOut().then(() => console.log('Auth.signOut() complete'));
-        setJwtToken(null);
+        try {
+            dispatch(logout());
+            dispatch(meetingsSignout());
+            dispatch(profilesLogout());
+            dispatch(systemLogout());
+            setJwtToken(null);
+            clearAuthUser();
+            Auth.signOut().then(() =>
+                console.log('Auth.signOut() complete').catch((e) => {
+                    printObject('error Auth.signOut:', e);
+                })
+            );
+        } catch (error) {
+            printObject('MSO:28-->error trying to logout', error);
+        }
     }, []);
 
     return (

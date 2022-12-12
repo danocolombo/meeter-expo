@@ -30,12 +30,13 @@ import { useAuthContext } from '../contexts/AuthContext';
 import { focusManager } from '@tanstack/react-query';
 import { current } from '@reduxjs/toolkit';
 import { useSysContext } from '../contexts/SysContext';
+import { useUserContext } from '../contexts/UserContext';
 //   FUNCTION START
 //   ===============
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
-    const { userProfile } = useAuthContext();
+    const { userProfile } = useUserContext();
     const { meeter } = useSysContext();
     const [displayMeetings, setDisplayMeetings] = useState([]);
 
@@ -65,20 +66,16 @@ const ActiveScreen = () => {
             return () => subscription.remove();
         }, [])
     );
-    printObject('AS:67--> userProffile:\n', userProfile);
-    printObject('AS:68-->meeter.affiliation', meeter.affiliation);
     let meetings = [];
     const { data, isError, isLoading, isFetching, refetch } = useQuery(
         ['meetings', 'active'],
-        () => FetchActiveMeetings(userProfile?.ActiveOrg.code || 'mtr'),
+        () => FetchActiveMeetings(userProfile?.activeOrg.code || 'mtr'),
         {
             refetchInterval: 60000,
             cacheTime: 2000,
             enabled: true,
         }
     );
-    printObject('AS:71-->isLoading', isLoading);
-    printObject('AS:72-->isFetching', isFetching);
     const handleNewRequest = () => {
         navigation.navigate('MeetingNew');
     };

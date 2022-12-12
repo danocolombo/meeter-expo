@@ -15,10 +15,6 @@ import CustomButton from '../../components/ui/Auth/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
-import { useAuthContext } from '../../contexts/AuthContext';
-import { useSysContext } from '../../contexts/SysContext';
-import { useAffiliationContext } from '../../contexts/AffiliationContext';
-import { useDispatch, useSelector } from 'react-redux';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 
 import { printObject } from '../../utils/helpers';
@@ -26,13 +22,10 @@ import { printObject } from '../../utils/helpers';
 //   FUNCTION START
 const SignInScreen = () => {
     const mtrTheme = useTheme();
-    const [isLoading, setIsLoading] = useState(false);
-
+    const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
 
-    const { loadCognitoInfo, cognitoSub } = useAuthContext();
-    const { refreshAffiliations, userAffiliations } = useAffiliationContext();
-
+    const [loggedInUser, setLoggedInUser] = useState(null);
     const {
         control,
         handleSubmit,
@@ -44,88 +37,29 @@ const SignInScreen = () => {
     // need this to pass the username on to forgot password
     const user = watch('username');
     const onSignInPressed = async (data) => {
-        setIsLoading(true);
-        const { username, password } = data;
-        //console.log(username, password);
-        let alertPayload = {};
-        let setAlert = {};
-        await Auth.signIn(username, password)
-            .then((user) => {
-                //printObject('SI:55__>user:', user);
-                if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-                    const { requiredAttributes } = user.challengeParam; // the array of required attributes, e.g ['email', 'phone_number']
-                    Auth.completeNewPassword(
-                        username, // the Cognito User Object
-                        password,
-                        []
-                    )
-                        .then((user) => {
-                            // at this time the user is logged in if no MFA required
-                            console.log(user);
-                            loadCognitoInfo(user.attributes)
-                                .then(() =>
-                                    console.log('cognitoSub', cognitoSub)
-                                )
-                                .catch((e) =>
-                                    printObject('loadCognitoInfo:catch e:', e)
-                                );
-                        })
-                        .catch((e) => {
-                            setIsLoading(false);
-                            const alertPayload = {
-                                msg: 'Authentication failed. Please check your credentials',
-                                alertType: 'danger',
-                            };
-                            setAlert(alertPayload);
-                            console.log(' need to return');
-                            // return;
-                        });
-                }
-                loadCognitoInfo(user)
-                    .then(() => console.log('cognitoSub', cognitoSub))
-                    .catch((e) => printObject('loadCognitoInfo:catch e:', e));
-                setIsLoading(false);
-                return;
-            })
-            .catch((e) => {
-                // printObject('SI:80__>signIn error catch: e:', e);
-                switch (e.code) {
-                    case 'UserNotFoundException':
-                        alertPayload = {
-                            msg: e.message,
-                            alertType: 'danger',
-                        };
-                        break;
-                    case 'PasswordResetRequiredException':
-                        alertPayload = {
-                            msg: e.message,
-                            alertType: 'danger',
-                        };
-                        break;
-                    case 'NotAuthorizedException':
-                        alertPayload = {
-                            msg: e.message,
-                            alertType: 'danger',
-                        };
-                        break;
-                    default:
-                        alertPayload = {
-                            msg: 'Signin error: [' + e.message + ']',
-                            alertType: 'danger',
-                        };
-                        break;
-                }
-            });
-        // if we have error loaded, let's return
-        if (alertPayload.msg) {
-            setIsLoading(false);
-            Alert.alert(alertPayload.msg);
-            alertPayload = {};
-
+        if (loading) {
             return;
         }
-
-        return;
+        setLoading(true);
+        try {
+            const response = await Auth.signIn(data.username, data.password);
+        } catch (error) {
+            switch (error.code) {
+                case 'UserNotFoundException':
+                    console.warn(error.message);
+                    break;
+                case 'PasswordResetRequiredException':
+                    console.warn(error.message);
+                    break;
+                case 'NotAuthorizedException':
+                    console.warn(error.message);
+                    break;
+                default:
+                    console.warn(error.message);
+                    break;
+            }
+        }
+        setLoading(false);
     };
 
     const onSignUpPressed = () => {
@@ -134,7 +68,7 @@ const SignInScreen = () => {
     const forgotPasswordPressed = () => {
         navigation.navigate('ForgotPassword', { user });
     };
-    if (isLoading) {
+    if (loading) {
         return (
             <View
                 style={{
@@ -200,7 +134,7 @@ const SignInScreen = () => {
                 />
 
                 <CustomButton
-                    text={isLoading ? 'Loading...' : 'Sign In'}
+                    text={loading ? 'Loading...' : 'Sign In'}
                     onPress={handleSubmit(onSignInPressed)}
                 />
                 <CustomButton

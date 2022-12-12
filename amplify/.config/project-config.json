@@ -2,7 +2,7 @@
   "providers": [
     "awscloudformation"
   ],
-  "projectName": "MeeterExpo",
+  "projectName": "Corinth",
   "version": "3.1",
   "frontend": "javascript",
   "javascript": {

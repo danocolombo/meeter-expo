@@ -17,6 +17,8 @@ import CurrencyInput from 'react-native-currency-input';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useSysContext } from '../contexts/SysContext';
+import { useUserContext } from '../contexts/UserContext';
 import {
     getMeetingGroups,
     clearGroups,
@@ -40,8 +42,9 @@ import TypeSelectors from './TypeSelectors';
 //   FUNCTION START
 //   ==============
 const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
-    const meeter = useSelector((state) => state.system);
-
+    // const meeter = useSelector((state) => state.system);
+    const { meeter } = useSysContext();
+    const { userProfile } = useUserContext();
     const { width } = useWindowDimensions();
 
     const mtrTheme = useTheme();
@@ -86,7 +89,9 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         cafeContact: meeting?.cafeContact ? meeting.cafeContact : '',
         setupContact: meeting?.setupContact ? meeting.setupContact : '',
         meetingDate: meeting?.meetingDate ? meeting.meetingDate : dashDate,
-        clientId: meeting?.clientId ? meeting.clientId : meeter.affiliation,
+        clientId: meeting?.clientId
+            ? meeting.clientId
+            : userProfile?.activeOrg?.organization?.code,
         donations: meeting?.donations ? meeting.donations : 0,
         youthContact: meeting?.youthContact ? meeting.youthContact : '',
         nurseryContact: meeting?.murseryContact ? meeting.nurseryContact : '',
@@ -215,7 +220,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         // need to create updated mtgCompKey from date
         const dateParts = values.meetingDate.split('-');
         const newKey =
-            meeter.affiliation.toLowerCase() +
+            userProfile?.activeOrg?.organization?.code.toLowerCase() +
             '#' +
             dateParts[0] +
             '#' +
@@ -233,7 +238,8 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         // console.log('---------------------------');
         // printObject('newValues', newValues);
         // console.log('---------------------------');
-        //mutation.mutate(values);
+        // return;
+        // mutation.mutate(values);
         handleUpdate(values);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);

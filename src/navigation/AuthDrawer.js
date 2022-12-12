@@ -13,16 +13,17 @@ import DefaultGroupsScreen from '../screens/DefaultGroupsScreen';
 import TeamScreen from '../screens/TeamScreen';
 import ActiveScreen from '../screens/ActiveScreen';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
-import ProfileScreen from '../screens/ProfileScreen';
+import ProfileScreen from '../screens/profille/ProfileScreen';
 import { useAuthContext } from '../contexts/AuthContext';
 //import { Colors } from '../constants/colors';
 import { printObject } from '../utils/helpers';
+import { useUserContext } from '../contexts/UserContext';
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 const AuthDrawer = (navigation) => {
     const mtrTheme = useTheme();
-    const { userProfile } = useAuthContext();
+    const { userProfile } = useUserContext();
     //printObject('AD:26-->userProfile', userProfile);
     // printObject('mtrTheme:', mtrTheme);
     const user = useSelector((state) => state.users.currentUser);
@@ -30,21 +31,16 @@ const AuthDrawer = (navigation) => {
 
     // console.log('AD: affiliations:', user)
     let manager = false;
-    if (
-        user?.affiliations?.active?.role === 'lead' ||
-        user?.affiliations?.active?.role === 'director' ||
-        user?.affiliations?.active?.role === 'superuser'
-    ) {
-        manager = true;
-    }
     let patron = false;
-    if (
-        user?.affiliations?.active?.role === 'rep' ||
-        user?.affiliations?.active?.role === 'lead' ||
-        user?.affiliations?.active?.role === 'director' ||
-        user?.affiliations?.active?.role === 'superuser'
-    ) {
-        patron = true;
+    if (userProfile) {
+        if (
+            userProfile.activeOrg?.role === 'superuser' ||
+            userProfile.activeOrg?.role === 'director' ||
+            userProfile.activeOrg?.role === 'manager'
+        ) {
+            manager = true;
+            patron = true;
+        }
     }
     const LandingComponent = (props) => (
         <LandingScreen theme={props.theme} {...props} />
@@ -136,7 +132,7 @@ const AuthDrawer = (navigation) => {
                     tabBarActiveTintColor: 'white',
                 })}
             />
-            {userProfile?.activeClientRole === 'superuser' && (
+            {userProfile?.activeOrg?.role === 'superuser' && (
                 <Stack.Screen
                     name='Groups'
                     options={({ navigation }) => ({
@@ -151,7 +147,7 @@ const AuthDrawer = (navigation) => {
                     component={DefaultGroupsScreen}
                 />
             )}
-            {userProfile?.activeClientRole === 'superuser' && (
+            {userProfile?.activeOrg?.role === 'superuser' && (
                 <Stack.Screen
                     name='Team'
                     options={({ navigation }) => ({

@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState, useContext } from 'react';
-import { DataStore } from 'aws-amplify';
-import { Affiliations } from '../models';
+// import { DataStore } from '@aws-amplify/datastore';
+// import { Affiliations } from '../models';
 import { printObject } from '../utils/helpers';
 
 const AffiliationContext = createContext({});
@@ -10,9 +10,10 @@ const AffiliationContextProvider = ({ children }) => {
     const [userAffiliations, setUserAffiliations] = useState(null);
 
     const refreshAffiliations = async (profileId) => {
-        DataStore.query(Affiliations, (affs) =>
-            affs.profileID('eq', profileId)
-        ).then(setUserAffiliations);
+        console.log('AffiliationContext:13-->not implemented');
+        // DataStore.query(Affiliations, (affs) =>
+        //     affs.profileID('eq', profileId)
+        // ).then(setUserAffiliations);
     };
     return (
         <AffiliationContext.Provider

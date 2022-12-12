@@ -14,11 +14,11 @@ import { focusManager } from '@tanstack/react-query';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Dropdown } from 'react-native-element-dropdown';
-import Input from './ui/Input';
+import Input from '../ui/Input';
 import { useTheme, FAB } from 'react-native-paper';
-import CustomButton from './ui/CustomButton';
-import { printObject, dateDashToDateObject } from '../utils/helpers';
-import { STATESBY2, SHIRTSIZESBY2 } from '../constants/meeter';
+import CustomButton from '../ui/CustomButton';
+import { printObject, dateDashToDateObject } from '../../utils/helpers';
+import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
 import { useMutation } from '@tanstack/react-query';
 
 //   FUNCTION START
@@ -219,7 +219,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
         }
     }
     const handlePicChangeRequest = () => {
-        navigation.navigate('ProfilePic');
+        navigation.navigate('ProfilePicModal');
     };
 
     const handleFormSubmit = () => {

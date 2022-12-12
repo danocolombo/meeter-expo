@@ -61,6 +61,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                 onAppStateChange
             );
             refetch();
+            printObject('AL:42-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])

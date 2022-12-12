@@ -3,20 +3,12 @@ import { Text, View, AppState, useWindowDimensions, Modal } from 'react-native';
 import { Surface, useTheme, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { focusManager } from '@tanstack/react-query';
-import { useQuery } from '@tanstack/react-query';
-import { useSelector, useDispatch } from 'react-redux';
+//import { S3Image } from 'aws-amplify-react-native';
+import CustomButton from '../../components/ui/CustomButton';
+import ProfileForm from '../../components/Profile/ProfileForm';
+import { useUserContext } from '../../contexts/UserContext';
 
-import CustomButton from '../components/ui/CustomButton';
-import ProfileForm from '../components/ProfileForm';
-import { useUserContext } from '../contexts/UserContext';
-import { useSysContext } from '../contexts/SysContext';
-import {
-    FetchProfile,
-    UpdateProfile,
-} from '../components/common/hooks/userQueries';
-import { updateCurrentUser } from '../features/usersSlice';
-import { printObject } from '../utils/helpers';
-import { DEFAULT_AFFILIATIONS } from '../constants/meeter';
+import { printObject } from '../../utils/helpers';
 
 //   FUNCTION START
 //   ==============
@@ -24,10 +16,10 @@ const ProfileScreen = (props) => {
     const { height, width } = useWindowDimensions();
     const navigation = useNavigation();
     const mtrTheme = useTheme();
-    const { meeter } = useSysContext();
+
+    // const { meeter } = useSysContext();
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const { userProfile, setUserProfile } = useUserContext();
 
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
@@ -48,49 +40,46 @@ const ProfileScreen = (props) => {
             //title: meeter.appName,
             headerBackTitle: 'Back',
         });
-    }, [navigation, meeter]);
+    }, [navigation]);
     const handleUpdate = (values) => {
-        setIsSaving(true);
-        values.username = user.username;
-        if (!values.defaultClient) {
-            values.defaultClient = 'mtr';
-            values.defaultClientId = '88j16596c6382dee0d7a8dtc';
-        }
-        if (!values?.affiliations?.active?.value) {
-            // should never get here, but just in case
-            values.affiliations = DEFAULT_AFFILIATIONS.affiliations;
-        }
-
-        // clean the unwanted root values
-        delete values?.residenceStreet;
-        delete values?.residenceCity;
-        delete values?.residenceStateProv;
-        delete values?.residencePostalCode;
-        // printObject('PS:71--handleUpdate::values(>>>DDB)', values);
-
-        UpdateProfile(values)
-            .then((res) => {
-                // printObject('UpdateProfile res:', res);
-                let newReduxUser = {
-                    ...values,
-                    jwtToken: user.jwtToken,
-                };
-                dispatch(updateCurrentUser(newReduxUser));
-                // printObject('newUser:', newReduxUser);
-                // printObject('user.currentUser:', user);
-                setIsSaving(false);
-                setShowMessage(true);
-                return;
-            })
-            .catch((err) => {
-                setIsSaving(false);
-                Alert.alert('Error saving profile. Please try again later.');
-                printObject('updateProfile provider failed:', err);
-                console.warn('updateProfile provider failed');
-
-                return;
-            });
-        setIsSaving(false);
+        // setIsSaving(true);
+        // values.username = user.username;
+        // if (!values.defaultClient) {
+        //     values.defaultClient = 'mtr';
+        //     values.defaultClientId = '88j16596c6382dee0d7a8dtc';
+        // }
+        // if (!values?.affiliations?.active?.value) {
+        //     // should never get here, but just in case
+        //     values.affiliations = DEFAULT_AFFILIATIONS.affiliations;
+        // }
+        // // clean the unwanted root values
+        // delete values?.residenceStreet;
+        // delete values?.residenceCity;
+        // delete values?.residenceStateProv;
+        // delete values?.residencePostalCode;
+        // // printObject('PS:71--handleUpdate::values(>>>DDB)', values);
+        // UpdateProfile(values)
+        //     .then((res) => {
+        //         // printObject('UpdateProfile res:', res);
+        //         let newReduxUser = {
+        //             ...values,
+        //             jwtToken: user.jwtToken,
+        //         };
+        //         dispatch(updateCurrentUser(newReduxUser));
+        //         // printObject('newUser:', newReduxUser);
+        //         // printObject('user.currentUser:', user);
+        //         setIsSaving(false);
+        //         setShowMessage(true);
+        //         return;
+        //     })
+        //     .catch((err) => {
+        //         setIsSaving(false);
+        //         Alert.alert('Error saving profile. Please try again later.');
+        //         printObject('updateProfile provider failed:', err);
+        //         console.warn('updateProfile provider failed');
+        //         return;
+        //     });
+        // setIsSaving(false);
     };
     const dismissMessage = () => {
         setShowMessage(false);
@@ -132,7 +121,6 @@ const ProfileScreen = (props) => {
                 </View>
 
                 <ProfileForm
-                    profile={userProfile}
                     handleUpdate={handleUpdate}
                     handleCancel={handleCancel}
                 />

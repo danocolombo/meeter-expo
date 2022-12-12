@@ -210,7 +210,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         // need to create updated mtgCompKey from date
         const dateParts = values.meetingDate.split('-');
         const newKey =
-            meeter.affiliation.toLowerCase() +
+            userProfile?.activeOrg?.organization?.code.toLowerCase() +
             '#' +
             dateParts[0] +
             '#' +

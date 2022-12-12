@@ -1,8 +1,9 @@
 {
-  "authSelections": "userPoolOnly",
-  "resourceName": "meeterexpo",
+  "authSelections": "identityPoolAndUserPool",
+  "resourceName": "corinth",
   "serviceType": "imported",
   "region": "us-east-1",
+  "authProvidersUserPool": [],
   "requiredAttributes": [
     "given_name",
     "family_name",

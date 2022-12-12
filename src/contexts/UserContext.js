@@ -1,59 +1,66 @@
 import { createContext, useEffect, useState, useContext } from 'react';
-import { DataStore } from 'aws-amplify';
-import { S3Image } from 'aws-amplify-react-native/dist/Storage';
-import { User, Affiliations } from '../models';
+// import { DataStore } from 'aws-amplify';
+import { API, graphqlOperation } from 'aws-amplify';
+import * as queries from '../graphql/queries';
+import * as mutations from '../corinthQL/mutations';
 import { useAuthContext } from './AuthContext';
+import { MEETER_DEFAULTS } from '../constants/meeter';
 import { printObject } from '../utils/helpers';
+import { defaultFallbackFonts } from 'react-native-render-html';
 
 const UserContext = createContext({});
 
 const UserContextProvider = ({ children }) => {
-    const { authUser, cognitoSub } = useAuthContext();
     const [userProfile, setUserProfile] = useState(null);
-    const [userAffiliates, setUserAffiliates] = useState(null);
-    const [currentRole, setCurrentRole] = useState('guest');
-    const loadUserProfile = async () => {
-        //printObject('UC:14__> loadUserProfile variable: ', sub);
 
-        const theUser = {
-            sub: authUser?.attributes?.sub,
-            firstName: authUser?.attributes?.given_name,
-            lastName: authUser?.attributes?.family_name,
-            login: authUser?.attributes?.preferred_username,
-            email: authUser?.attributes?.email,
-        };
-
-        await DataStore.query(User, (u) =>
-            u.sub('eq', authUser?.attributes?.sub)
-        )
-            .then((profile) => {
-                printObject('UC:27__> profile(User entry)', profile);
-                setUserProfile({ ...theUser, ...profile[0] });
-            })
-            .catch((e) => {
-                printObject('UC:30__> Error getting User data:\n', e);
-            });
-        DataStore.query(Affiliations)
-            .then((res) => printObject('ALL_AFFS:', res))
-            .catch((e) => printObject('AFFS_E', e));
-        await DataStore.query(Affiliations, (a) =>
-            a.userID('eq', userProfile.id)
-        )
-            .then((affs) => {
-                printObject('UC:39__>userProfile.id:', userProfile.id);
-                printObject('UC:39__> affiliates', affs);
-                setUserAffiliates(affs);
-            })
-            .catch((e) => {
-                printObject('UC:30__> Error getting Affiliates data:\n', e);
-            });
+    const clearUser = async () => {
+        setUserProfile(null);
     };
+    const saveUserProfile = async (profile) => {
+        setUserProfile(profile);
+    };
+    const updateUserProfile = async (resultantProfile) => {
+        if (!resultantProfile) {
+            return;
+        }
+        const userLocation = {
+            id: userProfile?.location?.id,
+            street: resultantProfile.location.street,
+            city: resultantProfile.location.city,
+            stateProv: resultantProfile.location.stateProv,
+            postalCode: resultantProfile?.location?.postalCode,
+        };
+        const updatedUserLocation = await API.graphql({
+            query: mutations.updateLocation,
+            variables: { input: userLocation },
+        });
+        const userData = {
+            id: userProfile.id,
+            phone: resultantProfile?.phone,
+            birthday: resultantProfile?.birthday,
+            shirt: resultantProfile?.shirt,
+        };
+        const updatedUser = await API.graphql({
+            query: mutations.updateUserProfile,
+            variables: { input: userData },
+        });
+        const combinedProfile = { ...userProfile, updatedUser };
+        printObject('UC:34-->combinedProfile:\n', combinedProfile);
+        console.info('Profile Updated');
+    };
+    const passValue = async (sub) => {
+        console.log('UC:62-->passValue(sub):', sub);
+    };
+
     return (
         <UserContext.Provider
             value={{
                 userProfile,
-                currentRole,
-                loadUserProfile,
+                setUserProfile,
+                saveUserProfile,
+                updateUserProfile,
+                passValue,
+                clearUser,
             }}
         >
             {children}

@@ -1,8 +1,12 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator, SafeAreaView } from 'react-native';
-import { NavigationContainer, StackActions } from '@react-navigation/native';
+import { View, ActivityIndicator, SafeAreaView, Alert } from 'react-native';
+import {
+    NavigationContainer,
+    NavigationHelpersContext,
+    StackActions,
+} from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useTheme } from 'react-native-paper';
 import { Button } from 'react-native';
@@ -14,7 +18,9 @@ import {
     DrawerItemList,
     DrawerItem,
 } from '@react-navigation/drawer';
-
+import { useSysContext } from '../contexts/SysContext';
+import { useAuthContext } from '../contexts/AuthContext';
+import { useUserContext } from '../contexts/UserContext';
 import LandingScreen from '../screens/LandingScreen';
 import SignInScreen from '../screens/Auth/SignIn';
 import SignUpScreen from '../screens/Auth/SignUp';
@@ -28,49 +34,26 @@ import MeetingNewScreen from '../screens/MeetingNewScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-// import ProfilePicScreen from '../screens/ProfilePicScreen';
+import ProfileScreen from '../screens/profille/ProfileScreen';
+import { logout } from '../features/usersSlice';
+// import { logout as meetingsSignout } from '../features/meetingsSlice';
+// import { logout as profilesLogout } from '../features/profilesSlice';
+// import { logout as systemLogout } from '../features/systemSlice';
+import { useDispatch } from 'react-redux';
+// import ProfilePicModal from '../screens/ProfilePicModal';
 import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
 import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
 import AuthDrawer from './AuthDrawer';
-import { Auth, Hub } from 'aws-amplify';
+import { Auth, Hub, Cache } from 'aws-amplify';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
 import { printObject } from '../utils/helpers';
-import { useAuthContext } from '../contexts/AuthContext';
 const Stack = createNativeStackNavigator();
 function MeeterStack(props) {
     const mtrTheme = useTheme();
-    const { authUser, checkAllAuth } = useAuthContext();
-    const meeter = useSelector((state) => state.system);
-    const [userCheck, setUserCheck] = useState(undefined);
-    const checkUser = async () => {
-        try {
-            const authUser = await Auth.currentAuthenticatedUser({
-                bypassCache: true,
-            });
-            setUserCheck(authUser);
-        } catch (e) {
-            setUserCheck(null);
-        }
-    };
-
-    useEffect(() => {
-        checkUser();
-    }, []);
-
-    useEffect(() => {
-        const listener = (data) => {
-            if (
-                data.payload.event === 'signIn' ||
-                data.payload.event === 'signOut'
-            ) {
-                checkUser();
-            }
-        };
-
-        Hub.listen('auth', listener);
-        return () => Hub.remove('auth', listener);
-    }, []);
+    const dispatch = useDispatch();
+    const { meeter, sysSignOut } = useSysContext();
+    const { authSignOut } = useAuthContext();
+    const { useSignOut } = useUserContext();
     return (
         <Stack.Navigator>
             <Stack.Screen
@@ -84,7 +67,7 @@ function MeeterStack(props) {
                 name='MeetingDetails'
                 component={MeetingDetailsScreen}
                 options={({ navigation }) => ({
-                    title: 'Meeter',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -96,7 +79,7 @@ function MeeterStack(props) {
                 name='MeetingEdit'
                 component={MeetingDetailsEditScreen}
                 options={({ navigation }) => ({
-                    title: 'Meeter',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -107,7 +90,7 @@ function MeeterStack(props) {
                 name='MeetingNew'
                 component={MeetingNewScreen}
                 options={({ navigation }) => ({
-                    title: 'Meeter',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -118,7 +101,7 @@ function MeeterStack(props) {
                 name='GroupNew'
                 component={GroupNewScreen}
                 options={({ navigation }) => ({
-                    title: 'Meeter',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -130,7 +113,7 @@ function MeeterStack(props) {
                 name='GroupDetails'
                 component={GroupDetailsScreen}
                 options={({ navigation }) => ({
-                    title: 'Meeter',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -142,7 +125,7 @@ function MeeterStack(props) {
                 name='GroupEdit'
                 component={GroupDetailsEditScreen}
                 options={({ navigation }) => ({
-                    title: 'Meeter',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -150,8 +133,8 @@ function MeeterStack(props) {
                 })}
             />
             {/* <Stack.Screen
-                name='ProfilePic'
-                component={ProfilePicScreen}
+                name='ProfilePicModal'
+                component={ProfilePicModal}
                 options={({ navigation }) => ({
                     title: 'Meeter',
                     headerStyle: {
@@ -164,7 +147,7 @@ function MeeterStack(props) {
                 name='DeleteConfirm'
                 component={DeleteConfirmScreen}
                 options={({ navigation }) => ({
-                    title: 'Meeter',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -175,7 +158,7 @@ function MeeterStack(props) {
                 name='DeleteGroupConfirm'
                 component={DeleteGroupConfirmScreen}
                 options={({ navigation }) => ({
-                    title: 'Meeter',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -201,7 +184,7 @@ function MeeterStack(props) {
                 name='Logout'
                 component={MeeterSignOut}
                 options={({ navigation }) => ({
-                    title: 'Meeter',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -213,52 +196,76 @@ function MeeterStack(props) {
 }
 //   --------- Navigation !!!!! ----------------
 function Navigation() {
-    const { authUser, jwtToken, setJwtToken } = useAuthContext();
-    const user = authUser;
-    const [userCheck, setUserCheck] = useState(undefined);
-
-    // const ORIGINAL_checkUser = async () => {
-    //     try {
-    //         const authUser = await Auth.currentAuthenticatedUser({
-    //             bypassCache: true,
-    //         });
-    //         setUserCheck(authUser);
-    //     } catch (e) {
-    //         setUserCheck(null);
-    //     }
-    // };
+    const mtrTheme = useTheme();
+    const dispatch = useDispatch();
+    const { meeter, loadSystem } = useSysContext();
+    const { clearUser } = useUserContext();
+    const [isUserAuthenticated, setIsUserAuthenticated] = useState(undefined);
     const checkUser = async () => {
         try {
             const authUser = await Auth.currentAuthenticatedUser({
                 bypassCache: true,
             });
-            setUserCheck(authUser);
-            setJwtToken(authUser?.signInUserSession?.accessToken?.jwtToken);
+            if (authUser?.attributes?.sub) {
+                setIsUserAuthenticated(authUser);
+            } else {
+                setIsUserAuthenticated(null);
+            }
         } catch (e) {
-            setUserCheck(null);
+            setIsUserAuthenticated(null);
+        }
+    };
+    const getSystemVariables = async () => {
+        try {
+            loadSystem().then((res) => {
+                // printObject('NAV:203-->system:\n', res);
+            });
+        } catch (error) {
+            printObject('NAV:206-->error loading system', error);
         }
     };
 
     useEffect(() => {
-        checkUser()
-            .then(() => {
-                // printObject('NAV:249__>authUser:', authUser);
-            })
-            .catch((e) => printObject('failure checkingUser:', e));
+        getSystemVariables();
+        checkUser();
     }, []);
-
-    // this is as listener to the Amplify hub (events)
     useEffect(() => {
         const listener = (data) => {
-            if (
-                data.payload.event === 'signIn' ||
-                data.payload.event === 'signOut'
-            ) {
+            if (data.payload.event === 'signIn') {
                 checkUser();
+            } else if (data.payload.event === 'signOut') {
+                Cache.clear();
+                clearUser();
+                printObject('NAV:221-->signOut() received', '');
+                // try {
+                //     authSignOut()
+                //         .then(() => console.log('authSignOut complete'))
+                //         .catch((e) => console.log('authSignOut failure:', e));
+                //     sysSignOut()
+                //         .then(() => console.log('sysSignOut complete'))
+                //         .then((e) => {
+                //             printObject('CD:48-->sysSignOut failure:', e);
+                //         });
+                //     Auth.signOut();
+                // } catch (error) {
+                //     printObject('signUserOut error:', error);
+                // }
+
+                setIsUserAuthenticated(false);
+
+                // dispatch(logout());
+                // dispatch(meetingsSignout());
+                // dispatch(profilesLogout());
+                // dispatch(systemLogout());
             }
         };
+        try {
+            Hub.listen('auth', listener);
+        } catch (error) {
+            printObject('NAV:241-->hub listener catch:\n', error);
+        }
 
-        Hub.listen('auth', listener);
+        //make suree to unsubscribe....
         return () => Hub.remove('auth', listener);
     }, []);
 
@@ -266,7 +273,7 @@ function Navigation() {
         <NavigationContainer>
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
-                    {jwtToken ? (
+                    {isUserAuthenticated ? (
                         <Stack.Screen
                             name='MeeterStack'
                             component={MeeterStack}

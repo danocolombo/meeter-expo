@@ -1,7 +1,7 @@
 {
-  "resourceName": "s3meeterexpostorage",
-  "bucketName": "meeter-expo-storage",
-  "policyUUID": "f533d540",
+  "resourceName": "s3corinthmeeterstorage",
+  "bucketName": "corinth-meeter-storage",
+  "policyUUID": "2e66ef68",
   "storageAccess": "authAndGuest",
   "guestAccess": [
     "READ"

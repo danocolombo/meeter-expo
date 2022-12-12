@@ -21,6 +21,7 @@ import {
     useIsFocused,
     useFocusEffect,
 } from '@react-navigation/native';
+import { Auth } from 'aws-amplify';
 import * as SplashScreen from 'expo-splash-screen';
 import Logo from '../../assets/M-square.png';
 import CustomButton from '../components/ui/CustomButton';
@@ -32,11 +33,12 @@ import {
     ActivityIndicator,
 } from 'react-native-paper';
 import { dateNumToDateDash, printObject } from '../utils/helpers';
-import MeetingListCard from '../components/Meeting.List.Card';
+//import MeetingListCard from '../components/Meeting.List.Card';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useUserContext } from '../contexts/UserContext';
 import { useSysContext } from '../contexts/SysContext';
 import { useAffiliationContext } from '../contexts/AffiliationContext';
+import profilesSlice from '../features/profilesSlice';
 
 //      ====================================
 //      FUNCTION START
@@ -45,27 +47,44 @@ const LandingScreen = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const { loadUserProfile, userProfile, currentRole } = useUserContext();
-    const { meeter } = useSysContext();
-    printObject('LS:50__> meeter:', meeter);
-    //const { authUser, cognitoSub } = useAuthContext();
-    const { heroMessage } = useSysContext();
-
-    const meetings = useSelector((state) => state.meetings.meetings);
     const [activeMeeting, setActiveMeeting] = useState();
-    const [nextMeeting, setNextMeeting] = useState(meetings[0]);
+    const [nextMeeting, setNextMeeting] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const { meeter, heroMessage } = useSysContext();
+    const { authUser, defineUser } = useAuthContext();
+    const { userProfile, saveUserProfile, passValue } = useUserContext();
 
     useLayoutEffect(() => {
         navigation.setOptions({
             title: '',
         });
     }, [navigation, meeter]);
+
+    async function getUserDefined() {
+        const cau = await Auth.currentAuthenticatedUser();
+        const user = await defineUser(cau.attributes.sub);
+        saveUserProfile(user);
+        console.log('LS:147-->user:', user);
+    }
+
     useEffect(() => {
-        setIsLoading(true);
-        loadUserProfile();
-        //todo: load the system context
-        setIsLoading(false);
+        if (isLoading) {
+            return;
+        }
+        if (!userProfile?.activeOrg?.id) {
+            setIsLoading(true);
+            console.log('LS:179-->before');
+            getUserDefined();
+            // .then(() => {
+            //     console.log('LS:180-->then');
+            //     console.log('LS:184-->userProfile:\n', userProfile);
+            // })
+            // .catch((e) => {
+            //     console.log('LS:187-->catch:', e);
+            // });
+            setIsLoading(false);
+        }
     }, []);
     if (isLoading) {
         return (
@@ -83,7 +102,7 @@ const LandingScreen = () => {
             </View>
         );
     }
-    printObject('LS:85__> userProfile:\n', userProfile);
+
     return (
         <>
             <Surface style={styles.welcomeSurface}>
@@ -101,25 +120,46 @@ const LandingScreen = () => {
                             color: mtrTheme.colors.landingAppName,
                         }}
                     >
-                        {userProfile?.ActiveOrg?.name}
+                        {userProfile?.activeOrg?.organization?.name}
                     </Text>
                 </View>
 
-                {activeMeeting && (
-                    <>
-                        <View style={{ marginTop: 10 }}>
-                            <Text style={mtrTheme.landingAnnouncement}>
-                                Next Meeting...
-                            </Text>
-                        </View>
-                        <View style={{ marginHorizontal: 20 }}>
-                            <MeetingListCard
-                                meeting={activeMeeting}
-                                active={true}
-                            />
-                        </View>
-                    </>
-                )}
+                {/* <>
+                    <View style={{ marginTop: 10 }}>
+                        <Text style={mtrTheme.landingAnnouncement}>
+                            Next Meeting...
+                        </Text>
+                    </View>
+                    <View style={{ marginHorizontal: 20 }}>
+                        <MeetingListCard
+                            meeting={activeMeeting}
+                            active={true}
+                        />
+                    </View>r
+                </> */}
+
+                <>
+                    <View style={mtrTheme.landingHeroMessageContainer}>
+                        <Text style={mtrTheme.landingHeroMessageText}>
+                            {userProfile?.activeOrg?.heroMessage}
+                        </Text>
+                    </View>
+                </>
+
+                {/* {userProfile?.activeSession?.heroMessage && (
+                    <View style={mtrTheme.landingHeroMessageContainer}>
+                        <Text style={mtrTheme.landingHeroMessageText}>
+                            {userProfile?.firstName} {userProfile.lastName}
+                        </Text>
+                        <Text style={mtrTheme.landingHeroMessageText}>
+                            {userProfile?.sub}
+                        </Text>
+                        <Text style={mtrTheme.landingHeroMessageText}>
+                            {userProfile?.userActiveOrgId}
+                        </Text>
+                    </View>
+                )} */}
+
                 {userProfile?.ActiveOrg?.heroMessage && (
                     <>
                         <View style={mtrTheme.landingHeroMessageContainer}>

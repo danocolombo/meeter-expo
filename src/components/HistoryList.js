@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux';
 
 const HistoryList = ({ clientId }) => {
     const mtrTheme = useTheme();
+    printObject('HL:21-->clientId :', clientId);
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
@@ -30,7 +31,7 @@ const HistoryList = ({ clientId }) => {
                 onAppStateChange
             );
             refetch();
-            printObject('HL:23-->REFETCH', null);
+            printObject('AL:42-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])

@@ -1,6 +1,6 @@
 {
   "authSelections": "identityPoolAndUserPool",
-  "resourceName": "corinth",
+  "resourceName": "jericho",
   "serviceType": "imported",
   "region": "us-east-1",
   "authProvidersUserPool": [],

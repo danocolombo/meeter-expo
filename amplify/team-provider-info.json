@@ -1,19 +1,19 @@
 {
   "staging": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-corinth-staging-220412-authRole",
-      "UnauthRoleArn": "arn:aws:iam::226036691416:role/amplify-corinth-staging-220412-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::226036691416:role/amplify-corinth-staging-220412-authRole",
+      "AuthRoleName": "amplify-jericho-staging-170250-authRole",
+      "UnauthRoleArn": "arn:aws:iam::226036691416:role/amplify-jericho-staging-170250-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::226036691416:role/amplify-jericho-staging-170250-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-corinth-staging-220412-deployment",
-      "UnauthRoleName": "amplify-corinth-staging-220412-unauthRole",
-      "StackName": "amplify-corinth-staging-220412",
-      "StackId": "arn:aws:cloudformation:us-east-1:226036691416:stack/amplify-corinth-staging-220412/412655e0-728d-11ed-b55c-0ef02cc7a0ef",
-      "AmplifyAppId": "d2uw7uqlv4vrqh"
+      "DeploymentBucketName": "amplify-jericho-staging-170250-deployment",
+      "UnauthRoleName": "amplify-jericho-staging-170250-unauthRole",
+      "StackName": "amplify-jericho-staging-170250",
+      "StackId": "arn:aws:cloudformation:us-east-1:226036691416:stack/amplify-jericho-staging-170250/cfd865e0-7a3e-11ed-b7bf-0a5f0ae7951f",
+      "AmplifyAppId": "d1l38x9dtu9zib"
     },
     "categories": {
       "auth": {
-        "corinth": {
+        "jericho": {
           "userPoolId": "us-east-1_LecNXt66q",
           "userPoolName": "Meeter",
           "webClientId": "3tn2h8s0mv2d342i1ovkr6qrd5",
@@ -28,10 +28,10 @@
         }
       },
       "storage": {
-        "s3corinthmeeterstorage": {}
+        "s3jerichosystemstorage": {}
       },
       "api": {
-        "corinth": {}
+        "jericho": {}
       }
     }
   }

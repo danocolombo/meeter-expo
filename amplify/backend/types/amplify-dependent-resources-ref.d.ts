@@ -1,12 +1,12 @@
 export type AmplifyDependentResourcesAttributes = {
     "storage": {
-        "s3corinthmeeterstorage": {
+        "s3jerichosystemstorage": {
             "BucketName": "string",
             "Region": "string"
         }
     },
     "api": {
-        "corinth": {
+        "jericho": {
             "GraphQLAPIKeyOutput": "string",
             "GraphQLAPIIdOutput": "string",
             "GraphQLAPIEndpointOutput": "string"

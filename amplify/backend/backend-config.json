@@ -1,6 +1,6 @@
 {
   "auth": {
-    "corinth": {
+    "jericho": {
       "service": "Cognito",
       "serviceType": "imported",
       "providerPlugin": "awscloudformation",
@@ -9,14 +9,14 @@
     }
   },
   "storage": {
-    "s3corinthmeeterstorage": {
+    "s3jerichosystemstorage": {
       "service": "S3",
       "providerPlugin": "awscloudformation",
       "dependsOn": []
     }
   },
   "api": {
-    "corinth": {
+    "jericho": {
       "service": "AppSync",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
@@ -25,9 +25,7 @@
           "defaultAuthentication": {
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 365,
-              "apiKeyExpirationDate": "2023-12-12T11:45:40.632Z",
-              "description": "Corinith-API-Key"
+              "apiKeyExpirationDays": 7
             }
           },
           "additionalAuthenticationProviders": []

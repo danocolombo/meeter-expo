@@ -1,12 +1,19 @@
 import React, { useLayoutEffect, useCallback, useState } from 'react';
-import { Text, View, AppState, useWindowDimensions, Modal } from 'react-native';
+import {
+    Text,
+    View,
+    AppState,
+    useWindowDimensions,
+    Modal,
+    Alert,
+} from 'react-native';
 import { Surface, useTheme, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { focusManager } from '@tanstack/react-query';
 //import { S3Image } from 'aws-amplify-react-native';
 import CustomButton from '../../components/ui/CustomButton';
 import ProfileForm from '../../components/Profile/ProfileForm';
-import { useUserContext } from '../../contexts/UserContext';
+import { useUserContext, up } from '../../contexts/UserContext';
 
 import { printObject } from '../../utils/helpers';
 
@@ -16,8 +23,7 @@ const ProfileScreen = (props) => {
     const { height, width } = useWindowDimensions();
     const navigation = useNavigation();
     const mtrTheme = useTheme();
-
-    // const { meeter } = useSysContext();
+    const { userProfile, updateUserProfile } = useUserContext();
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -42,44 +48,17 @@ const ProfileScreen = (props) => {
         });
     }, [navigation]);
     const handleUpdate = (values) => {
-        // setIsSaving(true);
-        // values.username = user.username;
-        // if (!values.defaultClient) {
-        //     values.defaultClient = 'mtr';
-        //     values.defaultClientId = '88j16596c6382dee0d7a8dtc';
-        // }
-        // if (!values?.affiliations?.active?.value) {
-        //     // should never get here, but just in case
-        //     values.affiliations = DEFAULT_AFFILIATIONS.affiliations;
-        // }
-        // // clean the unwanted root values
-        // delete values?.residenceStreet;
-        // delete values?.residenceCity;
-        // delete values?.residenceStateProv;
-        // delete values?.residencePostalCode;
-        // // printObject('PS:71--handleUpdate::values(>>>DDB)', values);
-        // UpdateProfile(values)
-        //     .then((res) => {
-        //         // printObject('UpdateProfile res:', res);
-        //         let newReduxUser = {
-        //             ...values,
-        //             jwtToken: user.jwtToken,
-        //         };
-        //         dispatch(updateCurrentUser(newReduxUser));
-        //         // printObject('newUser:', newReduxUser);
-        //         // printObject('user.currentUser:', user);
-        //         setIsSaving(false);
-        //         setShowMessage(true);
-        //         return;
-        //     })
-        //     .catch((err) => {
-        //         setIsSaving(false);
-        //         Alert.alert('Error saving profile. Please try again later.');
-        //         printObject('updateProfile provider failed:', err);
-        //         console.warn('updateProfile provider failed');
-        //         return;
-        //     });
-        // setIsSaving(false);
+        printObject('PS:45-->form submit values:\n', values);
+        setIsSaving(true);
+        updateUserProfile(values)
+            .then(() => {
+                console.log('profile updated');
+            })
+            .catch((e) => {
+                printObject('error saving profile:', e);
+            });
+        setIsSaving(false);
+        Alert.alert('Profile Updated.');
     };
     const dismissMessage = () => {
         setShowMessage(false);
@@ -87,7 +66,22 @@ const ProfileScreen = (props) => {
     const handleCancel = () => {
         console.log('User Cancelled');
     };
-
+    if (isSaving) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator
+                    color={mtrTheme.colors.activityIndicator}
+                    size={80}
+                />
+            </View>
+        );
+    }
     return (
         <>
             <Modal visible={showMessage} animationStyle='slide'>

@@ -1,6 +1,237 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateBlog = /* GraphQL */ `
+  subscription OnCreateBlog($filter: ModelSubscriptionBlogFilterInput) {
+    onCreateBlog(filter: $filter) {
+      id
+      name
+      posts {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          blogPostsId
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateBlog = /* GraphQL */ `
+  subscription OnUpdateBlog($filter: ModelSubscriptionBlogFilterInput) {
+    onUpdateBlog(filter: $filter) {
+      id
+      name
+      posts {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          blogPostsId
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteBlog = /* GraphQL */ `
+  subscription OnDeleteBlog($filter: ModelSubscriptionBlogFilterInput) {
+    onDeleteBlog(filter: $filter) {
+      id
+      name
+      posts {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          blogPostsId
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreatePost = /* GraphQL */ `
+  subscription OnCreatePost($filter: ModelSubscriptionPostFilterInput) {
+    onCreatePost(filter: $filter) {
+      id
+      title
+      blog {
+        id
+        name
+        posts {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      comments {
+        items {
+          id
+          content
+          createdAt
+          updatedAt
+          postCommentsId
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      blogPostsId
+    }
+  }
+`;
+export const onUpdatePost = /* GraphQL */ `
+  subscription OnUpdatePost($filter: ModelSubscriptionPostFilterInput) {
+    onUpdatePost(filter: $filter) {
+      id
+      title
+      blog {
+        id
+        name
+        posts {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      comments {
+        items {
+          id
+          content
+          createdAt
+          updatedAt
+          postCommentsId
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      blogPostsId
+    }
+  }
+`;
+export const onDeletePost = /* GraphQL */ `
+  subscription OnDeletePost($filter: ModelSubscriptionPostFilterInput) {
+    onDeletePost(filter: $filter) {
+      id
+      title
+      blog {
+        id
+        name
+        posts {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      comments {
+        items {
+          id
+          content
+          createdAt
+          updatedAt
+          postCommentsId
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+      blogPostsId
+    }
+  }
+`;
+export const onCreateComment = /* GraphQL */ `
+  subscription OnCreateComment($filter: ModelSubscriptionCommentFilterInput) {
+    onCreateComment(filter: $filter) {
+      id
+      post {
+        id
+        title
+        blog {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        comments {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        blogPostsId
+      }
+      content
+      createdAt
+      updatedAt
+      postCommentsId
+    }
+  }
+`;
+export const onUpdateComment = /* GraphQL */ `
+  subscription OnUpdateComment($filter: ModelSubscriptionCommentFilterInput) {
+    onUpdateComment(filter: $filter) {
+      id
+      post {
+        id
+        title
+        blog {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        comments {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        blogPostsId
+      }
+      content
+      createdAt
+      updatedAt
+      postCommentsId
+    }
+  }
+`;
+export const onDeleteComment = /* GraphQL */ `
+  subscription OnDeleteComment($filter: ModelSubscriptionCommentFilterInput) {
+    onDeleteComment(filter: $filter) {
+      id
+      post {
+        id
+        title
+        blog {
+          id
+          name
+          createdAt
+          updatedAt
+        }
+        comments {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        blogPostsId
+      }
+      content
+      createdAt
+      updatedAt
+      postCommentsId
+    }
+  }
+`;
 export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
     onCreateUser(filter: $filter) {
@@ -23,155 +254,18 @@ export const onCreateUser = /* GraphQL */ `
           city
           stateProv
           postalCode
-          organizations {
-            items {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            nextToken
-            startedAt
-          }
-          users {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         affiliations {
-          items {
-            id
-            role
-            status
-            user {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            organization {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            userAffiliationsId
-            organizationAffiliationsId
-          }
           nextToken
-          startedAt
         }
         defaultUsers {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         heroMessage
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
         locationOrganizationsId
       }
       picture
@@ -180,95 +274,12 @@ export const onCreateUser = /* GraphQL */ `
           id
           role
           status
-          user {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
-          organization {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           userAffiliationsId
           organizationAffiliationsId
         }
         nextToken
-        startedAt
       }
       location {
         id
@@ -277,103 +288,16 @@ export const onCreateUser = /* GraphQL */ `
         stateProv
         postalCode
         organizations {
-          items {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           nextToken
-          startedAt
         }
         users {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       organizationDefaultUsersId
       locationUsersId
     }
@@ -401,155 +325,18 @@ export const onUpdateUser = /* GraphQL */ `
           city
           stateProv
           postalCode
-          organizations {
-            items {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            nextToken
-            startedAt
-          }
-          users {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         affiliations {
-          items {
-            id
-            role
-            status
-            user {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            organization {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            userAffiliationsId
-            organizationAffiliationsId
-          }
           nextToken
-          startedAt
         }
         defaultUsers {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         heroMessage
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
         locationOrganizationsId
       }
       picture
@@ -558,95 +345,12 @@ export const onUpdateUser = /* GraphQL */ `
           id
           role
           status
-          user {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
-          organization {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           userAffiliationsId
           organizationAffiliationsId
         }
         nextToken
-        startedAt
       }
       location {
         id
@@ -655,103 +359,16 @@ export const onUpdateUser = /* GraphQL */ `
         stateProv
         postalCode
         organizations {
-          items {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           nextToken
-          startedAt
         }
         users {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       organizationDefaultUsersId
       locationUsersId
     }
@@ -779,155 +396,18 @@ export const onDeleteUser = /* GraphQL */ `
           city
           stateProv
           postalCode
-          organizations {
-            items {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            nextToken
-            startedAt
-          }
-          users {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         affiliations {
-          items {
-            id
-            role
-            status
-            user {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            organization {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            userAffiliationsId
-            organizationAffiliationsId
-          }
           nextToken
-          startedAt
         }
         defaultUsers {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         heroMessage
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
         locationOrganizationsId
       }
       picture
@@ -936,95 +416,12 @@ export const onDeleteUser = /* GraphQL */ `
           id
           role
           status
-          user {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
-          organization {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           userAffiliationsId
           organizationAffiliationsId
         }
         nextToken
-        startedAt
       }
       location {
         id
@@ -1033,103 +430,16 @@ export const onDeleteUser = /* GraphQL */ `
         stateProv
         postalCode
         organizations {
-          items {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           nextToken
-          startedAt
         }
         users {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       organizationDefaultUsersId
       locationUsersId
     }
@@ -1157,120 +467,14 @@ export const onCreateAffiliation = /* GraphQL */ `
           id
           name
           code
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          defaultUsers {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           heroMessage
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           locationOrganizationsId
         }
         picture
         affiliations {
-          items {
-            id
-            role
-            status
-            user {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            organization {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            userAffiliationsId
-            organizationAffiliationsId
-          }
           nextToken
-          startedAt
         }
         location {
           id
@@ -1278,56 +482,11 @@ export const onCreateAffiliation = /* GraphQL */ `
           city
           stateProv
           postalCode
-          organizations {
-            items {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            nextToken
-            startedAt
-          }
-          users {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
         organizationDefaultUsersId
         locationUsersId
       }
@@ -1341,162 +500,22 @@ export const onCreateAffiliation = /* GraphQL */ `
           city
           stateProv
           postalCode
-          organizations {
-            items {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            nextToken
-            startedAt
-          }
-          users {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         affiliations {
-          items {
-            id
-            role
-            status
-            user {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            organization {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            userAffiliationsId
-            organizationAffiliationsId
-          }
           nextToken
-          startedAt
         }
         defaultUsers {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         heroMessage
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
         locationOrganizationsId
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       userAffiliationsId
       organizationAffiliationsId
     }
@@ -1524,120 +543,14 @@ export const onUpdateAffiliation = /* GraphQL */ `
           id
           name
           code
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          defaultUsers {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           heroMessage
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           locationOrganizationsId
         }
         picture
         affiliations {
-          items {
-            id
-            role
-            status
-            user {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            organization {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            userAffiliationsId
-            organizationAffiliationsId
-          }
           nextToken
-          startedAt
         }
         location {
           id
@@ -1645,56 +558,11 @@ export const onUpdateAffiliation = /* GraphQL */ `
           city
           stateProv
           postalCode
-          organizations {
-            items {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            nextToken
-            startedAt
-          }
-          users {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
         organizationDefaultUsersId
         locationUsersId
       }
@@ -1708,162 +576,22 @@ export const onUpdateAffiliation = /* GraphQL */ `
           city
           stateProv
           postalCode
-          organizations {
-            items {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            nextToken
-            startedAt
-          }
-          users {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         affiliations {
-          items {
-            id
-            role
-            status
-            user {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            organization {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            userAffiliationsId
-            organizationAffiliationsId
-          }
           nextToken
-          startedAt
         }
         defaultUsers {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         heroMessage
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
         locationOrganizationsId
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       userAffiliationsId
       organizationAffiliationsId
     }
@@ -1891,120 +619,14 @@ export const onDeleteAffiliation = /* GraphQL */ `
           id
           name
           code
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          defaultUsers {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           heroMessage
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           locationOrganizationsId
         }
         picture
         affiliations {
-          items {
-            id
-            role
-            status
-            user {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            organization {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            userAffiliationsId
-            organizationAffiliationsId
-          }
           nextToken
-          startedAt
         }
         location {
           id
@@ -2012,56 +634,11 @@ export const onDeleteAffiliation = /* GraphQL */ `
           city
           stateProv
           postalCode
-          organizations {
-            items {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            nextToken
-            startedAt
-          }
-          users {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
         organizationDefaultUsersId
         locationUsersId
       }
@@ -2075,162 +652,22 @@ export const onDeleteAffiliation = /* GraphQL */ `
           city
           stateProv
           postalCode
-          organizations {
-            items {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            nextToken
-            startedAt
-          }
-          users {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
         }
         affiliations {
-          items {
-            id
-            role
-            status
-            user {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            organization {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            userAffiliationsId
-            organizationAffiliationsId
-          }
           nextToken
-          startedAt
         }
         defaultUsers {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         heroMessage
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
         locationOrganizationsId
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       userAffiliationsId
       organizationAffiliationsId
     }
@@ -2251,192 +688,25 @@ export const onCreateOrganization = /* GraphQL */ `
         stateProv
         postalCode
         organizations {
-          items {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           nextToken
-          startedAt
         }
         users {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
       }
       affiliations {
         items {
           id
           role
           status
-          user {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
-          organization {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           userAffiliationsId
           organizationAffiliationsId
         }
         nextToken
-        startedAt
       }
       defaultUsers {
         items {
@@ -2449,92 +719,17 @@ export const onCreateOrganization = /* GraphQL */ `
           phone
           shirt
           birthday
-          defaultOrg {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           picture
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           organizationDefaultUsersId
           locationUsersId
         }
         nextToken
-        startedAt
       }
       heroMessage
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       locationOrganizationsId
     }
   }
@@ -2554,192 +749,25 @@ export const onUpdateOrganization = /* GraphQL */ `
         stateProv
         postalCode
         organizations {
-          items {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           nextToken
-          startedAt
         }
         users {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
       }
       affiliations {
         items {
           id
           role
           status
-          user {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
-          organization {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           userAffiliationsId
           organizationAffiliationsId
         }
         nextToken
-        startedAt
       }
       defaultUsers {
         items {
@@ -2752,92 +780,17 @@ export const onUpdateOrganization = /* GraphQL */ `
           phone
           shirt
           birthday
-          defaultOrg {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           picture
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           organizationDefaultUsersId
           locationUsersId
         }
         nextToken
-        startedAt
       }
       heroMessage
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       locationOrganizationsId
     }
   }
@@ -2857,192 +810,25 @@ export const onDeleteOrganization = /* GraphQL */ `
         stateProv
         postalCode
         organizations {
-          items {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           nextToken
-          startedAt
         }
         users {
-          items {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
           nextToken
-          startedAt
         }
         createdAt
         updatedAt
-        _version
-        _deleted
-        _lastChangedAt
       }
       affiliations {
         items {
           id
           role
           status
-          user {
-            id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
-              id
-              name
-              code
-              heroMessage
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              locationOrganizationsId
-            }
-            picture
-            affiliations {
-              nextToken
-              startedAt
-            }
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            organizationDefaultUsersId
-            locationUsersId
-          }
-          organization {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           userAffiliationsId
           organizationAffiliationsId
         }
         nextToken
-        startedAt
       }
       defaultUsers {
         items {
@@ -3055,92 +841,17 @@ export const onDeleteOrganization = /* GraphQL */ `
           phone
           shirt
           birthday
-          defaultOrg {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           picture
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           organizationDefaultUsersId
           locationUsersId
         }
         nextToken
-        startedAt
       }
       heroMessage
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       locationOrganizationsId
     }
   }
@@ -3158,75 +869,12 @@ export const onCreateLocation = /* GraphQL */ `
           id
           name
           code
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          defaultUsers {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           heroMessage
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           locationOrganizationsId
         }
         nextToken
-        startedAt
       }
       users {
         items {
@@ -3239,91 +887,16 @@ export const onCreateLocation = /* GraphQL */ `
           phone
           shirt
           birthday
-          defaultOrg {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           picture
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           organizationDefaultUsersId
           locationUsersId
         }
         nextToken
-        startedAt
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -3340,75 +913,12 @@ export const onUpdateLocation = /* GraphQL */ `
           id
           name
           code
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          defaultUsers {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           heroMessage
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           locationOrganizationsId
         }
         nextToken
-        startedAt
       }
       users {
         items {
@@ -3421,91 +931,16 @@ export const onUpdateLocation = /* GraphQL */ `
           phone
           shirt
           birthday
-          defaultOrg {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           picture
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           organizationDefaultUsersId
           locationUsersId
         }
         nextToken
-        startedAt
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -3522,75 +957,12 @@ export const onDeleteLocation = /* GraphQL */ `
           id
           name
           code
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          defaultUsers {
-            items {
-              id
-              sub
-              username
-              firstName
-              lastName
-              email
-              phone
-              shirt
-              birthday
-              picture
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              organizationDefaultUsersId
-              locationUsersId
-            }
-            nextToken
-            startedAt
-          }
           heroMessage
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           locationOrganizationsId
         }
         nextToken
-        startedAt
       }
       users {
         items {
@@ -3603,91 +975,16 @@ export const onDeleteLocation = /* GraphQL */ `
           phone
           shirt
           birthday
-          defaultOrg {
-            id
-            name
-            code
-            location {
-              id
-              street
-              city
-              stateProv
-              postalCode
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-            }
-            affiliations {
-              nextToken
-              startedAt
-            }
-            defaultUsers {
-              nextToken
-              startedAt
-            }
-            heroMessage
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            locationOrganizationsId
-          }
           picture
-          affiliations {
-            items {
-              id
-              role
-              status
-              createdAt
-              updatedAt
-              _version
-              _deleted
-              _lastChangedAt
-              userAffiliationsId
-              organizationAffiliationsId
-            }
-            nextToken
-            startedAt
-          }
-          location {
-            id
-            street
-            city
-            stateProv
-            postalCode
-            organizations {
-              nextToken
-              startedAt
-            }
-            users {
-              nextToken
-              startedAt
-            }
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
           createdAt
           updatedAt
-          _version
-          _deleted
-          _lastChangedAt
           organizationDefaultUsersId
           locationUsersId
         }
         nextToken
-        startedAt
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -3703,9 +1000,6 @@ export const onCreateSystem = /* GraphQL */ `
       logoPicture
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -3721,9 +1015,6 @@ export const onUpdateSystem = /* GraphQL */ `
       logoPicture
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -3739,9 +1030,6 @@ export const onDeleteSystem = /* GraphQL */ `
       logoPicture
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;

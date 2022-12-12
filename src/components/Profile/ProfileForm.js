@@ -58,7 +58,9 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             : '',
         email: userProfile?.email ? userProfile.email : '',
         phone: userProfile?.phone ? userProfile.phone : '',
-        birthday: userProfile?.birthday ? userProfile.birthday : '',
+        birthday: userProfile?.birthday
+            ? userProfile.birthday.substr(0, 10)
+            : '',
         shirt: userProfile?.shirt ? userProfile.shirt.toUpperCase() : '',
         picture: userProfile?.picture || meeter?.defaultProfilePicture,
     });
@@ -196,7 +198,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         //      ========================
         //      save the form to graphql
         //      ========================
-        updateUserProfile(resultantProfile);
+        handleUpdate(resultantProfile);
     };
     printObject('PF:192__> values:', values);
     return (

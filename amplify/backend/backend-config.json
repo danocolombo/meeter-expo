@@ -25,7 +25,9 @@
           "defaultAuthentication": {
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
+              "apiKeyExpirationDays": 365,
+              "apiKeyExpirationDate": "2023-12-12T11:45:40.632Z",
+              "description": "Corinith-API-Key"
             }
           },
           "additionalAuthenticationProviders": []

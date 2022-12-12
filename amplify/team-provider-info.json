@@ -29,6 +29,9 @@
       },
       "storage": {
         "s3corinthmeeterstorage": {}
+      },
+      "api": {
+        "corinth": {}
       }
     }
   }

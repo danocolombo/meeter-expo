@@ -1,6 +1,6 @@
 projects:
-  cazadero:
-    schemaPath: src/graphql/schema.json
+  corinth:
+    schemaPath: amplify/backend/api/corinth/build/schema.graphql
     includes:
       - src/graphql/**/*.js
     excludes:
@@ -10,6 +10,6 @@ projects:
         codeGenTarget: javascript
         generatedFileName: ''
         docsFilePath: src/graphql
-extensions:
-  amplify:
-    version: 3
+        region: us-east-1
+        apiId: null
+        maxDepth: 5

@@ -1,7 +1,7 @@
 export const schema = {
     "models": {
-        "System": {
-            "name": "System",
+        "User": {
+            "name": "User",
             "fields": {
                 "id": {
                     "name": "id",
@@ -10,109 +10,64 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "version": {
-                    "name": "version",
+                "sub": {
+                    "name": "sub",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "ios_version": {
-                    "name": "ios_version",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "android_version": {
-                    "name": "android_version",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "defaultProfilePicture": {
-                    "name": "defaultProfilePicture",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "appName": {
-                    "name": "appName",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "Systems",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "public",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "Affiliations": {
-            "name": "Affiliations",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
                     "isRequired": true,
                     "attributes": []
                 },
-                "role": {
-                    "name": "role",
+                "username": {
+                    "name": "username",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "firstName": {
+                    "name": "firstName",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
-                "status": {
-                    "name": "status",
+                "lastName": {
+                    "name": "lastName",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
-                "Organization": {
-                    "name": "Organization",
+                "email": {
+                    "name": "email",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "phone": {
+                    "name": "phone",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "shirt": {
+                    "name": "shirt",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "birthday": {
+                    "name": "birthday",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "defaultOrg": {
+                    "name": "defaultOrg",
                     "isArray": false,
                     "type": {
                         "model": "Organization"
@@ -120,17 +75,49 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "affiliationsOrganizationId"
+                        "connectionType": "BELONGS_TO",
+                        "targetNames": [
+                            "organizationDefaultUsersId"
+                        ]
                     }
                 },
-                "userID": {
-                    "name": "userID",
+                "picture": {
+                    "name": "picture",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
+                },
+                "affiliations": {
+                    "name": "affiliations",
+                    "isArray": true,
+                    "type": {
+                        "model": "Affiliation"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "userAffiliationsId"
+                        ]
+                    }
+                },
+                "location": {
+                    "name": "location",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetNames": [
+                            "locationUsersId"
+                        ]
+                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -148,8 +135,15 @@ export const schema = {
                     "attributes": [],
                     "isReadOnly": true
                 },
-                "affiliationsOrganizationId": {
-                    "name": "affiliationsOrganizationId",
+                "organizationDefaultUsersId": {
+                    "name": "organizationDefaultUsersId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "locationUsersId": {
+                    "name": "locationUsersId",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": false,
@@ -157,22 +151,39 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Affiliations",
+            "pluralName": "Users",
             "attributes": [
                 {
                     "type": "model",
                     "properties": {}
                 },
                 {
+                    "type": "key",
+                    "properties": {
+                        "fields": [
+                            "sub"
+                        ]
+                    }
+                },
+                {
                     "type": "auth",
                     "properties": {
                         "rules": [
                             {
-                                "allow": "public",
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
                                 "operations": [
                                     "create",
+                                    "read",
                                     "update",
-                                    "delete",
+                                    "delete"
+                                ],
+                                "identityClaim": "cognito:username"
+                            },
+                            {
+                                "allow": "public",
+                                "operations": [
                                     "read"
                                 ]
                             }
@@ -195,15 +206,62 @@ export const schema = {
                     "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "code": {
                     "name": "code",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
+                },
+                "location": {
+                    "name": "location",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetNames": [
+                            "locationOrganizationsId"
+                        ]
+                    }
+                },
+                "affiliations": {
+                    "name": "affiliations",
+                    "isArray": true,
+                    "type": {
+                        "model": "Affiliation"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "organizationAffiliationsId"
+                        ]
+                    }
+                },
+                "defaultUsers": {
+                    "name": "defaultUsers",
+                    "isArray": true,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "organizationDefaultUsersId"
+                        ]
+                    }
                 },
                 "heroMessage": {
                     "name": "heroMessage",
@@ -227,6 +285,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "locationOrganizationsId": {
+                    "name": "locationOrganizationsId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -241,98 +306,20 @@ export const schema = {
                     "properties": {
                         "rules": [
                             {
-                                "allow": "public",
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
                                 "operations": [
                                     "create",
+                                    "read",
                                     "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "DefaultGroups": {
-            "name": "DefaultGroups",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "gender": {
-                    "name": "gender",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "title": {
-                    "name": "title",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "location": {
-                    "name": "location",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "facilitator": {
-                    "name": "facilitator",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "coFacilitator": {
-                    "name": "coFacilitator",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "DefaultGroups",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
+                                    "delete"
+                                ],
+                                "identityClaim": "cognito:username"
+                            },
                             {
                                 "allow": "public",
                                 "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
                                     "read"
                                 ]
                             }
@@ -341,8 +328,8 @@ export const schema = {
                 }
             ]
         },
-        "Residence": {
-            "name": "Residence",
+        "Location": {
+            "name": "Location",
             "fields": {
                 "id": {
                     "name": "id",
@@ -379,162 +366,37 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
+                "organizations": {
+                    "name": "organizations",
+                    "isArray": true,
+                    "type": {
+                        "model": "Organization"
+                    },
                     "isRequired": false,
                     "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "Residences",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "public",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "locationOrganizationsId"
                         ]
                     }
-                }
-            ]
-        },
-        "Profile": {
-            "name": "Profile",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
                 },
-                "sub": {
-                    "name": "sub",
-                    "isArray": false,
-                    "type": "String",
+                "users": {
+                    "name": "users",
+                    "isArray": true,
+                    "type": {
+                        "model": "User"
+                    },
                     "isRequired": false,
-                    "attributes": []
-                },
-                "firstName": {
-                    "name": "firstName",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "lastName": {
-                    "name": "lastName",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "email": {
-                    "name": "email",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "phone": {
-                    "name": "phone",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "username": {
-                    "name": "username",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "birthday": {
-                    "name": "birthday",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "shirt": {
-                    "name": "shirt",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "defaultClient": {
-                    "name": "defaultClient",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "defaultClientId": {
-                    "name": "defaultClientId",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "activeAffiliate": {
-                    "name": "activeAffiliate",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "profilePic": {
-                    "name": "profilePic",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "activeClientCode": {
-                    "name": "activeClientCode",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "activeClientRole": {
-                    "name": "activeClientRole",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "activeClientName": {
-                    "name": "activeClientName",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "locationUsersId"
+                        ]
+                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -554,7 +416,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Profiles",
+            "pluralName": "Locations",
             "attributes": [
                 {
                     "type": "model",
@@ -565,11 +427,20 @@ export const schema = {
                     "properties": {
                         "rules": [
                             {
-                                "allow": "public",
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
                                 "operations": [
                                     "create",
+                                    "read",
                                     "update",
-                                    "delete",
+                                    "delete"
+                                ],
+                                "identityClaim": "cognito:username"
+                            },
+                            {
+                                "allow": "public",
+                                "operations": [
                                     "read"
                                 ]
                             }
@@ -578,8 +449,8 @@ export const schema = {
                 }
             ]
         },
-        "User": {
-            "name": "User",
+        "Affiliation": {
+            "name": "Affiliation",
             "fields": {
                 "id": {
                     "name": "id",
@@ -588,71 +459,37 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "sub": {
-                    "name": "sub",
+                "role": {
+                    "name": "role",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
-                "firstName": {
-                    "name": "firstName",
+                "status": {
+                    "name": "status",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
-                "lastName": {
-                    "name": "lastName",
+                "user": {
+                    "name": "user",
                     "isArray": false,
-                    "type": "String",
+                    "type": {
+                        "model": "User"
+                    },
                     "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetNames": [
+                            "userAffiliationsId"
+                        ]
+                    }
                 },
-                "username": {
-                    "name": "username",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "phone": {
-                    "name": "phone",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "email": {
-                    "name": "email",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "birthday": {
-                    "name": "birthday",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "shirt": {
-                    "name": "shirt",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "picture": {
-                    "name": "picture",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "DefaultOrg": {
-                    "name": "DefaultOrg",
+                "organization": {
+                    "name": "organization",
                     "isArray": false,
                     "type": {
                         "model": "Organization"
@@ -660,37 +497,10 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "userDefaultOrgId"
-                    }
-                },
-                "ActiveOrg": {
-                    "name": "ActiveOrg",
-                    "isArray": false,
-                    "type": {
-                        "model": "Organization"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "userActiveOrgId"
-                    }
-                },
-                "Residence": {
-                    "name": "Residence",
-                    "isArray": false,
-                    "type": {
-                        "model": "Residence"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "userResidenceId"
+                        "connectionType": "BELONGS_TO",
+                        "targetNames": [
+                            "organizationAffiliationsId"
+                        ]
                     }
                 },
                 "createdAt": {
@@ -709,22 +519,15 @@ export const schema = {
                     "attributes": [],
                     "isReadOnly": true
                 },
-                "userDefaultOrgId": {
-                    "name": "userDefaultOrgId",
+                "userAffiliationsId": {
+                    "name": "userAffiliationsId",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": false,
                     "attributes": []
                 },
-                "userActiveOrgId": {
-                    "name": "userActiveOrgId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "userResidenceId": {
-                    "name": "userResidenceId",
+                "organizationAffiliationsId": {
+                    "name": "organizationAffiliationsId",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": false,
@@ -732,7 +535,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Users",
+            "pluralName": "Affiliations",
             "attributes": [
                 {
                     "type": "model",
@@ -743,11 +546,20 @@ export const schema = {
                     "properties": {
                         "rules": [
                             {
-                                "allow": "public",
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
                                 "operations": [
                                     "create",
+                                    "read",
                                     "update",
-                                    "delete",
+                                    "delete"
+                                ],
+                                "identityClaim": "cognito:username"
+                            },
+                            {
+                                "allow": "public",
+                                "operations": [
                                     "read"
                                 ]
                             }
@@ -756,8 +568,8 @@ export const schema = {
                 }
             ]
         },
-        "MeeterSystem": {
-            "name": "MeeterSystem",
+        "System": {
+            "name": "System",
             "fields": {
                 "id": {
                     "name": "id",
@@ -766,8 +578,15 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "version": {
-                    "name": "version",
+                "appName": {
+                    "name": "appName",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "android_version": {
+                    "name": "android_version",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -780,15 +599,22 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "android_version": {
-                    "name": "android_version",
+                "version": {
+                    "name": "version",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
-                "defaultProfilePic": {
-                    "name": "defaultProfilePic",
+                "defaultProfilePicture": {
+                    "name": "defaultProfilePicture",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "logoPicture": {
+                    "name": "logoPicture",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -812,7 +638,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "MeeterSystems",
+            "pluralName": "Systems",
             "attributes": [
                 {
                     "type": "model",
@@ -823,11 +649,20 @@ export const schema = {
                     "properties": {
                         "rules": [
                             {
-                                "allow": "public",
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
                                 "operations": [
                                     "create",
+                                    "read",
                                     "update",
-                                    "delete",
+                                    "delete"
+                                ],
+                                "identityClaim": "cognito:username"
+                            },
+                            {
+                                "allow": "public",
+                                "operations": [
                                     "read"
                                 ]
                             }
@@ -839,6 +674,6 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "codegenVersion": "3.3.1",
-    "version": "0aaa270450cb7e53f736addd6a6c190f"
+    "codegenVersion": "3.3.2",
+    "version": "c7015d0fd9d4d71afe9cfb8371c05d9a"
 };

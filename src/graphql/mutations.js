@@ -1,1014 +1,3780 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createAffiliation = /* GraphQL */ `
-  mutation CreateAffiliation(
-    $condition: ModelAffiliationConditionInput
-    $input: CreateAffiliationInput!
-  ) {
-    createAffiliation(condition: $condition, input: $input) {
-      createdAt
-      id
-      organization {
-        affiliations {
-          nextToken
-        }
-        code
-        createdAt
-        defaultUsers {
-          nextToken
-        }
-        heroMessage
-        id
-        location {
-          city
-          createdAt
-          id
-          postalCode
-          stateProv
-          street
-          updatedAt
-        }
-        locationOrganizationsId
-        name
-        updatedAt
-      }
-      organizationAffiliationsId
-      role
-      status
-      updatedAt
-      user {
-        affiliations {
-          nextToken
-        }
-        birthday
-        createdAt
-        defaultOrg {
-          code
-          createdAt
-          heroMessage
-          id
-          locationOrganizationsId
-          name
-          updatedAt
-        }
-        email
-        firstName
-        id
-        lastName
-        location {
-          city
-          createdAt
-          id
-          postalCode
-          stateProv
-          street
-          updatedAt
-        }
-        locationUsersId
-        organizationDefaultUsersId
-        phone
-        picture
-        shirt
-        sub
-        updatedAt
-        username
-      }
-      userAffiliationsId
-    }
-  }
-`;
-export const createLocation = /* GraphQL */ `
-  mutation CreateLocation(
-    $condition: ModelLocationConditionInput
-    $input: CreateLocationInput!
-  ) {
-    createLocation(condition: $condition, input: $input) {
-      city
-      createdAt
-      id
-      organizations {
-        items {
-          code
-          createdAt
-          heroMessage
-          id
-          locationOrganizationsId
-          name
-          updatedAt
-        }
-        nextToken
-      }
-      postalCode
-      stateProv
-      street
-      updatedAt
-      users {
-        items {
-          birthday
-          createdAt
-          email
-          firstName
-          id
-          lastName
-          locationUsersId
-          organizationDefaultUsersId
-          phone
-          picture
-          shirt
-          sub
-          updatedAt
-          username
-        }
-        nextToken
-      }
-    }
-  }
-`;
-export const createOrganization = /* GraphQL */ `
-  mutation CreateOrganization(
-    $condition: ModelOrganizationConditionInput
-    $input: CreateOrganizationInput!
-  ) {
-    createOrganization(condition: $condition, input: $input) {
-      affiliations {
-        items {
-          createdAt
-          id
-          organizationAffiliationsId
-          role
-          status
-          updatedAt
-          userAffiliationsId
-        }
-        nextToken
-      }
-      code
-      createdAt
-      defaultUsers {
-        items {
-          birthday
-          createdAt
-          email
-          firstName
-          id
-          lastName
-          locationUsersId
-          organizationDefaultUsersId
-          phone
-          picture
-          shirt
-          sub
-          updatedAt
-          username
-        }
-        nextToken
-      }
-      heroMessage
-      id
-      location {
-        city
-        createdAt
-        id
-        organizations {
-          nextToken
-        }
-        postalCode
-        stateProv
-        street
-        updatedAt
-        users {
-          nextToken
-        }
-      }
-      locationOrganizationsId
-      name
-      updatedAt
-    }
-  }
-`;
-export const createSystem = /* GraphQL */ `
-  mutation CreateSystem(
-    $condition: ModelSystemConditionInput
-    $input: CreateSystemInput!
-  ) {
-    createSystem(condition: $condition, input: $input) {
-      android_version
-      appName
-      createdAt
-      defaultProfilePicture
-      id
-      ios_version
-      logoPicture
-      updatedAt
-      version
-    }
-  }
-`;
 export const createUser = /* GraphQL */ `
   mutation CreateUser(
-    $condition: ModelUserConditionInput
     $input: CreateUserInput!
-  ) {
-    createUser(condition: $condition, input: $input) {
-      affiliations {
-        items {
-          createdAt
-          id
-          organizationAffiliationsId
-          role
-          status
-          updatedAt
-          userAffiliationsId
-        }
-        nextToken
-      }
-      birthday
-      createdAt
-      defaultOrg {
-        affiliations {
-          nextToken
-        }
-        code
-        createdAt
-        defaultUsers {
-          nextToken
-        }
-        heroMessage
-        id
-        location {
-          city
-          createdAt
-          id
-          postalCode
-          stateProv
-          street
-          updatedAt
-        }
-        locationOrganizationsId
-        name
-        updatedAt
-      }
-      email
-      firstName
-      id
-      lastName
-      location {
-        city
-        createdAt
-        id
-        organizations {
-          nextToken
-        }
-        postalCode
-        stateProv
-        street
-        updatedAt
-        users {
-          nextToken
-        }
-      }
-      locationUsersId
-      organizationDefaultUsersId
-      phone
-      picture
-      shirt
-      sub
-      updatedAt
-      username
-    }
-  }
-`;
-export const deleteAffiliation = /* GraphQL */ `
-  mutation DeleteAffiliation(
-    $condition: ModelAffiliationConditionInput
-    $input: DeleteAffiliationInput!
-  ) {
-    deleteAffiliation(condition: $condition, input: $input) {
-      createdAt
-      id
-      organization {
-        affiliations {
-          nextToken
-        }
-        code
-        createdAt
-        defaultUsers {
-          nextToken
-        }
-        heroMessage
-        id
-        location {
-          city
-          createdAt
-          id
-          postalCode
-          stateProv
-          street
-          updatedAt
-        }
-        locationOrganizationsId
-        name
-        updatedAt
-      }
-      organizationAffiliationsId
-      role
-      status
-      updatedAt
-      user {
-        affiliations {
-          nextToken
-        }
-        birthday
-        createdAt
-        defaultOrg {
-          code
-          createdAt
-          heroMessage
-          id
-          locationOrganizationsId
-          name
-          updatedAt
-        }
-        email
-        firstName
-        id
-        lastName
-        location {
-          city
-          createdAt
-          id
-          postalCode
-          stateProv
-          street
-          updatedAt
-        }
-        locationUsersId
-        organizationDefaultUsersId
-        phone
-        picture
-        shirt
-        sub
-        updatedAt
-        username
-      }
-      userAffiliationsId
-    }
-  }
-`;
-export const deleteLocation = /* GraphQL */ `
-  mutation DeleteLocation(
-    $condition: ModelLocationConditionInput
-    $input: DeleteLocationInput!
-  ) {
-    deleteLocation(condition: $condition, input: $input) {
-      city
-      createdAt
-      id
-      organizations {
-        items {
-          code
-          createdAt
-          heroMessage
-          id
-          locationOrganizationsId
-          name
-          updatedAt
-        }
-        nextToken
-      }
-      postalCode
-      stateProv
-      street
-      updatedAt
-      users {
-        items {
-          birthday
-          createdAt
-          email
-          firstName
-          id
-          lastName
-          locationUsersId
-          organizationDefaultUsersId
-          phone
-          picture
-          shirt
-          sub
-          updatedAt
-          username
-        }
-        nextToken
-      }
-    }
-  }
-`;
-export const deleteOrganization = /* GraphQL */ `
-  mutation DeleteOrganization(
-    $condition: ModelOrganizationConditionInput
-    $input: DeleteOrganizationInput!
-  ) {
-    deleteOrganization(condition: $condition, input: $input) {
-      affiliations {
-        items {
-          createdAt
-          id
-          organizationAffiliationsId
-          role
-          status
-          updatedAt
-          userAffiliationsId
-        }
-        nextToken
-      }
-      code
-      createdAt
-      defaultUsers {
-        items {
-          birthday
-          createdAt
-          email
-          firstName
-          id
-          lastName
-          locationUsersId
-          organizationDefaultUsersId
-          phone
-          picture
-          shirt
-          sub
-          updatedAt
-          username
-        }
-        nextToken
-      }
-      heroMessage
-      id
-      location {
-        city
-        createdAt
-        id
-        organizations {
-          nextToken
-        }
-        postalCode
-        stateProv
-        street
-        updatedAt
-        users {
-          nextToken
-        }
-      }
-      locationOrganizationsId
-      name
-      updatedAt
-    }
-  }
-`;
-export const deleteSystem = /* GraphQL */ `
-  mutation DeleteSystem(
-    $condition: ModelSystemConditionInput
-    $input: DeleteSystemInput!
-  ) {
-    deleteSystem(condition: $condition, input: $input) {
-      android_version
-      appName
-      createdAt
-      defaultProfilePicture
-      id
-      ios_version
-      logoPicture
-      updatedAt
-      version
-    }
-  }
-`;
-export const deleteUser = /* GraphQL */ `
-  mutation DeleteUser(
     $condition: ModelUserConditionInput
-    $input: DeleteUserInput!
   ) {
-    deleteUser(condition: $condition, input: $input) {
-      affiliations {
-        items {
-          createdAt
-          id
-          organizationAffiliationsId
-          role
-          status
-          updatedAt
-          userAffiliationsId
-        }
-        nextToken
-      }
-      birthday
-      createdAt
-      defaultOrg {
-        affiliations {
-          nextToken
-        }
-        code
-        createdAt
-        defaultUsers {
-          nextToken
-        }
-        heroMessage
-        id
-        location {
-          city
-          createdAt
-          id
-          postalCode
-          stateProv
-          street
-          updatedAt
-        }
-        locationOrganizationsId
-        name
-        updatedAt
-      }
-      email
-      firstName
+    createUser(input: $input, condition: $condition) {
       id
-      lastName
-      location {
-        city
-        createdAt
-        id
-        organizations {
-          nextToken
-        }
-        postalCode
-        stateProv
-        street
-        updatedAt
-        users {
-          nextToken
-        }
-      }
-      locationUsersId
-      organizationDefaultUsersId
-      phone
-      picture
-      shirt
       sub
-      updatedAt
       username
-    }
-  }
-`;
-export const updateAffiliation = /* GraphQL */ `
-  mutation UpdateAffiliation(
-    $condition: ModelAffiliationConditionInput
-    $input: UpdateAffiliationInput!
-  ) {
-    updateAffiliation(condition: $condition, input: $input) {
-      createdAt
-      id
-      organization {
-        affiliations {
-          nextToken
-        }
+      firstName
+      lastName
+      email
+      phone
+      shirt
+      birthday
+      defaultOrg {
+        id
+        name
         code
-        createdAt
-        defaultUsers {
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          organizations {
+            items {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            nextToken
+            startedAt
+          }
+          users {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        affiliations {
+          items {
+            id
+            role
+            status
+            user {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            organization {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            userAffiliationsId
+            organizationAffiliationsId
+          }
           nextToken
+          startedAt
+        }
+        defaultUsers {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
         }
         heroMessage
-        id
-        location {
-          city
-          createdAt
-          id
-          postalCode
-          stateProv
-          street
-          updatedAt
-        }
-        locationOrganizationsId
-        name
-        updatedAt
-      }
-      organizationAffiliationsId
-      role
-      status
-      updatedAt
-      user {
-        affiliations {
-          nextToken
-        }
-        birthday
         createdAt
-        defaultOrg {
-          code
-          createdAt
-          heroMessage
-          id
-          locationOrganizationsId
-          name
-          updatedAt
-        }
-        email
-        firstName
-        id
-        lastName
-        location {
-          city
-          createdAt
-          id
-          postalCode
-          stateProv
-          street
-          updatedAt
-        }
-        locationUsersId
-        organizationDefaultUsersId
-        phone
-        picture
-        shirt
-        sub
         updatedAt
-        username
+        _version
+        _deleted
+        _lastChangedAt
+        locationOrganizationsId
       }
-      userAffiliationsId
-    }
-  }
-`;
-export const updateLocation = /* GraphQL */ `
-  mutation UpdateLocation(
-    $condition: ModelLocationConditionInput
-    $input: UpdateLocationInput!
-  ) {
-    updateLocation(condition: $condition, input: $input) {
-      city
-      createdAt
-      id
-      organizations {
-        items {
-          code
-          createdAt
-          heroMessage
-          id
-          locationOrganizationsId
-          name
-          updatedAt
-        }
-        nextToken
-      }
-      postalCode
-      stateProv
-      street
-      updatedAt
-      users {
-        items {
-          birthday
-          createdAt
-          email
-          firstName
-          id
-          lastName
-          locationUsersId
-          organizationDefaultUsersId
-          phone
-          picture
-          shirt
-          sub
-          updatedAt
-          username
-        }
-        nextToken
-      }
-    }
-  }
-`;
-export const updateOrganization = /* GraphQL */ `
-  mutation UpdateOrganization(
-    $condition: ModelOrganizationConditionInput
-    $input: UpdateOrganizationInput!
-  ) {
-    updateOrganization(condition: $condition, input: $input) {
+      picture
       affiliations {
         items {
-          createdAt
           id
-          organizationAffiliationsId
           role
           status
-          updatedAt
-          userAffiliationsId
-        }
-        nextToken
-      }
-      code
-      createdAt
-      defaultUsers {
-        items {
-          birthday
+          user {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          organization {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
           createdAt
-          email
-          firstName
-          id
-          lastName
-          locationUsersId
-          organizationDefaultUsersId
-          phone
-          picture
-          shirt
-          sub
           updatedAt
-          username
+          _version
+          _deleted
+          _lastChangedAt
+          userAffiliationsId
+          organizationAffiliationsId
         }
         nextToken
+        startedAt
       }
-      heroMessage
-      id
       location {
-        city
-        createdAt
         id
-        organizations {
-          nextToken
-        }
-        postalCode
-        stateProv
         street
-        updatedAt
-        users {
+        city
+        stateProv
+        postalCode
+        organizations {
+          items {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
           nextToken
+          startedAt
         }
+        users {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
-      locationOrganizationsId
-      name
-      updatedAt
-    }
-  }
-`;
-export const updateSystem = /* GraphQL */ `
-  mutation UpdateSystem(
-    $condition: ModelSystemConditionInput
-    $input: UpdateSystemInput!
-  ) {
-    updateSystem(condition: $condition, input: $input) {
-      android_version
-      appName
       createdAt
-      defaultProfilePicture
-      id
-      ios_version
-      logoPicture
       updatedAt
-      version
+      _version
+      _deleted
+      _lastChangedAt
+      organizationDefaultUsersId
+      locationUsersId
     }
   }
 `;
 export const updateUser = /* GraphQL */ `
   mutation UpdateUser(
-    $condition: ModelUserConditionInput
     $input: UpdateUserInput!
+    $condition: ModelUserConditionInput
   ) {
-    updateUser(condition: $condition, input: $input) {
-      affiliations {
-        items {
-          createdAt
-          id
-          organizationAffiliationsId
-          role
-          status
-          updatedAt
-          userAffiliationsId
-        }
-        nextToken
-      }
+    updateUser(input: $input, condition: $condition) {
+      id
+      sub
+      username
+      firstName
+      lastName
+      email
+      phone
+      shirt
       birthday
-      createdAt
       defaultOrg {
-        affiliations {
-          nextToken
-        }
+        id
+        name
         code
-        createdAt
-        defaultUsers {
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          organizations {
+            items {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            nextToken
+            startedAt
+          }
+          users {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        affiliations {
+          items {
+            id
+            role
+            status
+            user {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            organization {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            userAffiliationsId
+            organizationAffiliationsId
+          }
           nextToken
+          startedAt
+        }
+        defaultUsers {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
         }
         heroMessage
-        id
-        location {
-          city
-          createdAt
-          id
-          postalCode
-          stateProv
-          street
-          updatedAt
-        }
-        locationOrganizationsId
-        name
-        updatedAt
-      }
-      email
-      firstName
-      id
-      lastName
-      location {
-        city
         createdAt
-        id
-        organizations {
-          nextToken
-        }
-        postalCode
-        stateProv
-        street
         updatedAt
-        users {
-          nextToken
-        }
+        _version
+        _deleted
+        _lastChangedAt
+        locationOrganizationsId
       }
-      locationUsersId
-      organizationDefaultUsersId
-      phone
       picture
-      shirt
-      sub
+      affiliations {
+        items {
+          id
+          role
+          status
+          user {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          organization {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAffiliationsId
+          organizationAffiliationsId
+        }
+        nextToken
+        startedAt
+      }
+      location {
+        id
+        street
+        city
+        stateProv
+        postalCode
+        organizations {
+          items {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          nextToken
+          startedAt
+        }
+        users {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      organizationDefaultUsersId
+      locationUsersId
+    }
+  }
+`;
+export const deleteUser = /* GraphQL */ `
+  mutation DeleteUser(
+    $input: DeleteUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    deleteUser(input: $input, condition: $condition) {
+      id
+      sub
       username
+      firstName
+      lastName
+      email
+      phone
+      shirt
+      birthday
+      defaultOrg {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          organizations {
+            items {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            nextToken
+            startedAt
+          }
+          users {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        affiliations {
+          items {
+            id
+            role
+            status
+            user {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            organization {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            userAffiliationsId
+            organizationAffiliationsId
+          }
+          nextToken
+          startedAt
+        }
+        defaultUsers {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        heroMessage
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        locationOrganizationsId
+      }
+      picture
+      affiliations {
+        items {
+          id
+          role
+          status
+          user {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          organization {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAffiliationsId
+          organizationAffiliationsId
+        }
+        nextToken
+        startedAt
+      }
+      location {
+        id
+        street
+        city
+        stateProv
+        postalCode
+        organizations {
+          items {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          nextToken
+          startedAt
+        }
+        users {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      organizationDefaultUsersId
+      locationUsersId
     }
   }
 `;
-export const createMeeting = /* GraphQL */ `
-  mutation CreateMeeting($input: CreateMeetingInput!) {
-    createMeeting(input: $input) {
-      meetingId
-      clientId
-      meetingDate
-      mtgCompIndex
-      mtgCompKey
-      announcementsContact
-      attendanceCount
-      avContact
-      cafeContact
-      cafeCount
-      childrenContact
-      childrenCount
-      cleanupContact
-      closingContact
-      donations
-      facilitatorContact
-      greeterContact1
-      greeterContact2
-      meal
-      mealContact
-      mealCount
-      meetingType
-      newcomersCount
-      notes
-      nurseryContact
-      nurseryCount
-      resourceContact
-      securityContact
-      setupContact
-      supportContact
-      title
-      transportationContact
-      transportationCount
-      worship
-      youthContact
-      youthCount
+export const createAffiliation = /* GraphQL */ `
+  mutation CreateAffiliation(
+    $input: CreateAffiliationInput!
+    $condition: ModelAffiliationConditionInput
+  ) {
+    createAffiliation(input: $input, condition: $condition) {
+      id
+      role
+      status
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          defaultUsers {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          heroMessage
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          items {
+            id
+            role
+            status
+            user {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            organization {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            userAffiliationsId
+            organizationAffiliationsId
+          }
+          nextToken
+          startedAt
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          organizations {
+            items {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            nextToken
+            startedAt
+          }
+          users {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          organizations {
+            items {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            nextToken
+            startedAt
+          }
+          users {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        affiliations {
+          items {
+            id
+            role
+            status
+            user {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            organization {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            userAffiliationsId
+            organizationAffiliationsId
+          }
+          nextToken
+          startedAt
+        }
+        defaultUsers {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        heroMessage
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        locationOrganizationsId
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userAffiliationsId
+      organizationAffiliationsId
     }
   }
 `;
-export const updateMeeting = /* GraphQL */ `
-  mutation UpdateMeeting($input: UpdateMeetingInput!) {
-    updateMeeting(input: $input) {
-      meetingId
-      clientId
-      meetingDate
-      mtgCompIndex
-      mtgCompKey
-      announcementsContact
-      attendanceCount
-      avContact
-      cafeContact
-      cafeCount
-      childrenContact
-      childrenCount
-      cleanupContact
-      closingContact
-      donations
-      facilitatorContact
-      greeterContact1
-      greeterContact2
-      meal
-      mealContact
-      mealCount
-      meetingType
-      newcomersCount
-      notes
-      nurseryContact
-      nurseryCount
-      resourceContact
-      securityContact
-      setupContact
-      supportContact
-      title
-      transportationContact
-      transportationCount
-      worship
-      youthContact
-      youthCount
+export const updateAffiliation = /* GraphQL */ `
+  mutation UpdateAffiliation(
+    $input: UpdateAffiliationInput!
+    $condition: ModelAffiliationConditionInput
+  ) {
+    updateAffiliation(input: $input, condition: $condition) {
+      id
+      role
+      status
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          defaultUsers {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          heroMessage
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          items {
+            id
+            role
+            status
+            user {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            organization {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            userAffiliationsId
+            organizationAffiliationsId
+          }
+          nextToken
+          startedAt
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          organizations {
+            items {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            nextToken
+            startedAt
+          }
+          users {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          organizations {
+            items {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            nextToken
+            startedAt
+          }
+          users {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        affiliations {
+          items {
+            id
+            role
+            status
+            user {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            organization {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            userAffiliationsId
+            organizationAffiliationsId
+          }
+          nextToken
+          startedAt
+        }
+        defaultUsers {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        heroMessage
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        locationOrganizationsId
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userAffiliationsId
+      organizationAffiliationsId
     }
   }
 `;
-export const deleteMeeting = /* GraphQL */ `
-  mutation DeleteMeeting($input: DeleteMeetingInput!) {
-    deleteMeeting(input: $input) {
-      meetingId
-      clientId
-      meetingDate
-      mtgCompIndex
-      mtgCompKey
-      announcementsContact
-      attendanceCount
-      avContact
-      cafeContact
-      cafeCount
-      childrenContact
-      childrenCount
-      cleanupContact
-      closingContact
-      donations
-      facilitatorContact
-      greeterContact1
-      greeterContact2
-      meal
-      mealContact
-      mealCount
-      meetingType
-      newcomersCount
-      notes
-      nurseryContact
-      nurseryCount
-      resourceContact
-      securityContact
-      setupContact
-      supportContact
-      title
-      transportationContact
-      transportationCount
-      worship
-      youthContact
-      youthCount
+export const deleteAffiliation = /* GraphQL */ `
+  mutation DeleteAffiliation(
+    $input: DeleteAffiliationInput!
+    $condition: ModelAffiliationConditionInput
+  ) {
+    deleteAffiliation(input: $input, condition: $condition) {
+      id
+      role
+      status
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          defaultUsers {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          heroMessage
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          items {
+            id
+            role
+            status
+            user {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            organization {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            userAffiliationsId
+            organizationAffiliationsId
+          }
+          nextToken
+          startedAt
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          organizations {
+            items {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            nextToken
+            startedAt
+          }
+          users {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          organizations {
+            items {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            nextToken
+            startedAt
+          }
+          users {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        affiliations {
+          items {
+            id
+            role
+            status
+            user {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            organization {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            userAffiliationsId
+            organizationAffiliationsId
+          }
+          nextToken
+          startedAt
+        }
+        defaultUsers {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        heroMessage
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        locationOrganizationsId
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userAffiliationsId
+      organizationAffiliationsId
     }
   }
 `;
-export const createGroup = /* GraphQL */ `
-  mutation CreateGroup($input: CreateGroupInput!) {
-    createGroup(input: $input) {
-      groupId
-      clientId
-      grpCompKey
-      meetingId
-      attendance
-      cofacilitator
-      facilitator
-      gender
-      location
-      notes
-      title
+export const createOrganization = /* GraphQL */ `
+  mutation CreateOrganization(
+    $input: CreateOrganizationInput!
+    $condition: ModelOrganizationConditionInput
+  ) {
+    createOrganization(input: $input, condition: $condition) {
+      id
+      name
+      code
+      location {
+        id
+        street
+        city
+        stateProv
+        postalCode
+        organizations {
+          items {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          nextToken
+          startedAt
+        }
+        users {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      affiliations {
+        items {
+          id
+          role
+          status
+          user {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          organization {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAffiliationsId
+          organizationAffiliationsId
+        }
+        nextToken
+        startedAt
+      }
+      defaultUsers {
+        items {
+          id
+          sub
+          username
+          firstName
+          lastName
+          email
+          phone
+          shirt
+          birthday
+          defaultOrg {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          picture
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          organizationDefaultUsersId
+          locationUsersId
+        }
+        nextToken
+        startedAt
+      }
+      heroMessage
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      locationOrganizationsId
     }
   }
 `;
-export const updateGroup = /* GraphQL */ `
-  mutation UpdateGroup($input: UpdateGroupInput!) {
-    updateGroup(input: $input) {
-      groupId
-      clientId
-      grpCompKey
-      meetingId
-      attendance
-      cofacilitator
-      facilitator
-      gender
-      location
-      notes
-      title
+export const updateOrganization = /* GraphQL */ `
+  mutation UpdateOrganization(
+    $input: UpdateOrganizationInput!
+    $condition: ModelOrganizationConditionInput
+  ) {
+    updateOrganization(input: $input, condition: $condition) {
+      id
+      name
+      code
+      location {
+        id
+        street
+        city
+        stateProv
+        postalCode
+        organizations {
+          items {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          nextToken
+          startedAt
+        }
+        users {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      affiliations {
+        items {
+          id
+          role
+          status
+          user {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          organization {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAffiliationsId
+          organizationAffiliationsId
+        }
+        nextToken
+        startedAt
+      }
+      defaultUsers {
+        items {
+          id
+          sub
+          username
+          firstName
+          lastName
+          email
+          phone
+          shirt
+          birthday
+          defaultOrg {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          picture
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          organizationDefaultUsersId
+          locationUsersId
+        }
+        nextToken
+        startedAt
+      }
+      heroMessage
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      locationOrganizationsId
     }
   }
 `;
-export const deleteGroup = /* GraphQL */ `
-  mutation DeleteGroup($input: DeleteGroupInput!) {
-    deleteGroup(input: $input) {
-      groupId
-      clientId
-      grpCompKey
-      meetingId
-      attendance
-      cofacilitator
-      facilitator
-      gender
-      location
-      notes
-      title
+export const deleteOrganization = /* GraphQL */ `
+  mutation DeleteOrganization(
+    $input: DeleteOrganizationInput!
+    $condition: ModelOrganizationConditionInput
+  ) {
+    deleteOrganization(input: $input, condition: $condition) {
+      id
+      name
+      code
+      location {
+        id
+        street
+        city
+        stateProv
+        postalCode
+        organizations {
+          items {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          nextToken
+          startedAt
+        }
+        users {
+          items {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      affiliations {
+        items {
+          id
+          role
+          status
+          user {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+              id
+              name
+              code
+              heroMessage
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              locationOrganizationsId
+            }
+            picture
+            affiliations {
+              nextToken
+              startedAt
+            }
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            organizationDefaultUsersId
+            locationUsersId
+          }
+          organization {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAffiliationsId
+          organizationAffiliationsId
+        }
+        nextToken
+        startedAt
+      }
+      defaultUsers {
+        items {
+          id
+          sub
+          username
+          firstName
+          lastName
+          email
+          phone
+          shirt
+          birthday
+          defaultOrg {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          picture
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          organizationDefaultUsersId
+          locationUsersId
+        }
+        nextToken
+        startedAt
+      }
+      heroMessage
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      locationOrganizationsId
+    }
+  }
+`;
+export const createLocation = /* GraphQL */ `
+  mutation CreateLocation(
+    $input: CreateLocationInput!
+    $condition: ModelLocationConditionInput
+  ) {
+    createLocation(input: $input, condition: $condition) {
+      id
+      street
+      city
+      stateProv
+      postalCode
+      organizations {
+        items {
+          id
+          name
+          code
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          defaultUsers {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          heroMessage
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          locationOrganizationsId
+        }
+        nextToken
+        startedAt
+      }
+      users {
+        items {
+          id
+          sub
+          username
+          firstName
+          lastName
+          email
+          phone
+          shirt
+          birthday
+          defaultOrg {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          picture
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          organizationDefaultUsersId
+          locationUsersId
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateLocation = /* GraphQL */ `
+  mutation UpdateLocation(
+    $input: UpdateLocationInput!
+    $condition: ModelLocationConditionInput
+  ) {
+    updateLocation(input: $input, condition: $condition) {
+      id
+      street
+      city
+      stateProv
+      postalCode
+      organizations {
+        items {
+          id
+          name
+          code
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          defaultUsers {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          heroMessage
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          locationOrganizationsId
+        }
+        nextToken
+        startedAt
+      }
+      users {
+        items {
+          id
+          sub
+          username
+          firstName
+          lastName
+          email
+          phone
+          shirt
+          birthday
+          defaultOrg {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          picture
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          organizationDefaultUsersId
+          locationUsersId
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteLocation = /* GraphQL */ `
+  mutation DeleteLocation(
+    $input: DeleteLocationInput!
+    $condition: ModelLocationConditionInput
+  ) {
+    deleteLocation(input: $input, condition: $condition) {
+      id
+      street
+      city
+      stateProv
+      postalCode
+      organizations {
+        items {
+          id
+          name
+          code
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          defaultUsers {
+            items {
+              id
+              sub
+              username
+              firstName
+              lastName
+              email
+              phone
+              shirt
+              birthday
+              picture
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              organizationDefaultUsersId
+              locationUsersId
+            }
+            nextToken
+            startedAt
+          }
+          heroMessage
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          locationOrganizationsId
+        }
+        nextToken
+        startedAt
+      }
+      users {
+        items {
+          id
+          sub
+          username
+          firstName
+          lastName
+          email
+          phone
+          shirt
+          birthday
+          defaultOrg {
+            id
+            name
+            code
+            location {
+              id
+              street
+              city
+              stateProv
+              postalCode
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+            }
+            affiliations {
+              nextToken
+              startedAt
+            }
+            defaultUsers {
+              nextToken
+              startedAt
+            }
+            heroMessage
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            locationOrganizationsId
+          }
+          picture
+          affiliations {
+            items {
+              id
+              role
+              status
+              createdAt
+              updatedAt
+              _version
+              _deleted
+              _lastChangedAt
+              userAffiliationsId
+              organizationAffiliationsId
+            }
+            nextToken
+            startedAt
+          }
+          location {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+              nextToken
+              startedAt
+            }
+            users {
+              nextToken
+              startedAt
+            }
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          organizationDefaultUsersId
+          locationUsersId
+        }
+        nextToken
+        startedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const createSystem = /* GraphQL */ `
+  mutation CreateSystem(
+    $input: CreateSystemInput!
+    $condition: ModelSystemConditionInput
+  ) {
+    createSystem(input: $input, condition: $condition) {
+      id
+      appName
+      android_version
+      ios_version
+      version
+      defaultProfilePicture
+      logoPicture
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateSystem = /* GraphQL */ `
+  mutation UpdateSystem(
+    $input: UpdateSystemInput!
+    $condition: ModelSystemConditionInput
+  ) {
+    updateSystem(input: $input, condition: $condition) {
+      id
+      appName
+      android_version
+      ios_version
+      version
+      defaultProfilePicture
+      logoPicture
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteSystem = /* GraphQL */ `
+  mutation DeleteSystem(
+    $input: DeleteSystemInput!
+    $condition: ModelSystemConditionInput
+  ) {
+    deleteSystem(input: $input, condition: $condition) {
+      id
+      appName
+      android_version
+      ios_version
+      version
+      defaultProfilePicture
+      logoPicture
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;

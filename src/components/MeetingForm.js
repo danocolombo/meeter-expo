@@ -243,7 +243,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         handleUpdate(values);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
-    // printObject('MDS:58-->meeting:', meeting);
+    // printObject('MF:58-->meeting:', meeting);
     useEffect(() => {
         //printObject('MF:218-->values', values);
         let dateObj = dateDashToDateObject(values.meetingDate);

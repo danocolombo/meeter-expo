@@ -146,20 +146,6 @@ const LandingScreen = () => {
                     </View>
                 </>
 
-                {/* {userProfile?.activeSession?.heroMessage && (
-                    <View style={mtrTheme.landingHeroMessageContainer}>
-                        <Text style={mtrTheme.landingHeroMessageText}>
-                            {userProfile?.firstName} {userProfile.lastName}
-                        </Text>
-                        <Text style={mtrTheme.landingHeroMessageText}>
-                            {userProfile?.sub}
-                        </Text>
-                        <Text style={mtrTheme.landingHeroMessageText}>
-                            {userProfile?.userActiveOrgId}
-                        </Text>
-                    </View>
-                )} */}
-
                 {userProfile?.ActiveOrg?.heroMessage && (
                     <>
                         <View style={mtrTheme.landingHeroMessageContainer}>

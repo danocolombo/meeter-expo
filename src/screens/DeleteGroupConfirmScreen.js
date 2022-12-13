@@ -75,7 +75,7 @@ const DeleteGroupConfirmScreen = ({ route, navigation }) => {
                                         textAlign: 'center',
                                     }}
                                 >
-                                    Your are about to delete the followoing
+                                    Your are about to delete the following
                                     group.
                                 </Text>
                             </View>
@@ -125,7 +125,7 @@ const DeleteGroupConfirmScreen = ({ route, navigation }) => {
                                     <CustomButton
                                         text='Yes, DELETE'
                                         bgColor='red'
-                                        fgColor='black'
+                                        fgColor='white'
                                         onPress={() => handleDeleteRequest()}
                                     />
                                 </View>

@@ -76,7 +76,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                 onAppStateChange
             );
             MEETING.refetch();
-            printObject('AL:42-->REFETCH', null);
+            printObject('MDES:79-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])

@@ -548,7 +548,7 @@ export const updateMeetingValues = (values) => (dispatch) => {
     console.log('A');
     let mDate = values.meetingDate;
     let mtgCompKey =
-        userProfile?.activeSession.organization.code.toLowerCase() +
+        userProfile?.activeOrg.code.toLowerCase() +
         '#' +
         mDate.substring(0, 4) +
         '#' +

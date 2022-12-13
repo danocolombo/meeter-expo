@@ -61,7 +61,7 @@ const ActiveScreen = () => {
                 onAppStateChange
             );
             refetch();
-            printObject('AL:42-->REFETCH', null);
+            printObject('AS:64-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])

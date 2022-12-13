@@ -31,7 +31,7 @@ const HistoryList = ({ clientId }) => {
                 onAppStateChange
             );
             refetch();
-            printObject('AL:42-->REFETCH', null);
+            printObject('HL:34-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])

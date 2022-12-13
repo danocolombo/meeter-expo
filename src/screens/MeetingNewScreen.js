@@ -27,7 +27,7 @@ const MeetingNewScreen = ({ route, navigation }) => {
     const daFix = ('0' + da.toString()).slice(-2);
     const today = yr.toString() + '-' + moFix + '-' + daFix;
     const compKey =
-        userProfile?.activeSession?.organization?.code.toLowerCase() +
+        userProfile?.activeOrg?.code.toLowerCase() +
         '#' +
         yr.toString() +
         '#' +
@@ -43,7 +43,7 @@ const MeetingNewScreen = ({ route, navigation }) => {
         childrenCount: 0,
         childrenContact: '',
         cleanupContact: '',
-        clientId: userProfile?.activeSession?.organization?.code.toLowerCase(),
+        clientId: userProfile?.activeOrg?.code.toLowerCase(),
         closingContact: '',
         donations: 0,
         facilitatorContact: '',

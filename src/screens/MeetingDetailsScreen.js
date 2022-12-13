@@ -110,7 +110,8 @@ const MeetingDetails = (props) => {
                 onAppStateChange
             );
             MEETING.refetch();
-            printObject('AL:42-->REFETCH', null);
+            GROUPS.refetch();
+            printObject('MDS:113-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])

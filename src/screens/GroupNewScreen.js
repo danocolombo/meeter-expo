@@ -83,7 +83,7 @@ const GroupNewScreen = ({ route, navigation }) => {
     const daFix = ('0' + da.toString()).slice(-2);
     const today = yr.toString() + '-' + moFix + '-' + daFix;
     const compKey =
-        userProfile?.activeSession.organization.code.toLowerCase() +
+        userProfile?.activeOrg.code.toLowerCase() +
         '#' +
         yr.toString() +
         '#' +

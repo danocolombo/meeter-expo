@@ -1,261 +1,135 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createBlog = /* GraphQL */ `
-  mutation CreateBlog(
-    $input: CreateBlogInput!
-    $condition: ModelBlogConditionInput
+export const createDefaultGroup = /* GraphQL */ `
+  mutation CreateDefaultGroup(
+    $input: CreateDefaultGroupInput!
+    $condition: ModelDefaultGroupConditionInput
   ) {
-    createBlog(input: $input, condition: $condition) {
-      id
-      name
-      posts {
-        items {
-          id
-          title
-          createdAt
-          updatedAt
-          blogPostsId
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const updateBlog = /* GraphQL */ `
-  mutation UpdateBlog(
-    $input: UpdateBlogInput!
-    $condition: ModelBlogConditionInput
-  ) {
-    updateBlog(input: $input, condition: $condition) {
-      id
-      name
-      posts {
-        items {
-          id
-          title
-          createdAt
-          updatedAt
-          blogPostsId
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const deleteBlog = /* GraphQL */ `
-  mutation DeleteBlog(
-    $input: DeleteBlogInput!
-    $condition: ModelBlogConditionInput
-  ) {
-    deleteBlog(input: $input, condition: $condition) {
-      id
-      name
-      posts {
-        items {
-          id
-          title
-          createdAt
-          updatedAt
-          blogPostsId
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const createPost = /* GraphQL */ `
-  mutation CreatePost(
-    $input: CreatePostInput!
-    $condition: ModelPostConditionInput
-  ) {
-    createPost(input: $input, condition: $condition) {
+    createDefaultGroup(input: $input, condition: $condition) {
       id
       title
-      blog {
+      gender
+      location
+      facilitator
+      organization {
         id
         name
-        posts {
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
           nextToken
         }
         createdAt
         updatedAt
-      }
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          postCommentsId
-        }
-        nextToken
+        locationOrganizationsId
       }
       createdAt
       updatedAt
-      blogPostsId
+      organizationDefaultGroupsId
     }
   }
 `;
-export const updatePost = /* GraphQL */ `
-  mutation UpdatePost(
-    $input: UpdatePostInput!
-    $condition: ModelPostConditionInput
+export const updateDefaultGroup = /* GraphQL */ `
+  mutation UpdateDefaultGroup(
+    $input: UpdateDefaultGroupInput!
+    $condition: ModelDefaultGroupConditionInput
   ) {
-    updatePost(input: $input, condition: $condition) {
+    updateDefaultGroup(input: $input, condition: $condition) {
       id
       title
-      blog {
+      gender
+      location
+      facilitator
+      organization {
         id
         name
-        posts {
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
           nextToken
         }
         createdAt
         updatedAt
-      }
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          postCommentsId
-        }
-        nextToken
+        locationOrganizationsId
       }
       createdAt
       updatedAt
-      blogPostsId
+      organizationDefaultGroupsId
     }
   }
 `;
-export const deletePost = /* GraphQL */ `
-  mutation DeletePost(
-    $input: DeletePostInput!
-    $condition: ModelPostConditionInput
+export const deleteDefaultGroup = /* GraphQL */ `
+  mutation DeleteDefaultGroup(
+    $input: DeleteDefaultGroupInput!
+    $condition: ModelDefaultGroupConditionInput
   ) {
-    deletePost(input: $input, condition: $condition) {
+    deleteDefaultGroup(input: $input, condition: $condition) {
       id
       title
-      blog {
+      gender
+      location
+      facilitator
+      organization {
         id
         name
-        posts {
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
           nextToken
         }
         createdAt
         updatedAt
-      }
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          postCommentsId
-        }
-        nextToken
+        locationOrganizationsId
       }
       createdAt
       updatedAt
-      blogPostsId
-    }
-  }
-`;
-export const createComment = /* GraphQL */ `
-  mutation CreateComment(
-    $input: CreateCommentInput!
-    $condition: ModelCommentConditionInput
-  ) {
-    createComment(input: $input, condition: $condition) {
-      id
-      post {
-        id
-        title
-        blog {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        comments {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        blogPostsId
-      }
-      content
-      createdAt
-      updatedAt
-      postCommentsId
-    }
-  }
-`;
-export const updateComment = /* GraphQL */ `
-  mutation UpdateComment(
-    $input: UpdateCommentInput!
-    $condition: ModelCommentConditionInput
-  ) {
-    updateComment(input: $input, condition: $condition) {
-      id
-      post {
-        id
-        title
-        blog {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        comments {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        blogPostsId
-      }
-      content
-      createdAt
-      updatedAt
-      postCommentsId
-    }
-  }
-`;
-export const deleteComment = /* GraphQL */ `
-  mutation DeleteComment(
-    $input: DeleteCommentInput!
-    $condition: ModelCommentConditionInput
-  ) {
-    deleteComment(input: $input, condition: $condition) {
-      id
-      post {
-        id
-        title
-        blog {
-          id
-          name
-          createdAt
-          updatedAt
-        }
-        comments {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        blogPostsId
-      }
-      content
-      createdAt
-      updatedAt
-      postCommentsId
+      organizationDefaultGroupsId
     }
   }
 `;
@@ -294,6 +168,9 @@ export const createUser = /* GraphQL */ `
           nextToken
         }
         heroMessage
+        defaultGroups {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -368,6 +245,9 @@ export const updateUser = /* GraphQL */ `
           nextToken
         }
         heroMessage
+        defaultGroups {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -442,6 +322,9 @@ export const deleteUser = /* GraphQL */ `
           nextToken
         }
         heroMessage
+        defaultGroups {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -547,6 +430,9 @@ export const createAffiliation = /* GraphQL */ `
           nextToken
         }
         heroMessage
+        defaultGroups {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -624,6 +510,9 @@ export const updateAffiliation = /* GraphQL */ `
           nextToken
         }
         heroMessage
+        defaultGroups {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -701,6 +590,9 @@ export const deleteAffiliation = /* GraphQL */ `
           nextToken
         }
         heroMessage
+        defaultGroups {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -768,6 +660,19 @@ export const createOrganization = /* GraphQL */ `
         nextToken
       }
       heroMessage
+      defaultGroups {
+        items {
+          id
+          title
+          gender
+          location
+          facilitator
+          createdAt
+          updatedAt
+          organizationDefaultGroupsId
+        }
+        nextToken
+      }
       createdAt
       updatedAt
       locationOrganizationsId
@@ -830,6 +735,19 @@ export const updateOrganization = /* GraphQL */ `
         nextToken
       }
       heroMessage
+      defaultGroups {
+        items {
+          id
+          title
+          gender
+          location
+          facilitator
+          createdAt
+          updatedAt
+          organizationDefaultGroupsId
+        }
+        nextToken
+      }
       createdAt
       updatedAt
       locationOrganizationsId
@@ -892,6 +810,19 @@ export const deleteOrganization = /* GraphQL */ `
         nextToken
       }
       heroMessage
+      defaultGroups {
+        items {
+          id
+          title
+          gender
+          location
+          facilitator
+          createdAt
+          updatedAt
+          organizationDefaultGroupsId
+        }
+        nextToken
+      }
       createdAt
       updatedAt
       locationOrganizationsId

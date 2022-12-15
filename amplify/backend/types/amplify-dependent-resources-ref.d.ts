@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
     "storage": {
-        "s3jerichosystemstorage": {
+        "jerichos3": {
             "BucketName": "string",
             "Region": "string"
         }

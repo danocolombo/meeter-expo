@@ -1,4 +1,10 @@
-import React, { useState, useLayoutEffect, useCallback } from 'react';
+import React, {
+    useState,
+    useEffect,
+    useLayoutEffect,
+    useCallback,
+    useRef,
+} from 'react';
 import {
     ImageBackground,
     Image,
@@ -6,6 +12,7 @@ import {
     Text,
     TextInput,
     View,
+    Input as RNInput,
     Alert,
     useWindowDimensions,
     TouchableOpacity,
@@ -15,14 +22,16 @@ import { Storage } from 'aws-amplify';
 // import { S3Image } from 'aws-amplify-react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { focusManager } from '@tanstack/react-query';
+import * as ImagePicker from 'expo-image-picker';
+import { v4 as uuid } from 'uuid';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Dropdown } from 'react-native-element-dropdown';
-import Input from '../ui/Input';
 import { useTheme, FAB } from 'react-native-paper';
 import { useUserContext } from '../../contexts/UserContext';
 import { useSysContext } from '../../contexts/SysContext';
 import CustomButton from '../ui/CustomButton';
+import Input from '../ui/Input';
 import { printObject, dateDashToDateObject } from '../../utils/helpers';
 import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
 
@@ -37,13 +46,16 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     const [birthDay, setBirthday] = useState(new Date(userProfile.birthday));
     const mtrTheme = useTheme();
     const { width } = useWindowDimensions();
+    const [profilePic, setProfilePic] = useState(null);
+    const [profilePicDetails, setProfilePicDetails] = useState(null);
     const { meeter } = useSysContext();
     const [stateProv, setStateProv] = useState(
         userProfile?.location?.stateProv || ''
     );
+    const [image, setImage] = useState(null);
+    //      useRef variable used to hold image object
+    const imageFileInput = useRef(null);
 
-    const hardPic =
-        'https://corinth-meeter-storage220412-staging.s3.amazonaws.com/public/default.png?AWSAccessKeyId=ASIATJIGWGHMKECXQ47S&Expires=1670212831&Signature=lhX%2BGfvP5ZDPSqxTGuKs4ZVGo0g%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEMz%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCICSBNMn06lCMJ462LyaaNr7ilIbJSHLlkkGzy2woeV2jAiEAtelHpG21gBKEaJrZohlUNcIDVvV311jNQ%2BnyMP%2FSLBoqzQQI5f%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARACGgwyMjYwMzY2OTE0MTYiDOMKW%2FN5549WnaoAFCqhBMeNrRNHA%2FT3DX0oDlq6WeHOlKxjgjlbIKIxxWyZv4KQzr9XosJmFyd53sKazj6%2BL6m7o%2FvtXi3cSRbMBgUhcCeHLf%2FTPCxrspsMonER8Tc%2B2FRnAVxdXahHOI9m2l5W3TtbJXQbwzzFttfpxBzPjSLKz5S6aGso%2FFtQ6wrIqbIYGMy3KxaBeYsM%2B21X8ZoX7EXwYrI3gPnyq6%2FJSZ84IIhnJiJHx4hpfhca%2BOiorXvQSQLiuSKw0bLf2Kim%2BJWjjolK6VguUgnedz8zVQo%2B%2BWN%2BoR0%2F7JJGBwgPpHlPe%2FIfKZBiaVF4Ch6r1s9nAhInPvnT2HCyMS9GMyscj07Zs5nJHjkvEPThONRhXTU7ZRyys8a4i7rhbCtKt8HK1iY%2BgYEWdYRUyKp%2B24gkM85QLMVF2ouzTKlnc%2FOQj0QW6knsXhHeAN3l3vfzf6iVln4Vol%2F3JeVQV1NwQdXz03I6aEtp6jhxkR71PAjiNjY99GzRKPHLg5ytXuSiv2HwnSC9oEQ%2F2sZnBh%2BIeuUPurq9u6cRNKwRESF%2FsVccNKkTim4%2Bk1m9CYVRQoqJb1u0U1Cxhon5mLLbaLwb9BVvWMvDBRys5QjKmFPJ0ezqNXiD0tjbPQ7lsoo%2BgMHkaWTFqZyhm9J3D%2Fe7fmDBs2oJMZl0DEKxdKv4A04NBzbrpSzXSZTqwKWMhHlTiUTulF00LGsDaOp1TsMAjNRzbQaQUWEFjhESMKfXtZwGOoUCF26NKl1cNSEhWN8agAPNRtD0bFJnk8wjVrbxr4ZLqAAK2CY6Z1vlC%2B9cdMNTDtFPyjS1F2hgEL8Ql8t7C%2BLQ9Fx5QT5seQD8KQi1O9Ia07rBBR2q00P1G%2BVKfDkfxBOTaSLJQNI%2F10RRtAO3Z2w%2FLEfX3W7Z1LgTj5%2FkP2pDn6tM7fVwbZma%2BlvB7depb6VfKPsRpcLrvslVDcNhIgIiS12dfqMOsXnuRLImWAAeEQRdI9k9ybxmWMmhU3h%2B1ZYSUXgRZ%2F39pqFm1bgjskZwYbcAnxdcQuftHdRzUYPxGOsN55nN7qoLz2jTfGKjMBNk1f0455wTFwZO2n9lmLqHlkcTeR1a';
     const [values, setValues] = useState({
         uid: userProfile.id,
         username: userProfile.username ? userProfile.username : '',
@@ -84,6 +96,25 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             setBirthday(dateObj);
         }, [])
     );
+    useEffect(() => {
+        let picRef;
+        console.log('userProfile.picture', userProfile.picture);
+        console.log(
+            'meeter.defaultProfilePicture:',
+            meeter.defaultProfilePicture
+        );
+        if (userProfile.picture) {
+            picRef = userProfile.picture;
+        } else {
+            //picRef = meeter.defaultProfilePicture;
+            picRef = 'default-user.png';
+        }
+        console.log('picRef:', picRef);
+        Storage.get(picRef, {
+            level: 'public',
+        }).then((hardPic) => setProfilePic(hardPic));
+    }, []);
+
     const FormatBirthDate = (data) => {
         // printObject('PF:78-->data:', data);
         let dateString =
@@ -173,20 +204,40 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             focusManager.setFocused(status === 'active');
         }
     }
-    const handlePicChangeRequest = () => {
-        navigation.navigate('ProfilePic');
+    const fetchImageFromUri = async (uri) => {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        return blob;
     };
+    const saveProfileToS3 = async (imageFilename) => {
+        //      this saves the file to S3 and returns the ref
 
+        const img = await fetchImageFromUri(profilePic);
+        const results = await Storage.put(imageFilename, img);
+    };
     const handleFormSubmit = () => {
         console.log('PF:181-->typeof birthday', typeof birthDay);
         console.log(
             'PF:182-->birthDay.toString:',
-            birthDay.toISOString().substr(0, 10)
+            birthDay.toISOString().slice(0, 10)
         );
+        printObject('profilePic:', profilePic);
+        printObject('profilePicDetails:', profilePicDetails);
+
+        let imageFilename = userProfile.picture;
+        if (profilePic !== imageFilename) {
+            const nameOnly = profilePicDetails.fileName.slice(0, -4);
+            const fileExtension = profilePicDetails.fileName.slice(-4);
+            // const imageFilename = `${nameOnly}_${uuid()}${fileExtension}`;
+            imageFilename = `${nameOnly}_${uuid()}${fileExtension}`;
+            saveProfileToS3(imageFilename);
+        }
+        printObject('PF:225-->imageFilename:\n', imageFilename);
         const resultantProfile = {
             phone: values.phone,
             birthday: birthDay,
             shirt: values.shirt,
+            picture: imageFilename,
             location: {
                 street: values.street,
                 city: values.city,
@@ -200,6 +251,25 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         //      ========================
         handleUpdate(resultantProfile);
     };
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        console.log('file information...');
+        console.log(result);
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+            setProfilePicDetails(result.assets[0]);
+            setProfilePic(result.assets[0].uri);
+        }
+    };
+
     printObject('PF:192__> values:', values);
     return (
         <>
@@ -219,7 +289,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                                 <Image
                                     // source={require('../../assets/user-profile.jpeg')}
                                     source={{
-                                        uri: userProfile.picture,
+                                        uri: profilePic,
                                     }}
                                     style={mtrTheme.profileImage}
                                 />
@@ -228,10 +298,21 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                             <FAB
                                 icon='image-edit-outline'
                                 style={styles.fab}
-                                onPress={() => handlePicChangeRequest()}
+                                onPress={() => pickImage()}
                             />
                         </View>
-
+                        {/* <View>
+                            <RNInput
+                                type='file'
+                                ref={imageFileInput}
+                                style={{
+                                    position: 'absolute',
+                                    width: 0,
+                                    height: 0,
+                                }}
+                                onChange={handleImageChange}
+                            />
+                        </View> */}
                         <View style={{ paddingTop: 5 }}>
                             <Text style={{ color: mtrTheme.colors.accent }}>
                                 {userProfile.firstName} {userProfile.lastName}
@@ -239,6 +320,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                         </View>
                     </View>
                 </View>
+                <View></View>
                 <View style={mtrTheme.profileFormRowStyle}>
                     <View style={{ minWidth: '90%' }}>
                         <Input

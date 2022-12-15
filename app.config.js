@@ -16,7 +16,6 @@ module.exports = ({ config }) => {
             resizeMode: 'contain',
             backgroundColor: '#ffffff',
         },
-
         extra: {
             eas: {
                 projectId: '7ef587ae-ab5b-4032-905d-af78d83b8fd9',
@@ -32,8 +31,8 @@ module.exports = ({ config }) => {
             supportsTablet: true,
             bundleIdentifier: 'guru.fortson.meeter',
             infoPlist: {
-                // UIBackgroundModes: ['location', 'fetch'],
-                //NSCameraUsageDescription: 'for our profile picture',
+                UIBackgroundModes: ['location', 'fetch'],
+                NSCameraUsageDescription: 'for your profile picture',
             },
             config: {},
         },
@@ -47,6 +46,16 @@ module.exports = ({ config }) => {
             },
             config: {},
         },
+        plugins: [
+            ['expo-camera'],
+            [
+                'expo-image-picker',
+                {
+                    photosPermission:
+                        'The app accesses your photos to let you set your profile picture',
+                },
+            ],
+        ],
         web: {
             favicon: './assets/favicon.png',
         },

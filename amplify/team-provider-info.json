@@ -28,7 +28,8 @@
         }
       },
       "storage": {
-        "s3jerichosystemstorage": {}
+        "s3jerichosystemstorage": {},
+        "jerichos3": {}
       },
       "api": {
         "jericho": {}

@@ -1,0 +1,16 @@
+{
+  "resourceName": "jerichos3",
+  "policyUUID": "1753f4b8",
+  "bucketName": "jerichosystems3files",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

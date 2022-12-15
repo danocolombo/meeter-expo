@@ -46,6 +46,9 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     const [birthDay, setBirthday] = useState(new Date(userProfile.birthday));
     const mtrTheme = useTheme();
     const { width } = useWindowDimensions();
+    //      the picture S3 reference
+    const [profilePicRef, setProfilePicRef] = useState(null);
+    //      the picture file
     const [profilePic, setProfilePic] = useState(null);
     const [profilePicDetails, setProfilePicDetails] = useState(null);
     const { meeter } = useSysContext();
@@ -98,18 +101,22 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     );
     useEffect(() => {
         let picRef;
-        console.log('userProfile.picture', userProfile.picture);
         console.log(
-            'meeter.defaultProfilePicture:',
+            'PF:101--useEffect::userProfile.picture',
+            userProfile.picture
+        );
+        console.log(
+            'PF:103-->useEffect::meeter.defaultProfilePicture:',
             meeter.defaultProfilePicture
         );
         if (userProfile.picture) {
             picRef = userProfile.picture;
         } else {
             //picRef = meeter.defaultProfilePicture;
-            picRef = 'default-user.png';
+            picRef = meeter.defaultProfilePicture;
         }
-        console.log('picRef:', picRef);
+        console.log('PF:115-->useEffect::picRef:', picRef);
+        setProfilePicRef(picRef);
         Storage.get(picRef, {
             level: 'public',
         }).then((hardPic) => setProfilePic(hardPic));
@@ -221,27 +228,45 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             'PF:182-->birthDay.toString:',
             birthDay.toISOString().slice(0, 10)
         );
-        printObject('profilePic:', profilePic);
-        printObject('profilePicDetails:', profilePicDetails);
+        //      start image section
+        let uploadImage = null;
+        printObject('PF:231-->profilePicRef:', profilePicRef);
+        printObject('PF:232-->profilePic:', profilePic);
 
-        let imageFilename = userProfile.picture;
-        if (profilePic !== imageFilename) {
+        if (profilePicDetails?.fileName) {
+            //      profilePicDetails not set if no upload
+            printObject('PF:233-->profilePicDetails:\n', profilePicDetails);
+            uploadImage = false; //      we have file, but need confirmation to upload
+        }
+        let picture;
+        if (uploadImage !== null) {
             const nameOnly = profilePicDetails.fileName.slice(0, -4);
             const fileExtension = profilePicDetails.fileName.slice(-4);
-            // const imageFilename = `${nameOnly}_${uuid()}${fileExtension}`;
-            imageFilename = `${nameOnly}_${uuid()}${fileExtension}`;
-            saveProfileToS3(imageFilename);
+            picture = `${nameOnly}_${uuid()}${fileExtension}`;
+        } else {
+            //      no file to upload
+            picture = profilePicRef; //     this should be default value here...
         }
-        printObject('PF:225-->imageFilename:\n', imageFilename);
+        console.log('PF:247-->picture:', picture);
+        console.log('PF:251-->profilePicRef:', profilePicRef);
+
+        if (picture !== meeter.defaultProfilePicture) {
+            //      not default pic
+            if (profilePicRef != picture) {
+                //      selected file is different, upload and save
+                saveProfileToS3(picture);
+            }
+        }
+
         const resultantProfile = {
             phone: values.phone,
             birthday: birthDay,
             shirt: values.shirt,
-            picture: imageFilename,
+            picture: picture,
             location: {
                 street: values.street,
                 city: values.city,
-                stateProv: stateProv.value,
+                stateProv: values.stateProv,
                 postalCode: values.postalCode,
             },
         };
@@ -249,6 +274,10 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         //      ========================
         //      save the form to graphql
         //      ========================
+        printObject(
+            'PF:277--> Profile Form done, resultantProfile:\n',
+            resultantProfile
+        );
         handleUpdate(resultantProfile);
     };
 

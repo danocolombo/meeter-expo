@@ -23,7 +23,6 @@ const UserContextProvider = ({ children }) => {
         if (!resultantProfile) {
             return;
         }
-        const tmpCity = 'Boise';
         const userLocation = {
             id: userProfile?.location?.id,
             street: resultantProfile.location.street,
@@ -42,6 +41,7 @@ const UserContextProvider = ({ children }) => {
             phone: resultantProfile?.phone,
             birthday: resultantProfile?.birthday,
             shirt: resultantProfile?.shirt,
+            picture: resultantProfile?.picture,
         };
         let combinedProfile = {};
         try {

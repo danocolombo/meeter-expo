@@ -3,24 +3,17 @@ import React, {
     useEffect,
     useLayoutEffect,
     useCallback,
-    useRef,
 } from 'react';
 import {
-    ImageBackground,
     Image,
     StyleSheet,
     Text,
-    TextInput,
     View,
     Input as RNInput,
-    Alert,
     useWindowDimensions,
     TouchableOpacity,
 } from 'react-native';
-//import { S3Image } from 'aws-amplify-react-native';
 import { Storage } from 'aws-amplify';
-// import { S3Image } from 'aws-amplify-react-native';
-import { useSelector, useDispatch } from 'react-redux';
 import { focusManager } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
 import { v4 as uuid } from 'uuid';
@@ -55,9 +48,6 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     const [stateProv, setStateProv] = useState(
         userProfile?.location?.stateProv || ''
     );
-    const [image, setImage] = useState(null);
-    //      useRef variable used to hold image object
-    const imageFileInput = useRef(null);
 
     const [values, setValues] = useState({
         uid: userProfile.id,
@@ -101,21 +91,13 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     );
     useEffect(() => {
         let picRef;
-        console.log(
-            'PF:101--useEffect::userProfile.picture',
-            userProfile.picture
-        );
-        console.log(
-            'PF:103-->useEffect::meeter.defaultProfilePicture:',
-            meeter.defaultProfilePicture
-        );
+
         if (userProfile.picture) {
             picRef = userProfile.picture;
         } else {
             //picRef = meeter.defaultProfilePicture;
             picRef = meeter.defaultProfilePicture;
         }
-        console.log('PF:115-->useEffect::picRef:', picRef);
         setProfilePicRef(picRef);
         Storage.get(picRef, {
             level: 'public',
@@ -230,12 +212,9 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         );
         //      start image section
         let uploadImage = null;
-        printObject('PF:231-->profilePicRef:', profilePicRef);
-        printObject('PF:232-->profilePic:', profilePic);
 
         if (profilePicDetails?.fileName) {
             //      profilePicDetails not set if no upload
-            printObject('PF:233-->profilePicDetails:\n', profilePicDetails);
             uploadImage = false; //      we have file, but need confirmation to upload
         }
         let picture;
@@ -247,8 +226,6 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             //      no file to upload
             picture = profilePicRef; //     this should be default value here...
         }
-        console.log('PF:247-->picture:', picture);
-        console.log('PF:251-->profilePicRef:', profilePicRef);
 
         if (picture !== meeter.defaultProfilePicture) {
             //      not default pic
@@ -293,7 +270,6 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         console.log(result);
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
             setProfilePicDetails(result.assets[0]);
             setProfilePic(result.assets[0].uri);
         }
@@ -330,18 +306,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                                 onPress={() => pickImage()}
                             />
                         </View>
-                        {/* <View>
-                            <RNInput
-                                type='file'
-                                ref={imageFileInput}
-                                style={{
-                                    position: 'absolute',
-                                    width: 0,
-                                    height: 0,
-                                }}
-                                onChange={handleImageChange}
-                            />
-                        </View> */}
+
                         <View style={{ paddingTop: 5 }}>
                             <Text style={{ color: mtrTheme.colors.accent }}>
                                 {userProfile.firstName} {userProfile.lastName}

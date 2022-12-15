@@ -8,6 +8,7 @@ import {
     isDateDashBeforeToday,
 } from '../utils/helpers';
 import { deleteMeetingFromDDB } from '../providers/meetings';
+import { useUserContext } from '../contexts/UserContext';
 //   this is url for all meetings
 const config = {
     headers: {
@@ -44,19 +45,19 @@ export const fetchSpecificMeeting = createAsyncThunk(
 export const meetingsSlice = createSlice({
     name: 'meetings',
     initialState,
-    extraReducers: {
-        [fetchSpecificMeeting.pending]: (state) => {
-            state.isLoadiing = true;
-        },
-        [fetchSpecificMeeting.fulfilled]: (state, action) => {
-            printObject('fulfilled meeting', action);
-            state.isLoading = false;
-            state.tmpMeeting = action.payload;
-        },
-        [fetchSpecificMeeting.rejected]: (state) => {
-            state.isLoading = false;
-        },
-    },
+    // extraReducers: {
+    //     [fetchSpecificMeeting.pending]: (state) => {
+    //         state.isLoadiing = true;
+    //     },
+    //     [fetchSpecificMeeting.fulfilled]: (state, action) => {
+    //         printObject('fulfilled meeting', action);
+    //         state.isLoading = false;
+    //         state.tmpMeeting = action.payload;
+    //     },
+    //     [fetchSpecificMeeting.rejected]: (state) => {
+    //         state.isLoading = false;
+    //     },
+    // },
     reducers: {
         createTmp: (state, action) => {
             state.tmpMeeting = {};
@@ -542,11 +543,12 @@ export const getMeetingGroups = (meetingId) => (dispatch) => {
     getData(meetingId);
 };
 export const updateMeetingValues = (values) => (dispatch) => {
+    const { userProfile } = useUserContext();
     // always make sure that the mtgCompKey is equal to the meetingDate
     console.log('A');
     let mDate = values.meetingDate;
     let mtgCompKey =
-        values.clientId.toLowerCase() +
+        userProfile?.activeOrg.code.toLowerCase() +
         '#' +
         mDate.substring(0, 4) +
         '#' +

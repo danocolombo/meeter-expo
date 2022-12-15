@@ -32,6 +32,7 @@ amplifyconfiguration.dart
 amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
+
 .secret-_
 \*\*.sample
 #amplify-do-not-edit-end

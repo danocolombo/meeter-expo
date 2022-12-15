@@ -26,14 +26,18 @@ import MeetingListCard from '../components/Meeting.List.Card';
 import { FontDisplay } from 'expo-font';
 import { FetchActiveMeetings } from '../components/common/hooks/meetingQueries';
 import { dateNumToDateDash, printObject } from '../utils/helpers';
+import { useAuthContext } from '../contexts/AuthContext';
 import { focusManager } from '@tanstack/react-query';
 import { current } from '@reduxjs/toolkit';
+import { useSysContext } from '../contexts/SysContext';
+import { useUserContext } from '../contexts/UserContext';
 //   FUNCTION START
 //   ===============
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
-    const meeter = useSelector((state) => state.system);
+    const { userProfile } = useUserContext();
+    const { meeter } = useSysContext();
     const [displayMeetings, setDisplayMeetings] = useState([]);
 
     useLayoutEffect(() => {
@@ -57,24 +61,21 @@ const ActiveScreen = () => {
                 onAppStateChange
             );
             refetch();
-            printObject('AL:42-->REFETCH', null);
+            printObject('AS:64-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])
     );
-
     let meetings = [];
     const { data, isError, isLoading, isFetching, refetch } = useQuery(
         ['meetings', 'active'],
-        () => FetchActiveMeetings(meeter.affiliation),
+        () => FetchActiveMeetings(userProfile?.activeOrg.code || 'mtr'),
         {
             refetchInterval: 60000,
             cacheTime: 2000,
             enabled: true,
         }
     );
-    printObject('AS:71-->isLoading', isLoading);
-    printObject('AS:72-->isFetching', isFetching);
     const handleNewRequest = () => {
         navigation.navigate('MeetingNew');
     };

@@ -27,18 +27,17 @@ const ActiveList = ({ clientId }) => {
             focusManager.setFocused(status === 'active');
         }
     }
-    useFocusEffect(
-        useCallback(() => {
-            const subscription = AppState.addEventListener(
-                'change',
-                onAppStateChange
-            );
-            refetch();
-            printObject('AL:42-->REFETCH', null);
+    useFocusEffect();
+    // useCallback(() => {
+    //     const subscription = AppState.addEventListener(
+    //         'change',
+    //         onAppStateChange
+    //     );
+    //     refetch();
+    //     printObject('AL:37-->REFETCH', null);
 
-            return () => subscription.remove();
-        }, [])
-    );
+    //     return () => subscription.remove();
+    // }, [])
 
     let meetings = [];
     const { data, isError, isLoading, isFetching, refetch } = useQuery(

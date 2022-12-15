@@ -1,3 +1,11 @@
+export const MEETER_DEFAULTS = {
+    ORGANIZATION_ID: '3c1096a9-003b-4534-ad77-8f628d564937',
+    CODE: 'mtr',
+    NAME: 'Meeter Test System',
+    HERO_MESSAGE: 'Welcome, thanks for your help.',
+    ROLE: 'guest',
+};
+
 export const PHONE_REGX =
     /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/;
 

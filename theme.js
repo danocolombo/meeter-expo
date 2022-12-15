@@ -163,6 +163,13 @@ const theme = {
     // },
 
     //   ----------------------------
+    //   DEFAULT GROUP SCREEN
+    //   ----------------------------
+    defaultGroupScreenSafeArea: {
+        flex: 1,
+        backgroundColor: primaryColor,
+    },
+    //   ----------------------------
     //   PROFILE FORM
     //   ----------------------------
     profileMessageModalSurface: {

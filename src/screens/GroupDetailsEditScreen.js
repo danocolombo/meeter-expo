@@ -114,7 +114,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
 
             console.log('handleDeleteConfirmClick complete.');
             navigation.navigate('MeetingDetails', {
-                meetingId: meetingId,
+                meetingId: meeting.meetingId,
             });
             // navigation.goBack();
             // navigation.dispatch(

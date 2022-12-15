@@ -210,7 +210,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         // need to create updated mtgCompKey from date
         const dateParts = values.meetingDate.split('-');
         const newKey =
-            meeter.affiliation.toLowerCase() +
+            userProfile?.activeOrg?.organization?.code.toLowerCase() +
             '#' +
             dateParts[0] +
             '#' +
@@ -233,7 +233,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         //handleUpdate(values);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
-    // printObject('MDS:58-->meeting:', meeting);
+    // printObject('MFM:236-->meeting:', meeting);
     useEffect(() => {
         printObject('MFM:218-->values', values);
         let dateObj = dateDashToDateObject(values.meetingDate);

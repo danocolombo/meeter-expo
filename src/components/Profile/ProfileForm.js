@@ -1,61 +1,73 @@
-import React, { useState, useLayoutEffect, useCallback } from 'react';
+import React, {
+    useState,
+    useEffect,
+    useLayoutEffect,
+    useCallback,
+} from 'react';
 import {
-    ImageBackground,
     Image,
     StyleSheet,
     Text,
     View,
-    Alert,
+    Input as RNInput,
     useWindowDimensions,
     TouchableOpacity,
 } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { Storage } from 'aws-amplify';
 import { focusManager } from '@tanstack/react-query';
+import * as ImagePicker from 'expo-image-picker';
+import { v4 as uuid } from 'uuid';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Dropdown } from 'react-native-element-dropdown';
-import Input from './ui/Input';
 import { useTheme, FAB } from 'react-native-paper';
-import CustomButton from './ui/CustomButton';
-import { printObject, dateDashToDateObject } from '../utils/helpers';
-import { STATESBY2, SHIRTSIZESBY2 } from '../constants/meeter';
-import { useMutation } from '@tanstack/react-query';
+import { useUserContext } from '../../contexts/UserContext';
+import { useSysContext } from '../../contexts/SysContext';
+import CustomButton from '../ui/CustomButton';
+import Input from '../ui/Input';
+import { printObject, dateDashToDateObject } from '../../utils/helpers';
+import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
 
 //   FUNCTION START
 //   ===============
-const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
+const ProfileForm = ({ handleUpdate, handleCancel }) => {
     const navigation = useNavigation();
-    const [stateValue, setStateValue] = useState(null);
+    const { userProfile, updateUserProfile } = useUserContext();
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isShirtFocus, setIsShirtFocus] = useState(false);
-
     const [modalBirthDateVisible, setModalBirthDateVisible] = useState(false);
+    const [birthDay, setBirthday] = useState(new Date(userProfile.birthday));
     const mtrTheme = useTheme();
-    const meeter = useSelector((state) => state.system);
-    const [birthday, setBirthday] = useState();
-    // console.log('birthday:', birthday);
-    // console.log(typeof birthday);
-    const user = useSelector((state) => state.users.currentUser);
     const { width } = useWindowDimensions();
+    //      the picture S3 reference
+    const [profilePicRef, setProfilePicRef] = useState(null);
+    //      the picture file
+    const [profilePic, setProfilePic] = useState(null);
+    const [profilePicDetails, setProfilePicDetails] = useState(null);
+    const { meeter } = useSysContext();
+    const [stateProv, setStateProv] = useState(
+        userProfile?.location?.stateProv || ''
+    );
+
     const [values, setValues] = useState({
-        uid: user?.uid,
-        username: profile?.username ? profile.username : user.userName,
-        firstName: profile?.firstName ? profile.firstName : user.firstName,
-        lastName: profile?.lastName ? profile.lastName : user.lastName,
-        email: profile?.email ? profile.email : user.email,
-        phone: profile?.phone ? profile.phone : '',
-        residenceStreet: profile?.residence?.street
-            ? profile.residence.street
+        uid: userProfile.id,
+        username: userProfile.username ? userProfile.username : '',
+        firstName: userProfile?.firstName ? userProfile.firstName : '',
+        lastName: userProfile?.lastName ? userProfile.lastName : '',
+        street: userProfile?.location?.street
+            ? userProfile.location.street
             : '',
-        residenceCity: profile?.residence?.city ? profile.residence.city : '',
-        residenceStateProv: profile?.residence?.stateProv
-            ? profile.residence.stateProv
+        city: userProfile?.location?.city ? userProfile.location.city : '',
+        postalCode: userProfile?.location?.postalCode
+            ? userProfile?.location?.postalCode
             : '',
-        residencePostalCode: profile?.residence?.postalCode
-            ? profile.residence.postalCode
+        email: userProfile?.email ? userProfile.email : '',
+        phone: userProfile?.phone ? userProfile.phone : '',
+        birthday: userProfile?.birthday
+            ? userProfile.birthday.substr(0, 10)
             : '',
-        birthday: profile?.birthday ? profile.birthday : '',
-        shirt: profile?.shirt ? profile.shirt : '',
+        shirt: userProfile?.shirt ? userProfile.shirt.toUpperCase() : '',
+        picture: userProfile?.picture || meeter?.defaultProfilePicture,
     });
     const [isFirstNameValid, setIsFirstNameValid] = useState(
         values.firstName?.length > 1 ? true : false
@@ -69,14 +81,29 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
             //let dateObj = dateDashToDateObject(values?.birthday);
             //setBirthday(dateObj);
             //setValues(profile);
-            let x = { ...values, ...profile };
-            setValues(x);
+            // let x = { ...values, ...profile };
+            // setValues(x);
             let dateObj = dateDashToDateObject(values?.birthday);
 
             // printObject('dateObj:', dateObj);
             setBirthday(dateObj);
         }, [])
     );
+    useEffect(() => {
+        let picRef;
+
+        if (userProfile.picture) {
+            picRef = userProfile.picture;
+        } else {
+            //picRef = meeter.defaultProfilePicture;
+            picRef = meeter.defaultProfilePicture;
+        }
+        setProfilePicRef(picRef);
+        Storage.get(picRef, {
+            level: 'public',
+        }).then((hardPic) => setProfilePic(hardPic));
+    }, []);
+
     const FormatBirthDate = (data) => {
         // printObject('PF:78-->data:', data);
         let dateString =
@@ -115,6 +142,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
     };
     const onBirthDateConfirm = (data) => {
         FormatBirthDate(data);
+        setBirthday(data);
         setModalBirthDateVisible(false);
     };
     const onBirthDateCancel = () => {
@@ -135,58 +163,6 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                 } else {
                     setIsLastNameValid(true);
                 }
-            }
-            if (inputIdentifier === 'residenceStreet') {
-                //console.log('STATE:', enteredValue);
-                let residence = {
-                    street: enteredValue,
-                    city: values?.residence?.city,
-                    stateProv: values?.residence?.stateProv,
-                    postalCode: values?.residence?.postalCode,
-                };
-                let newValues = { ...curInputValues, residence };
-                //printObject('newValues', newValues);
-                curInputValues = newValues;
-                return curInputValues;
-            }
-            if (inputIdentifier === 'residenceCity') {
-                //console.log('STATE:', enteredValue);
-                let residence = {
-                    street: values?.residence?.street,
-                    city: enteredValue,
-                    stateProv: values?.residence?.stateProv,
-                    postalCode: values?.residence?.postalCode,
-                };
-                let newValues = { ...curInputValues, residence };
-                //printObject('newValues', newValues);
-                curInputValues = newValues;
-                return curInputValues;
-            }
-            if (inputIdentifier === 'stateProv') {
-                //console.log('STATE:', enteredValue);
-                let residence = {
-                    street: values?.residence?.street,
-                    city: values?.residence?.city,
-                    stateProv: enteredValue,
-                    postalCode: values?.residence?.postalCode,
-                };
-                let newValues = { ...curInputValues, residence };
-                //printObject('newValues', newValues);
-                curInputValues = newValues;
-                return curInputValues;
-            }
-            if (inputIdentifier === 'residencePostalCode') {
-                //console.log('STATE:', enteredValue);
-                let residence = {
-                    street: values?.residence?.street,
-                    city: values?.residence?.city,
-                    stateProv: values?.residence?.stateProv,
-                    postalCode: enteredValue,
-                };
-                let newValues = { ...curInputValues, residence };
-                //printObject('newValues', newValues);
-                curInputValues = newValues;
-                return curInputValues;
             }
             if (inputIdentifier === 'shirt') {
                 let shirt = enteredValue;
@@ -211,20 +187,95 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
             // title: meeter.appName,
             headerBackTitle: 'Back',
         });
-    }, [navigation, meeter]);
+    }, [navigation]);
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
         }
     }
-    const handlePicChangeRequest = () => {
-        navigation.navigate('ProfilePic');
+    const fetchImageFromUri = async (uri) => {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        return blob;
     };
+    const saveProfileToS3 = async (imageFilename) => {
+        //      this saves the file to S3 and returns the ref
 
+        const img = await fetchImageFromUri(profilePic);
+        const results = await Storage.put(imageFilename, img);
+    };
     const handleFormSubmit = () => {
-        handleUpdate(values);
+        console.log('PF:181-->typeof birthday', typeof birthDay);
+        console.log(
+            'PF:182-->birthDay.toString:',
+            birthDay.toISOString().slice(0, 10)
+        );
+        //      start image section
+        let uploadImage = null;
+
+        if (profilePicDetails?.fileName) {
+            //      profilePicDetails not set if no upload
+            uploadImage = false; //      we have file, but need confirmation to upload
+        }
+        let picture;
+        if (uploadImage !== null) {
+            const nameOnly = profilePicDetails.fileName.slice(0, -4);
+            const fileExtension = profilePicDetails.fileName.slice(-4);
+            picture = `${nameOnly}_${uuid()}${fileExtension}`;
+        } else {
+            //      no file to upload
+            picture = profilePicRef; //     this should be default value here...
+        }
+
+        if (picture !== meeter.defaultProfilePicture) {
+            //      not default pic
+            if (profilePicRef != picture) {
+                //      selected file is different, upload and save
+                saveProfileToS3(picture);
+            }
+        }
+
+        const resultantProfile = {
+            phone: values.phone,
+            birthday: birthDay,
+            shirt: values.shirt,
+            picture: picture,
+            location: {
+                street: values.street,
+                city: values.city,
+                stateProv: values.stateProv,
+                postalCode: values.postalCode,
+            },
+        };
+
+        //      ========================
+        //      save the form to graphql
+        //      ========================
+        printObject(
+            'PF:277--> Profile Form done, resultantProfile:\n',
+            resultantProfile
+        );
+        handleUpdate(resultantProfile);
     };
 
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        console.log('file information...');
+        console.log(result);
+
+        if (!result.canceled) {
+            setProfilePicDetails(result.assets[0]);
+            setProfilePic(result.assets[0].uri);
+        }
+    };
+
+    printObject('PF:192__> values:', values);
     return (
         <>
             {/* {mutation.isLoading ? (
@@ -242,115 +293,28 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                             >
                                 <Image
                                     // source={require('../../assets/user-profile.jpeg')}
-                                    source={{ uri: profile.profilePic }}
+                                    source={{
+                                        uri: profilePic,
+                                    }}
                                     style={mtrTheme.profileImage}
                                 />
                             </View>
+
                             <FAB
                                 icon='image-edit-outline'
                                 style={styles.fab}
-                                onPress={() => handlePicChangeRequest()}
+                                onPress={() => pickImage()}
                             />
                         </View>
+
                         <View style={{ paddingTop: 5 }}>
                             <Text style={{ color: mtrTheme.colors.accent }}>
-                                {user.firstName} {user.lastName}
+                                {userProfile.firstName} {userProfile.lastName}
                             </Text>
                         </View>
                     </View>
                 </View>
-
-                {/* <View style={mtrTheme.profileFormRowStyle}>
-                    <View style={{ minWidth: '45%' }}>
-                        <Input
-                            label='First Name'
-                            labelStyle={mtrTheme.profileFormInputTitle}
-                            textInputConfig={{
-                                backgroundColor: 'lightgrey',
-                                value: values.firstName,
-                                paddingHorizontal: 5,
-                                marginRight: 5,
-                                fontSize: 24,
-                                color: mtrTheme.colors.unSelected,
-                                marginHorizontal: 0,
-                                enabled: false,
-                                placeholder: 'First Name',
-                                style: { color: 'black' },
-                                fontWeight: '500',
-                                //fontFamily: 'Roboto-Regular',
-                                letterSpacing: 0,
-                                // onChangeText: inputChangedHandler.bind(
-                                //     this,
-                                //     'firstName'
-                                // ),
-                            }}
-                        />
-                        {!isFirstNameValid && (
-                            <View style={styles.errorContainer}>
-                                <Text style={styles.errorText}>
-                                    minimum length: 2
-                                </Text>
-                            </View>
-                        )}
-                    </View>
-                    <View style={{ minWidth: '45%' }}>
-                        <Input
-                            label='Last Name'
-                            labelStyle={mtrTheme.profileFormInputTitle}
-                            textInputConfig={{
-                                backgroundColor: 'lightgrey',
-                                value: values.lastName,
-                                paddingHorizontal: 5,
-                                fontSize: 24,
-                                color: mtrTheme.colors.unSelected,
-                                enabled: false,
-                                placeholder: 'Last Name',
-                                style: { color: 'black' },
-                                fontWeight: '500',
-                                //fontFamily: 'Roboto-Regular',
-                                letterSpacing: 0,
-                                // onChangeText: inputChangedHandler.bind(
-                                //     this,
-                                //     'lastName'
-                                // ),
-                            }}
-                        />
-                        {!isLastNameValid && (
-                            <View style={styles.errorContainer}>
-                                <Text style={styles.errorText}>
-                                    minimum length: 2
-                                </Text>
-                            </View>
-                        )}
-                    </View>
-                </View> */}
-                {/* <View style={mtrTheme.profileFormRowStyle}>
-                    <View style={{ minWidth: '90%' }}>
-                        <Input
-                            label='Email'
-                            labelStyle={mtrTheme.profileFormInputTitle}
-                            textInputConfig={{
-                                backgroundColor: 'lightgrey',
-                                value: values.email,
-                                paddingHorizontal: 5,
-                                marginRight: 5,
-                                enabled: false,
-                                fontSize: 24,
-                                color: mtrTheme.colors.unSelected,
-                                marginHorizontal: 0,
-                                placeholder: 'Email',
-                                style: { color: 'black' },
-                                fontWeight: '500',
-                                //fontFamily: 'Roboto-Regular',
-                                letterSpacing: 0,
-                                // onChangeText: inputChangedHandler.bind(
-                                //     this,
-                                //     'email'
-                                // ),
-                            }}
-                        />
-                    </View>
-                </View> */}
+                <View></View>
                 <View style={mtrTheme.profileFormRowStyle}>
                     <View style={{ minWidth: '90%' }}>
                         <Input
@@ -387,7 +351,12 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                         <TouchableOpacity
                             onPress={() => setModalBirthDateVisible(true)}
                         >
-                            <View style={{ minWidth: '50%' }}>
+                            <View
+                                style={{
+                                    alignItems: 'center',
+                                    paddingHorizontal: 2,
+                                }}
+                            >
                                 <View
                                     style={{
                                         backgroundColor: 'lightgrey',
@@ -404,7 +373,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                             padding: 5,
                                         }}
                                     >
-                                        {values.birthday}
+                                        {birthDay.toLocaleDateString()}
                                     </Text>
                                 </View>
                             </View>
@@ -435,8 +404,8 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                             maxHeight={300}
                             labelField='label'
                             valueField='value'
-                            placeholder={!isShirtFocus ? 'Shirt' : '...'}
-                            searchPlaceholder='Search...'
+                            // placeholder={!isShirtFocus ? 'Shirt' : '...'}
+                            //searchPlaceholder='Search...'
                             value={values?.shirt}
                             onFocus={() => setIsShirtFocus(true)}
                             onBlur={() => setIsShirtFocus(false)}
@@ -463,7 +432,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                 labelStyle={mtrTheme.profileFormInputTitle}
                                 textInputConfig={{
                                     backgroundColor: 'lightgrey',
-                                    value: values?.residence?.street,
+                                    value: values.street,
                                     paddingHorizontal: 5,
                                     marginRight: 5,
                                     fontSize: 24,
@@ -476,7 +445,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                     letterSpacing: 0,
                                     onChangeText: inputChangedHandler.bind(
                                         this,
-                                        'residenceStreet'
+                                        'street'
                                     ),
                                 }}
                             />
@@ -489,7 +458,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                 labelStyle={mtrTheme.profileFormInputTitle}
                                 textInputConfig={{
                                     backgroundColor: 'lightgrey',
-                                    value: values?.residence?.city,
+                                    value: values.city,
                                     paddingHorizontal: 5,
                                     marginRight: 5,
                                     fontSize: 24,
@@ -502,7 +471,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                     letterSpacing: 0,
                                     onChangeText: inputChangedHandler.bind(
                                         this,
-                                        'residenceCity'
+                                        'city'
                                     ),
                                 }}
                             />
@@ -538,14 +507,11 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                     !isStateFocus ? 'Select State' : '...'
                                 }
                                 searchPlaceholder='Search...'
-                                value={values?.residence?.stateProv}
+                                value={stateProv}
                                 onFocus={() => setIsStateFocus(true)}
                                 onBlur={() => setIsStateFocus(false)}
                                 onChange={(item) => {
-                                    inputChangedHandler(
-                                        'stateProv',
-                                        item.value
-                                    ),
+                                    setStateProv(item),
                                         //setStateValue(item.value);
                                         setIsStateFocus(false);
                                 }}
@@ -557,11 +523,12 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                 labelStyle={mtrTheme.profileFormInputTitle}
                                 textInputConfig={{
                                     backgroundColor: 'lightgrey',
-                                    value: values?.residence?.postalCode,
+                                    value: values.postalCode,
                                     paddingHorizontal: 5,
                                     fontSize: 24,
                                     color: 'black',
-
+                                    height: 40,
+                                    width: 90,
                                     placeholder: 'Postal Code',
                                     style: { color: 'black' },
                                     fontWeight: '500',
@@ -569,7 +536,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                                     letterSpacing: 0,
                                     onChangeText: inputChangedHandler.bind(
                                         this,
-                                        'residencePostalCode'
+                                        'postalCode'
                                     ),
                                 }}
                             />
@@ -577,8 +544,8 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                     </View>
                 </View>
                 <View style={mtrTheme.profileFormRowStyle}>
-                    <Text style={{ color: 'silver', fontSize: 12 }}>
-                        UID: {user?.uid}
+                    <Text style={{ color: 'silver', fontSize: 10 }}>
+                        UID: {userProfile?.id}
                     </Text>
                 </View>
                 <View style={styles.buttonContainer}>
@@ -594,7 +561,7 @@ const ProfileForm = ({ profile, handleUpdate, handleCancel }) => {
                 <DateTimePickerModal
                     isVisible={modalBirthDateVisible}
                     mode='date'
-                    date={birthday}
+                    date={birthDay}
                     display='inline'
                     onConfirm={onBirthDateConfirm}
                     onCancel={onBirthDateCancel}

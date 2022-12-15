@@ -1,33 +1,74 @@
 import { createContext, useEffect, useState, useContext } from 'react';
-import { Auth, DataStore } from 'aws-amplify';
-import { User } from '../models';
-import { printObject } from '../utils/helpers';
+import * as queries from '../jerichoQL/queries';
+import { MEETER_DEFAULTS } from '../constants/meeter';
+import { API } from 'aws-amplify';
+import {
+    dateDashMadePretty,
+    isDateDashBeforeToday,
+    printObject,
+} from '../utils/helpers';
 
 const AuthContext = createContext({});
 
 const AuthContextProvider = ({ children }) => {
     const [authUser, setAuthUser] = useState(null);
-    const [dbUser, setDbUser] = useState(null);
-    const sub = authUser?.attributes?.sub;
+    const [cognitoSub, setCognitoSub] = useState(null);
+    const [jwtToken, setJwtToken] = useState(null);
 
-    useEffect(() => {
+    const authSignOut = async () => {
+        setAuthUser(null);
+        setCognitoSub(null);
+        setJwtToken(null);
+    };
+
+    const defineUser = async (sub) => {
         try {
-            Auth.currentAuthenticatedUser({ bypassCache: true })
-                .then(setAuthUser)
-                .catch((e) => printObject('system starting...'));
+            //      get graphQL user
+            const gqlProfileData = await API.graphql({
+                query: queries.usersBySub,
+                variables: { sub: sub },
+            });
+            const gqlProfile = gqlProfileData.data.usersBySub.items[0];
+            //      set activeOrg based on profile defaultOrg and affiliations
+            const clientData = gqlProfile.affiliations.items.filter(
+                (a) => a.organization.id === gqlProfile.defaultOrg.id
+            );
+            const client = clientData[0];
+            const activeOrg = {
+                id: client.organization.id,
+                code: client.organization.code,
+                name: client.organization.name,
+                heroMessage: client.organization.heroMessage,
+                role: client.role,
+                status: client.status,
+            };
+            const updatedProfile = { ...gqlProfile, activeOrg };
+            return updatedProfile;
+            //todo: what does it look like when new user and no profile?
+            //todo------------------------------------------------------
         } catch (error) {
-            console.log('yep:', error.message);
+            printObject('AC:34-->theUserInfo TryCatch failure:\n', error);
+            return;
         }
-    }, []);
+    };
 
-    useEffect(() => {
-        DataStore.query(User, (user) => user.sub('eq', sub)).then((users) =>
-            setDbUser(users[0])
-        );
-    }, [sub]);
-    //printObject('AuthContext-->authUser:', authUser);
+    const clearAuthUser = () => {
+        setAuthUser(null);
+    };
+
     return (
-        <AuthContext.Provider value={{ authUser, dbUser, sub, setDbUser }}>
+        <AuthContext.Provider
+            value={{
+                authUser,
+                cognitoSub,
+                setJwtToken,
+                jwtToken,
+
+                clearAuthUser,
+                authSignOut,
+                defineUser,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

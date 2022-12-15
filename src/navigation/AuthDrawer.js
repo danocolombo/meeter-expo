@@ -9,37 +9,38 @@ import { Ionicons } from '@expo/vector-icons';
 import MeetingsConfig from './BottomNav';
 import CustomDrawer from './CustomDrawer';
 import LandingScreen from '../screens/LandingScreen';
+import DefaultGroupsScreen from '../screens/DefaultGroupsScreen';
+import TeamScreen from '../screens/TeamScreen';
 import ActiveScreen from '../screens/ActiveScreen';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
-import ProfileScreen from '../screens/ProfileScreen';
-
+import ProfileScreen from '../screens/profille/ProfileScreen';
+import { useAuthContext } from '../contexts/AuthContext';
 //import { Colors } from '../constants/colors';
 import { printObject } from '../utils/helpers';
+import { useUserContext } from '../contexts/UserContext';
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 const AuthDrawer = (navigation) => {
     const mtrTheme = useTheme();
+    const { userProfile } = useUserContext();
+    //printObject('AD:26-->userProfile', userProfile);
     // printObject('mtrTheme:', mtrTheme);
     const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
-    // printObject('PF:17-->user', user);
+
+    // console.log('AD: affiliations:', user)
     let manager = false;
-    if (
-        user?.affiliations?.active?.role === 'lead' ||
-        user?.affiliations?.active?.role === 'director' ||
-        user?.affiliations?.active?.role === 'superuser'
-    ) {
-        manager = true;
-    }
     let patron = false;
-    if (
-        user?.affiliations?.active?.role === 'rep' ||
-        user?.affiliations?.active?.role === 'lead' ||
-        user?.affiliations?.active?.role === 'director' ||
-        user?.affiliations?.active?.role === 'superuser'
-    ) {
-        patron = true;
+    if (userProfile) {
+        if (
+            userProfile.activeOrg?.role === 'superuser' ||
+            userProfile.activeOrg?.role === 'director' ||
+            userProfile.activeOrg?.role === 'manager'
+        ) {
+            manager = true;
+            patron = true;
+        }
     }
     const LandingComponent = (props) => (
         <LandingScreen theme={props.theme} {...props} />
@@ -131,7 +132,37 @@ const AuthDrawer = (navigation) => {
                     tabBarActiveTintColor: 'white',
                 })}
             />
-            <Stack.Screen
+            {userProfile?.activeOrg?.role === 'superuser' && (
+                <Stack.Screen
+                    name='Groups'
+                    options={({ navigation }) => ({
+                        drawerIcon: ({ color }) => (
+                            <Ionicons
+                                name='people-outline'
+                                size={22}
+                                color={color}
+                            />
+                        ),
+                    })}
+                    component={DefaultGroupsScreen}
+                />
+            )}
+            {userProfile?.activeOrg?.role === 'superuser' && (
+                <Stack.Screen
+                    name='Team'
+                    options={({ navigation }) => ({
+                        drawerIcon: ({ color }) => (
+                            <Ionicons
+                                name='people-outline'
+                                size={22}
+                                color={color}
+                            />
+                        ),
+                    })}
+                    component={TeamScreen}
+                />
+            )}
+            {/* <Stack.Screen
                 name='Profile'
                 options={({ navigation }) => ({
                     drawerLabel: 'Profile',
@@ -145,16 +176,7 @@ const AuthDrawer = (navigation) => {
                     ),
                 })}
                 component={ProfileScreen}
-            />
-            <Stack.Screen
-                name='Logout'
-                options={({ navigation }) => ({
-                    drawerIcon: ({ color }) => (
-                        <Ionicons name='exit-outline' size={22} color={color} />
-                    ),
-                })}
-                component={MeeterSignOut}
-            />
+            /> */}
         </Drawer.Navigator>
     );
 };

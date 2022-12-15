@@ -13,7 +13,7 @@ import {
 } from 'react-native-paper';
 import { useQuery } from '@tanstack/react-query';
 import { FetchGroup } from '../components/common/hooks/groupQueries';
-
+import { printObject } from '../utils/helpers';
 //   FUNCTION START
 //   ===============
 const GroupDetailsScreen = ({ route, navigation }) => {
@@ -61,6 +61,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                 onAppStateChange
             );
             refetch();
+            printObject('GDS:64-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])

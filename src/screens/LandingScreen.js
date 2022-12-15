@@ -10,6 +10,7 @@ import {
     ImageBackground,
     Image,
     StyleSheet,
+    Alert,
     FlatList,
 } from 'react-native';
 import Constants from 'expo-constants';
@@ -20,6 +21,7 @@ import {
     useIsFocused,
     useFocusEffect,
 } from '@react-navigation/native';
+import { Auth } from 'aws-amplify';
 import * as SplashScreen from 'expo-splash-screen';
 import Logo from '../../assets/M-square.png';
 import CustomButton from '../components/ui/CustomButton';
@@ -31,52 +33,59 @@ import {
     ActivityIndicator,
 } from 'react-native-paper';
 import { dateNumToDateDash, printObject } from '../utils/helpers';
-import MeetingListCard from '../components/Meeting.List.Card';
+//import MeetingListCard from '../components/Meeting.List.Card';
 import { useAuthContext } from '../contexts/AuthContext';
+import { useUserContext } from '../contexts/UserContext';
 import { useSysContext } from '../contexts/SysContext';
+import { useAffiliationContext } from '../contexts/AffiliationContext';
+import profilesSlice from '../features/profilesSlice';
 
+//      ====================================
+//      FUNCTION START
 const LandingScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-
-    const user = useSelector((state) => state.users.currentUser);
-    const meeter = useSelector((state) => state.system);
-    const meetings = useSelector((state) => state.meetings.meetings);
     const [activeMeeting, setActiveMeeting] = useState();
-    const [nextMeeting, setNextMeeting] = useState(meetings[0]);
+    const [nextMeeting, setNextMeeting] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const { meeter, heroMessage } = useSysContext();
+    const { authUser, defineUser } = useAuthContext();
+    const { userProfile, saveUserProfile, passValue } = useUserContext();
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title: '',
         });
     }, [navigation, meeter]);
-    useEffect(() => {
-        setIsLoading(true);
-        // console.log('meetings = ', meetings.length);
-        let today = dateNumToDateDash(meeter.today);
-        //console.log('meetings', meetings.length);
-        let activeOnes = meetings.filter((m) => m.meetingDate >= today);
-        function quickSort(prop) {
-            return function (a, b) {
-                if (a[prop] > b[prop]) {
-                    return 1;
-                } else if (a[prop] < b[prop]) {
-                    return -1;
-                }
-                return 0;
-            };
-        }
-        let sortedResults = activeOnes.sort(quickSort('mtgCompKey'));
-        //console.log('actives:', activeOnes.length);
-        activeOnes ? setActiveMeeting(activeOnes[0]) : null;
 
-        // Do something when the screen is focused
-        setIsLoading(false);
-    }, [meetings]);
-    // printObject('CONTEXT:sub-->', sub);
-    // printObject('SYSTEM-CONTEXT-->systemDef', systemDef);
+    async function getUserDefined() {
+        const cau = await Auth.currentAuthenticatedUser();
+        const user = await defineUser(cau.attributes.sub);
+        saveUserProfile(user);
+        console.log('LS:147-->user:', user);
+    }
+
+    useEffect(() => {
+        if (isLoading) {
+            return;
+        }
+        if (!userProfile?.activeOrg?.id) {
+            setIsLoading(true);
+            console.log('LS:179-->before');
+            getUserDefined();
+            // .then(() => {
+            //     console.log('LS:180-->then');
+            //     console.log('LS:184-->userProfile:\n', userProfile);
+            // })
+            // .catch((e) => {
+            //     console.log('LS:187-->catch:', e);
+            // });
+            setIsLoading(false);
+        }
+    }, []);
     if (isLoading) {
         return (
             <View
@@ -93,6 +102,7 @@ const LandingScreen = () => {
             </View>
         );
     }
+
     return (
         <>
             <Surface style={styles.welcomeSurface}>
@@ -110,30 +120,37 @@ const LandingScreen = () => {
                             color: mtrTheme.colors.landingAppName,
                         }}
                     >
-                        {meeter.affiliateTitle}
+                        {userProfile?.activeOrg?.organization?.name}
                     </Text>
                 </View>
 
-                {activeMeeting && (
-                    <>
-                        <View style={{ marginTop: 10 }}>
-                            <Text style={mtrTheme.landingAnnouncement}>
-                                Next Meeting...
-                            </Text>
-                        </View>
-                        <View style={{ marginHorizontal: 20 }}>
-                            <MeetingListCard
-                                meeting={activeMeeting}
-                                active={true}
-                            />
-                        </View>
-                    </>
-                )}
-                {meeter?.affiliate?.heroMessage && (
+                {/* <>
+                    <View style={{ marginTop: 10 }}>
+                        <Text style={mtrTheme.landingAnnouncement}>
+                            Next Meeting...
+                        </Text>
+                    </View>
+                    <View style={{ marginHorizontal: 20 }}>
+                        <MeetingListCard
+                            meeting={activeMeeting}
+                            active={true}
+                        />
+                    </View>r
+                </> */}
+
+                <>
+                    <View style={mtrTheme.landingHeroMessageContainer}>
+                        <Text style={mtrTheme.landingHeroMessageText}>
+                            {userProfile?.activeOrg?.heroMessage}
+                        </Text>
+                    </View>
+                </>
+
+                {userProfile?.ActiveOrg?.heroMessage && (
                     <>
                         <View style={mtrTheme.landingHeroMessageContainer}>
                             <Text style={mtrTheme.landingHeroMessageText}>
-                                {meeter.affiliate.heroMessage}
+                                {userProfile?.ActiveOrg?.heroMessage}
                             </Text>
                         </View>
                     </>

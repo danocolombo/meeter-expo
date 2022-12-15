@@ -84,27 +84,27 @@ export const profilesSlice = createSlice({
             return state;
         },
     },
-    extraReducers: {
-        [getProfiles.pending]: (state) => {
-            state.isLoading = true;
-        },
-        [getProfiles.fulfilled]: (state, action) => {
-            // console.log(action);
-            // printObject('RS:70-->results...affiliate:', action);
-            state.isLoading = false;
-            // printObject('RS:223--> action', action);
-            // state.displayRallies = state.allRallies.filter(
-            //     (r) =>
-            //         r.eventDate >= action.payload &&
-            //         r.eventRegion === 'test' &&
-            //         r.approved === true
-            // );
-        },
-        [getProfiles.rejected]: (state, action) => {
-            console.log(action);
-            state.isLoading = false;
-        },
-    },
+    // extraReducers: {
+    //     [getProfiles.pending]: (state) => {
+    //         state.isLoading = true;
+    //     },
+    //     [getProfiles.fulfilled]: (state, action) => {
+    //         // console.log(action);
+    //         // printObject('RS:70-->results...affiliate:', action);
+    //         state.isLoading = false;
+    //         // printObject('RS:223--> action', action);
+    //         // state.displayRallies = state.allRallies.filter(
+    //         //     (r) =>
+    //         //         r.eventDate >= action.payload &&
+    //         //         r.eventRegion === 'test' &&
+    //         //         r.approved === true
+    //         // );
+    //     },
+    //     [getProfiles.rejected]: (state, action) => {
+    //         console.log(action);
+    //         state.isLoading = false;
+    //     },
+    // },
 });
 
 // Action creators are generated for each case reducer function

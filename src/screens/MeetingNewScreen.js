@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Surface, useTheme } from 'react-native-paper';
+import { useUserContext } from '../contexts/UserContext';
 import MeetingForm from '../components/MeetingForm';
 import { addMeeting } from '../features/meetingsSlice';
 import { isDateDashBeforeToday, printObject } from '../utils/helpers';
@@ -10,6 +11,7 @@ import { addMeetingDDB } from '../providers/meetings';
 //   ================
 const MeetingNewScreen = ({ route, navigation }) => {
     const mtrTheme = useTheme();
+    const { userProfile } = useUserContext();
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);
     var data = new Date();
@@ -25,7 +27,7 @@ const MeetingNewScreen = ({ route, navigation }) => {
     const daFix = ('0' + da.toString()).slice(-2);
     const today = yr.toString() + '-' + moFix + '-' + daFix;
     const compKey =
-        meeter.affiliation.toLowerCase() +
+        userProfile?.activeOrg?.code.toLowerCase() +
         '#' +
         yr.toString() +
         '#' +
@@ -41,7 +43,7 @@ const MeetingNewScreen = ({ route, navigation }) => {
         childrenCount: 0,
         childrenContact: '',
         cleanupContact: '',
-        clientId: meeter.affiliation.toLowerCase(),
+        clientId: userProfile?.activeOrg?.code.toLowerCase(),
         closingContact: '',
         donations: 0,
         facilitatorContact: '',
@@ -72,7 +74,7 @@ const MeetingNewScreen = ({ route, navigation }) => {
     const handleUpdate = (values) => {
         addMeetingDDB(values)
             .then((res) => {
-                printObject('addMeetingDDB res:', res);
+                printObject('MNS:77-->addMeetingDDB res:', res);
                 //dispatch(addMeeting(res));
                 // console.log('dispatch(updateMeeting) returned');
 

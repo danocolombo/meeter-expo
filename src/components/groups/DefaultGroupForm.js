@@ -13,6 +13,7 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const [values, setValues] = useState({
+        id: group?.id ? group.id : null,
         gender: group?.gender ? group.gender : 'x',
         title: group?.title ? group.title : '',
         location: group?.location ? group.location : '',
@@ -23,6 +24,9 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
     );
     const [isTitleValid, setIsTitleValid] = useState(
         group?.title?.length > 2 ? true : false
+    );
+    const [isFacilitatorValid, setIsFacilitatorValid] = useState(
+        group?.facilitator?.length > 1 ? true : false
     );
 
     function inputChangedHandler(inputIdentifier, enteredValue) {
@@ -39,6 +43,13 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                     setIsLocationValid(false);
                 } else {
                     setIsLocationValid(true);
+                }
+            }
+            if (inputIdentifier === 'facilitator') {
+                if (enteredValue.length < 2) {
+                    setIsFacilitatorValid(false);
+                } else {
+                    setIsFacilitatorValid(true);
                 }
             }
             return {
@@ -83,7 +94,7 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                         fontSize: 24,
                         color: 'black',
                         marginHorizontal: 0,
-                        placeholder: 'Group Title',
+                        placeholder: 'title of group...',
                         style: { color: 'black' },
                         fontWeight: '500',
 
@@ -113,7 +124,7 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                         color: 'black',
                         capitalize: 'words',
                         marginHorizontal: 0,
-                        placeholder: 'where was group?',
+                        placeholder: 'planned location...',
                         style: { color: 'black' },
 
                         fontWeight: '500',
@@ -137,14 +148,16 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                     label='Faciliatator'
                     labelStyle={mtrTheme.groupFormInputTitle}
                     textInputConfig={{
-                        backgroundColor: 'lightgrey',
+                        backgroundColor: isFacilitatorValid
+                            ? 'lightgrey'
+                            : mtrTheme.colors.errorTextBox,
                         paddingHorizontal: 5,
                         fontSize: 24,
                         value: values.facilitator,
                         color: 'black',
                         capitalize: 'words',
                         marginHorizontal: 0,
-                        placeholder: 'who facilitated?',
+                        placeholder: 'expected facilitator...',
                         style: { color: 'black' },
 
                         fontWeight: '500',
@@ -156,6 +169,13 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                     }}
                 />
             </View>
+            {!isFacilitatorValid && (
+                <View style={mtrTheme.groupEditInputErrorContainer}>
+                    <Text style={mtrTheme.groupEditInputErrorText}>
+                        REQUIRED: minimum length = 2
+                    </Text>
+                </View>
+            )}
             <View
                 style={{
                     marginTop: 40,
@@ -163,23 +183,25 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                     justifyContent: 'space-evenly',
                 }}
             >
-                <View>
-                    <CustomButton
-                        text='SAVE'
-                        bgColor={mtrTheme.colors.success}
-                        fgColor='white'
-                        type='STANDARD'
-                        enabled={isTitleValid && isLocationValid}
-                        onPress={handleFormSubmit}
-                    />
-                </View>
+                {isTitleValid && isLocationValid && isFacilitatorValid && (
+                    <View>
+                        <CustomButton
+                            text='SAVE'
+                            bgColor={mtrTheme.colors.success}
+                            fgColor='white'
+                            type='STANDARD'
+                            enabled={isTitleValid && isLocationValid}
+                            onPress={handleFormSubmit}
+                        />
+                    </View>
+                )}
                 <View>
                     <CustomButton
                         text='CANCEL'
                         bgColor={mtrTheme.colors.critical}
                         fgColor='white'
                         type='STANDARD'
-                        enabled={isTitleValid && isLocationValid}
+                        //enabled={isTitleValid && isLocationValid}
                         onPress={handleFormCancel}
                     />
                 </View>

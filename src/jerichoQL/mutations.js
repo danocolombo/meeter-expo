@@ -1,1059 +1,1026 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createAffiliation = /* GraphQL */ `
-    mutation CreateAffiliation(
-        $condition: ModelAffiliationConditionInput
-        $input: CreateAffiliationInput!
+export const createDefaultGroup = /* GraphQL */ `
+    mutation CreateDefaultGroup(
+        $input: CreateDefaultGroupInput!
+        $condition: ModelDefaultGroupConditionInput
     ) {
-        createAffiliation(condition: $condition, input: $input) {
-            createdAt
+        createDefaultGroup(input: $input, condition: $condition) {
             id
+            title
+            gender
+            location
+            facilitator
             organization {
+                id
+                name
+                code
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
                 affiliations {
                     nextToken
                 }
-                code
-                createdAt
                 defaultUsers {
                     nextToken
                 }
                 heroMessage
-                id
-                location {
-                    city
-                    createdAt
-                    id
-                    postalCode
-                    stateProv
-                    street
-                    updatedAt
-                }
-                locationOrganizationsId
-                name
-                updatedAt
-            }
-            organizationAffiliationsId
-            role
-            status
-            updatedAt
-            user {
-                affiliations {
+                defaultGroups {
                     nextToken
                 }
-                birthday
                 createdAt
-                defaultOrg {
-                    code
-                    createdAt
-                    heroMessage
-                    id
-                    locationOrganizationsId
-                    name
-                    updatedAt
-                }
-                email
-                firstName
-                id
-                lastName
-                location {
-                    city
-                    createdAt
-                    id
-                    postalCode
-                    stateProv
-                    street
-                    updatedAt
-                }
-                locationUsersId
-                organizationDefaultUsersId
-                phone
-                picture
-                shirt
-                sub
                 updatedAt
-                username
+                locationOrganizationsId
             }
-            userAffiliationsId
+            createdAt
+            updatedAt
+            organizationDefaultGroupsId
         }
     }
 `;
-export const createLocation = /* GraphQL */ `
-    mutation CreateLocation(
-        $condition: ModelLocationConditionInput
-        $input: CreateLocationInput!
+export const updateDefaultGroup = /* GraphQL */ `
+    mutation UpdateDefaultGroup(
+        $input: UpdateDefaultGroupInput!
+        $condition: ModelDefaultGroupConditionInput
     ) {
-        createLocation(condition: $condition, input: $input) {
-            city
-            createdAt
+        updateDefaultGroup(input: $input, condition: $condition) {
             id
-            organizations {
-                items {
-                    code
-                    createdAt
-                    heroMessage
+            title
+            gender
+            location
+            facilitator
+            organization {
+                id
+                name
+                code
+                location {
                     id
-                    locationOrganizationsId
-                    name
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
                     updatedAt
                 }
-                nextToken
+                affiliations {
+                    nextToken
+                }
+                defaultUsers {
+                    nextToken
+                }
+                heroMessage
+                defaultGroups {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+                locationOrganizationsId
             }
-            postalCode
-            stateProv
-            street
+            createdAt
             updatedAt
-            users {
-                items {
-                    birthday
-                    createdAt
-                    email
-                    firstName
+            organizationDefaultGroupsId
+        }
+    }
+`;
+export const deleteDefaultGroup = /* GraphQL */ `
+    mutation DeleteDefaultGroup(
+        $input: DeleteDefaultGroupInput!
+        $condition: ModelDefaultGroupConditionInput
+    ) {
+        deleteDefaultGroup(input: $input, condition: $condition) {
+            id
+            title
+            gender
+            location
+            facilitator
+            organization {
+                id
+                name
+                code
+                location {
                     id
-                    lastName
-                    locationUsersId
-                    organizationDefaultUsersId
-                    phone
-                    picture
-                    shirt
-                    sub
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
                     updatedAt
-                    username
+                }
+                affiliations {
+                    nextToken
+                }
+                defaultUsers {
+                    nextToken
+                }
+                heroMessage
+                defaultGroups {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+                locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            organizationDefaultGroupsId
+        }
+    }
+`;
+export const createUser = /* GraphQL */ `
+    mutation CreateUser(
+        $input: CreateUserInput!
+        $condition: ModelUserConditionInput
+    ) {
+        createUser(input: $input, condition: $condition) {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+                id
+                name
+                code
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                affiliations {
+                    nextToken
+                }
+                defaultUsers {
+                    nextToken
+                }
+                heroMessage
+                defaultGroups {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+                locationOrganizationsId
+            }
+            picture
+            affiliations {
+                items {
+                    id
+                    role
+                    status
+                    createdAt
+                    updatedAt
+                    userAffiliationsId
+                    organizationAffiliationsId
                 }
                 nextToken
             }
+            location {
+                id
+                street
+                city
+                stateProv
+                postalCode
+                organizations {
+                    nextToken
+                }
+                users {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+            }
+            createdAt
+            updatedAt
+            organizationDefaultUsersId
+            locationUsersId
+        }
+    }
+`;
+export const updateUser = /* GraphQL */ `
+    mutation UpdateUser(
+        $input: UpdateUserInput!
+        $condition: ModelUserConditionInput
+    ) {
+        updateUser(input: $input, condition: $condition) {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+                id
+                name
+                code
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                affiliations {
+                    nextToken
+                }
+                defaultUsers {
+                    nextToken
+                }
+                heroMessage
+                defaultGroups {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+                locationOrganizationsId
+            }
+            picture
+            affiliations {
+                items {
+                    id
+                    role
+                    status
+                    createdAt
+                    updatedAt
+                    userAffiliationsId
+                    organizationAffiliationsId
+                }
+                nextToken
+            }
+            location {
+                id
+                street
+                city
+                stateProv
+                postalCode
+                organizations {
+                    nextToken
+                }
+                users {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+            }
+            createdAt
+            updatedAt
+            organizationDefaultUsersId
+            locationUsersId
+        }
+    }
+`;
+export const deleteUser = /* GraphQL */ `
+    mutation DeleteUser(
+        $input: DeleteUserInput!
+        $condition: ModelUserConditionInput
+    ) {
+        deleteUser(input: $input, condition: $condition) {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+                id
+                name
+                code
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                affiliations {
+                    nextToken
+                }
+                defaultUsers {
+                    nextToken
+                }
+                heroMessage
+                defaultGroups {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+                locationOrganizationsId
+            }
+            picture
+            affiliations {
+                items {
+                    id
+                    role
+                    status
+                    createdAt
+                    updatedAt
+                    userAffiliationsId
+                    organizationAffiliationsId
+                }
+                nextToken
+            }
+            location {
+                id
+                street
+                city
+                stateProv
+                postalCode
+                organizations {
+                    nextToken
+                }
+                users {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+            }
+            createdAt
+            updatedAt
+            organizationDefaultUsersId
+            locationUsersId
+        }
+    }
+`;
+export const createAffiliation = /* GraphQL */ `
+    mutation CreateAffiliation(
+        $input: CreateAffiliationInput!
+        $condition: ModelAffiliationConditionInput
+    ) {
+        createAffiliation(input: $input, condition: $condition) {
+            id
+            role
+            status
+            user {
+                id
+                sub
+                username
+                firstName
+                lastName
+                email
+                phone
+                shirt
+                birthday
+                defaultOrg {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                picture
+                affiliations {
+                    nextToken
+                }
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                createdAt
+                updatedAt
+                organizationDefaultUsersId
+                locationUsersId
+            }
+            organization {
+                id
+                name
+                code
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                affiliations {
+                    nextToken
+                }
+                defaultUsers {
+                    nextToken
+                }
+                heroMessage
+                defaultGroups {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+                locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            userAffiliationsId
+            organizationAffiliationsId
+        }
+    }
+`;
+export const updateAffiliation = /* GraphQL */ `
+    mutation UpdateAffiliation(
+        $input: UpdateAffiliationInput!
+        $condition: ModelAffiliationConditionInput
+    ) {
+        updateAffiliation(input: $input, condition: $condition) {
+            id
+            role
+            status
+            user {
+                id
+                sub
+                username
+                firstName
+                lastName
+                email
+                phone
+                shirt
+                birthday
+                defaultOrg {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                picture
+                affiliations {
+                    nextToken
+                }
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                createdAt
+                updatedAt
+                organizationDefaultUsersId
+                locationUsersId
+            }
+            organization {
+                id
+                name
+                code
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                affiliations {
+                    nextToken
+                }
+                defaultUsers {
+                    nextToken
+                }
+                heroMessage
+                defaultGroups {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+                locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            userAffiliationsId
+            organizationAffiliationsId
+        }
+    }
+`;
+export const deleteAffiliation = /* GraphQL */ `
+    mutation DeleteAffiliation(
+        $input: DeleteAffiliationInput!
+        $condition: ModelAffiliationConditionInput
+    ) {
+        deleteAffiliation(input: $input, condition: $condition) {
+            id
+            role
+            status
+            user {
+                id
+                sub
+                username
+                firstName
+                lastName
+                email
+                phone
+                shirt
+                birthday
+                defaultOrg {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                picture
+                affiliations {
+                    nextToken
+                }
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                createdAt
+                updatedAt
+                organizationDefaultUsersId
+                locationUsersId
+            }
+            organization {
+                id
+                name
+                code
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                affiliations {
+                    nextToken
+                }
+                defaultUsers {
+                    nextToken
+                }
+                heroMessage
+                defaultGroups {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+                locationOrganizationsId
+            }
+            createdAt
+            updatedAt
+            userAffiliationsId
+            organizationAffiliationsId
         }
     }
 `;
 export const createOrganization = /* GraphQL */ `
     mutation CreateOrganization(
-        $condition: ModelOrganizationConditionInput
         $input: CreateOrganizationInput!
+        $condition: ModelOrganizationConditionInput
     ) {
-        createOrganization(condition: $condition, input: $input) {
+        createOrganization(input: $input, condition: $condition) {
+            id
+            name
+            code
+            location {
+                id
+                street
+                city
+                stateProv
+                postalCode
+                organizations {
+                    nextToken
+                }
+                users {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+            }
             affiliations {
                 items {
-                    createdAt
                     id
-                    organizationAffiliationsId
                     role
                     status
+                    createdAt
                     updatedAt
                     userAffiliationsId
+                    organizationAffiliationsId
                 }
                 nextToken
             }
-            code
-            createdAt
             defaultUsers {
                 items {
-                    birthday
-                    createdAt
-                    email
-                    firstName
                     id
-                    lastName
-                    locationUsersId
-                    organizationDefaultUsersId
-                    phone
-                    picture
-                    shirt
                     sub
-                    updatedAt
                     username
+                    firstName
+                    lastName
+                    email
+                    phone
+                    shirt
+                    birthday
+                    picture
+                    createdAt
+                    updatedAt
+                    organizationDefaultUsersId
+                    locationUsersId
                 }
                 nextToken
             }
             heroMessage
+            defaultGroups {
+                items {
+                    id
+                    title
+                    gender
+                    location
+                    facilitator
+                    createdAt
+                    updatedAt
+                    organizationDefaultGroupsId
+                }
+                nextToken
+            }
+            createdAt
+            updatedAt
+            locationOrganizationsId
+        }
+    }
+`;
+export const updateOrganization = /* GraphQL */ `
+    mutation UpdateOrganization(
+        $input: UpdateOrganizationInput!
+        $condition: ModelOrganizationConditionInput
+    ) {
+        updateOrganization(input: $input, condition: $condition) {
             id
+            name
+            code
             location {
-                city
-                createdAt
                 id
+                street
+                city
+                stateProv
+                postalCode
                 organizations {
                     nextToken
                 }
-                postalCode
-                stateProv
-                street
-                updatedAt
                 users {
                     nextToken
                 }
+                createdAt
+                updatedAt
             }
+            affiliations {
+                items {
+                    id
+                    role
+                    status
+                    createdAt
+                    updatedAt
+                    userAffiliationsId
+                    organizationAffiliationsId
+                }
+                nextToken
+            }
+            defaultUsers {
+                items {
+                    id
+                    sub
+                    username
+                    firstName
+                    lastName
+                    email
+                    phone
+                    shirt
+                    birthday
+                    picture
+                    createdAt
+                    updatedAt
+                    organizationDefaultUsersId
+                    locationUsersId
+                }
+                nextToken
+            }
+            heroMessage
+            defaultGroups {
+                items {
+                    id
+                    title
+                    gender
+                    location
+                    facilitator
+                    createdAt
+                    updatedAt
+                    organizationDefaultGroupsId
+                }
+                nextToken
+            }
+            createdAt
+            updatedAt
             locationOrganizationsId
+        }
+    }
+`;
+export const deleteOrganization = /* GraphQL */ `
+    mutation DeleteOrganization(
+        $input: DeleteOrganizationInput!
+        $condition: ModelOrganizationConditionInput
+    ) {
+        deleteOrganization(input: $input, condition: $condition) {
+            id
             name
+            code
+            location {
+                id
+                street
+                city
+                stateProv
+                postalCode
+                organizations {
+                    nextToken
+                }
+                users {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+            }
+            affiliations {
+                items {
+                    id
+                    role
+                    status
+                    createdAt
+                    updatedAt
+                    userAffiliationsId
+                    organizationAffiliationsId
+                }
+                nextToken
+            }
+            defaultUsers {
+                items {
+                    id
+                    sub
+                    username
+                    firstName
+                    lastName
+                    email
+                    phone
+                    shirt
+                    birthday
+                    picture
+                    createdAt
+                    updatedAt
+                    organizationDefaultUsersId
+                    locationUsersId
+                }
+                nextToken
+            }
+            heroMessage
+            defaultGroups {
+                items {
+                    id
+                    title
+                    gender
+                    location
+                    facilitator
+                    createdAt
+                    updatedAt
+                    organizationDefaultGroupsId
+                }
+                nextToken
+            }
+            createdAt
+            updatedAt
+            locationOrganizationsId
+        }
+    }
+`;
+export const createLocation = /* GraphQL */ `
+    mutation CreateLocation(
+        $input: CreateLocationInput!
+        $condition: ModelLocationConditionInput
+    ) {
+        createLocation(input: $input, condition: $condition) {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+                items {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                nextToken
+            }
+            users {
+                items {
+                    id
+                    sub
+                    username
+                    firstName
+                    lastName
+                    email
+                    phone
+                    shirt
+                    birthday
+                    picture
+                    createdAt
+                    updatedAt
+                    organizationDefaultUsersId
+                    locationUsersId
+                }
+                nextToken
+            }
+            createdAt
+            updatedAt
+        }
+    }
+`;
+export const updateLocation = /* GraphQL */ `
+    mutation UpdateLocation(
+        $input: UpdateLocationInput!
+        $condition: ModelLocationConditionInput
+    ) {
+        updateLocation(input: $input, condition: $condition) {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+                items {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                nextToken
+            }
+            users {
+                items {
+                    id
+                    sub
+                    username
+                    firstName
+                    lastName
+                    email
+                    phone
+                    shirt
+                    birthday
+                    picture
+                    createdAt
+                    updatedAt
+                    organizationDefaultUsersId
+                    locationUsersId
+                }
+                nextToken
+            }
+            createdAt
+            updatedAt
+        }
+    }
+`;
+export const deleteLocation = /* GraphQL */ `
+    mutation DeleteLocation(
+        $input: DeleteLocationInput!
+        $condition: ModelLocationConditionInput
+    ) {
+        deleteLocation(input: $input, condition: $condition) {
+            id
+            street
+            city
+            stateProv
+            postalCode
+            organizations {
+                items {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                nextToken
+            }
+            users {
+                items {
+                    id
+                    sub
+                    username
+                    firstName
+                    lastName
+                    email
+                    phone
+                    shirt
+                    birthday
+                    picture
+                    createdAt
+                    updatedAt
+                    organizationDefaultUsersId
+                    locationUsersId
+                }
+                nextToken
+            }
+            createdAt
             updatedAt
         }
     }
 `;
 export const createSystem = /* GraphQL */ `
     mutation CreateSystem(
-        $condition: ModelSystemConditionInput
         $input: CreateSystemInput!
-    ) {
-        createSystem(condition: $condition, input: $input) {
-            android_version
-            appName
-            createdAt
-            defaultProfilePicture
-            id
-            ios_version
-            logoPicture
-            updatedAt
-            version
-        }
-    }
-`;
-export const createUser = /* GraphQL */ `
-    mutation CreateUser(
-        $condition: ModelUserConditionInput
-        $input: CreateUserInput!
-    ) {
-        createUser(condition: $condition, input: $input) {
-            affiliations {
-                items {
-                    createdAt
-                    id
-                    organizationAffiliationsId
-                    role
-                    status
-                    updatedAt
-                    userAffiliationsId
-                }
-                nextToken
-            }
-            birthday
-            createdAt
-            defaultOrg {
-                affiliations {
-                    nextToken
-                }
-                code
-                createdAt
-                defaultUsers {
-                    nextToken
-                }
-                heroMessage
-                id
-                location {
-                    city
-                    createdAt
-                    id
-                    postalCode
-                    stateProv
-                    street
-                    updatedAt
-                }
-                locationOrganizationsId
-                name
-                updatedAt
-            }
-            email
-            firstName
-            id
-            lastName
-            location {
-                city
-                createdAt
-                id
-                organizations {
-                    nextToken
-                }
-                postalCode
-                stateProv
-                street
-                updatedAt
-                users {
-                    nextToken
-                }
-            }
-            locationUsersId
-            organizationDefaultUsersId
-            phone
-            picture
-            shirt
-            sub
-            updatedAt
-            username
-        }
-    }
-`;
-export const deleteAffiliation = /* GraphQL */ `
-    mutation DeleteAffiliation(
-        $condition: ModelAffiliationConditionInput
-        $input: DeleteAffiliationInput!
-    ) {
-        deleteAffiliation(condition: $condition, input: $input) {
-            createdAt
-            id
-            organization {
-                affiliations {
-                    nextToken
-                }
-                code
-                createdAt
-                defaultUsers {
-                    nextToken
-                }
-                heroMessage
-                id
-                location {
-                    city
-                    createdAt
-                    id
-                    postalCode
-                    stateProv
-                    street
-                    updatedAt
-                }
-                locationOrganizationsId
-                name
-                updatedAt
-            }
-            organizationAffiliationsId
-            role
-            status
-            updatedAt
-            user {
-                affiliations {
-                    nextToken
-                }
-                birthday
-                createdAt
-                defaultOrg {
-                    code
-                    createdAt
-                    heroMessage
-                    id
-                    locationOrganizationsId
-                    name
-                    updatedAt
-                }
-                email
-                firstName
-                id
-                lastName
-                location {
-                    city
-                    createdAt
-                    id
-                    postalCode
-                    stateProv
-                    street
-                    updatedAt
-                }
-                locationUsersId
-                organizationDefaultUsersId
-                phone
-                picture
-                shirt
-                sub
-                updatedAt
-                username
-            }
-            userAffiliationsId
-        }
-    }
-`;
-export const deleteLocation = /* GraphQL */ `
-    mutation DeleteLocation(
-        $condition: ModelLocationConditionInput
-        $input: DeleteLocationInput!
-    ) {
-        deleteLocation(condition: $condition, input: $input) {
-            city
-            createdAt
-            id
-            organizations {
-                items {
-                    code
-                    createdAt
-                    heroMessage
-                    id
-                    locationOrganizationsId
-                    name
-                    updatedAt
-                }
-                nextToken
-            }
-            postalCode
-            stateProv
-            street
-            updatedAt
-            users {
-                items {
-                    birthday
-                    createdAt
-                    email
-                    firstName
-                    id
-                    lastName
-                    locationUsersId
-                    organizationDefaultUsersId
-                    phone
-                    picture
-                    shirt
-                    sub
-                    updatedAt
-                    username
-                }
-                nextToken
-            }
-        }
-    }
-`;
-export const deleteOrganization = /* GraphQL */ `
-    mutation DeleteOrganization(
-        $condition: ModelOrganizationConditionInput
-        $input: DeleteOrganizationInput!
-    ) {
-        deleteOrganization(condition: $condition, input: $input) {
-            affiliations {
-                items {
-                    createdAt
-                    id
-                    organizationAffiliationsId
-                    role
-                    status
-                    updatedAt
-                    userAffiliationsId
-                }
-                nextToken
-            }
-            code
-            createdAt
-            defaultUsers {
-                items {
-                    birthday
-                    createdAt
-                    email
-                    firstName
-                    id
-                    lastName
-                    locationUsersId
-                    organizationDefaultUsersId
-                    phone
-                    picture
-                    shirt
-                    sub
-                    updatedAt
-                    username
-                }
-                nextToken
-            }
-            heroMessage
-            id
-            location {
-                city
-                createdAt
-                id
-                organizations {
-                    nextToken
-                }
-                postalCode
-                stateProv
-                street
-                updatedAt
-                users {
-                    nextToken
-                }
-            }
-            locationOrganizationsId
-            name
-            updatedAt
-        }
-    }
-`;
-export const deleteSystem = /* GraphQL */ `
-    mutation DeleteSystem(
         $condition: ModelSystemConditionInput
-        $input: DeleteSystemInput!
     ) {
-        deleteSystem(condition: $condition, input: $input) {
-            android_version
+        createSystem(input: $input, condition: $condition) {
+            id
             appName
-            createdAt
-            defaultProfilePicture
-            id
+            android_version
             ios_version
-            logoPicture
-            updatedAt
             version
-        }
-    }
-`;
-export const deleteUser = /* GraphQL */ `
-    mutation DeleteUser(
-        $condition: ModelUserConditionInput
-        $input: DeleteUserInput!
-    ) {
-        deleteUser(condition: $condition, input: $input) {
-            affiliations {
-                items {
-                    createdAt
-                    id
-                    organizationAffiliationsId
-                    role
-                    status
-                    updatedAt
-                    userAffiliationsId
-                }
-                nextToken
-            }
-            birthday
+            defaultProfilePicture
+            logoPicture
             createdAt
-            defaultOrg {
-                affiliations {
-                    nextToken
-                }
-                code
-                createdAt
-                defaultUsers {
-                    nextToken
-                }
-                heroMessage
-                id
-                location {
-                    city
-                    createdAt
-                    id
-                    postalCode
-                    stateProv
-                    street
-                    updatedAt
-                }
-                locationOrganizationsId
-                name
-                updatedAt
-            }
-            email
-            firstName
-            id
-            lastName
-            location {
-                city
-                createdAt
-                id
-                organizations {
-                    nextToken
-                }
-                postalCode
-                stateProv
-                street
-                updatedAt
-                users {
-                    nextToken
-                }
-            }
-            locationUsersId
-            organizationDefaultUsersId
-            phone
-            picture
-            shirt
-            sub
-            updatedAt
-            username
-        }
-    }
-`;
-export const updateAffiliation = /* GraphQL */ `
-    mutation UpdateAffiliation(
-        $condition: ModelAffiliationConditionInput
-        $input: UpdateAffiliationInput!
-    ) {
-        updateAffiliation(condition: $condition, input: $input) {
-            createdAt
-            id
-            organization {
-                affiliations {
-                    nextToken
-                }
-                code
-                createdAt
-                defaultUsers {
-                    nextToken
-                }
-                heroMessage
-                id
-                location {
-                    city
-                    createdAt
-                    id
-                    postalCode
-                    stateProv
-                    street
-                    updatedAt
-                }
-                locationOrganizationsId
-                name
-                updatedAt
-            }
-            organizationAffiliationsId
-            role
-            status
-            updatedAt
-            user {
-                affiliations {
-                    nextToken
-                }
-                birthday
-                createdAt
-                defaultOrg {
-                    code
-                    createdAt
-                    heroMessage
-                    id
-                    locationOrganizationsId
-                    name
-                    updatedAt
-                }
-                email
-                firstName
-                id
-                lastName
-                location {
-                    city
-                    createdAt
-                    id
-                    postalCode
-                    stateProv
-                    street
-                    updatedAt
-                }
-                locationUsersId
-                organizationDefaultUsersId
-                phone
-                picture
-                shirt
-                sub
-                updatedAt
-                username
-            }
-            userAffiliationsId
-        }
-    }
-`;
-export const updateLocation = /* GraphQL */ `
-    mutation UpdateLocation(
-        $condition: ModelLocationConditionInput
-        $input: UpdateLocationInput!
-    ) {
-        updateLocation(condition: $condition, input: $input) {
-            city
-            createdAt
-            id
-            organizations {
-                items {
-                    code
-                    createdAt
-                    heroMessage
-                    id
-                    locationOrganizationsId
-                    name
-                    updatedAt
-                }
-                nextToken
-            }
-            postalCode
-            stateProv
-            street
-            updatedAt
-            users {
-                items {
-                    birthday
-                    createdAt
-                    email
-                    firstName
-                    id
-                    lastName
-                    locationUsersId
-                    organizationDefaultUsersId
-                    phone
-                    picture
-                    shirt
-                    sub
-                    updatedAt
-                    username
-                }
-                nextToken
-            }
-        }
-    }
-`;
-export const updateOrganization = /* GraphQL */ `
-    mutation UpdateOrganization(
-        $condition: ModelOrganizationConditionInput
-        $input: UpdateOrganizationInput!
-    ) {
-        updateOrganization(condition: $condition, input: $input) {
-            affiliations {
-                items {
-                    createdAt
-                    id
-                    organizationAffiliationsId
-                    role
-                    status
-                    updatedAt
-                    userAffiliationsId
-                }
-                nextToken
-            }
-            code
-            createdAt
-            defaultUsers {
-                items {
-                    birthday
-                    createdAt
-                    email
-                    firstName
-                    id
-                    lastName
-                    locationUsersId
-                    organizationDefaultUsersId
-                    phone
-                    picture
-                    shirt
-                    sub
-                    updatedAt
-                    username
-                }
-                nextToken
-            }
-            heroMessage
-            id
-            location {
-                city
-                createdAt
-                id
-                organizations {
-                    nextToken
-                }
-                postalCode
-                stateProv
-                street
-                updatedAt
-                users {
-                    nextToken
-                }
-            }
-            locationOrganizationsId
-            name
             updatedAt
         }
     }
 `;
 export const updateSystem = /* GraphQL */ `
     mutation UpdateSystem(
-        $condition: ModelSystemConditionInput
         $input: UpdateSystemInput!
+        $condition: ModelSystemConditionInput
     ) {
-        updateSystem(condition: $condition, input: $input) {
-            android_version
+        updateSystem(input: $input, condition: $condition) {
+            id
             appName
-            createdAt
-            defaultProfilePicture
-            id
+            android_version
             ios_version
-            logoPicture
-            updatedAt
             version
-        }
-    }
-`;
-export const updateUser = /* GraphQL */ `
-    mutation UpdateUser(
-        $condition: ModelUserConditionInput
-        $input: UpdateUserInput!
-    ) {
-        updateUser(condition: $condition, input: $input) {
-            affiliations {
-                items {
-                    createdAt
-                    id
-                    organizationAffiliationsId
-                    role
-                    status
-                    updatedAt
-                    userAffiliationsId
-                }
-                nextToken
-            }
-            birthday
+            defaultProfilePicture
+            logoPicture
             createdAt
-            defaultOrg {
-                affiliations {
-                    nextToken
-                }
-                code
-                createdAt
-                defaultUsers {
-                    nextToken
-                }
-                heroMessage
-                id
-                location {
-                    city
-                    createdAt
-                    id
-                    postalCode
-                    stateProv
-                    street
-                    updatedAt
-                }
-                locationOrganizationsId
-                name
-                updatedAt
-            }
-            email
-            firstName
-            id
-            lastName
-            location {
-                city
-                createdAt
-                id
-                organizations {
-                    nextToken
-                }
-                postalCode
-                stateProv
-                street
-                updatedAt
-                users {
-                    nextToken
-                }
-            }
-            locationUsersId
-            organizationDefaultUsersId
-            phone
-            picture
-            shirt
-            sub
             updatedAt
-            username
         }
     }
 `;
-export const updateUserProfile = /* GraphQL */ `
-    mutation UpdateUser(
-        $condition: ModelUserConditionInput
-        $input: UpdateUserInput!
+export const deleteSystem = /* GraphQL */ `
+    mutation DeleteSystem(
+        $input: DeleteSystemInput!
+        $condition: ModelSystemConditionInput
     ) {
-        updateUser(condition: $condition, input: $input) {
+        deleteSystem(input: $input, condition: $condition) {
             id
-            sub
-            firstName
-            lastName
-            username
-            phone
-            email
-            birthday
-            shirt
-            picture
-            location {
-                id
-                street
-                city
-                stateProv
-                postalCode
-            }
-            defaultOrg {
-                id
-                code
-                name
-                heroMessage
-            }
-            affiliations {
-                items {
-                    id
-                    role
-                    status
-                    organization {
-                        id
-                        code
-                        name
-                        heroMessage
-                    }
-                }
-            }
-        }
-    }
-`;
-export const createMeeting = /* GraphQL */ `
-    mutation CreateMeeting($input: CreateMeetingInput!) {
-        createMeeting(input: $input) {
-            meetingId
-            clientId
-            meetingDate
-            mtgCompIndex
-            mtgCompKey
-            announcementsContact
-            attendanceCount
-            avContact
-            cafeContact
-            cafeCount
-            childrenContact
-            childrenCount
-            cleanupContact
-            closingContact
-            donations
-            facilitatorContact
-            greeterContact1
-            greeterContact2
-            meal
-            mealContact
-            mealCount
-            meetingType
-            newcomersCount
-            notes
-            nurseryContact
-            nurseryCount
-            resourceContact
-            securityContact
-            setupContact
-            supportContact
-            title
-            transportationContact
-            transportationCount
-            worship
-            youthContact
-            youthCount
-        }
-    }
-`;
-export const updateMeeting = /* GraphQL */ `
-    mutation UpdateMeeting($input: UpdateMeetingInput!) {
-        updateMeeting(input: $input) {
-            meetingId
-            clientId
-            meetingDate
-            mtgCompIndex
-            mtgCompKey
-            announcementsContact
-            attendanceCount
-            avContact
-            cafeContact
-            cafeCount
-            childrenContact
-            childrenCount
-            cleanupContact
-            closingContact
-            donations
-            facilitatorContact
-            greeterContact1
-            greeterContact2
-            meal
-            mealContact
-            mealCount
-            meetingType
-            newcomersCount
-            notes
-            nurseryContact
-            nurseryCount
-            resourceContact
-            securityContact
-            setupContact
-            supportContact
-            title
-            transportationContact
-            transportationCount
-            worship
-            youthContact
-            youthCount
-        }
-    }
-`;
-export const deleteMeeting = /* GraphQL */ `
-    mutation DeleteMeeting($input: DeleteMeetingInput!) {
-        deleteMeeting(input: $input) {
-            meetingId
-            clientId
-            meetingDate
-            mtgCompIndex
-            mtgCompKey
-            announcementsContact
-            attendanceCount
-            avContact
-            cafeContact
-            cafeCount
-            childrenContact
-            childrenCount
-            cleanupContact
-            closingContact
-            donations
-            facilitatorContact
-            greeterContact1
-            greeterContact2
-            meal
-            mealContact
-            mealCount
-            meetingType
-            newcomersCount
-            notes
-            nurseryContact
-            nurseryCount
-            resourceContact
-            securityContact
-            setupContact
-            supportContact
-            title
-            transportationContact
-            transportationCount
-            worship
-            youthContact
-            youthCount
-        }
-    }
-`;
-export const createGroup = /* GraphQL */ `
-    mutation CreateGroup($input: CreateGroupInput!) {
-        createGroup(input: $input) {
-            groupId
-            clientId
-            grpCompKey
-            meetingId
-            attendance
-            cofacilitator
-            facilitator
-            gender
-            location
-            notes
-            title
-        }
-    }
-`;
-export const updateGroup = /* GraphQL */ `
-    mutation UpdateGroup($input: UpdateGroupInput!) {
-        updateGroup(input: $input) {
-            groupId
-            clientId
-            grpCompKey
-            meetingId
-            attendance
-            cofacilitator
-            facilitator
-            gender
-            location
-            notes
-            title
-        }
-    }
-`;
-export const deleteGroup = /* GraphQL */ `
-    mutation DeleteGroup($input: DeleteGroupInput!) {
-        deleteGroup(input: $input) {
-            groupId
-            clientId
-            grpCompKey
-            meetingId
-            attendance
-            cofacilitator
-            facilitator
-            gender
-            location
-            notes
-            title
+            appName
+            android_version
+            ios_version
+            version
+            defaultProfilePicture
+            logoPicture
+            createdAt
+            updatedAt
         }
     }
 `;

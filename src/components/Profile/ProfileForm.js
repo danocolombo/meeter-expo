@@ -58,6 +58,9 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             ? userProfile.location.street
             : '',
         city: userProfile?.location?.city ? userProfile.location.city : '',
+        stateProv: userProfile?.location?.stateProv
+            ? userProfile.location.stateProv
+            : '',
         postalCode: userProfile?.location?.postalCode
             ? userProfile?.location?.postalCode
             : '',
@@ -171,6 +174,12 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                 curInputValues = newValues;
                 return curInputValues;
             }
+            if (inputIdentifier === 'stateProv') {
+                let stateProv = enteredValue;
+                let newValues = { ...curInputValues, stateProv };
+                curInputValues = newValues;
+                return curInputValues;
+            }
             return {
                 ...curInputValues,
                 [inputIdentifier]: enteredValue,
@@ -237,7 +246,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
 
         const resultantProfile = {
             phone: values.phone,
-            birthday: birthDay,
+            birthday: birthDay.toISOString().slice(0, 10),
             shirt: values.shirt,
             picture: picture,
             location: {
@@ -252,7 +261,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         //      save the form to graphql
         //      ========================
         printObject(
-            'PF:277--> Profile Form done, resultantProfile:\n',
+            'PF:255--> Profile Form done, resultantProfile:\n',
             resultantProfile
         );
         handleUpdate(resultantProfile);
@@ -266,8 +275,6 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             aspect: [4, 3],
             quality: 1,
         });
-        console.log('file information...');
-        console.log(result);
 
         if (!result.canceled) {
             setProfilePicDetails(result.assets[0]);
@@ -275,7 +282,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         }
     };
 
-    printObject('PF:192__> values:', values);
+    printObject('PF:278__> values:', values);
     return (
         <>
             {/* {mutation.isLoading ? (
@@ -511,7 +518,10 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                                 onFocus={() => setIsStateFocus(true)}
                                 onBlur={() => setIsStateFocus(false)}
                                 onChange={(item) => {
-                                    setStateProv(item),
+                                    inputChangedHandler(
+                                        'stateProv',
+                                        item.value
+                                    ),
                                         //setStateValue(item.value);
                                         setIsStateFocus(false);
                                 }}
@@ -528,7 +538,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                                     fontSize: 24,
                                     color: 'black',
                                     height: 40,
-                                    width: 90,
+                                    width: 100,
                                     placeholder: 'Postal Code',
                                     style: { color: 'black' },
                                     fontWeight: '500',

@@ -1,48 +1,27 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Surface, useTheme, FAB } from 'react-native-paper';
 import DefaultGroupCard from '../components/Default.Group.Card';
 import { useSysContext } from '../contexts/SysContext';
+import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
-const DefaultGroups = [
-    {
-        id: '834f0f09-f98d-42e7-a78c-dcca56sje82b',
-        gender: 'x',
-        title: 'Newcomers',
-        location: 'Main',
-        facilitator: 'Dick & Jane',
-    },
-    {
-        id: '67e30f09-f98d-42e7-a78c-dcca5j2ld-99a',
-        gender: 'f',
-        title: 'A-Z',
-        location: 'Room 9',
-        facilitator: 'Mary',
-    },
-    {
-        id: '9sw12hf09-f98d-42e7-a78c-dcca5f99f317',
-        gender: 'f',
-        title: 'Grief',
-        location: 'Room 1',
-        facilitator: 'Suz',
-    },
-    {
-        id: '3i8734f09-f98d-42e7-a78c-dcca88dm3di7',
-        gender: 'm',
-        title: 'A-Z',
-        location: 'Room 3',
-        facilitator: 'Jon',
-    },
-];
+import { printObject } from '../utils/helpers';
+
 const DefaultGroupsScreen = () => {
     const mtrTheme = useTheme();
-    const { meeter } = useSysContext();
+    const { meeter, defaultGroups } = useSysContext();
+    const { userProfile } = useUserContext();
+    const [groups, setGroups] = useState([]);
+    useEffect(() => {
+        setGroups(defaultGroups);
+    }, []);
+
     const handleNewRequest = () => {
         Alert.alert('NEW REQUEST');
         //navigation.navigate('MeetingNew');
     };
-
+    printObject('DGS:49-->groups:\n', groups);
     return (
         <SafeAreaView
             style={[
@@ -65,11 +44,11 @@ const DefaultGroupsScreen = () => {
                     The following meetings can be dynamically added to meetings.
                 </Text>
             </View>
-            {DefaultGroups && (
+            {groups && (
                 <>
-                    {DefaultGroups && (
+                    {groups && (
                         <FlatList
-                            data={DefaultGroups}
+                            data={groups}
                             keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
                                 <DefaultGroupCard group={item} active={true} />

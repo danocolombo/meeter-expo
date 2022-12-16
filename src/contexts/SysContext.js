@@ -10,8 +10,9 @@ const SysContext = createContext({});
 
 const SysContextProvider = ({ children }) => {
     const [meeter, setMeeter] = useState(null);
-
+    const [defaultGroups, setDefaultGroups] = useState([]);
     useEffect(() => {
+        getDefaultGroups();
         // DataStore.query(System).then(setMeeter);
     }, []);
     const sysSignOut = async () => {
@@ -45,9 +46,44 @@ const SysContextProvider = ({ children }) => {
             return;
         }
     };
+    const getDefaultGroups = async () => {
+        const DefaultGroups = [
+            {
+                id: '834f0f09-f98d-42e7-a78c-dcca56sje82b',
+                gender: 'x',
+                title: 'Newcomers',
+                location: 'Main',
+                facilitator: 'Dick & Jane',
+            },
+            {
+                id: '67e30f09-f98d-42e7-a78c-dcca5j2ld-99a',
+                gender: 'f',
+                title: 'A-Z',
+                location: 'Room 9',
+                facilitator: 'Mary',
+            },
+            {
+                id: '9sw12hf09-f98d-42e7-a78c-dcca5f99f317',
+                gender: 'f',
+                title: 'Grief',
+                location: 'Room 1',
+                facilitator: 'Suz',
+            },
+            {
+                id: '3i8734f09-f98d-42e7-a78c-dcca88dm3di7',
+                gender: 'm',
+                title: 'A-Z',
+                location: 'Room 3',
+                facilitator: 'Jon',
+            },
+        ];
+        setDefaultGroups(DefaultGroups);
+    };
     //printObject('AuthContext-->authUser:', authUser);
     return (
-        <SysContext.Provider value={{ meeter, loadSystem, sysSignOut }}>
+        <SysContext.Provider
+            value={{ meeter, loadSystem, sysSignOut, defaultGroups }}
+        >
             {children}
         </SysContext.Provider>
     );

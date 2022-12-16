@@ -32,6 +32,10 @@ const CustomButton = ({
             cStyle = 'container_CANCEL';
             tStyle = 'text_CANCEL';
             break;
+        case 'STANDARD':
+            cStyle = 'container_STANDARD';
+            tStyle = 'text_STANDARD';
+            break;
         default:
             break;
     }
@@ -83,6 +87,10 @@ const styles = StyleSheet.create({
     },
     container_DELETE: {},
     container_TERTIARY: {},
+    container_STANDARD: {
+        minWidth: 120,
+    },
+    text_STANDARD: {},
     text: {
         color: 'white',
         fontWeight: '700',

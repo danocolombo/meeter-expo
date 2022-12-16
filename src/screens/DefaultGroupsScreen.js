@@ -1,27 +1,46 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import * as queries from '../jerichoQL/queries';
+import { API } from 'aws-amplify';
+import { useNavigation } from '@react-navigation/native';
 import { Surface, useTheme, FAB } from 'react-native-paper';
-import DefaultGroupCard from '../components/Default.Group.Card';
+import DefaultGroupCard from '../components/groups/Default.Group.Card';
 import { useSysContext } from '../contexts/SysContext';
 import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { printObject } from '../utils/helpers';
+import Navigation from '../navigation/Navigation';
 
 const DefaultGroupsScreen = () => {
     const mtrTheme = useTheme();
+    const navigation = useNavigation();
     const { meeter, defaultGroups } = useSysContext();
     const { userProfile } = useUserContext();
     const [groups, setGroups] = useState([]);
     useEffect(() => {
-        setGroups(defaultGroups);
+        getDefaultGroups().then(() => {
+            console.log('DONE');
+        });
     }, []);
-
+    async function getDefaultGroups() {
+        try {
+            const systemInfo = await API.graphql({
+                query: queries.getOrganizationDefaultGroups,
+                variables: { id: userProfile.activeOrg.id },
+            });
+            printObject('DGS:27-->systemInfo response:\n', systemInfo);
+            const defaultGroups =
+                systemInfo.data.getOrganization.defaultGroups.items;
+            setGroups(defaultGroups);
+        } catch (error) {
+            printObject('DGS:30-->systemInfo TryCatch failure:\n', error);
+            return;
+        }
+    }
     const handleNewRequest = () => {
-        Alert.alert('NEW REQUEST');
-        //navigation.navigate('MeetingNew');
+        navigation.navigate('DGModal');
     };
-    printObject('DGS:49-->groups:\n', groups);
     return (
         <SafeAreaView
             style={[
@@ -64,7 +83,7 @@ const DefaultGroupsScreen = () => {
                     fgColor='white'
                     type='PRIMARY'
                     enabled='true'
-                    onPress={() => {}}
+                    onPress={() => handleNewRequest()}
                 />
             </View>
         </SafeAreaView>

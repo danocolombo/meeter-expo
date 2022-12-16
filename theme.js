@@ -167,6 +167,13 @@ const theme = {
     //   ----------------------------
     defaultGroupScreenSafeArea: {
         flex: 1,
+    },
+
+    //   ----------------------------
+    //   PROFILE FORM
+    //   ----------------------------
+    defaultGroupModalContainer: {
+        flex: 1,
         backgroundColor: primaryColor,
     },
     //   ----------------------------

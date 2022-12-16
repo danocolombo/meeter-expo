@@ -43,6 +43,7 @@ import { useDispatch } from 'react-redux';
 // import ProfilePicModal from '../screens/ProfilePicModal';
 import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
 import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
+import DGModalScreen from '../components/modals/DefaultGroup.modal';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub, Cache } from 'aws-amplify';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
@@ -74,7 +75,19 @@ function MeeterStack(props) {
                     headerTintColor: 'white',
                 })}
             />
-
+            <Stack.Group screenOptions={{ presentation: 'modal' }}>
+                <Stack.Screen
+                    name='DGModal'
+                    component={DGModalScreen}
+                    options={({ navigation }) => ({
+                        title: meeter?.appName,
+                        headerStyle: {
+                            backgroundColor: mtrTheme.colors.background,
+                        },
+                        headerTintColor: 'white',
+                    })}
+                />
+            </Stack.Group>
             <Stack.Screen
                 name='MeetingEdit'
                 component={MeetingDetailsEditScreen}

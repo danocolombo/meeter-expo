@@ -16,9 +16,12 @@ import {
     Platform,
     AppState,
 } from 'react-native';
+import { API } from 'aws-amplify';
+import * as queries from '../jerichoQL/queries';
 import { useQuery } from '@tanstack/react-query';
 import { focusManager } from '@tanstack/react-query';
 // import * as Application from 'expo-application';
+import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -43,6 +46,7 @@ import {
     useTheme,
     Badge,
     ActivityIndicator,
+    FAB,
 } from 'react-native-paper';
 import {
     printObject,
@@ -53,22 +57,25 @@ import { FetchMeeting } from '../components/common/hooks/meetingQueries';
 import { FetchGroups } from '../components/common/hooks/groupQueries';
 import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
+import { useUserContext } from '../contexts/UserContext';
 //   FUNCTION START
 //   ==============
 const MeetingDetails = (props) => {
     const meetingId = props.route.params.meetingId;
     const mtrTheme = useTheme();
-
+    const { userProfile } = useUserContext();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const [displayGroups, setDisplayGroups] = useState([]);
+    const [groups, setGroups] = useState([]);
     const meeter = useSelector((state) => state.system);
     const navigation = useNavigation();
     const uns = useNavigationState((state) => state);
     let historic = false;
 
     let meeting = {};
-    const { width } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
+
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
@@ -98,6 +105,20 @@ const MeetingDetails = (props) => {
             });
         }
     }, [navigation, meeter]);
+    async function getDefaultGroups() {
+        try {
+            const systemInfo = await API.graphql({
+                query: queries.getOrganizationDefaultGroups,
+                variables: { id: userProfile.activeOrg.id },
+            });
+            const defaultGroups =
+                systemInfo.data.getOrganization.defaultGroups.items;
+            setGroups(defaultGroups);
+        } catch (error) {
+            printObject('DGS:116-->systemInfo TryCatch failure:\n', error);
+            return;
+        }
+    }
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
@@ -111,6 +132,7 @@ const MeetingDetails = (props) => {
             );
             MEETING.refetch();
             GROUPS.refetch();
+            getDefaultGroups();
             printObject('MDS:113-->REFETCH', null);
 
             return () => subscription.remove();
@@ -131,6 +153,9 @@ const MeetingDetails = (props) => {
         cacheTime: 2000,
         enabled: true,
     });
+    const handleAddDefaults = () => {
+        Alert.alert('ADD DEFAULT GROUPS');
+    };
     //if (data) {
     if (MEETING.data) {
         // printObject('DATA to use:', MEETING.data);
@@ -163,7 +188,6 @@ const MeetingDetails = (props) => {
     if (meeting) {
         historic = isDateDashBeforeToday(meeting.meetingDate);
     }
-
     return (
         <>
             <Surface style={styles.surface}>
@@ -171,6 +195,16 @@ const MeetingDetails = (props) => {
                     <Text style={mtrTheme.screenTitle}>
                         {meeting?.meetingType}
                     </Text>
+                    {meeter.userRole !== 'guest' && groups.length > 0 && (
+                        <FAB
+                            icon='account-group'
+                            style={[
+                                styles.FAB,
+                                { bottom: -Math.abs(height) * 0.75 },
+                            ]}
+                            onPress={handleAddDefaults}
+                        />
+                    )}
                 </View>
                 <View style={styles.firstRow}>
                     <View style={styles.dateWrapper}>
@@ -393,5 +427,11 @@ const styles = StyleSheet.create({
 
     dateWrapper: {
         margin: 5,
+    },
+    FAB: {
+        position: 'absolute',
+        margin: 0,
+        right: 20,
+        backgroundColor: 'green',
     },
 });

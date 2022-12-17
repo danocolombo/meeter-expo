@@ -11,7 +11,6 @@ import CustomButton from '../components/ui/CustomButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as mutations from '../jerichoQL/mutations';
 import { printObject } from '../utils/helpers';
-import Navigation from '../navigation/Navigation';
 
 const DefaultGroupsScreen = () => {
     const mtrTheme = useTheme();
@@ -49,7 +48,7 @@ const DefaultGroupsScreen = () => {
                 systemInfo.data.getOrganization.defaultGroups.items;
             setGroups(defaultGroups);
         } catch (error) {
-            printObject('DGS:30-->systemInfo TryCatch failure:\n', error);
+            printObject('DGS:52-->systemInfo TryCatch failure:\n', error);
             return;
         }
     }
@@ -86,10 +85,11 @@ const DefaultGroupsScreen = () => {
                     paddingVertical: 10,
                     paddingHorizontal: 50,
                     marginBottom: 10,
+                    marginHorizontal: 30,
                 }}
             >
                 <Text style={mtrTheme.subTitleSmall}>
-                    The following meetings can be dynamically added to meetings.
+                    Default meetings can be dynamically added to meetings.
                 </Text>
             </View>
             {groups && (
@@ -111,7 +111,7 @@ const DefaultGroupsScreen = () => {
             )}
             <View style={{ marginHorizontal: 20 }}>
                 <CustomButton
-                    text='ADD NEW GROUP'
+                    text='ADD DEFAULT GROUP'
                     bgColor={mtrTheme.colors.success}
                     fgColor='white'
                     type='PRIMARY'

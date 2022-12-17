@@ -192,6 +192,13 @@ function MeeterStack(props) {
                     ),
                 })}
                 component={ProfileScreen}
+                options={({ navigation }) => ({
+                    title: meeter?.appName,
+                    headerStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+                    headerTintColor: 'white',
+                })}
             />
             <Stack.Screen
                 name='Logout'

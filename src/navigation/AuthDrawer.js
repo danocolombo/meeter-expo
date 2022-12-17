@@ -51,7 +51,7 @@ const AuthDrawer = (navigation) => {
         <Drawer.Navigator
             screenOptions={({ navigation }) => ({
                 headerStyle: {
-                    backgroundColor: 'black',
+                    backgroundColor: mtrTheme.colors.background,
                 },
                 headerTintColor: 'white',
                 tabBarStyle: {

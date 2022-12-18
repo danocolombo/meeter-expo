@@ -43,6 +43,7 @@ const GroupListCard = ({ group, meeting }) => {
                             <View
                                 style={{
                                     paddingHorizontal: 15,
+                                    width: '100%',
                                     paddingVertical: 10,
                                 }}
                             >
@@ -69,49 +70,57 @@ const GroupListCard = ({ group, meeting }) => {
                                         </Text>
                                     )}
                                 </View>
-                                {group.location && (
-                                    <View>
-                                        <Text
-                                            style={mtrTheme.groupListCardText}
-                                        >
-                                            {group.location}
-                                        </Text>
-                                    </View>
-                                )}
-                                {group.facilitator && (
-                                    <View>
-                                        <Text
-                                            style={mtrTheme.groupListCardText}
-                                        >
-                                            {group.facilitator}
-                                        </Text>
-                                    </View>
-                                )}
-                                {group.cofacilitator && (
-                                    <View>
-                                        <Text
-                                            style={mtrTheme.groupListCardText}
-                                        >
-                                            {group.cofacilitator}
-                                        </Text>
-                                    </View>
-                                )}
-                            </View>
-                            <View
-                                style={{
-                                    marginLeft: 'auto',
-                                    marginRight: 10,
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <Badge
-                                    size={30}
-                                    style={
-                                        mtrTheme.groupListCardAttendanceBadge
-                                    }
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                    }}
                                 >
-                                    {group.attendance}
-                                </Badge>
+                                    {group.location && (
+                                        <View>
+                                            <Text
+                                                style={
+                                                    mtrTheme.groupListCardText
+                                                }
+                                            >
+                                                {group.location}
+                                            </Text>
+                                        </View>
+                                    )}
+                                    {group.facilitator && (
+                                        <View>
+                                            <Text
+                                                style={
+                                                    mtrTheme.groupListCardText
+                                                }
+                                            >
+                                                {group.facilitator}
+                                            </Text>
+                                        </View>
+                                    )}
+                                    {group.cofacilitator && (
+                                        <View>
+                                            <Text
+                                                style={
+                                                    mtrTheme.groupListCardText
+                                                }
+                                            >
+                                                {group.cofacilitator}
+                                            </Text>
+                                        </View>
+                                    )}
+                                    <View>
+                                        <Badge
+                                            size={30}
+                                            style={
+                                                mtrTheme.groupListCardAttendanceBadge
+                                            }
+                                        >
+                                            {group.attendance}
+                                        </Badge>
+                                    </View>
+                                </View>
                             </View>
                         </View>
                     </View>

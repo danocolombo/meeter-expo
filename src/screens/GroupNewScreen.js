@@ -175,6 +175,7 @@ const GroupNewScreen = ({ route, navigation }) => {
     }
     const mutation = useMutation({
         mutationFn: (values) => {
+            printObject('GNS:178-->values:\n', values);
             return (
                 PutGroup(values),
                 {

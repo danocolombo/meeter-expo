@@ -70,11 +70,24 @@ const DefaultGroupsScreen = () => {
         navigation.navigate('DGModal');
     };
     return (
-        <SafeAreaView
-            style={[
-                mtrTheme.defaultGroupScreenSafeArea,
-                { backgroundColor: mtrTheme.colors.background },
-            ]}
+        // <SafeAreaView
+        //     style={[
+        //         mtrTheme.defaultGroupScreenSafeArea,
+        //         {
+        //             flexDirection: 'column',
+        //             backgroundColor: mtrTheme.colors.background,
+        //             justifyContent: 'flex-start',
+        //             borderWidth: 1,
+        //             borderColor: 'yellow',
+        //         },
+        //     ]}
+        // >
+        <View
+            style={{
+                backgroundColor: mtrTheme.colors.background,
+
+                flex: 1,
+            }}
         >
             <View>
                 <Text style={mtrTheme.screenTitle}>DEFAULT MEETINGS</Text>
@@ -109,7 +122,7 @@ const DefaultGroupsScreen = () => {
                     )}
                 </>
             )}
-            <View style={{ marginHorizontal: 20 }}>
+            <View style={{ marginHorizontal: 20, paddingBottom: 20 }}>
                 <CustomButton
                     text='ADD DEFAULT GROUP'
                     bgColor={mtrTheme.colors.success}
@@ -119,7 +132,8 @@ const DefaultGroupsScreen = () => {
                     onPress={() => handleNewRequest()}
                 />
             </View>
-        </SafeAreaView>
+        </View>
+        // </SafeAreaView>
     );
 };
 

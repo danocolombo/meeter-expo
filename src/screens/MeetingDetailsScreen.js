@@ -24,6 +24,7 @@ import { focusManager } from '@tanstack/react-query';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
+import { PutGroup } from '../components/common/hooks/groupQueries';
 import {
     useNavigation,
     useIsFocused,
@@ -58,15 +59,16 @@ import { FetchGroups } from '../components/common/hooks/groupQueries';
 import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { useUserContext } from '../contexts/UserContext';
+import CustomButton from '../components/ui/CustomButton';
 //   FUNCTION START
 //   ==============
 const MeetingDetails = (props) => {
     const meetingId = props.route.params.meetingId;
     const mtrTheme = useTheme();
     const { userProfile } = useUserContext();
+    const [showDefaultsButton, setShowDefaultButton] = useState(true);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const [displayGroups, setDisplayGroups] = useState([]);
     const [groups, setGroups] = useState([]);
     const meeter = useSelector((state) => state.system);
     const navigation = useNavigation();
@@ -114,6 +116,7 @@ const MeetingDetails = (props) => {
             const defaultGroups =
                 systemInfo.data.getOrganization.defaultGroups.items;
             setGroups(defaultGroups);
+            setShowDefaultButton(true);
         } catch (error) {
             printObject('DGS:116-->systemInfo TryCatch failure:\n', error);
             return;
@@ -153,8 +156,37 @@ const MeetingDetails = (props) => {
         cacheTime: 2000,
         enabled: true,
     });
-    const handleAddDefaults = () => {
-        Alert.alert('ADD DEFAULT GROUPS');
+    const handleAddDefaults = async () => {
+        // console.log('handleAddDefaults');
+        printObject('MDS:160-->meeting:\n', meeting);
+        //todo: list the default groups...
+        groups.map((group) => {
+            console.log('group.id:', group.id);
+            const values = {
+                meetingId: meetingId,
+                groupId: '0',
+                gender: group.gender,
+                title: group.title,
+                attendance: 0,
+                location: group?.location ? group?.location : '',
+                grpCompKey: meeting.mtgCompKey,
+                facilitator: group?.facilitator ? group.facilitator : '',
+                cofacilitator: '',
+                notes: '',
+            };
+            PutGroup(values)
+                .then((results) => {
+                    printObject('MDS:177-->PutGroup results:\n', results);
+                })
+                .catch((error) => {
+                    printObject('MDS:177-->PutGroup error:', error);
+                });
+            printObject('MDS:173-->values:', values);
+        });
+        //todo: forEach default groups
+        //      only let them add one time.
+        GROUPS.refetch();
+        setShowDefaultButton(false);
     };
     //if (data) {
     if (MEETING.data) {
@@ -195,16 +227,6 @@ const MeetingDetails = (props) => {
                     <Text style={mtrTheme.screenTitle}>
                         {meeting?.meetingType}
                     </Text>
-                    {meeter.userRole !== 'guest' && groups.length > 0 && (
-                        <FAB
-                            icon='account-group'
-                            style={[
-                                styles.FAB,
-                                { bottom: -Math.abs(height) * 0.75 },
-                            ]}
-                            onPress={handleAddDefaults}
-                        />
-                    )}
                 </View>
                 <View style={styles.firstRow}>
                     <View style={styles.dateWrapper}>
@@ -390,6 +412,17 @@ const MeetingDetails = (props) => {
                         </Text>
                     </View>
                 )}
+                {meeter.userRole !== 'guest' &&
+                    groups.length > 0 &&
+                    showDefaultsButton && (
+                        <CustomButton
+                            text='Add Default Groups'
+                            bgColor='blue'
+                            fgColor={'white'}
+                            type='STANDARD'
+                            onPress={handleAddDefaults}
+                        />
+                    )}
                 {/* <GroupList meetingId={meetingId} /> */}
                 {/* <View>
                     (GROUPS.data &&

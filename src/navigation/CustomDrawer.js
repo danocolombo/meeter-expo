@@ -35,7 +35,11 @@ const CustomDrawer = (props) => {
     async function checkUserRole() {
         try {
             console.log('CD:37-->role', userProfile?.activeOrg?.role);
-            setUserRole(userProfile?.activeOrg?.role);
+            if (userProfile?.activeOrg?.role) {
+                setUserRole(userProfile?.activeOrg?.role);
+            } else {
+                setUserRole('guest');
+            }
         } catch (error) {
             console.log('CD:39-->error checkUserRole');
         }

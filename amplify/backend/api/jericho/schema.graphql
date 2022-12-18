@@ -26,6 +26,7 @@ type User @model {
     picture: String
     affiliations: [Affiliation] @hasMany
     location: Location @belongsTo
+    manages: [Organization] @manyToMany(relationName: "ManageOrganization")
 }
 
 type Affiliation @model {
@@ -45,6 +46,7 @@ type Organization @model {
     defaultUsers: [User] @hasMany
     heroMessage: String
     defaultGroups: [DefaultGroup] @hasMany
+    managers: [User] @manyToMany(relationName: "ManageOrganization")
 }
 
 type Location @model {

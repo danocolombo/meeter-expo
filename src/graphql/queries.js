@@ -32,6 +32,9 @@ export const getDefaultGroup = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -107,6 +110,9 @@ export const getUser = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -138,6 +144,16 @@ export const getUser = /* GraphQL */ `
         }
         createdAt
         updatedAt
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       createdAt
       updatedAt
@@ -184,6 +200,9 @@ export const listUsers = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+        }
+        manages {
+          nextToken
         }
         createdAt
         updatedAt
@@ -232,6 +251,9 @@ export const getAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        manages {
+          nextToken
+        }
         createdAt
         updatedAt
         organizationDefaultUsersId
@@ -258,6 +280,9 @@ export const getAffiliation = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -382,6 +407,16 @@ export const getOrganization = /* GraphQL */ `
         }
         nextToken
       }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
       locationOrganizationsId
@@ -416,6 +451,9 @@ export const listOrganizations = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -533,6 +571,134 @@ export const listSystems = /* GraphQL */ `
     }
   }
 `;
+export const getManageOrganization = /* GraphQL */ `
+  query GetManageOrganization($id: ID!) {
+    getManageOrganization(id: $id) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          nextToken
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        manages {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
+          nextToken
+        }
+        managers {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listManageOrganizations = /* GraphQL */ `
+  query ListManageOrganizations(
+    $filter: ModelManageOrganizationFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listManageOrganizations(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        userId
+        organizationId
+        user {
+          id
+          sub
+          username
+          firstName
+          lastName
+          email
+          phone
+          shirt
+          birthday
+          picture
+          createdAt
+          updatedAt
+          organizationDefaultUsersId
+          locationUsersId
+        }
+        organization {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
 export const usersBySub = /* GraphQL */ `
   query UsersBySub(
     $sub: String!
@@ -580,10 +746,115 @@ export const usersBySub = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        manages {
+          nextToken
+        }
         createdAt
         updatedAt
         organizationDefaultUsersId
         locationUsersId
+      }
+      nextToken
+    }
+  }
+`;
+export const manageOrganizationsByUserId = /* GraphQL */ `
+  query ManageOrganizationsByUserId(
+    $userId: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelManageOrganizationFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    manageOrganizationsByUserId(
+      userId: $userId
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        userId
+        organizationId
+        user {
+          id
+          sub
+          username
+          firstName
+          lastName
+          email
+          phone
+          shirt
+          birthday
+          picture
+          createdAt
+          updatedAt
+          organizationDefaultUsersId
+          locationUsersId
+        }
+        organization {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const manageOrganizationsByOrganizationId = /* GraphQL */ `
+  query ManageOrganizationsByOrganizationId(
+    $organizationId: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelManageOrganizationFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    manageOrganizationsByOrganizationId(
+      organizationId: $organizationId
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        userId
+        organizationId
+        user {
+          id
+          sub
+          username
+          firstName
+          lastName
+          email
+          phone
+          shirt
+          birthday
+          picture
+          createdAt
+          updatedAt
+          organizationDefaultUsersId
+          locationUsersId
+        }
+        organization {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        createdAt
+        updatedAt
       }
       nextToken
     }

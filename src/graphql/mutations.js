@@ -35,6 +35,9 @@ export const createDefaultGroup = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -79,6 +82,9 @@ export const updateDefaultGroup = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -121,6 +127,9 @@ export const deleteDefaultGroup = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -171,6 +180,9 @@ export const createUser = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -202,6 +214,16 @@ export const createUser = /* GraphQL */ `
         }
         createdAt
         updatedAt
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       createdAt
       updatedAt
@@ -248,6 +270,9 @@ export const updateUser = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -279,6 +304,16 @@ export const updateUser = /* GraphQL */ `
         }
         createdAt
         updatedAt
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       createdAt
       updatedAt
@@ -325,6 +360,9 @@ export const deleteUser = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -356,6 +394,16 @@ export const deleteUser = /* GraphQL */ `
         }
         createdAt
         updatedAt
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       createdAt
       updatedAt
@@ -405,6 +453,9 @@ export const createAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        manages {
+          nextToken
+        }
         createdAt
         updatedAt
         organizationDefaultUsersId
@@ -431,6 +482,9 @@ export const createAffiliation = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -485,6 +539,9 @@ export const updateAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        manages {
+          nextToken
+        }
         createdAt
         updatedAt
         organizationDefaultUsersId
@@ -511,6 +568,9 @@ export const updateAffiliation = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -565,6 +625,9 @@ export const deleteAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        manages {
+          nextToken
+        }
         createdAt
         updatedAt
         organizationDefaultUsersId
@@ -591,6 +654,9 @@ export const deleteAffiliation = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -673,6 +739,16 @@ export const createOrganization = /* GraphQL */ `
         }
         nextToken
       }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
       locationOrganizationsId
@@ -748,6 +824,16 @@ export const updateOrganization = /* GraphQL */ `
         }
         nextToken
       }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
       locationOrganizationsId
@@ -820,6 +906,16 @@ export const deleteOrganization = /* GraphQL */ `
           createdAt
           updatedAt
           organizationDefaultGroupsId
+        }
+        nextToken
+      }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
         }
         nextToken
       }
@@ -1019,6 +1115,258 @@ export const deleteSystem = /* GraphQL */ `
       version
       defaultProfilePicture
       logoPicture
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createManageOrganization = /* GraphQL */ `
+  mutation CreateManageOrganization(
+    $input: CreateManageOrganizationInput!
+    $condition: ModelManageOrganizationConditionInput
+  ) {
+    createManageOrganization(input: $input, condition: $condition) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          nextToken
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        manages {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
+          nextToken
+        }
+        managers {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateManageOrganization = /* GraphQL */ `
+  mutation UpdateManageOrganization(
+    $input: UpdateManageOrganizationInput!
+    $condition: ModelManageOrganizationConditionInput
+  ) {
+    updateManageOrganization(input: $input, condition: $condition) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          nextToken
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        manages {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
+          nextToken
+        }
+        managers {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteManageOrganization = /* GraphQL */ `
+  mutation DeleteManageOrganization(
+    $input: DeleteManageOrganizationInput!
+    $condition: ModelManageOrganizationConditionInput
+  ) {
+    deleteManageOrganization(input: $input, condition: $condition) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          nextToken
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        manages {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
+          nextToken
+        }
+        managers {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+      }
       createdAt
       updatedAt
     }

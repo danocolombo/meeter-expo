@@ -28,24 +28,41 @@ const AuthContextProvider = ({ children }) => {
                 query: queries.usersBySub,
                 variables: { sub: sub },
             });
-            const gqlProfile = gqlProfileData.data.usersBySub.items[0];
-            //      set activeOrg based on profile defaultOrg and affiliations
-            const clientData = gqlProfile.affiliations.items.filter(
-                (a) => a.organization.id === gqlProfile.defaultOrg.id
-            );
-            const client = clientData[0];
-            const activeOrg = {
-                id: client.organization.id,
-                code: client.organization.code,
-                name: client.organization.name,
-                heroMessage: client.organization.heroMessage,
-                role: client.role,
-                status: client.status,
-            };
-            const updatedProfile = { ...gqlProfile, activeOrg };
-            return updatedProfile;
-            //todo: what does it look like when new user and no profile?
-            //todo------------------------------------------------------
+            printObject('AC:31-->gqlProfileData:\n', gqlProfileData);
+            //*****************************************
+            //* check if user has proflile
+            //*****************************************
+            if (gqlProfileData?.data?.usersBySub?.items[0]?.id) {
+                const gqlProfile = gqlProfileData.data.usersBySub.items[0];
+                //      set activeOrg based on profile defaultOrg and affiliations
+                const clientData = gqlProfile.affiliations.items.filter(
+                    (a) => a.organization.id === gqlProfile.defaultOrg.id
+                );
+                const client = clientData[0];
+                const activeOrg = {
+                    id: client.organization.id,
+                    code: client.organization.code,
+                    name: client.organization.name,
+                    heroMessage: client.organization.heroMessage,
+                    role: client.role,
+                    status: client.status,
+                };
+                const updatedProfile = { ...gqlProfile, activeOrg };
+                return updatedProfile;
+            } else {
+                //todo: what does it look like when new user and no profile?
+                //todo------------------------------------------------------
+                const activeOrg = {
+                    id: MEETER_DEFAULTS.ORGANIZATION_ID,
+                    code: MEETER_DEFAULTS.CODE,
+                    name: MEETER_DEFAULTS.NAME,
+                    heroMessage: MEETER_DEFAULTS.HERO_MESSAGE,
+                    role: 'guest',
+                    status: 'active',
+                };
+                const updatedProfile = { activeOrg };
+                return updatedProfile;
+            }
         } catch (error) {
             printObject('AC:34-->theUserInfo TryCatch failure:\n', error);
             return;

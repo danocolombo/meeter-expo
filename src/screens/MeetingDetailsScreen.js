@@ -77,13 +77,16 @@ const MeetingDetails = (props) => {
 
     let meeting = {};
     const { width, height } = useWindowDimensions();
-
+    printObject('MDS:80-->userProfile:\n', userProfile);
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
             headerLabelColor = 'white';
         }
-        if (meeter.userRole !== 'guest') {
+        if (
+            userProfile.activeOrg.role === 'manage' ||
+            userProfile.activeOrg.role === 'meals'
+        ) {
             navigation.setOptions({
                 title: meeter.appName,
                 headerBackTitle: 'Back',
@@ -363,7 +366,7 @@ const MeetingDetails = (props) => {
                         >
                             Open-Share Groups
                         </Text>
-                        {meeter.userRole !== 'guest' && (
+                        {userProfile.activeOrg.role === 'manage' && (
                             <View
                                 style={{
                                     justifyContent: 'center',
@@ -410,7 +413,7 @@ const MeetingDetails = (props) => {
                         </Text>
                     </View>
                 )}
-                {meeter.userRole !== 'guest' &&
+                {userProfile.activeOrg.role === 'manage' &&
                     groups.length > 0 &&
                     showDefaultsButton && (
                         <CustomButton

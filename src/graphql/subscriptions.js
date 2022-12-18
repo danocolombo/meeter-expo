@@ -34,6 +34,9 @@ export const onCreateDefaultGroup = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -77,6 +80,9 @@ export const onUpdateDefaultGroup = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -118,6 +124,9 @@ export const onDeleteDefaultGroup = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -165,6 +174,9 @@ export const onCreateUser = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -196,6 +208,16 @@ export const onCreateUser = /* GraphQL */ `
         }
         createdAt
         updatedAt
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       createdAt
       updatedAt
@@ -239,6 +261,9 @@ export const onUpdateUser = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -270,6 +295,16 @@ export const onUpdateUser = /* GraphQL */ `
         }
         createdAt
         updatedAt
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       createdAt
       updatedAt
@@ -313,6 +348,9 @@ export const onDeleteUser = /* GraphQL */ `
         defaultGroups {
           nextToken
         }
+        managers {
+          nextToken
+        }
         createdAt
         updatedAt
         locationOrganizationsId
@@ -344,6 +382,16 @@ export const onDeleteUser = /* GraphQL */ `
         }
         createdAt
         updatedAt
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
       }
       createdAt
       updatedAt
@@ -392,6 +440,9 @@ export const onCreateAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        manages {
+          nextToken
+        }
         createdAt
         updatedAt
         organizationDefaultUsersId
@@ -418,6 +469,9 @@ export const onCreateAffiliation = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -471,6 +525,9 @@ export const onUpdateAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        manages {
+          nextToken
+        }
         createdAt
         updatedAt
         organizationDefaultUsersId
@@ -497,6 +554,9 @@ export const onUpdateAffiliation = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -550,6 +610,9 @@ export const onDeleteAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        manages {
+          nextToken
+        }
         createdAt
         updatedAt
         organizationDefaultUsersId
@@ -576,6 +639,9 @@ export const onDeleteAffiliation = /* GraphQL */ `
         }
         heroMessage
         defaultGroups {
+          nextToken
+        }
+        managers {
           nextToken
         }
         createdAt
@@ -657,6 +723,16 @@ export const onCreateOrganization = /* GraphQL */ `
         }
         nextToken
       }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
       locationOrganizationsId
@@ -731,6 +807,16 @@ export const onUpdateOrganization = /* GraphQL */ `
         }
         nextToken
       }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
       locationOrganizationsId
@@ -802,6 +888,16 @@ export const onDeleteOrganization = /* GraphQL */ `
           createdAt
           updatedAt
           organizationDefaultGroupsId
+        }
+        nextToken
+      }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
         }
         nextToken
       }
@@ -983,6 +1079,255 @@ export const onDeleteSystem = /* GraphQL */ `
       version
       defaultProfilePicture
       logoPicture
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateManageOrganization = /* GraphQL */ `
+  subscription OnCreateManageOrganization(
+    $filter: ModelSubscriptionManageOrganizationFilterInput
+  ) {
+    onCreateManageOrganization(filter: $filter) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          nextToken
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        manages {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
+          nextToken
+        }
+        managers {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateManageOrganization = /* GraphQL */ `
+  subscription OnUpdateManageOrganization(
+    $filter: ModelSubscriptionManageOrganizationFilterInput
+  ) {
+    onUpdateManageOrganization(filter: $filter) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          nextToken
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        manages {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
+          nextToken
+        }
+        managers {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteManageOrganization = /* GraphQL */ `
+  subscription OnDeleteManageOrganization(
+    $filter: ModelSubscriptionManageOrganizationFilterInput
+  ) {
+    onDeleteManageOrganization(filter: $filter) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+        }
+        picture
+        affiliations {
+          nextToken
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        manages {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+        }
+        affiliations {
+          nextToken
+        }
+        defaultUsers {
+          nextToken
+        }
+        heroMessage
+        defaultGroups {
+          nextToken
+        }
+        managers {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+      }
       createdAt
       updatedAt
     }

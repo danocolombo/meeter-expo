@@ -107,7 +107,7 @@ const ActiveScreen = () => {
             <Surface style={mtrTheme.screenSurface}>
                 <View>
                     <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
-                    {meeter.userRole !== 'guest' && (
+                    {meeter?.userRole === 'manage' && (
                         <FAB
                             icon='calendar-plus'
                             style={styles.FAB}

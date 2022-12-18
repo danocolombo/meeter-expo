@@ -148,21 +148,22 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
             headerBackTitle: 'Cancel',
             headerRight: () => (
                 <>
-                    {meeting.meetingId !== '0' && (
-                        <TouchableOpacity
-                            onPress={() =>
-                                navigation.navigate('DeleteConfirm', {
-                                    meeting: meeting,
-                                })
-                            }
-                        >
-                            <MaterialCommunityIcons
-                                name='delete-forever'
-                                size={30}
-                                color={mtrTheme.colors.critical}
-                            />
-                        </TouchableOpacity>
-                    )}
+                    {meeting.meetingId !== '0' &&
+                        userProfile.activeOrg.role === 'manage' && (
+                            <TouchableOpacity
+                                onPress={() =>
+                                    navigation.navigate('DeleteConfirm', {
+                                        meeting: meeting,
+                                    })
+                                }
+                            >
+                                <MaterialCommunityIcons
+                                    name='delete-forever'
+                                    size={30}
+                                    color={mtrTheme.colors.critical}
+                                />
+                            </TouchableOpacity>
+                        )}
                 </>
             ),
         });
@@ -209,6 +210,9 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
         setModalMeetingDateVisible(false);
     };
     const handleTypeChange = (value) => {
+        if (userProfile.activeOrg.role !== 'manage') {
+            return;
+        }
         const newValues = {
             ...values,
             meetingType: value,
@@ -291,7 +295,11 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                         </View>
                         <View style={mtrTheme.meetingEditFirstRow}>
                             <TouchableOpacity
-                                onPress={() => setModalMeetingDateVisible(true)}
+                                onPress={() =>
+                                    userProfile.activeOrg.role === 'manage'
+                                        ? setModalMeetingDateVisible(true)
+                                        : null
+                                }
                             >
                                 <View style={mtrTheme.meetingEditDateWrapper}>
                                     {Platform.OS === 'ios' && (
@@ -332,6 +340,11 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                                                 paddingHorizontal: 1,
                                                 fontSize: 24,
                                                 color: 'black',
+                                                editable:
+                                                    userProfile.activeOrg
+                                                        .role === 'manage'
+                                                        ? true
+                                                        : false,
                                                 marginHorizontal: 10,
                                                 placeholder: 'Lesson Title',
                                                 // style: { color: 'white' },
@@ -357,6 +370,11 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                                                 value: values.title,
                                                 paddingHorizontal: 1,
                                                 fontSize: 24,
+                                                editable:
+                                                    userProfile.activeOrg
+                                                        .role === 'manage'
+                                                        ? true
+                                                        : false,
                                                 color: 'black',
                                                 marginHorizontal: 10,
                                                 autoCapitalize: 'words',

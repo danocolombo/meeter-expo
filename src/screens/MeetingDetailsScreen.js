@@ -158,10 +158,9 @@ const MeetingDetails = (props) => {
     });
     const handleAddDefaults = async () => {
         // console.log('handleAddDefaults');
-        printObject('MDS:160-->meeting:\n', meeting);
-        //todo: list the default groups...
+        // printObject('MDS:160-->meeting:\n', meeting);
         groups.map((group) => {
-            console.log('group.id:', group.id);
+            // console.log('group.id:', group.id);
             const values = {
                 meetingId: meetingId,
                 groupId: '0',
@@ -176,14 +175,13 @@ const MeetingDetails = (props) => {
             };
             PutGroup(values)
                 .then((results) => {
-                    printObject('MDS:177-->PutGroup results:\n', results);
+                    // printObject('MDS:177-->PutGroup results:\n', results);
                 })
                 .catch((error) => {
-                    printObject('MDS:177-->PutGroup error:', error);
+                    printObject('MDS:182-->PutGroup error:', error);
                 });
-            printObject('MDS:173-->values:', values);
+            // printObject('MDS:173-->values:', values);
         });
-        //todo: forEach default groups
         //      only let them add one time.
         GROUPS.refetch();
         setShowDefaultButton(false);

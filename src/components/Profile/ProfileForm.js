@@ -3,8 +3,10 @@ import React, {
     useEffect,
     useLayoutEffect,
     useCallback,
+    useRef,
 } from 'react';
 import {
+    Modal,
     Image,
     StyleSheet,
     Text,
@@ -20,13 +22,20 @@ import { v4 as uuid } from 'uuid';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Dropdown } from 'react-native-element-dropdown';
-import { useTheme, FAB } from 'react-native-paper';
+import { useTheme, Surface, FAB } from 'react-native-paper';
 import { useUserContext } from '../../contexts/UserContext';
 import { useSysContext } from '../../contexts/SysContext';
 import CustomButton from '../ui/CustomButton';
+import { MaterialIcons } from '@expo/vector-icons';
 import Input from '../ui/Input';
 import { printObject, dateDashToDateObject } from '../../utils/helpers';
 import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
+//* CAMERA IMPORTS
+import { Camera, CameraType } from 'expo-camera';
+import { shareAsync } from 'expo-sharing';
+import * as MediaLibrary from 'expo-media-library';
+import Button from '../ui/IButton';
+import { ScreenStackHeaderBackButtonImage } from 'react-native-screens';
 
 //   FUNCTION START
 //   ===============
@@ -38,7 +47,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     const [modalBirthDateVisible, setModalBirthDateVisible] = useState(false);
     const [birthDay, setBirthday] = useState(new Date(userProfile.birthday));
     const mtrTheme = useTheme();
-    const { width } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
     //      the picture S3 reference
     const [profilePicRef, setProfilePicRef] = useState(null);
     //      the picture file
@@ -48,6 +57,18 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     const [stateProv, setStateProv] = useState(
         userProfile?.location?.stateProv || ''
     );
+    //* CAMERA VARIABLES
+    //************************* */
+    const [cameraImage, setCameraImage] = useState(null);
+    const [type, setType] = useState(CameraType.back);
+    const [flashMode, toggleFlashMode] = useState(
+        Camera.Constants.FlashMode.off
+    );
+    const [showCameraModal, setShowCameraModal] = useState(false);
+    let cameraRef = useRef();
+    const [hasCameraPermission, setHasCameraPermission] = useState();
+    const [hasMediaLibraryPermission, setHasMediaLibraryPermission] =
+        useState();
 
     const [values, setValues] = useState({
         uid: userProfile.id,
@@ -92,6 +113,65 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             setBirthday(dateObj);
         }, [])
     );
+    //* Camera Permissions and settings
+    async function getPermssions() {
+        const cameraPermission = await Camera.requestCameraPermissionsAsync();
+        const mediaLibraryPermission =
+            await MediaLibrary.requestPermissionsAsync();
+        printObject('cameraPermission:', cameraPermission);
+        if (cameraPermission.status === 'granted') {
+            console.log('CAMERA PERMISSION GRANTED');
+
+            //setHasCameraPermission(true);
+        }
+        // setHasCameraPermission(cameraPermission.status === 'granted');
+        printObject('mediaLibraryPermission:', mediaLibraryPermission);
+        if (mediaLibraryPermission.status === 'granted') {
+            console.log('MEDIA LIBRARY PERMISSION GRANTED');
+            setHasMediaLibraryPermission(true);
+            //     setHasMediaLibraryPermission(true);
+        }
+        // setHasMediaLibraryPermission(
+        //     mediaLibraryPermission.status === 'granted'
+        // );
+    }
+    useEffect(() => {
+        // getPermssions();
+        (async () => {
+            const cameraPermission =
+                await Camera.requestCameraPermissionsAsync();
+            const mediaLibraryPermission =
+                await MediaLibrary.requestPermissionsAsync();
+            setHasCameraPermission(cameraPermission.status === 'granted');
+            setHasMediaLibraryPermission(
+                mediaLibraryPermission.status === 'granted'
+            );
+        })();
+        //   return () => {
+        //     second
+        //}
+    }, []);
+    function toggleCameraType() {
+        setType((current) =>
+            current === CameraType.back ? CameraType.front : CameraType.back
+        );
+    }
+    // if (hasCameraPermission === undefined) {
+    //     return (
+    //         <View>
+    //             <Text>Rquesting camera permissions...</Text>
+    //         </View>
+    //     );
+    // } else if (!hasCameraPermission) {
+    //     return (
+    //         <View>
+    //             <Text>
+    //                 Permission for the camera not granted. Please change in
+    //                 settings.
+    //             </Text>
+    //         </View>
+    //     );
+    // }
     useEffect(() => {
         let picRef;
 
@@ -281,14 +361,78 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             setProfilePic(result.assets[0].uri);
         }
     };
-
+    const handlePictureClick = async () => {
+        //* ---------------------------------
+        //* take a picture
+        //* ---------------------------------
+        if (cameraRef) {
+            try {
+                const data = await cameraRef.current.takePictureAsync();
+                printObject('camera data:\n', data);
+                setCameraImage(data.uri);
+            } catch (error) {
+                printObject('Error taking picture', error);
+            }
+        }
+    };
     printObject('PF:278__> values:', values);
     return (
         <>
             {/* {mutation.isLoading ? (
                 'Adding meeting...'
             ) : ( */}
+            <Modal visible={showCameraModal} animationStyle='slide'>
+                <Surface style={styles.cameraContainer}>
+                    <View>
+                        <Text style={mtrTheme.meetingEditDeleteModalTitle}>
+                            Take a picture
+                        </Text>
+                    </View>
+                    <Camera
+                        style={styles.camera}
+                        type={type}
+                        flashMode={flashMode}
+                    >
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity
+                                style={styles.cameraButton}
+                                onPress={toggleCameraType}
+                            >
+                                <Text style={styles.text}>Flip Camera</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity
+                                style={styles.cameraButton}
+                                onPress={handlePictureClick}
+                            >
+                                <MaterialIcons
+                                    name='camera'
+                                    size={24}
+                                    color='white'
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </Camera>
+                    <View>
+                        <TouchableOpacity
+                            onPress={() => setShowCameraModal(false)}
+                        >
+                            <MaterialIcons
+                                name='camera'
+                                size={24}
+                                color='white'
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </Surface>
+            </Modal>
             <>
+                <View>
+                    <TouchableOpacity onPress={() => setShowCameraModal(true)}>
+                        <MaterialIcons name='camera' size={24} color='white' />
+                    </TouchableOpacity>
+                </View>
                 <View style={mtrTheme.profileImageContainer}>
                     <View>
                         <View style={mtrTheme.profileImageFrame}>
@@ -654,5 +798,28 @@ const styles = StyleSheet.create({
         //margin: 16,
         right: 0,
         bottom: 0,
+    },
+    cameraContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    camera: {
+        flex: 0.5,
+    },
+    buttonContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        backgroundColor: 'transparent',
+        margin: 64,
+    },
+    cameraButton: {
+        flex: 1,
+        alignSelf: 'flex-end',
+        alignItems: 'center',
+    },
+    text: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'white',
     },
 });

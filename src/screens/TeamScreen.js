@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 import {
     Button,
     Menu,
@@ -8,11 +8,12 @@ import {
     Provider,
 } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TEAM_MEMBERS } from '../../data/team-members';
 import { printObject } from '../utils/helpers';
-
+import TeamGroupCard from '../components/teams/Team.Group.Card';
 const TeamScreen = () => {
+    const [teamMembers, setTeamMembers] = useState([]);
     const [visible, setVisible] = useState(true);
     const openMenu1 = () => setVisible(true);
     const closeMenu1 = () => setVisible(false);
@@ -31,6 +32,9 @@ const TeamScreen = () => {
         setMenuAnchor(anchor);
         openMenu();
     };
+    useEffect(() => {
+        setTeamMembers(TEAM_MEMBERS.affiliations.items);
+    }, []);
 
     printObject('TEAM_MEMBERS:\n', TEAM_MEMBERS);
     return (
@@ -38,7 +42,21 @@ const TeamScreen = () => {
             <View>
                 <Text>TeamScreen</Text>
             </View>
-
+            {teamMembers && (
+                <>
+                    <FlatList
+                        data={teamMembers}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <TeamGroupCard
+                                team={item}
+                                active={true}
+                                handleDelete={() => {}}
+                            />
+                        )}
+                    />
+                </>
+            )}
             <Provider>
                 <View
                     style={{

@@ -113,7 +113,7 @@ const DefaultGroupsScreen = () => {
                             keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
                                 <DefaultGroupCard
-                                    team={item}
+                                    group={item}
                                     active={true}
                                     handleDelete={handleDeleteRequest}
                                 />

@@ -39,7 +39,7 @@ const UserContextProvider = ({ children }) => {
         const userData = {
             id: userProfile.id,
             phone: resultantProfile?.phone,
-            birthday: resultantProfile?.birthday,
+            birthday: resultantProfile?.birthday.slice(0, 10),
             shirt: resultantProfile?.shirt,
             picture: resultantProfile?.picture,
         };

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState, useContext } from 'react';
-import * as queries from '../graphql/queries';
+import * as queries from '../jerichoQL/queries';
 import { API } from 'aws-amplify';
 
 //import { DataStore } from '@aws-amplify/datastore';
@@ -11,9 +11,6 @@ const SysContext = createContext({});
 const SysContextProvider = ({ children }) => {
     const [meeter, setMeeter] = useState(null);
 
-    useEffect(() => {
-        // DataStore.query(System).then(setMeeter);
-    }, []);
     const sysSignOut = async () => {
         try {
             console.log('CHKCHKCHKCHK');
@@ -45,6 +42,7 @@ const SysContextProvider = ({ children }) => {
             return;
         }
     };
+
     //printObject('AuthContext-->authUser:', authUser);
     return (
         <SysContext.Provider value={{ meeter, loadSystem, sysSignOut }}>

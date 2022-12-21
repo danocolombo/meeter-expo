@@ -5,14 +5,15 @@ import {
     Pressable,
     Platform,
     Alert,
+    TouchableOpacity,
 } from 'react-native';
 import React, { useState } from 'react';
 import { useTheme, withTheme, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 // import MeetingCardDate from './ui/Meeting.Card.Date';
-import DateBall from './ui/DateBall';
-import DateStack from './ui/DateStack';
-import { printObject } from '../utils/helpers';
+import DateBall from '../ui/DateBall';
+import DateStack from '../ui/DateStack';
+import { printObject } from '../../utils/helpers';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 const DefaultGroupListCard = ({ group, active }) => {
     const navigation = useNavigation();
@@ -32,7 +33,13 @@ const DefaultGroupListCard = ({ group, active }) => {
     //printObject('mtrTheme:', mtrTheme);
     function groupPressHandler() {
         // if the user is registered, take them to registerForm
-        Alert.alert('PRESSED');
+        navigation.navigate('DGModal', {
+            id: group.id,
+            gender: group.gender,
+            title: group.title,
+            location: group.location,
+            facilitator: group.facilitator,
+        });
         // navigation.navigate('MeetingDetails', {
         //     meetingId: meeting.meetingId,
         // });
@@ -67,6 +74,7 @@ const DefaultGroupListCard = ({ group, active }) => {
                                     flexDirection: 'row',
                                     // borderWidth: 1,
                                     // borderColor: 'blue',
+                                    justifyContent: 'space-between',
                                     width: '85%',
                                 }}
                             >
@@ -126,6 +134,23 @@ const DefaultGroupListCard = ({ group, active }) => {
                                             </Text>
                                         </View>
                                     </View>
+                                </View>
+                                <View
+                                    style={{
+                                        justifyContent: 'flex-start',
+                                    }}
+                                >
+                                    <TouchableOpacity
+                                        onPress={() => Alert.alert(group.id)}
+                                    >
+                                        <View style={{ marginTop: 20 }}>
+                                            <MaterialCommunityIcons
+                                                name='trash-can-outline'
+                                                size={30}
+                                                color='black'
+                                            />
+                                        </View>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>

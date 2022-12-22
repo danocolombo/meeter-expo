@@ -16,11 +16,15 @@ import {
     Platform,
     AppState,
 } from 'react-native';
+import { API } from 'aws-amplify';
+import * as queries from '../jerichoQL/queries';
 import { useQuery } from '@tanstack/react-query';
 import { focusManager } from '@tanstack/react-query';
 // import * as Application from 'expo-application';
+import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
+import { PutGroup } from '../components/common/hooks/groupQueries';
 import {
     useNavigation,
     useIsFocused,
@@ -43,6 +47,7 @@ import {
     useTheme,
     Badge,
     ActivityIndicator,
+    FAB,
 } from 'react-native-paper';
 import {
     printObject,
@@ -53,28 +58,35 @@ import { FetchMeeting } from '../components/common/hooks/meetingQueries';
 import { FetchGroups } from '../components/common/hooks/groupQueries';
 import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
+import { useUserContext } from '../contexts/UserContext';
+import CustomButton from '../components/ui/CustomButton';
 //   FUNCTION START
 //   ==============
 const MeetingDetails = (props) => {
     const meetingId = props.route.params.meetingId;
     const mtrTheme = useTheme();
-
+    const { userProfile } = useUserContext();
+    const [showDefaultsButton, setShowDefaultButton] = useState(true);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const [displayGroups, setDisplayGroups] = useState([]);
+    const [groups, setGroups] = useState([]);
     const meeter = useSelector((state) => state.system);
     const navigation = useNavigation();
     const uns = useNavigationState((state) => state);
     let historic = false;
 
     let meeting = {};
-    const { width } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
+    printObject('MDS:80-->userProfile:\n', userProfile);
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
             headerLabelColor = 'white';
         }
-        if (meeter.userRole !== 'guest') {
+        if (
+            userProfile.activeOrg.role === 'manage' ||
+            userProfile.activeOrg.role === 'meals'
+        ) {
             navigation.setOptions({
                 title: meeter.appName,
                 headerBackTitle: 'Back',
@@ -98,6 +110,21 @@ const MeetingDetails = (props) => {
             });
         }
     }, [navigation, meeter]);
+    async function getDefaultGroups() {
+        try {
+            const systemInfo = await API.graphql({
+                query: queries.getOrganizationDefaultGroups,
+                variables: { id: userProfile.activeOrg.id },
+            });
+            const defaultGroups =
+                systemInfo.data.getOrganization.defaultGroups.items;
+            setGroups(defaultGroups);
+            setShowDefaultButton(true);
+        } catch (error) {
+            printObject('DGS:116-->systemInfo TryCatch failure:\n', error);
+            return;
+        }
+    }
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
@@ -111,6 +138,7 @@ const MeetingDetails = (props) => {
             );
             MEETING.refetch();
             GROUPS.refetch();
+            getDefaultGroups();
             printObject('MDS:113-->REFETCH', null);
 
             return () => subscription.remove();
@@ -131,6 +159,36 @@ const MeetingDetails = (props) => {
         cacheTime: 2000,
         enabled: true,
     });
+    const handleAddDefaults = async () => {
+        // console.log('handleAddDefaults');
+        // printObject('MDS:160-->meeting:\n', meeting);
+        groups.map((group) => {
+            // console.log('group.id:', group.id);
+            const values = {
+                meetingId: meetingId,
+                groupId: '0',
+                gender: group.gender,
+                title: group.title,
+                attendance: 0,
+                location: group?.location ? group?.location : '',
+                grpCompKey: meeting.mtgCompKey,
+                facilitator: group?.facilitator ? group.facilitator : '',
+                cofacilitator: '',
+                notes: '',
+            };
+            PutGroup(values)
+                .then((results) => {
+                    // printObject('MDS:177-->PutGroup results:\n', results);
+                })
+                .catch((error) => {
+                    printObject('MDS:182-->PutGroup error:', error);
+                });
+            // printObject('MDS:173-->values:', values);
+        });
+        //      only let them add one time.
+        GROUPS.refetch();
+        setShowDefaultButton(false);
+    };
     //if (data) {
     if (MEETING.data) {
         // printObject('DATA to use:', MEETING.data);
@@ -163,7 +221,6 @@ const MeetingDetails = (props) => {
     if (meeting) {
         historic = isDateDashBeforeToday(meeting.meetingDate);
     }
-
     return (
         <>
             <Surface style={styles.surface}>
@@ -309,7 +366,7 @@ const MeetingDetails = (props) => {
                         >
                             Open-Share Groups
                         </Text>
-                        {meeter.userRole !== 'guest' && (
+                        {userProfile.activeOrg.role === 'manage' && (
                             <View
                                 style={{
                                     justifyContent: 'center',
@@ -356,6 +413,17 @@ const MeetingDetails = (props) => {
                         </Text>
                     </View>
                 )}
+                {userProfile.activeOrg.role === 'manage' &&
+                    groups.length > 0 &&
+                    showDefaultsButton && (
+                        <CustomButton
+                            text='Add Default Groups'
+                            bgColor='blue'
+                            fgColor={'white'}
+                            type='STANDARD'
+                            onPress={handleAddDefaults}
+                        />
+                    )}
                 {/* <GroupList meetingId={meetingId} /> */}
                 {/* <View>
                     (GROUPS.data &&
@@ -393,5 +461,11 @@ const styles = StyleSheet.create({
 
     dateWrapper: {
         margin: 5,
+    },
+    FAB: {
+        position: 'absolute',
+        margin: 0,
+        right: 20,
+        backgroundColor: 'green',
     },
 });

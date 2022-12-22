@@ -1,16 +1,16 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, FlatList, AppState } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as queries from '../jerichoQL/queries';
 import { API } from 'aws-amplify';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Surface, useTheme, FAB } from 'react-native-paper';
 import DefaultGroupCard from '../components/groups/Default.Group.Card';
 import { useSysContext } from '../contexts/SysContext';
 import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as mutations from '../jerichoQL/mutations';
 import { printObject } from '../utils/helpers';
-import Navigation from '../navigation/Navigation';
 
 const DefaultGroupsScreen = () => {
     const mtrTheme = useTheme();
@@ -18,6 +18,21 @@ const DefaultGroupsScreen = () => {
     const { meeter, defaultGroups } = useSysContext();
     const { userProfile } = useUserContext();
     const [groups, setGroups] = useState([]);
+    function onAppStateChange(status) {
+        if (Platform.OS !== 'web') {
+            focusManager.setFocused(status === 'active');
+        }
+    }
+    useFocusEffect(
+        useCallback(() => {
+            const subscription = AppState.addEventListener(
+                'change',
+                onAppStateChange
+            );
+            getDefaultGroups();
+            return () => subscription.remove();
+        }, [])
+    );
     useEffect(() => {
         getDefaultGroups().then(() => {
             console.log('DONE');
@@ -29,24 +44,50 @@ const DefaultGroupsScreen = () => {
                 query: queries.getOrganizationDefaultGroups,
                 variables: { id: userProfile.activeOrg.id },
             });
-            printObject('DGS:27-->systemInfo response:\n', systemInfo);
             const defaultGroups =
                 systemInfo.data.getOrganization.defaultGroups.items;
             setGroups(defaultGroups);
         } catch (error) {
-            printObject('DGS:30-->systemInfo TryCatch failure:\n', error);
+            printObject('DGS:52-->systemInfo TryCatch failure:\n', error);
             return;
         }
     }
+    async function deleteDefaultGroup(value) {
+        try {
+            const results = await API.graphql({
+                query: mutations.deleteDefaultGroup,
+                variables: { input: { id: value } },
+            });
+        } catch (error) {
+            printObject('failed to delete default group:', error);
+        }
+        getDefaultGroups();
+    }
+    const handleDeleteRequest = (value) => {
+        deleteDefaultGroup(value);
+    };
     const handleNewRequest = () => {
         navigation.navigate('DGModal');
     };
     return (
-        <SafeAreaView
-            style={[
-                mtrTheme.defaultGroupScreenSafeArea,
-                { backgroundColor: mtrTheme.colors.background },
-            ]}
+        // <SafeAreaView
+        //     style={[
+        //         mtrTheme.defaultGroupScreenSafeArea,
+        //         {
+        //             flexDirection: 'column',
+        //             backgroundColor: mtrTheme.colors.background,
+        //             justifyContent: 'flex-start',
+        //             borderWidth: 1,
+        //             borderColor: 'yellow',
+        //         },
+        //     ]}
+        // >
+        <View
+            style={{
+                backgroundColor: mtrTheme.colors.background,
+
+                flex: 1,
+            }}
         >
             <View>
                 <Text style={mtrTheme.screenTitle}>DEFAULT MEETINGS</Text>
@@ -57,10 +98,11 @@ const DefaultGroupsScreen = () => {
                     paddingVertical: 10,
                     paddingHorizontal: 50,
                     marginBottom: 10,
+                    marginHorizontal: 30,
                 }}
             >
                 <Text style={mtrTheme.subTitleSmall}>
-                    The following meetings can be dynamically added to meetings.
+                    Default meetings can be dynamically added to meetings.
                 </Text>
             </View>
             {groups && (
@@ -70,15 +112,19 @@ const DefaultGroupsScreen = () => {
                             data={groups}
                             keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
-                                <DefaultGroupCard group={item} active={true} />
+                                <DefaultGroupCard
+                                    group={item}
+                                    active={true}
+                                    handleDelete={handleDeleteRequest}
+                                />
                             )}
                         />
                     )}
                 </>
             )}
-            <View style={{ marginHorizontal: 20 }}>
+            <View style={{ marginHorizontal: 20, paddingBottom: 20 }}>
                 <CustomButton
-                    text='ADD NEW GROUP'
+                    text='ADD DEFAULT GROUP'
                     bgColor={mtrTheme.colors.success}
                     fgColor='white'
                     type='PRIMARY'
@@ -86,7 +132,8 @@ const DefaultGroupsScreen = () => {
                     onPress={() => handleNewRequest()}
                 />
             </View>
-        </SafeAreaView>
+        </View>
+        // </SafeAreaView>
     );
 };
 

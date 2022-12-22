@@ -160,16 +160,12 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                         </Text>
                                     </View>
 
-                                    <View style={mtrTheme.groupCardTopRow}>
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsLabel
-                                                }
-                                            >
-                                                Title:
-                                            </Text>
-                                        </View>
+                                    <View
+                                        style={[
+                                            mtrTheme.groupCardTopRow,
+                                            { maxWidth: '90%' },
+                                        ]}
+                                    >
                                         <View>
                                             <Text
                                                 style={
@@ -205,20 +201,36 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                                 )}
                                             </Text>
                                         </View>
+                                    </View>
+                                    <View
+                                        style={{
+                                            flexDirection: 'row',
+                                            marginTop: 10,
+                                        }}
+                                    >
+                                        <View>
+                                            <Text
+                                                style={
+                                                    mtrTheme.groupCardDetailsLabel
+                                                }
+                                            >
+                                                Attendance:
+                                            </Text>
+                                        </View>
                                         <View
                                             style={{
-                                                marginLeft: 'auto',
-                                                marginRight: 0,
+                                                paddingLeft: 20,
+                                                // marginLeft: 'auto',
+                                                // marginRight: 0,
                                             }}
                                         >
-                                            <Badge
-                                                size={40}
+                                            <Text
                                                 style={
-                                                    mtrTheme.groupDetailsAttendanceBadge
+                                                    mtrTheme.groupCardDetailsLabel
                                                 }
                                             >
                                                 {group.attendance}
-                                            </Badge>
+                                            </Text>
                                         </View>
                                     </View>
                                     <View style={mtrTheme.groupCardRow}>

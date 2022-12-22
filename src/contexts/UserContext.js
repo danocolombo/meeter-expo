@@ -45,13 +45,17 @@ const UserContextProvider = ({ children }) => {
         };
         let combinedProfile = {};
         try {
+            // const updatedUser = await API.graphql({
+            //     query: mutations.updateUserProfile,
+            //     variables: { input: userData },
+            // });
             const updatedUser = await API.graphql({
-                query: mutations.updateUserProfile,
+                query: mutations.updateUser,
                 variables: { input: userData },
             });
             combinedProfile = { ...userProfile, updatedUser };
         } catch (error) {
-            printObject('ERROR updateUserProfile:\n', error);
+            printObject('UC:58-->ERROR updateUserProfile:\n', error);
         }
         printObject('UC:34-->combinedProfile:\n', combinedProfile);
         console.info('UC:58-->Profile Updated');

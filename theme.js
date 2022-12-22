@@ -482,10 +482,11 @@ const theme = {
     },
     meetingEditMealNumberContainer: {
         width: '55%',
+        marginRight: 10,
         paddingRight: 'auto',
     },
     meetingEditNumberLabelContainer: {
-        width: '50%',
+        width: '45%',
         paddingLeft: 'auto',
     },
     //   MEETING DELETE

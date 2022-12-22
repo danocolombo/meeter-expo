@@ -39,6 +39,7 @@ import { useUserContext } from '../contexts/UserContext';
 import { useSysContext } from '../contexts/SysContext';
 import { useAffiliationContext } from '../contexts/AffiliationContext';
 import profilesSlice from '../features/profilesSlice';
+import { StatusBar } from 'expo-status-bar';
 
 //      ====================================
 //      FUNCTION START
@@ -105,6 +106,7 @@ const LandingScreen = () => {
 
     return (
         <>
+            <StatusBar style='light' />
             <Surface style={styles.welcomeSurface}>
                 <View style={{ marginTop: 20 }}>
                     <Text style={mtrTheme.screenTitle}>WELCOME</Text>

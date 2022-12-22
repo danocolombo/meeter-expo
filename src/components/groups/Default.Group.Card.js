@@ -15,7 +15,7 @@ import DateBall from '../ui/DateBall';
 import DateStack from '../ui/DateStack';
 import { printObject } from '../../utils/helpers';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-const DefaultGroupListCard = ({ group, active }) => {
+const DefaultGroupListCard = ({ group, active, handleDelete }) => {
     const navigation = useNavigation();
     let iconToDisplay;
     switch (group.gender) {
@@ -43,6 +43,9 @@ const DefaultGroupListCard = ({ group, active }) => {
         // navigation.navigate('MeetingDetails', {
         //     meetingId: meeting.meetingId,
         // });
+    }
+    function handleDeleteClick() {
+        handleDelete(group.id);
     }
     return (
         <>
@@ -141,7 +144,7 @@ const DefaultGroupListCard = ({ group, active }) => {
                                     }}
                                 >
                                     <TouchableOpacity
-                                        onPress={() => Alert.alert(group.id)}
+                                        onPress={() => handleDeleteClick()}
                                     >
                                         <View style={{ marginTop: 20 }}>
                                             <MaterialCommunityIcons

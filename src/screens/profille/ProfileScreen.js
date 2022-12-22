@@ -16,6 +16,7 @@ import ProfileForm from '../../components/Profile/ProfileForm';
 import { useUserContext, up } from '../../contexts/UserContext';
 
 import { printObject } from '../../utils/helpers';
+import { StatusBar } from 'expo-status-bar';
 
 //   FUNCTION START
 //   ==============
@@ -84,6 +85,7 @@ const ProfileScreen = (props) => {
     }
     return (
         <>
+            <StatusBar style='light' />
             <Modal visible={showMessage} animationStyle='slide'>
                 <Surface
                     style={[

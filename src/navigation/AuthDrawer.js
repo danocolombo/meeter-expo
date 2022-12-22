@@ -34,7 +34,7 @@ const AuthDrawer = (navigation) => {
     let patron = false;
     if (userProfile) {
         if (
-            userProfile.activeOrg?.role === 'superuser' ||
+            userProfile.activeOrg?.role === 'manage' ||
             userProfile.activeOrg?.role === 'director' ||
             userProfile.activeOrg?.role === 'manager'
         ) {
@@ -45,7 +45,7 @@ const AuthDrawer = (navigation) => {
     const LandingComponent = (props) => (
         <LandingScreen theme={props.theme} {...props} />
     );
-    // {user?.stateRep || user?.stateLead || user?.superuser} : (
+    // {user?.stateRep || user?.stateLead || user?.manage} : (
 
     return (
         <Drawer.Navigator
@@ -132,7 +132,7 @@ const AuthDrawer = (navigation) => {
                     tabBarActiveTintColor: 'white',
                 })}
             />
-            {userProfile?.activeOrg?.role === 'superuser' && (
+            {userProfile?.activeOrg?.role === 'manage' && (
                 <Stack.Screen
                     name='Groups'
                     options={({ navigation }) => ({
@@ -153,7 +153,7 @@ const AuthDrawer = (navigation) => {
                     component={DefaultGroupsScreen}
                 />
             )}
-            {userProfile?.activeOrg?.role === 'superuser' && (
+            {userProfile?.activeOrg?.role === 'manage' && (
                 <Stack.Screen
                     name='Team'
                     options={({ navigation }) => ({

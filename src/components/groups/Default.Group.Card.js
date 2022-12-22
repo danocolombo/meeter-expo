@@ -17,8 +17,9 @@ import { printObject } from '../../utils/helpers';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 const DefaultGroupListCard = ({ group, active, handleDelete }) => {
     const navigation = useNavigation();
+    printObject('GROUP:\n', group);
     let iconToDisplay;
-    switch (group.gender) {
+    switch (group?.gender) {
         case 'f':
             iconToDisplay = 'human-female';
             break;

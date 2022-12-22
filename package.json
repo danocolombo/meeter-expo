@@ -9,6 +9,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll"
   },
+  "author": "Fortson Guru",
+  "license": "MIT",
   "jest": {
     "preset": "jest-expo"
   },
@@ -44,6 +46,7 @@
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
     "expo-system-ui": "~2.0.1",
+    "expo-updates": "~0.15.6",
     "expo-web-browser": "~12.0.0",
     "graphql": "15.8.0",
     "lodash": "^4.17.21",

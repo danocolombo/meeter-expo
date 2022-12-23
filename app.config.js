@@ -55,6 +55,16 @@ module.exports = ({ config }) => {
                         'The app accesses your photos to let you set your profile picture',
                 },
             ],
+            [
+                'expo-media-library',
+                {
+                    photosPermission:
+                        'Allow $(PRODUCT_NAME) to access your photos',
+                    savePhotosPermission:
+                        'Allow $(PRODUCT_NAME) to save photos on your device',
+                    isAccessMediaLocationEnabled: 'true',
+                },
+            ],
         ],
         web: {
             favicon: './assets/favicon.png',

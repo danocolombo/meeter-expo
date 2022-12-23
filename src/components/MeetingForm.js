@@ -5,6 +5,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     useWindowDimensions,
+    KeyboardAvoidingView,
     Platform,
     Button,
     Modal,
@@ -286,7 +287,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                             <Text>Meeting added!</Text>
                         </View>
                     ) : null}
-                    <Surface style={styles.surface}>
+                    <KeyboardAvoidingView style={styles.surface}>
                         <View style={mtrTheme.meetingEditTypeSelectorRow}>
                             <TypeSelectors
                                 pick={values.meetingType}
@@ -706,7 +707,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                             onConfirm={onMeetingDateConfirm}
                             onCancel={onMeetingDateCancel}
                         />
-                    </Surface>
+                    </KeyboardAvoidingView>
                 </>
             )}
         </>

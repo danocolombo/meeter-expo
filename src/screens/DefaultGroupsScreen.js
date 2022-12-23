@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import * as queries from '../jerichoQL/queries';
 import { API } from 'aws-amplify';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { Surface, useTheme, FAB } from 'react-native-paper';
+import { Surface, useTheme, ActivityIndicator, FAB } from 'react-native-paper';
 import DefaultGroupCard from '../components/groups/Default.Group.Card';
 import { useSysContext } from '../contexts/SysContext';
 import { useUserContext } from '../contexts/UserContext';
@@ -18,6 +18,7 @@ const DefaultGroupsScreen = () => {
     const { meeter, defaultGroups } = useSysContext();
     const { userProfile } = useUserContext();
     const [groups, setGroups] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
@@ -39,6 +40,7 @@ const DefaultGroupsScreen = () => {
         });
     }, []);
     async function getDefaultGroups() {
+        setIsLoading(true);
         try {
             const systemInfo = await API.graphql({
                 query: queries.getOrganizationDefaultGroups,
@@ -47,8 +49,10 @@ const DefaultGroupsScreen = () => {
             const defaultGroups =
                 systemInfo.data.getOrganization.defaultGroups.items;
             setGroups(defaultGroups);
+            setIsLoading(false);
         } catch (error) {
             printObject('DGS:52-->systemInfo TryCatch failure:\n', error);
+            setIsLoading(false);
             return;
         }
     }
@@ -69,6 +73,22 @@ const DefaultGroupsScreen = () => {
     const handleNewRequest = () => {
         navigation.navigate('DGModal');
     };
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator
+                    color={mtrTheme.colors.activityIndicator}
+                    size={80}
+                />
+            </View>
+        );
+    }
     return (
         // <SafeAreaView
         //     style={[
@@ -90,7 +110,7 @@ const DefaultGroupsScreen = () => {
             }}
         >
             <View>
-                <Text style={mtrTheme.screenTitle}>DEFAULT MEETINGS</Text>
+                <Text style={mtrTheme.screenTitle}>DEFAULT GROUPS</Text>
             </View>
 
             <View
@@ -102,7 +122,7 @@ const DefaultGroupsScreen = () => {
                 }}
             >
                 <Text style={mtrTheme.subTitleSmall}>
-                    Default meetings can be dynamically added to meetings.
+                    Default groups can be dynamically added to meetings.
                 </Text>
             </View>
             {groups && (

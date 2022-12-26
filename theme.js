@@ -481,8 +481,8 @@ const theme = {
         textAlign: 'right',
     },
     meetingEditMealNumberContainer: {
-        width: '55%',
-        marginRight: 10,
+        // width: '55%',
+        // marginRight: 10,
         paddingRight: 'auto',
     },
     meetingEditNumberLabelContainer: {

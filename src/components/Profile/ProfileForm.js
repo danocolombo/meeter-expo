@@ -41,24 +41,24 @@ import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
 
 //   FUNCTION START
 //   ===============
-const ProfileForm = ({ handleUpdate, handleCancel }) => {
+const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const navigation = useNavigation();
     const [savingProfile, setSavingProfile] = useState(false);
-    const { userProfile } = useUserContext();
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isShirtFocus, setIsShirtFocus] = useState(false);
     const [modalBirthDateVisible, setModalBirthDateVisible] = useState(false);
-    const [birthDay, setBirthday] = useState(new Date(userProfile.birthday));
+    const [birthDay, setBirthday] = useState(new Date(profile.birthday));
     const mtrTheme = useTheme();
     const { width, height } = useWindowDimensions();
     //      the picture S3 reference
     const [profilePicRef, setProfilePicRef] = useState(null);
+    const profilePicture = useRef(null);
     //      the picture file
     const [profilePic, setProfilePic] = useState(null);
     const [profilePicDetails, setProfilePicDetails] = useState(null);
     const { meeter } = useSysContext();
     const [stateProv, setStateProv] = useState(
-        userProfile?.location?.stateProv || ''
+        profile?.location?.stateProv || ''
     );
     //* CAMERA VARIABLES
     //************************* */
@@ -75,27 +75,23 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         useState();
 
     const [values, setValues] = useState({
-        uid: userProfile.id,
-        username: userProfile.username ? userProfile.username : '',
-        firstName: userProfile?.firstName ? userProfile.firstName : '',
-        lastName: userProfile?.lastName ? userProfile.lastName : '',
-        street: userProfile?.location?.street
-            ? userProfile.location.street
+        uid: profile.id,
+        username: profile.username ? profile.username : '',
+        firstName: profile?.firstName ? profile.firstName : '',
+        lastName: profile?.lastName ? profile.lastName : '',
+        street: profile?.location?.street ? profile.location.street : '',
+        city: profile?.location?.city ? profile.location.city : '',
+        stateProv: profile?.location?.stateProv
+            ? profile.location.stateProv
             : '',
-        city: userProfile?.location?.city ? userProfile.location.city : '',
-        stateProv: userProfile?.location?.stateProv
-            ? userProfile.location.stateProv
+        postalCode: profile?.location?.postalCode
+            ? profile?.location?.postalCode
             : '',
-        postalCode: userProfile?.location?.postalCode
-            ? userProfile?.location?.postalCode
-            : '',
-        email: userProfile?.email ? userProfile.email : '',
-        phone: userProfile?.phone ? userProfile.phone : '',
-        birthday: userProfile?.birthday
-            ? userProfile.birthday.substr(0, 10)
-            : '',
-        shirt: userProfile?.shirt ? userProfile.shirt.toUpperCase() : '',
-        picture: userProfile?.picture || meeter?.defaultProfilePicture,
+        email: profile?.email ? profile.email : '',
+        phone: profile?.phone ? profile.phone : '',
+        birthday: profile?.birthday ? profile.birthday.substr(0, 10) : '',
+        shirt: profile?.shirt ? profile.shirt.toUpperCase() : '',
+        picture: profile?.picture || meeter?.defaultProfilePicture,
     });
     const [isFirstNameValid, setIsFirstNameValid] = useState(
         values.firstName?.length > 1 ? true : false
@@ -103,20 +99,30 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     const [isLastNameValid, setIsLastNameValid] = useState(
         values.lastName?.length > 2 ? true : false
     );
-    useFocusEffect(
-        useCallback(() => {
-            // printObject('useFocusEffect-->profile:', profile);
-            //let dateObj = dateDashToDateObject(values?.birthday);
-            //setBirthday(dateObj);
-            //setValues(profile);
-            // let x = { ...values, ...profile };
-            // setValues(x);
-            let dateObj = dateDashToDateObject(values?.birthday);
+    useEffect(() => {
+        let dateObj = dateDashToDateObject(values?.birthday);
 
-            // printObject('dateObj:', dateObj);
-            setBirthday(dateObj);
-        }, [])
-    );
+        // printObject('dateObj:', dateObj);
+        setBirthday(dateObj);
+        //=======================
+        let picRef;
+
+        if (profile.picture) {
+            picRef = profile.picture;
+        } else {
+            //picRef = meeter.defaultProfilePicture;
+            picRef = meeter.defaultProfilePicture;
+        }
+        setProfilePicRef(picRef);
+        Storage.get(picRef, {
+            level: 'public',
+        }).then((hardPic) => {
+            setProfilePic(hardPic);
+            printObject('PF:132-->Storage.get', hardPic);
+            profilePicture.current = hardPic;
+        });
+    }, []);
+
     //* Camera Permissions and settings
     async function getPermssions() {
         const cameraPermission = await Camera.requestCameraPermissionsAsync();
@@ -179,8 +185,8 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     useEffect(() => {
         let picRef;
 
-        if (userProfile.picture) {
-            picRef = userProfile.picture;
+        if (profile.picture) {
+            picRef = profile.picture;
         } else {
             //picRef = meeter.defaultProfilePicture;
             picRef = meeter.defaultProfilePicture;
@@ -188,7 +194,10 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         setProfilePicRef(picRef);
         Storage.get(picRef, {
             level: 'public',
-        }).then((hardPic) => setProfilePic(hardPic));
+        }).then((hardPic) => {
+            printObject('PF:208-->Storage.get', hardPic);
+            setProfilePic(hardPic);
+        });
     }, []);
 
     const FormatBirthDate = (data) => {
@@ -294,7 +303,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     const saveProfileToS3 = async (imageFilename) => {
         //      this saves the file to S3 and returns the ref
         printObject('PF:296-->imageFilename to save:\n', imageFilename);
-        printObject('PF:297-->userProfile.picture: ', userProfile.picture);
+        printObject('PF:297-->profile.picture: ', profile.picture);
         try {
             console.log('trying to save to s3');
             const img = await fetchImageFromUri(profilePic);
@@ -313,14 +322,14 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         let pictureToSave;
         if (cameraData) {
             // printObject('PF:315-->we have cameraData', cameraData);
-            if (userProfile?.picture) {
+            if (profile?.picture) {
                 // printObject(
                 //     'PF:317-->we have a profile picture:',
-                //     userProfile.picture
+                //     profile.picture
                 // );
-                oldProfilePictureName = userProfile.picture;
+                oldProfilePictureName = profile.picture;
             } else {
-                // printObject('NO profile picture:', userProfile);
+                // printObject('NO profile picture:', profile);
                 oldProfilePictureName = null;
             }
             //      create new profile picture name
@@ -332,8 +341,8 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             try {
                 const response = await fetch(cameraData.uri);
                 const img = await response.blob();
-
                 const results = await Storage.put(newFileName, img);
+
                 pictureToSave = newFileName;
                 // delete the previously used S3 image.
                 if (oldProfilePictureName != meeter.defaultProfilePicture) {
@@ -348,14 +357,14 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
             } catch (error) {
                 // printObject('PF:346-->error saving S3:\n', error);
                 Alert.alert('Could not save image. Please try later.');
-                pictureToSave = userProfile?.picture;
+                pictureToSave = profile?.picture;
             }
         } else {
             // printObject(
             //     'PF:352-->no profile pic changes, continue to save profile',
             //     null
             // );
-            pictureToSave = userProfile?.picture;
+            pictureToSave = profile?.picture;
         }
         const resultantProfile = {
             phone: values.phone,
@@ -375,81 +384,9 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         //      ========================
         //      save the form to graphql
         //      ========================
-        Storage.get(pictureToSave, {
-            level: 'public',
-        }).then((hardPic) => setProfilePic(hardPic));
-        async function getS3FileInfo(s3name) {
-            const uri = await Storage.get(s3name);
-            setProfilePic(uri);
-        }
-        await getS3FileInfo(pictureToSave);
-        printObject('new pic value:', profilePic);
+
         handleUpdate(resultantProfile);
         setSavingProfile(false);
-    };
-    const handleFormSubmit1 = () => {
-        // console.log('PF:304-->typeof birthday', typeof birthDay);
-        // console.log(
-        //     'PF:306-->birthDay.toString:',
-        //     birthDay.toISOString().slice(0, 10)
-        // );
-        //      start image section
-        let uploadImage = null;
-        printObject('PF:340-->profilePicDetails:\n', profilePicDetails);
-        if (profilePicDetails?.fileName) {
-            console.log('PF:342-->we have a profile fileName');
-            uploadImage = false; //      we have file, but need confirmation to upload
-        }
-        let picture;
-        if (uploadImage !== null) {
-            console.log('PF:347-->upload is not null');
-            const nameOnly = profilePicDetails.fileName.slice(0, -4);
-            const fileExtension = profilePicDetails.fileName.slice(-4);
-            picture = `${nameOnly}_${uuid()}${fileExtension}`;
-        } else {
-            //      no file to upload
-            console.log('PF:353-->uploadInmage is null');
-            picture = profilePicRef; //     this should be default value here...
-        }
-        printObject('PF:356--> picture CHECK:\n', picture);
-        printObject(
-            'PF:358-->meeter.defaultProfilePicture:',
-            meeter.defaultProfilePicture
-        );
-        if (picture !== meeter.defaultProfilePicture) {
-            console.log('PF:362-->not the same...save');
-            //      not default pic
-            if (profilePicRef != picture) {
-                //      selected file is different, upload and save
-                console.log('PF:366-->calling saveProfileToS3');
-                saveProfileToS3(picture);
-                console.log('PF:368-->done saveProfileToS3');
-            }
-        } else {
-            console.log('PF:371--> they are the same, no s3 saving needed');
-        }
-
-        const resultantProfile = {
-            phone: values.phone,
-            birthday: birthDay.toISOString().slice(0, 10),
-            shirt: values.shirt,
-            picture: picture,
-            location: {
-                street: values.street,
-                city: values.city,
-                stateProv: values.stateProv,
-                postalCode: values.postalCode,
-            },
-        };
-
-        //      ========================
-        //      save the form to graphql
-        //      ========================
-        printObject(
-            'PF:391--> Profile Form done, resultantProfile:\n',
-            resultantProfile
-        );
-        handleUpdate(resultantProfile);
     };
 
     const pickImage = async () => {
@@ -486,9 +423,10 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         }
         setShowCameraModal(false);
     };
-    printObject('PF:481--screen refresh values:', values);
-    printObject('cameraImage:', cameraImage);
-    printObject('profilePic:', profilePic);
+    printObject('PF:489--screen refresh values:', values);
+    printObject('PF:490-->cameraImage:', cameraImage);
+    printObject('PF:491-->profilePic:', profilePic);
+    printObject('PF:452-->profilePicture: \n', profilePicture);
     return (
         <>
             <Modal visible={showCameraModal} animationStyle='slide'>
@@ -582,7 +520,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
 
                         <View style={{ paddingTop: 5 }}>
                             <Text style={{ color: mtrTheme.colors.accent }}>
-                                {userProfile.firstName} {userProfile.lastName}
+                                {profile.firstName} {profile.lastName}
                             </Text>
                         </View>
                     </View>
@@ -821,7 +759,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                 </View>
                 <View style={mtrTheme.profileFormRowStyle}>
                     <Text style={{ color: 'silver', fontSize: 10 }}>
-                        UID: {userProfile?.id}
+                        UID: {profile?.id}
                     </Text>
                 </View>
                 <View style={styles.buttonContainer}>

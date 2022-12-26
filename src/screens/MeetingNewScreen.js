@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
+import {
+    StyleSheet,
+    Text,
+    View,
+    KeyboardAvoidingView,
+    ScrollView,
+} from 'react-native';
 import React, { useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Surface, useTheme } from 'react-native-paper';
@@ -113,12 +119,21 @@ const MeetingNewScreen = ({ route, navigation }) => {
 
     return (
         <>
-            <Surface style={mtrTheme.screenSurface}>
-                <View>
-                    <Text style={mtrTheme.screenTitle}>NEW MEETING</Text>
-                </View>
-                <MeetingForm meeting={meeting} handleUpdate={handleUpdate} />
-            </Surface>
+            <KeyboardAvoidingView style={{ flex: 1 }}>
+                <ScrollView>
+                    <Surface style={mtrTheme.screenSurface}>
+                        <View>
+                            <Text style={mtrTheme.screenTitle}>
+                                NEW MEETING
+                            </Text>
+                        </View>
+                        <MeetingForm
+                            meeting={meeting}
+                            handleUpdate={handleUpdate}
+                        />
+                    </Surface>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </>
     );
 };

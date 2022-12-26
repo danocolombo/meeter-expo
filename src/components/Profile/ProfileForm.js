@@ -23,6 +23,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useTheme, Surface, FAB } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 // *  CAMERA INTEGRATION
 import { Camera, CameraType } from 'expo-camera';
@@ -42,7 +43,8 @@ import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
 //   ===============
 const ProfileForm = ({ handleUpdate, handleCancel }) => {
     const navigation = useNavigation();
-    const { userProfile, updateUserProfile } = useUserContext();
+    const [savingProfile, setSavingProfile] = useState(false);
+    const { userProfile } = useUserContext();
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isShirtFocus, setIsShirtFocus] = useState(false);
     const [modalBirthDateVisible, setModalBirthDateVisible] = useState(false);
@@ -66,6 +68,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         Camera.Constants.FlashMode.off
     );
     const [showCameraModal, setShowCameraModal] = useState(false);
+    const [cameraData, setCameraData] = useState(null);
     let cameraRef = useRef();
     const [hasCameraPermission, setHasCameraPermission] = useState();
     const [hasMediaLibraryPermission, setHasMediaLibraryPermission] =
@@ -290,39 +293,140 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
     };
     const saveProfileToS3 = async (imageFilename) => {
         //      this saves the file to S3 and returns the ref
-
-        const img = await fetchImageFromUri(profilePic);
-        const results = await Storage.put(imageFilename, img);
+        printObject('PF:296-->imageFilename to save:\n', imageFilename);
+        printObject('PF:297-->userProfile.picture: ', userProfile.picture);
+        try {
+            console.log('trying to save to s3');
+            const img = await fetchImageFromUri(profilePic);
+            const results = await Storage.put(imageFilename, img);
+            console.log('done trying');
+        } catch (error) {
+            printObject('PF:304->>failure trying to save to s3');
+        }
     };
-    const handleFormSubmit = () => {
-        console.log('PF:181-->typeof birthday', typeof birthDay);
-        console.log(
-            'PF:182-->birthDay.toString:',
-            birthDay.toISOString().slice(0, 10)
-        );
+    const handleFormSubmit = async () => {
+        if (savingProfile) return;
+        setSavingProfile(true);
+        // printObject('PF:310-->handleFormSubmit start', null);
+        // printObject('PF:311-->profilePicDetails:', profilePicDetails);
+        let oldProfilePictureName = null;
+        let pictureToSave;
+        if (cameraData) {
+            // printObject('PF:315-->we have cameraData', cameraData);
+            if (userProfile?.picture) {
+                // printObject(
+                //     'PF:317-->we have a profile picture:',
+                //     userProfile.picture
+                // );
+                oldProfilePictureName = userProfile.picture;
+            } else {
+                // printObject('NO profile picture:', userProfile);
+                oldProfilePictureName = null;
+            }
+            //      create new profile picture name
+            const newNameParts = cameraData.uri.split('/');
+            const target = newNameParts.length;
+            const newFileName = newNameParts[target - 1];
+            // console.log('PF:330-->old file: ', oldProfilePictureName);
+            // console.log('PF:331-->new file: ', newFileName);
+            try {
+                const response = await fetch(cameraData.uri);
+                const img = await response.blob();
+
+                const results = await Storage.put(newFileName, img);
+                pictureToSave = newFileName;
+                // delete the previously used S3 image.
+                if (oldProfilePictureName != meeter.defaultProfilePicture) {
+                    // delete the S3 file
+                    // console.log('PF:338-->DELETE: ', oldProfilePictureName);
+                    try {
+                        await Storage.remove(oldProfilePictureName);
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+            } catch (error) {
+                // printObject('PF:346-->error saving S3:\n', error);
+                Alert.alert('Could not save image. Please try later.');
+                pictureToSave = userProfile?.picture;
+            }
+        } else {
+            // printObject(
+            //     'PF:352-->no profile pic changes, continue to save profile',
+            //     null
+            // );
+            pictureToSave = userProfile?.picture;
+        }
+        const resultantProfile = {
+            phone: values.phone,
+            birthday: birthDay.toISOString().slice(0, 10),
+            shirt: values.shirt,
+            picture: pictureToSave,
+            location: {
+                street: values.street,
+                city: values.city,
+                stateProv: values.stateProv,
+                postalCode: values.postalCode,
+            },
+        };
+        console.log('PF:369-->old name', oldProfilePictureName);
+        console.log('PF:370-->new name:', pictureToSave);
+        printObject('PF:371-->resultantProfile:\n', resultantProfile);
+        //      ========================
+        //      save the form to graphql
+        //      ========================
+        Storage.get(pictureToSave, {
+            level: 'public',
+        }).then((hardPic) => setProfilePic(hardPic));
+        async function getS3FileInfo(s3name) {
+            const uri = await Storage.get(s3name);
+            setProfilePic(uri);
+        }
+        await getS3FileInfo(pictureToSave);
+        printObject('new pic value:', profilePic);
+        handleUpdate(resultantProfile);
+        setSavingProfile(false);
+    };
+    const handleFormSubmit1 = () => {
+        // console.log('PF:304-->typeof birthday', typeof birthDay);
+        // console.log(
+        //     'PF:306-->birthDay.toString:',
+        //     birthDay.toISOString().slice(0, 10)
+        // );
         //      start image section
         let uploadImage = null;
-
+        printObject('PF:340-->profilePicDetails:\n', profilePicDetails);
         if (profilePicDetails?.fileName) {
-            //      profilePicDetails not set if no upload
+            console.log('PF:342-->we have a profile fileName');
             uploadImage = false; //      we have file, but need confirmation to upload
         }
         let picture;
         if (uploadImage !== null) {
+            console.log('PF:347-->upload is not null');
             const nameOnly = profilePicDetails.fileName.slice(0, -4);
             const fileExtension = profilePicDetails.fileName.slice(-4);
             picture = `${nameOnly}_${uuid()}${fileExtension}`;
         } else {
             //      no file to upload
+            console.log('PF:353-->uploadInmage is null');
             picture = profilePicRef; //     this should be default value here...
         }
-
+        printObject('PF:356--> picture CHECK:\n', picture);
+        printObject(
+            'PF:358-->meeter.defaultProfilePicture:',
+            meeter.defaultProfilePicture
+        );
         if (picture !== meeter.defaultProfilePicture) {
+            console.log('PF:362-->not the same...save');
             //      not default pic
             if (profilePicRef != picture) {
                 //      selected file is different, upload and save
+                console.log('PF:366-->calling saveProfileToS3');
                 saveProfileToS3(picture);
+                console.log('PF:368-->done saveProfileToS3');
             }
+        } else {
+            console.log('PF:371--> they are the same, no s3 saving needed');
         }
 
         const resultantProfile = {
@@ -342,7 +446,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         //      save the form to graphql
         //      ========================
         printObject(
-            'PF:255--> Profile Form done, resultantProfile:\n',
+            'PF:391--> Profile Form done, resultantProfile:\n',
             resultantProfile
         );
         handleUpdate(resultantProfile);
@@ -366,17 +470,25 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
         //* ---------------------------------
         //* take a picture
         //* ---------------------------------
+        if (!cameraRef) return;
+
         if (cameraRef) {
             try {
-                const data = await cameraRef.current.takePictureAsync();
+                console.log('inside try');
+                const data = await cameraRef.takePictureAsync();
+                //const data = await cameraRef.current.takePictureAsync();
                 printObject('camera data:\n', data);
+                setCameraData(data);
                 setCameraImage(data.uri);
             } catch (error) {
                 printObject('Error taking picture', error);
             }
         }
+        setShowCameraModal(false);
     };
-    printObject('PF:278__> values:', values);
+    printObject('PF:481--screen refresh values:', values);
+    printObject('cameraImage:', cameraImage);
+    printObject('profilePic:', profilePic);
     return (
         <>
             <Modal visible={showCameraModal} animationStyle='slide'>
@@ -390,38 +502,48 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                         style={styles.camera}
                         type={type}
                         flashMode={flashMode}
+                        ref={(r) => {
+                            cameraRef = r;
+                        }}
+                    ></Camera>
+
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%',
+                            marginTop: 30,
+                        }}
                     >
-                        <View style={styles.buttonContainer}>
+                        <View style={styles.cameraControlRotate}>
                             <TouchableOpacity
-                                style={styles.cameraButton}
-                                onPress={toggleCameraType}
+                                onPress={() => {
+                                    setType(
+                                        type === CameraType.back
+                                            ? CameraType.front
+                                            : CameraType.back
+                                    );
+                                }}
                             >
-                                <Text style={styles.text}>Flip Camera</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.buttonContainer}>
-                            <TouchableOpacity
-                                style={styles.cameraButton}
-                                onPress={handlePictureClick}
-                            >
-                                <MaterialIcons
-                                    name='camera'
-                                    size={24}
+                                <MaterialCommunityIcons
+                                    name='rotate-3d-variant'
+                                    size={36}
                                     color='white'
                                 />
                             </TouchableOpacity>
                         </View>
-                    </Camera>
-                    <View>
-                        <TouchableOpacity
-                            onPress={() => setShowCameraModal(false)}
-                        >
-                            <MaterialIcons
-                                name='camera'
-                                size={24}
-                                color='white'
-                            />
-                        </TouchableOpacity>
+                        <View style={styles.cameraControlCapture}>
+                            <TouchableOpacity
+                                onPress={() => handlePictureClick()}
+                            >
+                                <MaterialIcons
+                                    name='camera'
+                                    size={36}
+                                    color='white'
+                                />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </Surface>
             </Modal>
@@ -443,7 +565,9 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                                 <Image
                                     // source={require('../../assets/user-profile.jpeg')}
                                     source={{
-                                        uri: profilePic,
+                                        uri: cameraImage
+                                            ? cameraImage
+                                            : profilePic,
                                     }}
                                     style={mtrTheme.profileImage}
                                 />
@@ -702,7 +826,7 @@ const ProfileForm = ({ handleUpdate, handleCancel }) => {
                 </View>
                 <View style={styles.buttonContainer}>
                     <CustomButton
-                        text='SAVE'
+                        text={savingProfile ? 'Saving...' : 'SAVE'}
                         bgColor='green'
                         fgColor='white'
                         type='PRIMARY'
@@ -803,9 +927,29 @@ const styles = StyleSheet.create({
     camera: {
         flex: 0.5,
     },
-    cameraButton: {
+    cameraControlRotate: {
         flex: 1,
-        alignSelf: 'flex-end',
-        alignItems: 'center',
+        alignItems: 'flex-start',
+        paddingLeft: 20,
     },
+    cameraControlCapture: {
+        flex: 1,
+        alignItems: 'flex-end',
+        paddingRight: 20,
+    },
+    // cameraControlsContainer: {
+    //     flexDirection: 'row',
+    //     alignItems: 'center',
+    //     alignContent: 'space-around',
+    // },
+    // cameraRotateContainer: {
+    //     backgroundColor: 'grey',
+    //     borderColor: 'yellow',
+    //     borderWidth: 1,
+    // },
+    // cameraButton: {
+    //     flex: 1,
+    //     alignSelf: 'flex-end',
+    //     alignItems: 'center',
+    // },
 });

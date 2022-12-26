@@ -758,7 +758,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         height: 45,
     },
-    buttonContainer: { marginTop: 10, marginHorizontal: 20 },
+    buttonContainer: { marginTop: 10, marginHorizontal: 20, marginBottom: 20 },
     button: {
         backgroundColor: 'blue',
         marginHorizontal: 20,

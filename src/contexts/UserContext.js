@@ -19,6 +19,7 @@ const UserContextProvider = ({ children }) => {
     const saveUserProfile = async (profile) => {
         setUserProfile(profile);
     };
+
     const updateUserProfile = async (resultantProfile) => {
         if (!resultantProfile) {
             return;

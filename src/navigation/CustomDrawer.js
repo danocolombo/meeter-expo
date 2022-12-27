@@ -15,16 +15,14 @@ import {
 } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
-import { usersSlice } from '../features/usersSlice';
 import { useUserContext } from '../contexts/UserContext';
 import { useSysContext, sysSignOut } from '../contexts/SysContext';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { printObject } from '../utils/helpers';
 
 const CustomDrawer = (props) => {
     const mtrTheme = useTheme();
-    const user = useSelector((state) => state.users.currentUser);
     const { meeter } = useSysContext();
     const { userProfile } = useUserContext();
     const { systemDef, sysSignOut } = useSysContext();
@@ -36,6 +34,7 @@ const CustomDrawer = (props) => {
 
     async function checkUserRole() {
         try {
+            printObject('CD:37-->userProfile:\n', userProfile);
             console.log('CD:37-->role', userProfile?.activeOrg?.role);
             if (userProfile?.activeOrg?.role) {
                 setUserRole(userProfile?.activeOrg?.role);
@@ -46,9 +45,11 @@ const CustomDrawer = (props) => {
             console.log('CD:39-->error checkUserRole');
         }
     }
-    useEffect(() => {
-        checkUserRole();
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            checkUserRole();
+        }, [userProfile])
+    );
     async function getPictureDetails() {
         let picRef = meeter.defaultProfilePicture;
         if (userProfile?.picture) {
@@ -61,24 +62,28 @@ const CustomDrawer = (props) => {
         try {
             Storage.get(picRef, {
                 level: 'public',
-            }).then((hardPic) => setPictureObject(hardPic));
+            })
+                .then((hardPic) => setPictureObject(hardPic))
+                .catch((error) => {
+                    printObject('CD:68-->error getting storage ref:\n', error);
+                });
         } catch (error) {
-            console.log('CD:69-->error Storeage.get\n', error);
+            console.log('CD:71-->error Storeage.get\n', error);
         }
-
-        console.log('CD:69-->picRef:', picRef);
-        console.log('CD:70-->pictureObject:', pictureObject);
     }
-    useEffect(() => {
-        getPictureDetails();
-    }, []);
-    // useEffect(() => {
-    //     if (profilePic) {
-    //         setProfilePicture(profilePic);
-    //     } else if (systemDef?.defaultProfilePic) {
-    //         setProfilePicture(systemDef.defaultProfilePic);
-    //     }
-    // }, [profilePic, systemDef]);
+    useFocusEffect(
+        React.useCallback(() => {
+            getPictureDetails()
+                .then(() => {
+                    console.log('CD:78-->picRef:', picRef);
+                    console.log('CD:79-->pictureObject:', pictureObject);
+                })
+                .catch((error) => {
+                    printObject('CD:82-->ERROR:\n', error);
+                });
+        }, [userProfile])
+    );
+
     const signUserOut = async () => {
         Auth.signOut();
         //try {
@@ -124,7 +129,7 @@ const CustomDrawer = (props) => {
                         />
                     )}
                     <Text style={{ color: mtrTheme.colors.accent }}>
-                        {userProfile.firstName} {userProfile.lastName}
+                        {userProfile?.firstName} {userProfile?.lastName}
                     </Text>
                 </ImageBackground>
                 <View

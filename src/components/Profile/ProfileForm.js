@@ -93,11 +93,11 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
         shirt: profile?.shirt ? profile.shirt.toUpperCase() : '',
         picture: profile?.picture || meeter?.defaultProfilePicture,
     });
-    const [isFirstNameValid, setIsFirstNameValid] = useState(
-        values.firstName?.length > 1 ? true : false
+    const [isFirstNameValid, setIsFir597stNameValid] = useState(
+        values?.firstName?.length > 1 ? true : false
     );
     const [isLastNameValid, setIsLastNameValid] = useState(
-        values.lastName?.length > 2 ? true : false
+        values?.lastName?.length > 2 ? true : false
     );
     useEffect(() => {
         let dateObj = dateDashToDateObject(values?.birthday);
@@ -245,6 +245,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
         setModalBirthDateVisible(false);
     };
     function inputChangedHandler(inputIdentifier, enteredValue) {
+        // console.log('inputChangeHandler::inputIdentifier:', inputIdentifier);
         setValues((curInputValues) => {
             if (inputIdentifier === 'firstName') {
                 if (enteredValue.length < 2) {
@@ -272,6 +273,29 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                 let newValues = { ...curInputValues, stateProv };
                 curInputValues = newValues;
                 return curInputValues;
+            }
+            if (inputIdentifier === 'postalCode') {
+                //* entered value has to be numeric and no greater than 5 digits
+                try {
+                    if (!isNaN(enteredValue)) {
+                        if (
+                            parseInt(enteredValue) > 0 &&
+                            parseInt(enteredValue) < 100000
+                        ) {
+                            let postalCode = enteredValue;
+                            let newValues = { ...curInputValues, postalCode };
+                            curInputValues = newValues;
+                            return cuInputValues;
+                        } else {
+                            return curInputValues;
+                        }
+                    } else {
+                        let postalCode = values?.postalCode;
+                        let newValues = { ...curInputValues, postalCode };
+                        curInputValues = newValues;
+                        return curInputValues;
+                    }
+                } catch (error) {}
             }
             return {
                 ...curInputValues,
@@ -520,7 +544,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
 
                         <View style={{ paddingTop: 5 }}>
                             <Text style={{ color: mtrTheme.colors.accent }}>
-                                {profile.firstName} {profile.lastName}
+                                {profile?.firstName} {profile?.lastName}
                             </Text>
                         </View>
                     </View>
@@ -533,7 +557,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                             labelStyle={mtrTheme.profileFormInputTitle}
                             textInputConfig={{
                                 backgroundColor: 'lightgrey',
-                                value: values.phone,
+                                value: values?.phone,
                                 paddingHorizontal: 5,
                                 marginRight: 5,
                                 fontSize: 24,
@@ -643,7 +667,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                 labelStyle={mtrTheme.profileFormInputTitle}
                                 textInputConfig={{
                                     backgroundColor: 'lightgrey',
-                                    value: values.street,
+                                    value: values?.street,
                                     paddingHorizontal: 5,
                                     marginRight: 5,
                                     fontSize: 24,
@@ -669,7 +693,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                 labelStyle={mtrTheme.profileFormInputTitle}
                                 textInputConfig={{
                                     backgroundColor: 'lightgrey',
-                                    value: values.city,
+                                    value: values?.city,
                                     paddingHorizontal: 5,
                                     marginRight: 5,
                                     fontSize: 24,
@@ -737,7 +761,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                 labelStyle={mtrTheme.profileFormInputTitle}
                                 textInputConfig={{
                                     backgroundColor: 'lightgrey',
-                                    value: values.postalCode,
+                                    value: values?.postalCode,
                                     paddingHorizontal: 5,
                                     fontSize: 24,
                                     color: 'black',

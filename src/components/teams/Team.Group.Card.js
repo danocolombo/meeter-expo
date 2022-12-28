@@ -29,9 +29,97 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
     return (
         <>
             <View style={styles.rootContainer}>
-                <View>
-                    <Text>{team.id}</Text>
-                </View>
+                <Pressable
+                    onPress={groupPressHandler}
+                    style={({ pressed }) => pressed && styles.pressed}
+                >
+                    <View
+                        style={[
+                            styles.meetingItem,
+
+                            active
+                                ? mtrTheme.meetingCardActivePrimary
+                                : mtrTheme.meetingCardHistoricPrimary,
+                        ]}
+                    >
+                        <View
+                            style={{
+                                padding: 5,
+                                flexDirection: 'row',
+                                minHeight: 'auto',
+                                justifyContent: 'center',
+                                alignContent: 'center',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <View
+                                style={{
+                                    minWidth: '90%',
+                                    flexDirection: 'row',
+                                    alignItems: 'stretch',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        flexDirection: 'column',
+                                        padding: 20,
+                                        // alignContent: 'space-around',
+                                        // alignItems: 'center',
+
+                                        borderWidth: 1,
+                                        borderColor: 'green',
+                                    }}
+                                >
+                                    <View style={{ minHeight: 'auto' }}>
+                                        <Text>PIC</Text>
+                                    </View>
+                                </View>
+                                <View
+                                    style={{
+                                        justifyContent: 'center',
+                                        marginLeft: 15,
+                                        alignContent: 'stretch',
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            fontFamily: 'Roboto-Bold',
+                                            fontSize: 26,
+                                        }}
+                                    >
+                                        {team.firstName} {team.lastName}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            fontFamily: 'Roboto-Regular',
+                                            fontSize: 20,
+                                        }}
+                                    >
+                                        {team.activeRoles}
+                                    </Text>
+                                </View>
+                                <View
+                                    style={{
+                                        borderWidth: 1,
+                                        borderColor: 'black',
+                                        paddingLeft: 'auto',
+                                        alignItems: 'flex-end',
+                                    }}
+                                >
+                                    <View>
+                                        <Text>TOP</Text>
+                                    </View>
+                                    <View>
+                                        <Text>BOTTOM</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View></View>
+                    </View>
+                </Pressable>
             </View>
         </>
     );

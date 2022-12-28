@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import TeamGroupCard from '../components/teams/Team.Group.Card';
-import { getTeam } from '../jerichoQL/providers/team';
+import { getTeam } from '../jerichoQL/providers/team.provider';
 
 const TeamScreen = () => {
     const [teamMembers, setTeamMembers] = useState([]);

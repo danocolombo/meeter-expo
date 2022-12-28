@@ -1,18 +1,18 @@
 import { Text, View, Image, Switch, TouchableOpacity } from 'react-native';
-import { Storage } from 'aws-amplify';
-import { useTheme } from 'react-native-paper';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useTheme, ActivityIndicator } from 'react-native-paper';
+import React, { useState } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useUserContext } from '../contexts/UserContext';
 import { useSysContext } from '../contexts/SysContext';
 import { printObject } from '../utils/helpers';
-import TeamGroupCard from '../components/teams/Team.Group.Card';
-import { getTeam } from '../jerichoQL/providers/team';
+import { updateAffiliations } from '../jerichoQL/providers/affiliations.provider';
 
 const TeamMemberScreen = (props) => {
     const teamMember = props.route.params.teamMember;
     const mtrTheme = useTheme();
     const { meeter } = useSysContext();
+    const { userProfile } = useUserContext();
+    const [isUpdating, setIsUpdating] = useState(false);
     const [pictureObject, setPictureObject] = useState(
         props.route.params.pictureUri
     );
@@ -32,11 +32,65 @@ const TeamMemberScreen = (props) => {
     const toggleGroups = () => setGroups((previousState) => !previousState);
     const toggleManage = () => setManage((previousState) => !previousState);
 
-    useFocusEffect(
-        useCallback(() => {
-            //* determine the initial values
-        }, [])
-    );
+    const saveChanges = () => {
+        //*  We only get here if there were changes, so prepare the request
+        setIsUpdating(true);
+        let adds = [];
+        let removes = [];
+        //* check meals
+        if (meals !== mealsOriginalValue) {
+            if (mealsOriginalValue === false) {
+                adds.push('meals');
+            } else {
+                removes.push('meals');
+            }
+        }
+        if (groups !== groupsOriginalValue) {
+            if (groupsOriginalValue === false) {
+                adds.push('groups');
+            } else {
+                removes.push('groups');
+            }
+        }
+        if (manage !== manageOriginalValue) {
+            if (manageOriginalValue === false) {
+                adds.push('manage');
+            } else {
+                removes.push('manage');
+            }
+        }
+
+        const changeRequest = {
+            organizationId: userProfile.activeOrg.id,
+            userId: userProfile.id,
+            add: adds,
+            remove: removes,
+        };
+        updateAffiliations(changeRequest)
+            .then(() => {
+                console.log('updateAffiliations passed');
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        setIsUpdating(false);
+    };
+    if (isUpdating) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator
+                    color={mtrTheme.colors.activityIndicator}
+                    size={80}
+                />
+            </View>
+        );
+    }
     return (
         <>
             <View
@@ -165,7 +219,7 @@ const TeamMemberScreen = (props) => {
                             groups !== groupsOriginalValue ||
                             manage !== manageOriginalValue) && (
                             <TouchableOpacity
-                                onPress={toggleGroups}
+                                onPress={saveChanges}
                                 style={{
                                     width: 150,
                                     backgroundColor: 'green',

@@ -1,4 +1,4 @@
-//      team.js
+//      team.provider.js
 //* ======================================
 //      this file gets graphQL data and returns
 //      simplified json object

@@ -179,6 +179,19 @@ export const getOrganization = /* GraphQL */ `
         }
     }
 `;
+export const getOrgUserAffiliations = `
+    query OrgUserAffiliationQuery($orgId: ID, $userId: ID){
+        listAffiliations(
+            filter:{organizationAffiliationsId: {eq: $orgId}, and: {userAffiliationsId: {eq: $userId}}}
+        ){
+            items {
+                id
+                role
+                status
+            }
+        }
+    }
+`;
 export const getOrganizationTeam = /* GraphQL */ `
     query GetOrganization($id: ID!) {
         getOrganization(id: $id) {

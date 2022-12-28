@@ -28,7 +28,7 @@ import ConfirmEmailScreen from '../screens/Auth/ConfirmEmail';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
 import NewPasswordScreen from '../screens/Auth/NewPassword';
 import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
-// import MeetingDelete from '../screens/MeetingDelete';
+import TeamMemberScreen from '../screens/TeamMemberScreen'; // import MeetingDelete from '../screens/MeetingDelete';
 import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
 import MeetingNewScreen from '../screens/MeetingNewScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
@@ -137,6 +137,17 @@ function MeeterStack(props) {
             <Stack.Screen
                 name='GroupEdit'
                 component={GroupDetailsEditScreen}
+                options={({ navigation }) => ({
+                    title: meeter?.appName,
+                    headerStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+                    headerTintColor: 'white',
+                })}
+            />
+            <Stack.Screen
+                name='TeamMember'
+                component={TeamMemberScreen}
                 options={({ navigation }) => ({
                     title: meeter?.appName,
                     headerStyle: {

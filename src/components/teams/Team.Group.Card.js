@@ -46,12 +46,18 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
     function handleDeleteClick() {
         return;
     }
+    function handleDetailsPress() {
+        navigation.navigate('TeamMember', {
+            teamMember: team,
+            pictureUri: pictureObject,
+        });
+    }
     // printObject('team:\n', team);
     return (
         <>
             <View style={styles.rootContainer}>
                 <Pressable
-                    onPress={groupPressHandler}
+                    onPress={handleDetailsPress}
                     style={({ pressed }) => pressed && styles.pressed}
                 >
                     <View style={[styles.teamMemberItem]}>
@@ -145,7 +151,7 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
                                         <TouchableOpacity>
                                             <View
                                                 style={{
-                                                    backgroundColor: 'white',
+                                                    backgroundColor: 'green',
                                                     width: 75,
                                                     borderRadius: 5,
                                                     padding: 3,
@@ -157,21 +163,27 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
                                                         fontFamily:
                                                             'Roboto-Bold',
                                                         fontSize: 18,
+                                                        color: 'white',
                                                     }}
                                                 >
-                                                    Alter
+                                                    Approve
                                                 </Text>
                                             </View>
                                         </TouchableOpacity>
                                     </View>
-                                    <View style={{ paddingTop: 5 }}>
+                                    <View
+                                        style={{
+                                            paddingBottom: 5,
+                                            marginRight: 10,
+                                        }}
+                                    >
                                         <TouchableOpacity>
                                             <View
                                                 style={{
                                                     backgroundColor: 'red',
                                                     width: 75,
                                                     borderRadius: 5,
-                                                    paddingVertical: 3,
+                                                    padding: 3,
                                                 }}
                                             >
                                                 <Text
@@ -183,7 +195,7 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
                                                         color: 'white',
                                                     }}
                                                 >
-                                                    Remove
+                                                    Reject
                                                 </Text>
                                             </View>
                                         </TouchableOpacity>

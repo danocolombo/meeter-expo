@@ -45,6 +45,17 @@ const TeamScreen = () => {
                         These are the current users that have access to this
                         affiliation. Click each one for more details.
                     </Text>
+                    <Text
+                        style={[
+                            mtrTheme.subTitleSmall,
+                            {
+                                marginTop: 10,
+                            },
+                        ]}
+                    >
+                        New member requests will be highlighted and you can take
+                        appropriate action as you see fit.
+                    </Text>
                 </View>
                 {teamMembers && (
                     <>

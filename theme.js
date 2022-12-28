@@ -247,6 +247,12 @@ const theme = {
         paddingBottom: 10,
         marginHorizontal: 5,
     },
+    //   TEAM CARD STYLES
+    teamMemberImage: {
+        height: 80,
+        aspectRatio: 1,
+        borderRadius: 40,
+    },
     //   GROUP EDIT
     groupEditSurface: {
         flex: 1,

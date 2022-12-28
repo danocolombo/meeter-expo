@@ -2,30 +2,51 @@ import {
     StyleSheet,
     Text,
     View,
+    Image,
     Pressable,
-    Platform,
-    Alert,
     TouchableOpacity,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTheme, withTheme, Badge } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-// import MeetingCardDate from './ui/Meeting.Card.Date';
-import DateBall from '../ui/DateBall';
-import DateStack from '../ui/DateStack';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { Storage } from 'aws-amplify';
+import { useSysContext } from '../../contexts/SysContext';
 import { printObject } from '../../utils/helpers';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 const TeamGroupListCard = ({ team, active, handleDelete }) => {
     const navigation = useNavigation();
     const mtrTheme = useTheme();
-    //printObject('mtrTheme:', mtrTheme);
+    const { meeter } = useSysContext();
+    const [pictureObject, setPictureObject] = useState(null);
+
+    useFocusEffect(
+        useCallback(() => {
+            async function fetchImage() {
+                try {
+                    let theFile = '';
+                    if (team.picture === null) {
+                        theFile = meeter.defaultProfilePicture;
+                    } else {
+                        theFile = team.picture;
+                    }
+                    const url = await Storage.get(theFile, {
+                        level: 'public',
+                    });
+                    setPictureObject(url);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+            fetchImage();
+        }, [])
+    );
+
     function groupPressHandler() {
         return;
     }
     function handleDeleteClick() {
         return;
     }
-    printObject('team:\n', team);
+    // printObject('team:\n', team);
     return (
         <>
             <View style={styles.rootContainer}>
@@ -33,59 +54,69 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
                     onPress={groupPressHandler}
                     style={({ pressed }) => pressed && styles.pressed}
                 >
-                    <View
-                        style={[
-                            styles.meetingItem,
-
-                            active
-                                ? mtrTheme.meetingCardActivePrimary
-                                : mtrTheme.meetingCardHistoricPrimary,
-                        ]}
-                    >
+                    <View style={[styles.teamMemberItem]}>
                         <View
                             style={{
-                                padding: 5,
-                                flexDirection: 'row',
-                                minHeight: 'auto',
-                                justifyContent: 'center',
-                                alignContent: 'center',
-                                alignItems: 'center',
+                                borderWidth: 1,
+                                borderColor: 'blue',
+                                width: '100%',
+                                // minWidth: '100%',
                             }}
                         >
                             <View
                                 style={{
-                                    minWidth: '90%',
                                     flexDirection: 'row',
-                                    alignItems: 'stretch',
-                                    justifyContent: 'space-between',
+                                    marginVertical: 10,
+                                    flexWrap: 'wrap',
+                                    width: '100%',
                                 }}
                             >
                                 <View
                                     style={{
-                                        flexDirection: 'column',
-                                        padding: 20,
-                                        // alignContent: 'space-around',
-                                        // alignItems: 'center',
-
-                                        borderWidth: 1,
-                                        borderColor: 'green',
+                                        flex: 0,
+                                        justifyContent: 'center',
                                     }}
                                 >
-                                    <View style={{ minHeight: 'auto' }}>
-                                        <Text>PIC</Text>
+                                    <View
+                                        style={{
+                                            width: 100,
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        {pictureObject && (
+                                            <>
+                                                <View
+                                                    style={{
+                                                        backgroundColor:
+                                                            'white',
+                                                        borderRadius: 40,
+                                                    }}
+                                                >
+                                                    <Image
+                                                        source={{
+                                                            uri: pictureObject,
+                                                        }}
+                                                        style={{
+                                                            height: 80,
+                                                            width: 80,
+                                                            borderRadius: 40,
+                                                        }}
+                                                    />
+                                                </View>
+                                            </>
+                                        )}
                                     </View>
                                 </View>
                                 <View
                                     style={{
+                                        flex: 1,
                                         justifyContent: 'center',
-                                        marginLeft: 15,
-                                        alignContent: 'stretch',
                                     }}
                                 >
                                     <Text
                                         style={{
                                             fontFamily: 'Roboto-Bold',
-                                            fontSize: 26,
+                                            fontSize: 20,
                                         }}
                                     >
                                         {team.firstName} {team.lastName}
@@ -101,23 +132,65 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
                                 </View>
                                 <View
                                     style={{
-                                        borderWidth: 1,
-                                        borderColor: 'black',
-                                        paddingLeft: 'auto',
-                                        alignItems: 'flex-end',
+                                        flex: 0,
+                                        justifyContent: 'center',
                                     }}
                                 >
-                                    <View>
-                                        <Text>TOP</Text>
+                                    <View
+                                        style={{
+                                            paddingBottom: 5,
+                                            marginRight: 10,
+                                        }}
+                                    >
+                                        <TouchableOpacity>
+                                            <View
+                                                style={{
+                                                    backgroundColor: 'white',
+                                                    width: 75,
+                                                    borderRadius: 5,
+                                                    padding: 3,
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        textAlign: 'center',
+                                                        fontFamily:
+                                                            'Roboto-Bold',
+                                                        fontSize: 18,
+                                                    }}
+                                                >
+                                                    Alter
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
                                     </View>
-                                    <View>
-                                        <Text>BOTTOM</Text>
+                                    <View style={{ paddingTop: 5 }}>
+                                        <TouchableOpacity>
+                                            <View
+                                                style={{
+                                                    backgroundColor: 'red',
+                                                    width: 75,
+                                                    borderRadius: 5,
+                                                    paddingVertical: 3,
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        textAlign: 'center',
+                                                        fontFamily:
+                                                            'Roboto-Bold',
+                                                        fontSize: 18,
+                                                        color: 'white',
+                                                    }}
+                                                >
+                                                    Remove
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                             </View>
                         </View>
-
-                        <View></View>
                     </View>
                 </Pressable>
             </View>
@@ -134,9 +207,9 @@ const styles = StyleSheet.create({
     rootContainer: {
         marginHorizontal: 10,
     },
-    meetingItem: {
+    teamMemberItem: {
         marginVertical: 5,
-        paddingBottom: 5,
+        // paddingBottom: 5,
         backgroundColor: 'darkgrey',
         flexDirection: 'row',
         //justifyContent: 'space-between',
@@ -146,90 +219,5 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.4,
-    },
-    firstRow: {
-        flexDirection: 'row',
-    },
-    dateWrapper: {
-        margin: 5,
-    },
-    // dataWrapper: {
-    //     flexDirection: 'column',
-    // },
-    col1: {
-        paddingVertical: 8,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        paddingLeft: 10,
-        // borderWidth: 1,
-        // borderColor: 'yellow',
-    },
-    eventDateWrapper: {
-        // paddingTop: 5,
-        // borderWidth: 1,
-        // borderColor: 'yellow',
-    },
-
-    eventTimeWrapper: {
-        marginTop: 5,
-        marginBottom: 5,
-        // paddingHorizontal: 0,
-        // justifyContent: 'center',
-        alignItems: 'center',
-        paddingVertical: 2,
-        // borderWidth: 1,
-        // borderColor: 'white',
-    },
-    eventTime: {
-        // marginLeft: 5,
-        // marginRight: 30,
-        fontSize: 16,
-        color: 'white',
-        justifyContent: 'center',
-    },
-    registeredWrapper: {
-        borderWidth: 1,
-        padding: 4,
-        borderRadius: 10,
-        borderColor: 'green',
-        backgroundColor: 'green',
-        alignItems: 'center',
-    },
-    registeredText: { color: 'white', fontSize: 10 },
-    col2: {
-        flex: 1,
-        paddingVertical: 8,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        // borderWidth: 1,
-        // borderColor: 'yellow',
-    },
-    locationWrapper: {
-        justifyContent: 'center',
-        // borderWidth: 1,
-        // borderColor: 'white',
-    },
-    locationText: {
-        width: '100%',
-        marginLeft: 20,
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'lightgrey',
-    },
-    hostWrapper: {
-        paddingLeft: 25,
-        // borderWidth: 1,
-        // borderColor: 'white',
-    },
-    hostName: {
-        // marginLeft: 20,
-        fontSize: 20,
-        // fontWeight: 'bold',
-        color: 'lightgrey',
-    },
-    hostRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-start',
     },
 });

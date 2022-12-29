@@ -53,7 +53,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const [isShirtFocus, setIsShirtFocus] = useState(false);
     const [modalBirthDateVisible, setModalBirthDateVisible] = useState(false);
     const [birthDay, setBirthday] = useState(
-        profile?.birthDay
+        profile?.birthday
             ? new Date(profile.birthday)
             : today.toISOString().slice(0, 10)
     );
@@ -458,10 +458,14 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
         }
         setShowCameraModal(false);
     };
-    printObject('PF:489--screen refresh values:', values);
-    printObject('PF:490-->cameraImage:', cameraImage);
-    printObject('PF:491-->profilePic:', profilePic);
-    printObject('PF:452-->profilePicture: \n', profilePicture);
+    // printObject('PF:489--screen refresh values:', values);
+    // printObject('PF:490-->cameraImage:', cameraImage);
+    // printObject('PF:491-->profilePic:', profilePic);
+    // printObject('PF:452-->profilePicture: \n', profilePicture);
+    console.log('type of birthDay:', typeof birthDay);
+    printObject('birthDay:\n', birthDay);
+    console.log('type of values.birthday:', typeof values.birthday);
+    printObject('values.birthday:\n', values.birthday);
     return (
         <>
             <Modal visible={showCameraModal} animationStyle='slide'>
@@ -619,7 +623,9 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             padding: 5,
                                         }}
                                     >
-                                        {birthDay.toISOString().slice(0, 10)}
+                                        {profile.birthday
+                                            ? values.birthday
+                                            : 'undefined    '}
                                     </Text>
                                 </View>
                             </View>

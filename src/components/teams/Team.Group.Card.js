@@ -136,71 +136,74 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
                                         {team.activeRoles}
                                     </Text>
                                 </View>
-                                <View
-                                    style={{
-                                        flex: 0,
-                                        justifyContent: 'center',
-                                    }}
-                                >
+                                {!team.activeRoles && (
                                     <View
                                         style={{
-                                            paddingBottom: 5,
-                                            marginRight: 10,
+                                            flex: 0,
+                                            justifyContent: 'center',
                                         }}
                                     >
-                                        <TouchableOpacity>
-                                            <View
-                                                style={{
-                                                    backgroundColor: 'green',
-                                                    width: 75,
-                                                    borderRadius: 5,
-                                                    padding: 3,
-                                                }}
-                                            >
-                                                <Text
+                                        <View
+                                            style={{
+                                                paddingBottom: 5,
+                                                marginRight: 10,
+                                            }}
+                                        >
+                                            <TouchableOpacity>
+                                                <View
                                                     style={{
-                                                        textAlign: 'center',
-                                                        fontFamily:
-                                                            'Roboto-Bold',
-                                                        fontSize: 18,
-                                                        color: 'white',
+                                                        backgroundColor:
+                                                            'green',
+                                                        width: 75,
+                                                        borderRadius: 5,
+                                                        padding: 3,
                                                     }}
                                                 >
-                                                    Approve
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View
-                                        style={{
-                                            paddingBottom: 5,
-                                            marginRight: 10,
-                                        }}
-                                    >
-                                        <TouchableOpacity>
-                                            <View
-                                                style={{
-                                                    backgroundColor: 'red',
-                                                    width: 75,
-                                                    borderRadius: 5,
-                                                    padding: 3,
-                                                }}
-                                            >
-                                                <Text
+                                                    <Text
+                                                        style={{
+                                                            textAlign: 'center',
+                                                            fontFamily:
+                                                                'Roboto-Bold',
+                                                            fontSize: 18,
+                                                            color: 'white',
+                                                        }}
+                                                    >
+                                                        Approve
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <View
+                                            style={{
+                                                paddingBottom: 5,
+                                                marginRight: 10,
+                                            }}
+                                        >
+                                            <TouchableOpacity>
+                                                <View
                                                     style={{
-                                                        textAlign: 'center',
-                                                        fontFamily:
-                                                            'Roboto-Bold',
-                                                        fontSize: 18,
-                                                        color: 'white',
+                                                        backgroundColor: 'red',
+                                                        width: 75,
+                                                        borderRadius: 5,
+                                                        padding: 3,
                                                     }}
                                                 >
-                                                    Reject
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
+                                                    <Text
+                                                        style={{
+                                                            textAlign: 'center',
+                                                            fontFamily:
+                                                                'Roboto-Bold',
+                                                            fontSize: 18,
+                                                            color: 'white',
+                                                        }}
+                                                    >
+                                                        Reject
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                </View>
+                                )}
                             </View>
                         </View>
                     </View>

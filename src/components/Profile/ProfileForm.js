@@ -36,18 +36,27 @@ import { useUserContext } from '../../contexts/UserContext';
 import { useSysContext } from '../../contexts/SysContext';
 import CustomButton from '../ui/CustomButton';
 import Input from '../ui/Input';
-import { printObject, dateDashToDateObject } from '../../utils/helpers';
+import {
+    printObject,
+    dateDashToDateObject,
+    todayMinus60,
+} from '../../utils/helpers';
 import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
 
 //   FUNCTION START
 //   ===============
 const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
+    const today = new Date();
     const navigation = useNavigation();
     const [savingProfile, setSavingProfile] = useState(false);
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isShirtFocus, setIsShirtFocus] = useState(false);
     const [modalBirthDateVisible, setModalBirthDateVisible] = useState(false);
-    const [birthDay, setBirthday] = useState(new Date(profile.birthday));
+    const [birthDay, setBirthday] = useState(
+        profile?.birthDay
+            ? new Date(profile.birthday)
+            : today.toISOString().slice(0, 10)
+    );
     const mtrTheme = useTheme();
     const { width, height } = useWindowDimensions();
     //      the picture S3 reference
@@ -89,7 +98,9 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             : '',
         email: profile?.email ? profile.email : '',
         phone: profile?.phone ? profile.phone : '',
-        birthday: profile?.birthday ? profile.birthday.substr(0, 10) : '',
+        birthday: profile?.birthday
+            ? profile.birthday.substr(0, 10)
+            : today.toISOString().slice(0, 10),
         shirt: profile?.shirt ? profile.shirt.toUpperCase() : '',
         picture: profile?.picture || meeter?.defaultProfilePicture,
     });
@@ -608,7 +619,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             padding: 5,
                                         }}
                                     >
-                                        {birthDay.toLocaleDateString()}
+                                        {birthDay.toISOString().slice(0, 10)}
                                     </Text>
                                 </View>
                             </View>

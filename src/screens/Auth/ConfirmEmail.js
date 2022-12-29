@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import CustomInput from '../../components/ui/CustomInput';
 import CustomButton from '../../components/ui/Auth/CustomButton';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { registerUser } from '../../jerichoQL/providers/users.provider';
 import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
+import { printObject } from '../../utils/helpers';
 const ConfirmEmailScreen = () => {
     const route = useRoute();
     const { control, handleSubmit, watch } = useForm({
@@ -21,7 +23,7 @@ const ConfirmEmailScreen = () => {
             console.log('confirmSignUp_reponse', response);
             navigation.navigate('SignIn');
         } catch (e) {
-            Alert.alert('Oops', e.message);
+            Alert.alert('Failure jericho user registration', e.message);
         }
     };
 
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
         padding: 20,
+        marginTop: 75,
     },
     title: {
         fontSize: 24,

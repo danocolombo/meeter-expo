@@ -33,23 +33,44 @@ const AuthContextProvider = ({ children }) => {
             //* check if user has proflile
             //*****************************************
             if (gqlProfileData?.data?.usersBySub?.items[0]?.id) {
+                console.log('IF---- where we belong');
                 const gqlProfile = gqlProfileData.data.usersBySub.items[0];
                 //      set activeOrg based on profile defaultOrg and affiliations
-                const clientData = gqlProfile.affiliations.items.filter(
-                    (a) => a.organization.id === gqlProfile.defaultOrg.id
-                );
-                const client = clientData[0];
-                const activeOrg = {
-                    id: client.organization.id,
-                    code: client.organization.code,
-                    name: client.organization.name,
-                    heroMessage: client.organization.heroMessage,
-                    role: client.role,
-                    status: client.status,
-                };
+                let clientData = {};
+                if (gqlProfile?.defaultOrg?.id) {
+                    clientData = gqlProfile.affiliations.items.filter(
+                        (a) => a.organization.id === gqlProfile.defaultOrg.id
+                    );
+                }
+                let client = {};
+                let activeOrg = {};
+                if (clientData.length > 0) {
+                    //* affiliation found...
+                    client = clientData[0];
+                    activeOrg = {
+                        id: client.organization.id,
+                        code: client.organization.code,
+                        name: client.organization.name,
+                        heroMessage: client.organization.heroMessage,
+                        role: client.role,
+                        status: client.status,
+                    };
+                } else {
+                    //* this is default, no affiliations
+                    activeOrg = {
+                        id: MEETER_DEFAULTS.ORGANIZATION_ID,
+                        code: MEETER_DEFAULTS.CODE,
+                        name: MEETER_DEFAULTS.NAME,
+                        heroMessage: MEETER_DEFAULTS.HERO_MESSAGE,
+                        role: MEETER_DEFAULTS.ROLE,
+                        status: 'active',
+                    };
+                }
+                printObject('AC:68-->activeOrg:\n', activeOrg);
                 const updatedProfile = { ...gqlProfile, activeOrg };
                 return updatedProfile;
             } else {
+                console.log('ELSE---HELP');
                 //todo: what does it look like when new user and no profile?
                 //todo------------------------------------------------------
                 const activeOrg = {
@@ -64,7 +85,7 @@ const AuthContextProvider = ({ children }) => {
                 return updatedProfile;
             }
         } catch (error) {
-            printObject('AC:34-->theUserInfo TryCatch failure:\n', error);
+            printObject('AC:87-->theUserInfo TryCatch failure:\n', error);
             return;
         }
     };

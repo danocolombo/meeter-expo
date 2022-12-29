@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Foundation } from '@expo/vector-icons';
 import { useTheme, withTheme, Badge } from 'react-native-paper';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Storage } from 'aws-amplify';
@@ -141,67 +142,14 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
                                         style={{
                                             flex: 0,
                                             justifyContent: 'center',
+                                            marginRight: 10,
                                         }}
                                     >
-                                        <View
-                                            style={{
-                                                paddingBottom: 5,
-                                                marginRight: 10,
-                                            }}
-                                        >
-                                            <TouchableOpacity>
-                                                <View
-                                                    style={{
-                                                        backgroundColor:
-                                                            'green',
-                                                        width: 75,
-                                                        borderRadius: 5,
-                                                        padding: 3,
-                                                    }}
-                                                >
-                                                    <Text
-                                                        style={{
-                                                            textAlign: 'center',
-                                                            fontFamily:
-                                                                'Roboto-Bold',
-                                                            fontSize: 18,
-                                                            color: 'white',
-                                                        }}
-                                                    >
-                                                        Approve
-                                                    </Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                        </View>
-                                        <View
-                                            style={{
-                                                paddingBottom: 5,
-                                                marginRight: 10,
-                                            }}
-                                        >
-                                            <TouchableOpacity>
-                                                <View
-                                                    style={{
-                                                        backgroundColor: 'red',
-                                                        width: 75,
-                                                        borderRadius: 5,
-                                                        padding: 3,
-                                                    }}
-                                                >
-                                                    <Text
-                                                        style={{
-                                                            textAlign: 'center',
-                                                            fontFamily:
-                                                                'Roboto-Bold',
-                                                            fontSize: 18,
-                                                            color: 'white',
-                                                        }}
-                                                    >
-                                                        Reject
-                                                    </Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                        </View>
+                                        <Foundation
+                                            name='burst-new'
+                                            size={80}
+                                            color='yellow'
+                                        />
                                     </View>
                                 )}
                             </View>

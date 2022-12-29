@@ -57,5 +57,35 @@ export async function getTeam(teamId) {
     });
     console.log('################ team.js ######################');
     printObject('T:59-->users:\n', users);
-    return users;
+    //* get the new users first.
+    let newUsers = users.filter((item) => {
+        return item.activeRoles === undefined;
+    });
+    if (newUsers.length > 1) {
+        //* sort firstName, lastName
+        newUsers.sort((a, b) => {
+            if (a.firstName < b.firstName) return -1;
+            if (a.firstName > b.firstName) return 1;
+            if (a.lastName < b.lastName) return -1;
+            if (a.lastName > b.lastName) return 1;
+            return 0;
+        });
+    }
+
+    //* get the old users
+    let oldUsers = users.filter((item) => {
+        return item.activeRoles !== undefined;
+    });
+    if (oldUsers.length > 1) {
+        //* sort firstName, lastName
+        oldUsers.sort((a, b) => {
+            if (a.firstName < b.firstName) return -1;
+            if (a.firstName > b.firstName) return 1;
+            if (a.lastName < b.lastName) return -1;
+            if (a.lastName > b.lastName) return 1;
+            return 0;
+        });
+    }
+    const polishedUsers = newUsers.concat(oldUsers);
+    return polishedUsers;
 }

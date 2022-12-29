@@ -98,9 +98,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             : '',
         email: profile?.email ? profile.email : '',
         phone: profile?.phone ? profile.phone : '',
-        birthday: profile?.birthday
-            ? profile.birthday.substr(0, 10)
-            : today.toISOString().slice(0, 10),
+        birthday: profile?.birthday ? profile.birthday.substr(0, 10) : '',
         shirt: profile?.shirt ? profile.shirt.toUpperCase() : '',
         picture: profile?.picture || meeter?.defaultProfilePicture,
     });
@@ -623,7 +621,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             padding: 5,
                                         }}
                                     >
-                                        {profile.birthday
+                                        {values.birthday
                                             ? values.birthday
                                             : 'undefined    '}
                                     </Text>
@@ -816,7 +814,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                 <DateTimePickerModal
                     isVisible={modalBirthDateVisible}
                     mode='date'
-                    date={birthDay}
+                    date={values.birthday ? birthDay : today}
                     display='inline'
                     onConfirm={onBirthDateConfirm}
                     onCancel={onBirthDateCancel}

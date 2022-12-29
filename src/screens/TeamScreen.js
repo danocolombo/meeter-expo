@@ -1,25 +1,27 @@
 import { Text, View, FlatList } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import TeamGroupCard from '../components/teams/Team.Group.Card';
 import { getTeam } from '../jerichoQL/providers/team.provider';
+import { useFocusEffect } from '@react-navigation/native';
 
 const TeamScreen = () => {
     const [teamMembers, setTeamMembers] = useState([]);
     const mtrTheme = useTheme();
     const { userProfile } = useUserContext();
-
-    useEffect(() => {
-        getTeam(userProfile.activeOrg.id)
-            .then((theTeam) => {
-                setTeamMembers(theTeam);
-            })
-            .catch((error) => {
-                printObject('getTeam error:\n', error);
-            });
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            getTeam(userProfile.activeOrg.id)
+                .then((theTeam) => {
+                    setTeamMembers(theTeam);
+                })
+                .catch((error) => {
+                    printObject('getTeam error:\n', error);
+                });
+        }, [])
+    );
 
     return (
         <>

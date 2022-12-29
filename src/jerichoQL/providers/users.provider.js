@@ -6,6 +6,7 @@ import { printObject } from '../../utils/helpers';
 import * as queries from '../queries';
 import * as mutations from '../mutations';
 import { API } from 'aws-amplify';
+import { MEETER_DEFAULTS } from '../../constants/meeter';
 export const checkUserProfile = async (user) => {
     printObject('U.P:10-->user', user);
     try {
@@ -25,6 +26,7 @@ export const checkUserProfile = async (user) => {
                 firstName: user?.attributes?.given_name,
                 lastName: user?.attributes?.family_name,
                 email: user?.attributes?.email,
+                organizationDefaultUsersId: MEETER_DEFAULTS.ORGANIZATION_ID,
             };
             try {
                 API.graphql({

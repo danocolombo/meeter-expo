@@ -17,6 +17,7 @@ import Navigation from '../navigation/Navigation';
 
 const TeamMemberScreen = (props) => {
     const teamMember = props.route.params.teamMember;
+    printObject('teamMember***** ', teamMember);
     const mtrTheme = useTheme();
     const [showNotice, setShowNotice] = useState(
         teamMember.activeRoles ? false : true

@@ -7,7 +7,7 @@ import * as queries from '../queries';
 import * as mutations from '../mutations';
 import { API } from 'aws-amplify';
 export const updateAffiliations = async (changeRequest) => {
-    printObject('a.p:10', changeRequest);
+    printObject('a.p:10--changeRequest', changeRequest);
 
     //* get current affiliations for org/user
     const affiliationResponse = await API.graphql({
@@ -32,16 +32,10 @@ export const updateAffiliations = async (changeRequest) => {
             );
             if (existing.length > 0) {
                 console.log('the role (', r, ') exists');
-                console.log(
-                    'affilationsId:',
-                    item.id,
-                    '\nrole:',
-                    r,
-                    '\nstatus: "active"'
-                );
+
                 try {
                     const updateInfo = {
-                        id: item.id,
+                        id: existing[0].id,
                         status: 'active',
                     };
                     API.graphql({
@@ -99,24 +93,19 @@ export const updateAffiliations = async (changeRequest) => {
     //* identify "remove" requests
     const removeRequests = changeRequest.remove;
     if (removeRequests.length > 0) {
-        printObject('removeRequests:\n', removeRequests);
+        printObject('A.P:102-->removeRequests:\n', removeRequests);
+
         removeRequests.forEach((r) => {
             console.log('remove ', r, ' from the user');
+
             //* check if the role is already defined
             const existing = existingAffiliations.filter(
                 (item) => item.role === r
             );
             if (existing.length > 0) {
-                console.log(
-                    'affiliationsID:',
-                    existing[0].id,
-                    '\nrole:',
-                    r,
-                    '\nstatus: "inactive"'
-                );
                 try {
                     const updateInfo = {
-                        id: item.id,
+                        id: existing[0].id,
                         status: 'inactive',
                     };
                     API.graphql({
@@ -131,7 +120,7 @@ export const updateAffiliations = async (changeRequest) => {
                             console.error(error);
                         });
                 } catch (error) {
-                    console.log('a.p:59-->unexpected error:\n', error);
+                    console.log('a.p:130-->unexpected error:\n', error);
                 }
                 //todo: update existing affiliation status = "inactive"
             } else {

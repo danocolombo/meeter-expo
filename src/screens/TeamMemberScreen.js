@@ -6,19 +6,18 @@ import {
     Modal,
     TouchableOpacity,
     StyleSheet,
+    Alert,
 } from 'react-native';
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
 import React, { useState } from 'react';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useUserContext } from '../contexts/UserContext';
-import { useSysContext } from '../contexts/SysContext';
 import { printObject } from '../utils/helpers';
 import { updateAffiliations } from '../jerichoQL/providers/affiliations.provider';
+import Navigation from '../navigation/Navigation';
 
 const TeamMemberScreen = (props) => {
     const teamMember = props.route.params.teamMember;
     const mtrTheme = useTheme();
-    const { meeter } = useSysContext();
     const [showNotice, setShowNotice] = useState(
         teamMember.activeRoles ? false : true
     );
@@ -86,10 +85,11 @@ const TeamMemberScreen = (props) => {
 
         const changeRequest = {
             organizationId: userProfile.activeOrg.id,
-            userId: userProfile.id,
+            userId: teamMember.id,
             add: adds,
             remove: removes,
         };
+
         updateAffiliations(changeRequest)
             .then(() => {
                 console.log('updateAffiliations passed');
@@ -98,6 +98,7 @@ const TeamMemberScreen = (props) => {
                 console.error(error);
             });
         setIsUpdating(false);
+        Alert.alert('Permissions Updated');
     };
     const allowReadOnly = () => {
         Alert.alert('READ ONLY GRANTED');

@@ -7,7 +7,7 @@ import * as queries from '../queries';
 import * as mutations from '../mutations';
 import { API } from 'aws-amplify';
 export const updateAffiliations = async (changeRequest) => {
-    // printObject('a.p:10', changeRequest);
+    printObject('a.p:10', changeRequest);
 
     //* get current affiliations for org/user
     const affiliationResponse = await API.graphql({

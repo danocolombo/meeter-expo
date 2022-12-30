@@ -134,24 +134,27 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
                                             fontSize: 20,
                                         }}
                                     >
-                                        {team.activeRoles}
+                                        {team.activeRoles.length > 0
+                                            ? team.activeRoles
+                                            : 'READ-ONLY'}
                                     </Text>
                                 </View>
-                                {!team.activeRoles && (
-                                    <View
-                                        style={{
-                                            flex: 0,
-                                            justifyContent: 'center',
-                                            marginRight: 10,
-                                        }}
-                                    >
-                                        <Foundation
-                                            name='burst-new'
-                                            size={80}
-                                            color='yellow'
-                                        />
-                                    </View>
-                                )}
+                                {team.activeRoles &&
+                                    team.activeRoles.includes('new') && (
+                                        <View
+                                            style={{
+                                                flex: 0,
+                                                justifyContent: 'center',
+                                                marginRight: 10,
+                                            }}
+                                        >
+                                            <Foundation
+                                                name='burst-new'
+                                                size={80}
+                                                color='yellow'
+                                            />
+                                        </View>
+                                    )}
                             </View>
                         </View>
                     </View>

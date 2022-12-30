@@ -6,6 +6,103 @@ import { printObject } from '../../utils/helpers';
 import * as queries from '../queries';
 import * as mutations from '../mutations';
 import { API } from 'aws-amplify';
+export const getAffiliationsForTeam = async (teamId) => {
+    //      get all affiliations for org
+    //      organize by user
+    //      sort new users at top, then old
+
+    //* get all the affiliations for the teamId
+    const gqlResponse = await API.graphql({
+        query: queries.getAffiliationsForTeam,
+        variables: {
+            orgId: teamId,
+        },
+    });
+
+    if (gqlResponse.length < 1) {
+        return null;
+    }
+    const affs = gqlResponse.data.listAffiliations.items;
+    printObject('A.P:21-->affs:\n', affs);
+
+    let allUsers = [];
+    affs.forEach((a) => {
+        allUsers.push(a.userAffiliationsId);
+    });
+    // allUsers.forEach((au, index) => {
+    //     console.log('au:', index, '-->', au);
+    // });
+    //* simplify allUsers
+    const uniqueUsers = allUsers.filter((value, index, self) => {
+        return self.indexOf(value) === index;
+    });
+    // uniqueUsers.forEach((uu, index) => {
+    //     console.log('uu:', index, '=>', uu);
+    // });
+    let wholeTeam = [];
+    uniqueUsers.forEach((uu, index) => {
+        //* add an emply affiliation array
+        let user = {};
+        user.id = uu;
+        user.activeRoles = [];
+        user.inactiveRoles = [];
+        affs.forEach((aff) => {
+            if (aff.userAffiliationsId === uu) {
+                user.firstName = aff.user.firstName;
+                user.lastName = aff.user.lastName;
+                user.email = aff.user.email;
+                user.phone = aff.user.phone;
+                user.picture = aff.user.picture;
+                if (aff.status === 'active') {
+                    user.activeRoles.push(aff.role);
+                } else {
+                    user.inactiveRoles.push(aff.role);
+                }
+            }
+        });
+        wholeTeam.push(user);
+    });
+    //* get the newusers separated out
+    let rawNewUsers = [];
+    let rawOldUsers = [];
+    wholeTeam.forEach((tm) => {
+        //* check affiliations for role: "new" and status: "active"
+        // console.log('tm:', tm);
+        let newFlag = false;
+        affs.forEach((a) => {
+            // printObject('a:', a);
+            if (
+                a.role === 'new' &&
+                a.status === 'active' &&
+                a.userAffiliationsId === tm.id
+            ) {
+                newFlag = true;
+            }
+        });
+        if (newFlag) {
+            rawNewUsers.push(tm);
+        } else {
+            rawOldUsers.push(tm);
+        }
+    });
+    //* sort both arrays before combining
+
+    if (rawOldUsers.length > 1) {
+        //* sort firstName, lastName
+        rawOldUsers.sort((a, b) => {
+            if (a.firstName < b.firstName) return -1;
+            if (a.firstName > b.firstName) return 1;
+            if (a.lastName < b.lastName) return -1;
+            if (a.lastName > b.lastName) return 1;
+            return 0;
+        });
+    }
+    //* combine
+    const team = rawNewUsers.concat(rawOldUsers);
+
+    printObject('A.P:98-->team:', team);
+    return team;
+};
 export const updateAffiliations = async (changeRequest) => {
     printObject('a.p:10--changeRequest', changeRequest);
 

@@ -4,7 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import TeamGroupCard from '../components/teams/Team.Group.Card';
-import { getTeam } from '../jerichoQL/providers/team.provider';
+// import { getTeam } from '../jerichoQL/providers/team.provider';
+import { getAffiliationsForTeam } from '../jerichoQL/providers/affiliations.provider';
 import { useFocusEffect } from '@react-navigation/native';
 
 const TeamScreen = () => {
@@ -13,8 +14,9 @@ const TeamScreen = () => {
     const { userProfile } = useUserContext();
     useFocusEffect(
         useCallback(() => {
-            getTeam(userProfile.activeOrg.id)
+            getAffiliationsForTeam(userProfile.activeOrg.id)
                 .then((theTeam) => {
+                    printObject('TS:19-->theTeam:\n', theTeam);
                     setTeamMembers(theTeam);
                 })
                 .catch((error) => {

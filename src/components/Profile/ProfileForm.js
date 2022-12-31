@@ -12,8 +12,11 @@ import {
     View,
     Input as RNInput,
     useWindowDimensions,
+    KeyboardAvoidingView,
+    SafeAreaView,
     TouchableOpacity,
     Modal,
+    ScrollView,
 } from 'react-native';
 import { Storage } from 'aws-amplify';
 import { focusManager } from '@tanstack/react-query';
@@ -21,6 +24,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { v4 as uuid } from 'uuid';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import PhoneInput from '../ui/PhoneInput';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useTheme, Surface, FAB } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -40,6 +44,9 @@ import {
     printObject,
     dateDashToDateObject,
     todayMinus60,
+    getPhoneType,
+    transformPatePhone,
+    createPatePhone,
 } from '../../utils/helpers';
 import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
 
@@ -69,6 +76,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const [stateProv, setStateProv] = useState(
         profile?.location?.stateProv || ''
     );
+    const [showPhoneError, setShowPhoneError] = useState(false);
     //* CAMERA VARIABLES
     //************************* */
     const [cameraImage, setCameraImage] = useState(null);
@@ -82,7 +90,27 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const [hasCameraPermission, setHasCameraPermission] = useState();
     const [hasMediaLibraryPermission, setHasMediaLibraryPermission] =
         useState();
+    // phone control needs the value in numeric format. Check if we need to
+    // alter to use
+    let phoneDisplayValue;
+    if (profile?.phone) {
+        let phoneType = getPhoneType(profile?.phone);
 
+        switch (phoneType) {
+            case 'PATE':
+                phoneDisplayValue = profile.phone;
+                break;
+            case 'MASKED':
+                // console.log('REC:57 tmp.contact.phone', tmp.contact.phone);
+                phoneDisplayValue = createPatePhone(profile.phone);
+                break;
+            default:
+                phoneDisplayValue = '';
+                break;
+        }
+    } else {
+        phoneDisplayValue = '';
+    }
     const [values, setValues] = useState({
         uid: profile.id,
         username: profile.username ? profile.username : '',
@@ -97,7 +125,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             ? profile?.location?.postalCode
             : '',
         email: profile?.email ? profile.email : '',
-        phone: profile?.phone ? profile.phone : '',
+        phone: phoneDisplayValue,
         birthday: profile?.birthday ? profile.birthday.substr(0, 10) : '',
         shirt: profile?.shirt ? profile.shirt.toUpperCase() : '',
         picture: profile?.picture || meeter?.defaultProfilePicture,
@@ -399,8 +427,48 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             // );
             pictureToSave = profile?.picture;
         }
+        //* --------------------------
+        //* prep the phone number
+        //* --------------------------
+        let phoneToPass;
+        if (values.phone) {
+            //ensure that the phone is in expected format (xxx) xxx-xxxx
+            // 1. value needs to be either 0 or 14 characters.
+            let phoneValue = values.phone;
+            let phoneOkay = false;
+            if (phoneValue.length === 10 && phoneValue.indexOf(')') === -1) {
+                phoneOkay = true;
+            } else if (
+                phoneValue.indexOf(')') === 4 &&
+                phoneValue.length === 14
+            ) {
+                phoneOkay = true;
+            }
+            if (phoneOkay === false) {
+                setShowPhoneError(true);
+                return;
+            }
+            if (values.phone) {
+                let pType = getPhoneType(values.phone);
+                switch (pType) {
+                    case 'PATE':
+                        phoneToPass = transformPatePhone(values.phone);
+                        break;
+                    case 'MASKED':
+                        phoneToPass = values.phone;
+                        break;
+                    default:
+                        phoneToPass = '';
+                        break;
+                }
+            } else {
+                phoneToPass = '';
+            }
+        } else {
+            phoneToPass = '';
+        }
         const resultantProfile = {
-            phone: values.phone,
+            phone: phoneToPass,
             birthday: birthDay.toISOString().slice(0, 10),
             shirt: values.shirt,
             picture: pictureToSave,
@@ -465,363 +533,485 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     console.log('type of values.birthday:', typeof values.birthday);
     printObject('values.birthday:\n', values.birthday);
     return (
-        <>
-            <Modal visible={showCameraModal} animationStyle='slide'>
-                <Surface style={styles.cameraContainer}>
-                    <View>
-                        <Text style={mtrTheme.meetingEditDeleteModalTitle}>
-                            Take a picture
-                        </Text>
-                    </View>
-                    <Camera
-                        style={styles.camera}
-                        type={type}
-                        flashMode={flashMode}
-                        ref={(r) => {
-                            cameraRef = r;
-                        }}
-                    ></Camera>
-
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '100%',
-                            marginTop: 30,
-                        }}
-                    >
-                        <View style={styles.cameraControlRotate}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setType(
-                                        type === CameraType.back
-                                            ? CameraType.front
-                                            : CameraType.back
-                                    );
-                                }}
-                            >
-                                <MaterialCommunityIcons
-                                    name='rotate-3d-variant'
-                                    size={36}
-                                    color='white'
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.cameraControlCapture}>
-                            <TouchableOpacity
-                                onPress={() => handlePictureClick()}
-                            >
-                                <MaterialIcons
-                                    name='camera'
-                                    size={36}
-                                    color='white'
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Surface>
-            </Modal>
+        <SafeAreaView>
             <>
-                <View>
-                    <TouchableOpacity onPress={() => setShowCameraModal(true)}>
-                        <MaterialIcons name='camera' size={24} color='white' />
-                    </TouchableOpacity>
-                </View>
-                <View style={mtrTheme.profileImageContainer}>
-                    <View>
-                        <View style={mtrTheme.profileImageFrame}>
-                            <View
-                                style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <Image
-                                    // source={require('../../assets/user-profile.jpeg')}
-                                    source={{
-                                        uri: cameraImage
-                                            ? cameraImage
-                                            : profilePic,
-                                    }}
-                                    style={mtrTheme.profileImage}
-                                />
-                            </View>
-
-                            <FAB
-                                icon='image-edit-outline'
-                                style={styles.fab}
-                                onPress={() => pickImage()}
-                            />
-                        </View>
-
-                        <View style={{ paddingTop: 5 }}>
-                            <Text style={{ color: mtrTheme.colors.accent }}>
-                                {profile?.firstName} {profile?.lastName}
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-                <View></View>
-                <View style={mtrTheme.profileFormRowStyle}>
-                    <View style={{ minWidth: '90%' }}>
-                        <Input
-                            label='Phone Number'
-                            labelStyle={mtrTheme.profileFormInputTitle}
-                            textInputConfig={{
-                                backgroundColor: 'lightgrey',
-                                value: values?.phone,
-                                paddingHorizontal: 5,
-                                marginRight: 5,
-                                fontSize: 24,
-                                color: 'black',
-                                marginHorizontal: 0,
-                                placeholder: 'Phone',
-                                style: { color: 'black' },
-                                fontWeight: '500',
-                                //fontFamily: 'Roboto-Regular',
-                                letterSpacing: 0,
-                                onChangeText: inputChangedHandler.bind(
-                                    this,
-                                    'phone'
-                                ),
-                            }}
-                        />
-                    </View>
-                </View>
-                <View style={mtrTheme.profileFormRowStyle}>
-                    <View>
-                        <View>
-                            <Text style={mtrTheme.profileFormInputTitle}>
-                                Birthday
-                            </Text>
-                        </View>
-                        <TouchableOpacity
-                            onPress={() => setModalBirthDateVisible(true)}
-                        >
-                            <View
-                                style={{
-                                    alignItems: 'center',
-                                    paddingHorizontal: 2,
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        backgroundColor: 'lightgrey',
-                                        // maxWidth: 170,
-                                        // minWidth: 170,
-                                        marginRight: 10,
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            color: 'black',
-                                            fontSize: 24,
-                                            fontWeight: '500',
-                                            padding: 5,
-                                        }}
-                                    >
-                                        {values.birthday
-                                            ? values.birthday
-                                            : 'undefined    '}
-                                    </Text>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{ marginRight: 10 }}>
-                        <View>
-                            <Text style={mtrTheme.profileFormInputTitle}>
-                                Shirt
-                            </Text>
-                        </View>
-                        <Dropdown
-                            style={[
-                                styles.dropdown,
-                                isStateFocus && { borderColor: 'blue' },
-                            ]}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            containerStyle={styles.dropDownContainer}
-                            itemContainerStyle={{
-                                paddingVertical: 0,
-                                marginVertical: 0,
-                            }}
-                            iconStyle={styles.iconStyle}
-                            data={SHIRTSIZESBY2}
-                            search={false}
-                            maxHeight={300}
-                            labelField='label'
-                            valueField='value'
-                            // placeholder={!isShirtFocus ? 'Shirt' : '...'}
-                            //searchPlaceholder='Search...'
-                            value={values?.shirt}
-                            onFocus={() => setIsShirtFocus(true)}
-                            onBlur={() => setIsShirtFocus(false)}
-                            onChange={(item) => {
-                                inputChangedHandler('shirt', item.value),
-                                    //setStateValue(item.value);
-                                    setIsShirtFocus(false);
-                            }}
-                        />
-                    </View>
-                </View>
-                <View style={mtrTheme.profileFormRowStyle}>
-                    <View>
-                        <Text style={mtrTheme.profileFormSectionHeader}>
-                            Residence
-                        </Text>
-                    </View>
-                </View>
-                <View style={mtrTheme.profileFormResidenceBorder}>
-                    <View style={mtrTheme.profileFormRowStyle}>
-                        <View style={{ minWidth: '90%' }}>
-                            <Input
-                                label='Street'
-                                labelStyle={mtrTheme.profileFormInputTitle}
-                                textInputConfig={{
-                                    backgroundColor: 'lightgrey',
-                                    value: values?.street,
-                                    paddingHorizontal: 5,
-                                    marginRight: 5,
-                                    fontSize: 24,
-                                    color: 'black',
-                                    marginHorizontal: 0,
-                                    placeholder: 'Street',
-                                    style: { color: 'black' },
-                                    fontWeight: '500',
-                                    //fontFamily: 'Roboto-Regular',
-                                    letterSpacing: 0,
-                                    onChangeText: inputChangedHandler.bind(
-                                        this,
-                                        'street'
-                                    ),
-                                }}
-                            />
-                        </View>
-                    </View>
-                    <View style={mtrTheme.profileFormRowStyle}>
-                        <View style={{ minWidth: '90%' }}>
-                            <Input
-                                label='City'
-                                labelStyle={mtrTheme.profileFormInputTitle}
-                                textInputConfig={{
-                                    backgroundColor: 'lightgrey',
-                                    value: values?.city,
-                                    paddingHorizontal: 5,
-                                    marginRight: 5,
-                                    fontSize: 24,
-                                    color: 'black',
-                                    marginHorizontal: 0,
-                                    placeholder: 'City',
-                                    style: { color: 'black' },
-                                    fontWeight: '500',
-                                    //fontFamily: 'Roboto-Regular',
-                                    letterSpacing: 0,
-                                    onChangeText: inputChangedHandler.bind(
-                                        this,
-                                        'city'
-                                    ),
-                                }}
-                            />
-                        </View>
-                    </View>
-                    <View
-                        style={[
-                            mtrTheme.profileFormRowStyle,
-                            { justifyContent: 'flex-start', marginLeft: 20 },
-                        ]}
-                    >
-                        <View style={{ marginRight: 10 }}>
+                <KeyboardAvoidingView behavior='padding'>
+                    <Modal visible={showCameraModal} animationStyle='slide'>
+                        <Surface style={styles.cameraContainer}>
                             <View>
-                                <Text style={mtrTheme.profileFormInputTitle}>
-                                    State
+                                <Text
+                                    style={mtrTheme.meetingEditDeleteModalTitle}
+                                >
+                                    Take a picture
                                 </Text>
                             </View>
-                            <Dropdown
-                                style={[
-                                    styles.dropdown,
-                                    isStateFocus && { borderColor: 'blue' },
-                                ]}
-                                placeholderStyle={styles.placeholderStyle}
-                                selectedTextStyle={styles.selectedTextStyle}
-                                inputSearchStyle={styles.inputSearchStyle}
-                                iconStyle={styles.iconStyle}
-                                data={STATESBY2}
-                                search={false}
-                                maxHeight={300}
-                                labelField='label'
-                                valueField='value'
-                                placeholder={
-                                    !isStateFocus ? 'Select State' : '...'
-                                }
-                                searchPlaceholder='Search...'
-                                value={stateProv}
-                                onFocus={() => setIsStateFocus(true)}
-                                onBlur={() => setIsStateFocus(false)}
-                                onChange={(item) => {
-                                    inputChangedHandler(
-                                        'stateProv',
-                                        item.value
-                                    ),
-                                        //setStateValue(item.value);
-                                        setIsStateFocus(false);
+                            <Camera
+                                style={styles.camera}
+                                type={type}
+                                flashMode={flashMode}
+                                ref={(r) => {
+                                    cameraRef = r;
                                 }}
-                            />
-                        </View>
-                        <View style={{ minWidth: '45%' }}>
-                            <Input
-                                label='Postal Code'
-                                labelStyle={mtrTheme.profileFormInputTitle}
-                                textInputConfig={{
-                                    backgroundColor: 'lightgrey',
-                                    value: values?.postalCode,
-                                    paddingHorizontal: 5,
-                                    fontSize: 24,
-                                    color: 'black',
-                                    height: 40,
-                                    width: 100,
-                                    placeholder: 'Postal Code',
-                                    style: { color: 'black' },
-                                    fontWeight: '500',
-                                    //fontFamily: 'Roboto-Regular',
-                                    letterSpacing: 0,
-                                    onChangeText: inputChangedHandler.bind(
-                                        this,
-                                        'postalCode'
-                                    ),
+                            ></Camera>
+
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: '100%',
+                                    marginTop: 30,
                                 }}
-                            />
-                        </View>
-                    </View>
-                </View>
-                <View style={mtrTheme.profileFormRowStyle}>
-                    <Text style={{ color: 'silver', fontSize: 10 }}>
-                        UID: {profile?.id}
-                    </Text>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <CustomButton
-                        text={savingProfile ? 'Saving...' : 'SAVE'}
-                        bgColor='green'
-                        fgColor='white'
-                        type='PRIMARY'
-                        enabled={isFirstNameValid && isLastNameValid}
-                        onPress={handleFormSubmit}
-                    />
-                </View>
-                <DateTimePickerModal
-                    isVisible={modalBirthDateVisible}
-                    mode='date'
-                    date={values.birthday ? birthDay : today}
-                    display='inline'
-                    onConfirm={onBirthDateConfirm}
-                    onCancel={onBirthDateCancel}
-                />
+                            >
+                                <View style={styles.cameraControlRotate}>
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setType(
+                                                type === CameraType.back
+                                                    ? CameraType.front
+                                                    : CameraType.back
+                                            );
+                                        }}
+                                    >
+                                        <MaterialCommunityIcons
+                                            name='rotate-3d-variant'
+                                            size={36}
+                                            color='white'
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.cameraControlCapture}>
+                                    <TouchableOpacity
+                                        onPress={() => handlePictureClick()}
+                                    >
+                                        <MaterialIcons
+                                            name='camera'
+                                            size={36}
+                                            color='white'
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Surface>
+                    </Modal>
+                    <>
+                        <KeyboardAvoidingView behavior='padding'>
+                            <ScrollView>
+                                {/* <View>
+                                    <TouchableOpacity
+                                        onPress={() => setShowCameraModal(true)}
+                                    >
+                                        <MaterialIcons
+                                            name='camera'
+                                            size={24}
+                                            color='white'
+                                        />
+                                    </TouchableOpacity>
+                                </View> */}
+                                <View style={mtrTheme.profileImageContainer}>
+                                    <View>
+                                        <View
+                                            style={mtrTheme.profileImageFrame}
+                                        >
+                                            <View
+                                                style={{
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Image
+                                                    // source={require('../../assets/user-profile.jpeg')}
+                                                    source={{
+                                                        uri: cameraImage
+                                                            ? cameraImage
+                                                            : profilePic,
+                                                    }}
+                                                    style={
+                                                        mtrTheme.profileImage
+                                                    }
+                                                />
+                                            </View>
+
+                                            <FAB
+                                                icon='camera'
+                                                style={styles.fab}
+                                                onPress={() =>
+                                                    setShowCameraModal(true)
+                                                }
+                                            />
+                                        </View>
+
+                                        <View style={{ paddingTop: 5 }}>
+                                            <Text
+                                                style={{
+                                                    color: mtrTheme.colors
+                                                        .accent,
+                                                }}
+                                            >
+                                                {profile?.firstName}{' '}
+                                                {profile?.lastName}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View style={mtrTheme.profileFormRowStyle}>
+                                    <View style={{ alignItems: 'center' }}>
+                                        <View
+                                            style={
+                                                showPhoneError
+                                                    ? styles.phoneWrapperError
+                                                    : styles.phoneWrapper
+                                            }
+                                        >
+                                            <View>
+                                                <Text
+                                                    style={
+                                                        mtrTheme.profileFormInputTitle
+                                                    }
+                                                >
+                                                    Phone
+                                                </Text>
+                                            </View>
+                                            <PhoneInput
+                                                overrideStyle={{
+                                                    borderColor: 'lightgrey',
+                                                    borderWidth: 2,
+                                                    borderRadius: 6,
+                                                    backgroundColor:
+                                                        'lightgrey',
+                                                }}
+                                                value={values.phone}
+                                                onChange={inputChangedHandler.bind(
+                                                    this,
+                                                    'phone'
+                                                )}
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
+
+                                <View style={mtrTheme.profileFormRowStyle}>
+                                    <View>
+                                        <View>
+                                            <Text
+                                                style={
+                                                    mtrTheme.profileFormInputTitle
+                                                }
+                                            >
+                                                Birthday
+                                            </Text>
+                                        </View>
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                setModalBirthDateVisible(true)
+                                            }
+                                        >
+                                            <View
+                                                style={{
+                                                    alignItems: 'center',
+                                                    paddingHorizontal: 2,
+                                                }}
+                                            >
+                                                <View
+                                                    style={{
+                                                        backgroundColor:
+                                                            'lightgrey',
+                                                        // maxWidth: 170,
+                                                        // minWidth: 170,
+                                                        marginRight: 10,
+                                                    }}
+                                                >
+                                                    <Text
+                                                        style={{
+                                                            color: 'black',
+                                                            fontSize: 24,
+                                                            fontWeight: '500',
+                                                            padding: 5,
+                                                        }}
+                                                    >
+                                                        {values.birthday
+                                                            ? values.birthday
+                                                            : 'undefined    '}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{ marginRight: 10 }}>
+                                        <View>
+                                            <Text
+                                                style={
+                                                    mtrTheme.profileFormInputTitle
+                                                }
+                                            >
+                                                Shirt
+                                            </Text>
+                                        </View>
+                                        <Dropdown
+                                            style={[
+                                                styles.dropdown,
+                                                isStateFocus && {
+                                                    borderColor: 'blue',
+                                                },
+                                            ]}
+                                            placeholderStyle={
+                                                styles.placeholderStyle
+                                            }
+                                            selectedTextStyle={
+                                                styles.selectedTextStyle
+                                            }
+                                            inputSearchStyle={
+                                                styles.inputSearchStyle
+                                            }
+                                            containerStyle={
+                                                styles.dropDownContainer
+                                            }
+                                            itemContainerStyle={{
+                                                paddingVertical: 0,
+                                                marginVertical: 0,
+                                            }}
+                                            iconStyle={styles.iconStyle}
+                                            data={SHIRTSIZESBY2}
+                                            search={false}
+                                            maxHeight={300}
+                                            labelField='label'
+                                            valueField='value'
+                                            // placeholder={!isShirtFocus ? 'Shirt' : '...'}
+                                            //searchPlaceholder='Search...'
+                                            value={values?.shirt}
+                                            onFocus={() =>
+                                                setIsShirtFocus(true)
+                                            }
+                                            onBlur={() =>
+                                                setIsShirtFocus(false)
+                                            }
+                                            onChange={(item) => {
+                                                inputChangedHandler(
+                                                    'shirt',
+                                                    item.value
+                                                ),
+                                                    //setStateValue(item.value);
+                                                    setIsShirtFocus(false);
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                                <View style={mtrTheme.profileFormRowStyle}>
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrTheme.profileFormSectionHeader
+                                            }
+                                        >
+                                            Residence
+                                        </Text>
+                                    </View>
+                                </View>
+                                <View
+                                    style={mtrTheme.profileFormResidenceBorder}
+                                >
+                                    <View style={mtrTheme.profileFormRowStyle}>
+                                        <View style={{ minWidth: '90%' }}>
+                                            <Input
+                                                label='Street'
+                                                labelStyle={
+                                                    mtrTheme.profileFormInputTitle
+                                                }
+                                                textInputConfig={{
+                                                    backgroundColor:
+                                                        'lightgrey',
+                                                    value: values?.street,
+                                                    paddingHorizontal: 5,
+                                                    marginRight: 5,
+                                                    fontSize: 24,
+                                                    color: 'black',
+                                                    marginHorizontal: 0,
+                                                    placeholder: 'Street',
+                                                    style: { color: 'black' },
+                                                    fontWeight: '500',
+                                                    //fontFamily: 'Roboto-Regular',
+                                                    letterSpacing: 0,
+                                                    onChangeText:
+                                                        inputChangedHandler.bind(
+                                                            this,
+                                                            'street'
+                                                        ),
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={mtrTheme.profileFormRowStyle}>
+                                        <View style={{ minWidth: '90%' }}>
+                                            <Input
+                                                label='City'
+                                                labelStyle={
+                                                    mtrTheme.profileFormInputTitle
+                                                }
+                                                textInputConfig={{
+                                                    backgroundColor:
+                                                        'lightgrey',
+                                                    value: values?.city,
+                                                    paddingHorizontal: 5,
+                                                    marginRight: 5,
+                                                    fontSize: 24,
+                                                    color: 'black',
+                                                    marginHorizontal: 0,
+                                                    placeholder: 'City',
+                                                    style: { color: 'black' },
+                                                    fontWeight: '500',
+                                                    //fontFamily: 'Roboto-Regular',
+                                                    letterSpacing: 0,
+                                                    onChangeText:
+                                                        inputChangedHandler.bind(
+                                                            this,
+                                                            'city'
+                                                        ),
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View
+                                        style={[
+                                            mtrTheme.profileFormRowStyle,
+                                            {
+                                                justifyContent: 'flex-start',
+                                                marginLeft: 20,
+                                            },
+                                        ]}
+                                    >
+                                        <View style={{ marginRight: 10 }}>
+                                            <View>
+                                                <Text
+                                                    style={
+                                                        mtrTheme.profileFormInputTitle
+                                                    }
+                                                >
+                                                    State
+                                                </Text>
+                                            </View>
+                                            <Dropdown
+                                                style={[
+                                                    styles.dropdown,
+                                                    isStateFocus && {
+                                                        borderColor: 'blue',
+                                                    },
+                                                ]}
+                                                placeholderStyle={
+                                                    styles.placeholderStyle
+                                                }
+                                                selectedTextStyle={
+                                                    styles.selectedTextStyle
+                                                }
+                                                inputSearchStyle={
+                                                    styles.inputSearchStyle
+                                                }
+                                                iconStyle={styles.iconStyle}
+                                                data={STATESBY2}
+                                                search={false}
+                                                maxHeight={300}
+                                                labelField='label'
+                                                valueField='value'
+                                                placeholder={
+                                                    !isStateFocus
+                                                        ? 'Select State'
+                                                        : '...'
+                                                }
+                                                searchPlaceholder='Search...'
+                                                value={stateProv}
+                                                onFocus={() =>
+                                                    setIsStateFocus(true)
+                                                }
+                                                onBlur={() =>
+                                                    setIsStateFocus(false)
+                                                }
+                                                onChange={(item) => {
+                                                    inputChangedHandler(
+                                                        'stateProv',
+                                                        item.value
+                                                    ),
+                                                        //setStateValue(item.value);
+                                                        setIsStateFocus(false);
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={{ minWidth: '45%' }}>
+                                            <Input
+                                                label='Postal Code'
+                                                labelStyle={
+                                                    mtrTheme.profileFormInputTitle
+                                                }
+                                                textInputConfig={{
+                                                    backgroundColor:
+                                                        'lightgrey',
+                                                    value: values?.postalCode,
+                                                    paddingHorizontal: 5,
+                                                    fontSize: 24,
+                                                    color: 'black',
+                                                    height: 40,
+                                                    width: 100,
+                                                    placeholder: 'Postal Code',
+                                                    style: { color: 'black' },
+                                                    fontWeight: '500',
+                                                    //fontFamily: 'Roboto-Regular',
+                                                    letterSpacing: 0,
+                                                    onChangeText:
+                                                        inputChangedHandler.bind(
+                                                            this,
+                                                            'postalCode'
+                                                        ),
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
+                                <View style={mtrTheme.profileFormRowStyle}>
+                                    <Text
+                                        style={{
+                                            color: 'silver',
+                                            fontSize: 10,
+                                        }}
+                                    >
+                                        UID: {profile?.id}
+                                    </Text>
+                                </View>
+                                <View style={{ paddingBottom: 10 }}>
+                                    <View style={styles.buttonContainer}>
+                                        <CustomButton
+                                            text={
+                                                savingProfile
+                                                    ? 'Saving...'
+                                                    : 'SAVE'
+                                            }
+                                            bgColor='green'
+                                            fgColor='white'
+                                            type='PRIMARY'
+                                            enabled={
+                                                isFirstNameValid &&
+                                                isLastNameValid
+                                            }
+                                            onPress={handleFormSubmit}
+                                        />
+                                    </View>
+                                </View>
+                                <DateTimePickerModal
+                                    isVisible={modalBirthDateVisible}
+                                    mode='date'
+                                    date={values.birthday ? birthDay : today}
+                                    display='inline'
+                                    style={{
+                                        backgroundColor:
+                                            mtrTheme.colors.background,
+                                    }}
+                                    onConfirm={onBirthDateConfirm}
+                                    onCancel={onBirthDateCancel}
+                                />
+                            </ScrollView>
+                        </KeyboardAvoidingView>
+                    </>
+                    {/* )} */}
+                </KeyboardAvoidingView>
             </>
-            {/* )} */}
-        </>
+        </SafeAreaView>
     );
 };
 
@@ -842,7 +1032,7 @@ const styles = StyleSheet.create({
         color: 'red',
         fontWeight: '700',
     },
-    buttonContainer: { marginTop: 20, marginHorizontal: 20 },
+    buttonContainer: { marginTop: 20, marginHorizontal: 20, marginBottom: 15 },
     button: {
         backgroundColor: 'blue',
         marginHorizontal: 20,
@@ -913,6 +1103,17 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'flex-end',
         paddingRight: 20,
+    },
+    phoneWrapper: {
+        marginBottom: 10,
+    },
+    phoneWrapperError: {
+        marginBottom: 10,
+    },
+    phoneError: {
+        color: 'red',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     // cameraControlsContainer: {
     //     flexDirection: 'row',

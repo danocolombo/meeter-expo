@@ -157,6 +157,13 @@ const AuthDrawer = (navigation) => {
                 <Stack.Screen
                     name='Team'
                     options={({ navigation }) => ({
+                        title: 'Team',
+                        headerTitle: meeter.appName,
+                        headerStyle: {
+                            backgroundColor: mtrTheme.colors.background,
+                        },
+                        headerTintColor: 'white',
+
                         drawerIcon: ({ color }) => (
                             <Ionicons
                                 name='people-outline'

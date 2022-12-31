@@ -247,6 +247,12 @@ const theme = {
         paddingBottom: 10,
         marginHorizontal: 5,
     },
+    //   TEAM CARD STYLES
+    teamMemberImage: {
+        height: 80,
+        aspectRatio: 1,
+        borderRadius: 40,
+    },
     //   GROUP EDIT
     groupEditSurface: {
         flex: 1,
@@ -481,8 +487,8 @@ const theme = {
         textAlign: 'right',
     },
     meetingEditMealNumberContainer: {
-        width: '55%',
-        marginRight: 10,
+        // width: '55%',
+        // marginRight: 10,
         paddingRight: 'auto',
     },
     meetingEditNumberLabelContainer: {

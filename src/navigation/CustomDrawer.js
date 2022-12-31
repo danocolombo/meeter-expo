@@ -6,7 +6,7 @@ import {
     View,
     TouchableOpacity,
 } from 'react-native';
-import { Auth } from 'aws-amplify';
+import { Auth, Storage } from 'aws-amplify';
 import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import {
@@ -15,25 +15,26 @@ import {
 } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
-import { usersSlice } from '../features/usersSlice';
 import { useUserContext } from '../contexts/UserContext';
 import { useSysContext, sysSignOut } from '../contexts/SysContext';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { printObject } from '../utils/helpers';
 
 const CustomDrawer = (props) => {
     const mtrTheme = useTheme();
-    const user = useSelector((state) => state.users.currentUser);
-    //const { profilePic } = useAuthContext();
+    const { meeter } = useSysContext();
     const { userProfile } = useUserContext();
     const { systemDef, sysSignOut } = useSysContext();
     const [profilePicture, setProfilePicture] = useState(null);
+    const [pictureName, setPictureName] = useState(null);
+    const [pictureObject, setPictureObject] = useState(null);
     const [useRole, setUserRole] = useState(null);
     const navigation = useNavigation();
 
     async function checkUserRole() {
         try {
+            printObject('CD:37-->userProfile:\n', userProfile);
             console.log('CD:37-->role', userProfile?.activeOrg?.role);
             if (userProfile?.activeOrg?.role) {
                 setUserRole(userProfile?.activeOrg?.role);
@@ -44,17 +45,45 @@ const CustomDrawer = (props) => {
             console.log('CD:39-->error checkUserRole');
         }
     }
-    useEffect(() => {
-        checkUserRole();
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            checkUserRole();
+        }, [userProfile])
+    );
+    async function getPictureDetails() {
+        let picRef = meeter.defaultProfilePicture;
+        if (userProfile?.picture) {
+            picRef = userProfile.picture;
+            setPictureName(userProfile.picture);
+        } else {
+            setPictureName(meeter.defaultProfilePic);
+            picRef = meeter.defaultProfilePicture;
+        }
+        try {
+            Storage.get(picRef, {
+                level: 'public',
+            })
+                .then((hardPic) => setPictureObject(hardPic))
+                .catch((error) => {
+                    printObject('CD:68-->error getting storage ref:\n', error);
+                });
+        } catch (error) {
+            console.log('CD:71-->error Storeage.get\n', error);
+        }
+    }
+    useFocusEffect(
+        React.useCallback(() => {
+            getPictureDetails()
+                .then(() => {
+                    console.log('CD:78-->picRef:', picRef);
+                    console.log('CD:79-->pictureObject:', pictureObject);
+                })
+                .catch((error) => {
+                    printObject('CD:82-->ERROR:\n', error);
+                });
+        }, [userProfile])
+    );
 
-    // useEffect(() => {
-    //     if (profilePic) {
-    //         setProfilePicture(profilePic);
-    //     } else if (systemDef?.defaultProfilePic) {
-    //         setProfilePicture(systemDef.defaultProfilePic);
-    //     }
-    // }, [profilePic, systemDef]);
     const signUserOut = async () => {
         Auth.signOut();
         //try {
@@ -81,14 +110,16 @@ const CustomDrawer = (props) => {
             >
                 <ImageBackground
                     source={require('../../assets/menu-bg.jpeg')}
-                    style={{ padding: 20, marginBottom: 10 }}
+                    style={{
+                        padding: 5,
+                        marginBottom: 10,
+                        alignItems: 'center',
+                    }}
                 >
-                    {profilePicture && (
+                    {pictureObject && (
                         <Image
                             source={{
-                                uri: profilePic
-                                    ? profilePic
-                                    : systemDef.defaultProfilePic,
+                                uri: pictureObject,
                             }}
                             style={{
                                 height: 80,
@@ -98,7 +129,7 @@ const CustomDrawer = (props) => {
                         />
                     )}
                     <Text style={{ color: mtrTheme.colors.accent }}>
-                        {user.firstName} {user.lastName}
+                        {userProfile?.firstName} {userProfile?.lastName}
                     </Text>
                 </ImageBackground>
                 <View

@@ -16,7 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-
+import { checkUserProfile } from '../../jerichoQL/providers/users.provider';
 import { printObject } from '../../utils/helpers';
 
 //   FUNCTION START
@@ -43,6 +43,13 @@ const SignInScreen = () => {
         setLoading(true);
         try {
             const response = await Auth.signIn(data.username, data.password);
+            checkUserProfile(response)
+                .then((response) => {
+                    printObject('SI:response:\n', response);
+                })
+                .catch((error) => {
+                    console.log('SI:62-->error', error);
+                });
         } catch (error) {
             switch (error.code) {
                 case 'UserNotFoundException':
@@ -59,6 +66,7 @@ const SignInScreen = () => {
                     break;
             }
         }
+
         setLoading(false);
     };
 

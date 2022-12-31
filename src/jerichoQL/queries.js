@@ -179,6 +179,79 @@ export const getOrganization = /* GraphQL */ `
         }
     }
 `;
+export const getAffiliationsForTeam = `
+    query ListAffiliations($orgId: ID){
+        listAffiliations(filter: {organizationAffiliationsId: {eq: $orgId}}) {
+            items {
+                id
+                role
+                status
+                organizationAffiliationsId
+                userAffiliationsId
+                user {
+                    id
+                    firstName
+                    lastName
+                    email
+                    phone
+                    picture
+                }
+            }
+        }
+    }
+`;
+export const getOrgUserAffiliations = `
+    query OrgUserAffiliationQuery($orgId: ID, $userId: ID){
+        listAffiliations(
+            filter:{organizationAffiliationsId: {eq: $orgId}, and: {userAffiliationsId: {eq: $userId}}}
+        ){
+            items {
+                id
+                role
+                status
+            }
+        }
+    }
+`;
+export const getOrganizationTeam = /* GraphQL */ `
+    query GetOrganization($id: ID!) {
+        getOrganization(id: $id) {
+            id
+            code
+            name
+            defaultUsers {
+                items {
+                    id
+                    username
+                    firstName
+                    lastName
+                    email
+                    phone
+                    shirt
+                    birthday
+                    picture
+                    location {
+                        street
+                        city
+                        stateProv
+                        postalCode
+                    }
+                    affiliations {
+                        items {
+                            id
+                            role
+                            status
+                            organization {
+                                id
+                                code
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
 export const getSystem = /* GraphQL */ `
     query GetSystem($id: ID!) {
         getSystem(id: $id) {

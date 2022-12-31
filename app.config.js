@@ -1,8 +1,8 @@
 module.exports = ({ config }) => {
-    let BASE_version = '1.0.14';
+    let BASE_version = '1.0.15';
     let ANDROID_version = 1;
     let COMBO_version = BASE_version + '-' + ANDROID_version.toString();
-    let DESCRIPTION = 'expo/1.1.0 - sprint14.2';
+    let DESCRIPTION = 'expo/1.1.0 - sprint15';
     console.log('NAME: ' + config.name); // prints 'My App'
     console.log('COMBO_version: ' + COMBO_version);
     return {
@@ -53,6 +53,16 @@ module.exports = ({ config }) => {
                 {
                     photosPermission:
                         'The app accesses your photos to let you set your profile picture',
+                },
+            ],
+            [
+                'expo-media-library',
+                {
+                    photosPermission:
+                        'Allow $(PRODUCT_NAME) to access your photos',
+                    savePhotosPermission:
+                        'Allow $(PRODUCT_NAME) to save photos on your device',
+                    isAccessMediaLocationEnabled: 'true',
                 },
             ],
         ],

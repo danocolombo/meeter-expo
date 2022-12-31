@@ -48,18 +48,27 @@ const ProfileScreen = (props) => {
             headerBackTitle: 'Back',
         });
     }, [navigation]);
+
     const handleUpdate = (values) => {
+        const updateProfileData = async (values) => {
+            updateUserProfile(values)
+                .then(() => {
+                    console.log('profile updated');
+                })
+                .catch((e) => {
+                    printObject('error saving profile:', e);
+                });
+        };
         printObject('PS:45-->form submit values:\n', values);
         setIsSaving(true);
-        updateUserProfile(values)
+        updateProfileData(values)
             .then(() => {
-                console.log('profile updated');
+                setIsSaving(false);
+                Alert.alert('Profile Updated.');
             })
-            .catch((e) => {
-                printObject('error saving profile:', e);
+            .catch((error) => {
+                console.error(error);
             });
-        setIsSaving(false);
-        Alert.alert('Profile Updated.');
     };
     const dismissMessage = () => {
         setShowMessage(false);
@@ -119,6 +128,7 @@ const ProfileScreen = (props) => {
                 <ProfileForm
                     handleUpdate={handleUpdate}
                     handleCancel={handleCancel}
+                    profile={userProfile}
                 />
             </Surface>
         </>

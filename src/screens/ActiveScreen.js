@@ -102,12 +102,13 @@ const ActiveScreen = () => {
             </View>
         );
     }
+    printObject('AS:105-->userProfile:\n ', userProfile);
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
                 <View>
                     <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
-                    {meeter?.userRole === 'manage' && (
+                    {userProfile?.activeOrg?.role === 'manage' && (
                         <FAB
                             icon='calendar-plus'
                             style={styles.FAB}

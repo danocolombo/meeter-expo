@@ -679,6 +679,21 @@ export const createOrganization = /* GraphQL */ `
         }
     }
 `;
+export const updateOrgHeroMessage = `
+    mutation UpdateOrganization(
+        $input: UpdateOrganizationInput!
+        $condition: ModelOrganizationConditionInput
+    ) {
+        updateOrganization(input: $input, condition: $condition) {
+            id
+            name
+            code
+            heroMessage
+           
+        }
+    }
+`;
+
 export const updateOrganization = /* GraphQL */ `
     mutation UpdateOrganization(
         $input: UpdateOrganizationInput!

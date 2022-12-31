@@ -51,8 +51,10 @@ const LandingScreen = () => {
     const [activeMeeting, setActiveMeeting] = useState();
     const [nextMeeting, setNextMeeting] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
-    const { meeter, heroMessage } = useSysContext();
+    const [welcomeMessage, setWelcomeMessage] = useState(
+        userProfile?.activeOrg?.heroMessage
+    );
+    const { meeter } = useSysContext();
     const { authUser, defineUser } = useAuthContext();
     const { userProfile, saveUserProfile, passValue } = useUserContext();
 
@@ -69,6 +71,15 @@ const LandingScreen = () => {
         console.log('LS:147-->user:', user);
     }
 
+    useFocusEffect(
+        useCallback(() => {
+            if (userProfile?.activeOrg?.heroMessage) {
+                setWelcomeMessage(userProfile?.activeOrg?.heroMessage);
+            } else {
+                setWelcomeMessage('Welcome...');
+            }
+        }, [])
+    );
     useEffect(() => {
         if (isLoading) {
             return;
@@ -141,22 +152,14 @@ const LandingScreen = () => {
                 </> */}
 
                 <>
-                    <View style={mtrTheme.landingHeroMessageContainer}>
-                        <Text style={mtrTheme.landingHeroMessageText}>
-                            {userProfile?.activeOrg?.heroMessage}
-                        </Text>
-                    </View>
-                </>
-
-                {userProfile?.ActiveOrg?.heroMessage && (
-                    <>
+                    {userProfile?.activeOrg?.heroMessage && (
                         <View style={mtrTheme.landingHeroMessageContainer}>
                             <Text style={mtrTheme.landingHeroMessageText}>
-                                {userProfile?.ActiveOrg?.heroMessage}
+                                {userProfile.activeOrg.heroMessage}
                             </Text>
                         </View>
-                    </>
-                )}
+                    )}
+                </>
             </Surface>
         </>
     );

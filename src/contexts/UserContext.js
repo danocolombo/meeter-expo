@@ -19,7 +19,17 @@ const UserContextProvider = ({ children }) => {
     const saveUserProfile = async (profile) => {
         setUserProfile(profile);
     };
+    const updateHeroMessage = async (theMessage) => {
+        let heroMessage = theMessage;
+        let originalActiveOrg = userProfile.activeOrg;
+        let activeOrg = { ...originalActiveOrg, heroMessage };
+        let updateValues = { ...userProfile, activeOrg };
+        // console.log('#########################');
+        // printObject('UC:25-->updateValues:\n', updateValues);
+        // console.log('#########################');
 
+        setUserProfile(updateValues);
+    };
     const updateUserProfile = async (resultantProfile) => {
         if (!resultantProfile) {
             return;
@@ -74,6 +84,7 @@ const UserContextProvider = ({ children }) => {
                 updateUserProfile,
                 passValue,
                 clearUser,
+                updateHeroMessage,
             }}
         >
             {children}

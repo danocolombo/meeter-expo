@@ -6,11 +6,13 @@ import { useSelector } from 'react-redux';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import MeetingsConfig from './BottomNav';
 import CustomDrawer from './CustomDrawer';
 import LandingScreen from '../screens/LandingScreen';
 import DefaultGroupsScreen from '../screens/DefaultGroupsScreen';
 import TeamScreen from '../screens/TeamScreen';
+import HeroMessageScreen from '../screens/HeroMessage';
 import ActiveScreen from '../screens/ActiveScreen';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
 import ProfileScreen from '../screens/profille/ProfileScreen';
@@ -136,7 +138,7 @@ const AuthDrawer = (navigation) => {
                 <Stack.Screen
                     name='Groups'
                     options={({ navigation }) => ({
-                        title: 'Groups',
+                        title: 'Default Groups',
                         headerTitle: meeter.appName,
                         headerStyle: {
                             backgroundColor: mtrTheme.colors.background,
@@ -144,8 +146,8 @@ const AuthDrawer = (navigation) => {
                         headerTintColor: 'white',
                         drawerIcon: ({ color }) => (
                             <Ionicons
-                                name='people-outline'
-                                size={22}
+                                name='md-people-circle-outline'
+                                size={30}
                                 color={color}
                             />
                         ),
@@ -157,7 +159,7 @@ const AuthDrawer = (navigation) => {
                 <Stack.Screen
                     name='Team'
                     options={({ navigation }) => ({
-                        title: 'Team',
+                        title: 'Your Team',
                         headerTitle: meeter.appName,
                         headerStyle: {
                             backgroundColor: mtrTheme.colors.background,
@@ -167,12 +169,34 @@ const AuthDrawer = (navigation) => {
                         drawerIcon: ({ color }) => (
                             <Ionicons
                                 name='people-outline'
-                                size={22}
+                                size={28}
                                 color={color}
                             />
                         ),
                     })}
                     component={TeamScreen}
+                />
+            )}
+            {userProfile?.activeOrg?.role === 'manage' && (
+                <Stack.Screen
+                    name='Welcome'
+                    options={({ navigation }) => ({
+                        title: 'Welcome Message',
+                        headerTitle: meeter.appName,
+                        headerStyle: {
+                            backgroundColor: mtrTheme.colors.background,
+                        },
+                        headerTintColor: 'white',
+
+                        drawerIcon: ({ color }) => (
+                            <MaterialCommunityIcons
+                                name='message-outline'
+                                size={24}
+                                color={color}
+                            />
+                        ),
+                    })}
+                    component={HeroMessageScreen}
                 />
             )}
             {/* <Stack.Screen

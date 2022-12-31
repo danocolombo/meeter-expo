@@ -13,7 +13,6 @@ import React, { useState } from 'react';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { updateAffiliations } from '../jerichoQL/providers/affiliations.provider';
-import Navigation from '../navigation/Navigation';
 
 const TeamMemberScreen = (props) => {
     const teamMember = props.route.params.teamMember;

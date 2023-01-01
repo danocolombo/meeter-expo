@@ -537,7 +537,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             <>
                 <KeyboardAvoidingView behavior='padding'>
                     <Modal visible={showCameraModal} animationStyle='slide'>
-                        <Surface style={styles.cameraContainer}>
+                        <Surface style={styles(mtrTheme).cameraContainer}>
                             <View>
                                 <Text
                                     style={mtrTheme.meetingEditDeleteModalTitle}
@@ -546,7 +546,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                 </Text>
                             </View>
                             <Camera
-                                style={styles.camera}
+                                style={styles(mtrTheme).camera}
                                 type={type}
                                 flashMode={flashMode}
                                 ref={(r) => {
@@ -563,7 +563,9 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                     marginTop: 30,
                                 }}
                             >
-                                <View style={styles.cameraControlRotate}>
+                                <View
+                                    style={styles(mtrTheme).cameraControlRotate}
+                                >
                                     <TouchableOpacity
                                         onPress={() => {
                                             setType(
@@ -580,7 +582,11 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                         />
                                     </TouchableOpacity>
                                 </View>
-                                <View style={styles.cameraControlCapture}>
+                                <View
+                                    style={
+                                        styles(mtrTheme).cameraControlCapture
+                                    }
+                                >
                                     <TouchableOpacity
                                         onPress={() => handlePictureClick()}
                                     >
@@ -634,7 +640,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
 
                                             <FAB
                                                 icon='camera'
-                                                style={styles.fab}
+                                                style={styles(mtrTheme).fab}
                                                 onPress={() =>
                                                     setShowCameraModal(true)
                                                 }
@@ -659,8 +665,10 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                         <View
                                             style={
                                                 showPhoneError
-                                                    ? styles.phoneWrapperError
-                                                    : styles.phoneWrapper
+                                                    ? styles(mtrTheme)
+                                                          .phoneWrapperError
+                                                    : styles(mtrTheme)
+                                                          .phoneWrapper
                                             }
                                         >
                                             <View>
@@ -749,28 +757,34 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                         </View>
                                         <Dropdown
                                             style={[
-                                                styles.dropdown,
+                                                styles(mtrTheme).dropdown,
                                                 isStateFocus && {
                                                     borderColor: 'blue',
                                                 },
                                             ]}
                                             placeholderStyle={
-                                                styles.placeholderStyle
+                                                styles(mtrTheme)
+                                                    .placeholderStyle
                                             }
                                             selectedTextStyle={
-                                                styles.selectedTextStyle
+                                                styles(mtrTheme)
+                                                    .selectedTextStyle
                                             }
                                             inputSearchStyle={
-                                                styles.inputSearchStyle
+                                                styles(mtrTheme)
+                                                    .inputSearchStyle
                                             }
                                             containerStyle={
-                                                styles.dropDownContainer
+                                                styles(mtrTheme)
+                                                    .dropDownContainer
                                             }
                                             itemContainerStyle={{
                                                 paddingVertical: 0,
                                                 marginVertical: 0,
                                             }}
-                                            iconStyle={styles.iconStyle}
+                                            iconStyle={
+                                                styles(mtrTheme).iconStyle
+                                            }
                                             data={SHIRTSIZESBY2}
                                             search={false}
                                             maxHeight={300}
@@ -891,21 +905,26 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             </View>
                                             <Dropdown
                                                 style={[
-                                                    styles.dropdown,
+                                                    styles(mtrTheme).dropdown,
                                                     isStateFocus && {
                                                         borderColor: 'blue',
                                                     },
                                                 ]}
                                                 placeholderStyle={
-                                                    styles.placeholderStyle
+                                                    styles(mtrTheme)
+                                                        .placeholderStyle
                                                 }
                                                 selectedTextStyle={
-                                                    styles.selectedTextStyle
+                                                    styles(mtrTheme)
+                                                        .selectedTextStyle
                                                 }
                                                 inputSearchStyle={
-                                                    styles.inputSearchStyle
+                                                    styles(mtrTheme)
+                                                        .inputSearchStyle
                                                 }
-                                                iconStyle={styles.iconStyle}
+                                                iconStyle={
+                                                    styles(mtrTheme).iconStyle
+                                                }
                                                 data={STATESBY2}
                                                 search={false}
                                                 maxHeight={300}
@@ -964,7 +983,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                         </View>
                                     </View>
                                 </View>
-                                <View style={mtrTheme.profileFormRowStyle}>
+                                <View style={styles(mtrTheme).uidContainer}>
                                     <Text
                                         style={{
                                             color: 'silver',
@@ -974,8 +993,12 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                         UID: {profile?.id}
                                     </Text>
                                 </View>
-                                <View style={{ paddingBottom: 10 }}>
-                                    <View style={styles.buttonContainer}>
+                                <View style={styles.saveButtonContainer}>
+                                    <View
+                                        style={
+                                            styles(mtrTheme).saveButtonWrapper
+                                        }
+                                    >
                                         <CustomButton
                                             text={
                                                 savingProfile
@@ -992,6 +1015,24 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             onPress={handleFormSubmit}
                                         />
                                     </View>
+                                </View>
+                                <View
+                                    style={styles(mtrTheme).affButtonContainer}
+                                >
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            navigation.navigate('Affiliation')
+                                        }
+                                        style={styles(mtrTheme).affButton}
+                                    >
+                                        <Text
+                                            style={
+                                                styles(mtrTheme).affButtonText
+                                            }
+                                        >
+                                            AFFILIATIONS
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                                 <DateTimePickerModal
                                     isVisible={modalBirthDateVisible}
@@ -1017,117 +1058,150 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
 
 export default ProfileForm;
 
-const styles = StyleSheet.create({
-    formContainer: {
-        //marginTop: 10,
-    },
-    rowStyle: {
-        marginTop: 5,
-    },
-    errorContainer: {
-        marginTop: 2,
-        marginLeft: 20,
-    },
-    errorText: {
-        color: 'red',
-        fontWeight: '700',
-    },
-    buttonContainer: { marginTop: 20, marginHorizontal: 20, marginBottom: 15 },
-    button: {
-        backgroundColor: 'blue',
-        marginHorizontal: 20,
-        marginTop: 20,
-    },
-    dropDownLabel: {
-        color: 'white',
-        fontSize: 24,
-        fontWeight: '500',
-        fontFamily: 'Roboto-Regular',
-        letterSpacing: 0,
-    },
-    dropdown: {
-        height: 40,
-        borderColor: 'gray',
-        color: 'black',
-        fontWeight: 500,
-        fontSize: 30,
-        backgroundColor: 'lightgrey',
-        marginVertical: 1,
-        minWidth: 65,
-        maxWidth: 65,
-        borderWidth: 0.5,
-        borderRadius: 1,
-        paddingHorizontal: 2,
-        paddingVertical: 0,
-    },
-    dropDownContainer: {
-        fontSize: 4,
-    },
-    placeholderStyle: {
-        fontSize: 16,
-    },
-    selectedTextStyle: {
-        fontSize: 20,
-        fontWeight: '500',
-        color: 'black',
-    },
-    inputSearchStyle: {
-        //height: 40,
-        fontSize: 16,
-    },
+const styles = (mtrTheme) =>
+    StyleSheet.create({
+        formContainer: {
+            //marginTop: 10,
+        },
+        rowStyle: {
+            marginTop: 5,
+        },
+        errorContainer: {
+            marginTop: 2,
+            marginLeft: 20,
+        },
+        errorText: {
+            color: 'red',
+            fontWeight: '700',
+        },
+        buttonContainer: {
+            marginTop: 20,
+            marginHorizontal: 20,
+            marginBottom: 15,
+        },
+        button: {
+            backgroundColor: 'blue',
+            marginHorizontal: 20,
+            marginTop: 20,
+        },
+        dropDownLabel: {
+            color: 'white',
+            fontSize: 24,
+            fontWeight: '500',
+            fontFamily: 'Roboto-Regular',
+            letterSpacing: 0,
+        },
+        dropdown: {
+            height: 40,
+            borderColor: 'gray',
+            color: 'black',
+            fontWeight: 500,
+            fontSize: 30,
+            backgroundColor: 'lightgrey',
+            marginVertical: 1,
+            minWidth: 65,
+            maxWidth: 65,
+            borderWidth: 0.5,
+            borderRadius: 1,
+            paddingHorizontal: 2,
+            paddingVertical: 0,
+        },
+        dropDownContainer: {
+            fontSize: 4,
+        },
+        placeholderStyle: {
+            fontSize: 16,
+        },
+        selectedTextStyle: {
+            fontSize: 20,
+            fontWeight: '500',
+            color: 'black',
+        },
+        inputSearchStyle: {
+            //height: 40,
+            fontSize: 16,
+        },
 
-    fab: {
-        position: 'absolute',
-        backgroundColor: 'white',
-        color: 'blue',
-        height: 30,
-        alignItems: 'center',
-        justifyContent: 'center',
-        aspectRatio: 1,
-        right: 0,
-        bottom: 0,
-    },
-    cameraContainer: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    camera: {
-        flex: 0.5,
-    },
-    cameraControlRotate: {
-        flex: 1,
-        alignItems: 'flex-start',
-        paddingLeft: 20,
-    },
-    cameraControlCapture: {
-        flex: 1,
-        alignItems: 'flex-end',
-        paddingRight: 20,
-    },
-    phoneWrapper: {
-        marginBottom: 10,
-    },
-    phoneWrapperError: {
-        marginBottom: 10,
-    },
-    phoneError: {
-        color: 'red',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    // cameraControlsContainer: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    //     alignContent: 'space-around',
-    // },
-    // cameraRotateContainer: {
-    //     backgroundColor: 'grey',
-    //     borderColor: 'yellow',
-    //     borderWidth: 1,
-    // },
-    // cameraButton: {
-    //     flex: 1,
-    //     alignSelf: 'flex-end',
-    //     alignItems: 'center',
-    // },
-});
+        fab: {
+            position: 'absolute',
+            backgroundColor: 'white',
+            color: 'blue',
+            height: 30,
+            alignItems: 'center',
+            justifyContent: 'center',
+            aspectRatio: 1,
+            right: 0,
+            bottom: 0,
+        },
+        cameraContainer: {
+            flex: 1,
+            justifyContent: 'center',
+        },
+        camera: {
+            flex: 0.5,
+        },
+        cameraControlRotate: {
+            flex: 1,
+            alignItems: 'flex-start',
+            paddingLeft: 20,
+        },
+        cameraControlCapture: {
+            flex: 1,
+            alignItems: 'flex-end',
+            paddingRight: 20,
+        },
+        phoneWrapper: {
+            marginBottom: 10,
+        },
+        phoneWrapperError: {
+            marginBottom: 10,
+        },
+        phoneError: {
+            color: 'red',
+            fontSize: 18,
+            fontWeight: 'bold',
+        },
+        uidContainer: {
+            alignItems: 'center',
+        },
+
+        saveButtonContainer: {
+            marginBottom: 10,
+        },
+        saveButtonWrapper: {
+            marginTop: 5,
+            marginHorizontal: 20,
+            marginBottom: 15,
+        },
+        affButtonContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+        },
+        affButton: {
+            backgroundColor: mtrTheme.colors.lightBlue,
+            borderRadius: 5,
+        },
+        affButtonText: {
+            fontSize: 14,
+            fontColor: 'white',
+            fontFamily: 'Roboto-Regular',
+            textAlign: 'center',
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+        },
+        // cameraControlsContainer: {
+        //     flexDirection: 'row',
+        //     alignItems: 'center',
+        //     alignContent: 'space-around',
+        // },
+        // cameraRotateContainer: {
+        //     backgroundColor: 'grey',
+        //     borderColor: 'yellow',
+        //     borderWidth: 1,
+        // },
+        // cameraButton: {
+        //     flex: 1,
+        //     alignSelf: 'flex-end',
+        //     alignItems: 'center',
+        // },
+    });

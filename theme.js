@@ -27,6 +27,7 @@ const theme = {
         // primary color for your app, usually your brand color
         primary: primaryColor,
         // secondary color for your app which complements the primary color
+        secondary: secondaryColor,
         accent: accentColor,
         //background color for pages, such as lists
         background: primaryBackground,
@@ -67,6 +68,7 @@ const theme = {
         navDrawerActiveTint: '#fff',
         navDrawerInactiveBackground: '#fff',
         navDrawerInactiveTint: '#999',
+        lightBlue: '#578CFE',
     },
     fonts: {
         regular: 16,
@@ -202,7 +204,7 @@ const theme = {
     },
     profileImageContainer: {
         flexDirection: 'row',
-        marginVertical: 15,
+        marginTop: 10,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -230,11 +232,9 @@ const theme = {
         fontFamily: 'Roboto-Regular',
         fontSize: 18,
         fontWeight: '500',
-
         color: 'white',
     },
     profileFormSectionHeader: {
-        marginTop: 10,
         color: accentColor,
         fontSize: 26,
         fontFamily: 'Roboto-Bold',

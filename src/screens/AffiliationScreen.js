@@ -20,6 +20,7 @@ import * as mutations from '../jerichoQL/mutations';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { MEETER_DEFAULTS } from '../constants/meeter';
 
 const AffiliationScreen = (props) => {
     const navigation = useNavigation();
@@ -186,84 +187,112 @@ const AffiliationScreen = (props) => {
                                     your activity with a specific organization.{' '}
                                 </Text>
                             </View>
-                            <View style={styles(mtrTheme).introContainer}>
-                                <Text style={styles(mtrTheme).introText}>
-                                    If you have access to other affiliates, you
-                                    can switch to them by selecting them in the
-                                    dropdown list, and tap "CHANGE"
-                                </Text>
-                            </View>
-                            <View
-                                style={{
-                                    flexDirection: 'column',
-                                    // borderWidth: 1,
-                                    // borderColor: 'yellow',
-                                    marginLeft: '20%',
-                                }}
-                            >
-                                <View
-                                    style={styles(mtrTheme).dropDownContainer}
-                                >
-                                    <View>
-                                        <Dropdown
-                                            style={[
-                                                styles(mtrTheme).dropdown,
-                                                isAffiliationFocus && {
-                                                    borderColor: 'blue',
-                                                },
-                                            ]}
-                                            placeholderStyle={
-                                                styles(mtrTheme)
-                                                    .placeholderStyle
-                                            }
-                                            selectedTextStyle={
-                                                styles(mtrTheme)
-                                                    .selectedTextStyle
-                                            }
-                                            inputSearchStyle={
-                                                styles(mtrTheme)
-                                                    .inputSearchStyle
-                                            }
-                                            containerStyle={
+                            {userProfile.activeOrg.id ===
+                            MEETER_DEFAULTS.ORGANIZATION_ID ? (
+                                <View style={styles(mtrTheme).introContainer}>
+                                    <Text style={styles(mtrTheme).introText}>
+                                        You need to provide an affiliation code
+                                        to get started. You can use MTR to view
+                                        a sample.
+                                    </Text>
+                                </View>
+                            ) : (
+                                <>
+                                    <View
+                                        style={styles(mtrTheme).introContainer}
+                                    >
+                                        <Text
+                                            style={styles(mtrTheme).introText}
+                                        >
+                                            If you have access to other
+                                            affiliates, you can switch to them
+                                            by selecting them in the dropdown
+                                            list, and tap "CHANGE"
+                                        </Text>
+                                    </View>
+                                    <View
+                                        style={{
+                                            flexDirection: 'column',
+                                            // borderWidth: 1,
+                                            // borderColor: 'yellow',
+                                            marginLeft: '20%',
+                                        }}
+                                    >
+                                        <View
+                                            style={
                                                 styles(mtrTheme)
                                                     .dropDownContainer
                                             }
-                                            itemContainerStyle={{
-                                                paddingVertical: 0,
-                                                marginVertical: 0,
-                                            }}
-                                            iconStyle={
-                                                styles(mtrTheme).iconStyle
-                                            }
-                                            data={availableAffiliations}
-                                            search={false}
-                                            maxHeight={300}
-                                            labelField='label'
-                                            placeholder='available affiliations'
-                                            valueField='value'
-                                            // placeholder={!isShirtFocus ? 'Shirt' : '...'}
-                                            //searchPlaceholder='Search...'
-                                            value={affiliationSelected}
-                                            onFocus={() =>
-                                                setIsAffiliationFocus(true)
-                                            }
-                                            onBlur={() =>
-                                                setIsAffiliationFocus(false)
-                                            }
-                                            onChange={(item) => {
-                                                inputChangedHandler(
-                                                    'affiliate',
-                                                    item.value
-                                                ),
-                                                    //setStateValue(item.value);
-                                                    setIsAffiliationFocus(
-                                                        false
-                                                    );
-                                            }}
-                                        />
+                                        >
+                                            <View>
+                                                <Dropdown
+                                                    style={[
+                                                        styles(mtrTheme)
+                                                            .dropdown,
+                                                        isAffiliationFocus && {
+                                                            borderColor: 'blue',
+                                                        },
+                                                    ]}
+                                                    placeholderStyle={
+                                                        styles(mtrTheme)
+                                                            .placeholderStyle
+                                                    }
+                                                    selectedTextStyle={
+                                                        styles(mtrTheme)
+                                                            .selectedTextStyle
+                                                    }
+                                                    inputSearchStyle={
+                                                        styles(mtrTheme)
+                                                            .inputSearchStyle
+                                                    }
+                                                    containerStyle={
+                                                        styles(mtrTheme)
+                                                            .dropDownContainer
+                                                    }
+                                                    itemContainerStyle={{
+                                                        paddingVertical: 0,
+                                                        marginVertical: 0,
+                                                    }}
+                                                    iconStyle={
+                                                        styles(mtrTheme)
+                                                            .iconStyle
+                                                    }
+                                                    data={availableAffiliations}
+                                                    search={false}
+                                                    maxHeight={300}
+                                                    labelField='label'
+                                                    placeholder='available affiliations'
+                                                    valueField='value'
+                                                    // placeholder={!isShirtFocus ? 'Shirt' : '...'}
+                                                    //searchPlaceholder='Search...'
+                                                    value={affiliationSelected}
+                                                    onFocus={() =>
+                                                        setIsAffiliationFocus(
+                                                            true
+                                                        )
+                                                    }
+                                                    onBlur={() =>
+                                                        setIsAffiliationFocus(
+                                                            false
+                                                        )
+                                                    }
+                                                    onChange={(item) => {
+                                                        inputChangedHandler(
+                                                            'affiliate',
+                                                            item.value
+                                                        ),
+                                                            //setStateValue(item.value);
+                                                            setIsAffiliationFocus(
+                                                                false
+                                                            );
+                                                    }}
+                                                />
+                                            </View>
+                                        </View>
                                     </View>
-                                </View>
-                            </View>
+                                </>
+                            )}
+
                             {affiliationSelected && (
                                 <View>
                                     <View
@@ -294,10 +323,9 @@ const AffiliationScreen = (props) => {
                                 <Text style={styles(mtrTheme).introText}>
                                     If you have been invited to join a team,
                                     enter the code you were provided below and
-                                    you can join.
+                                    get connected.
                                 </Text>
                             </View>
-
                             <View style={mtrTheme.profileFormRowStyle}>
                                 <View
                                     style={{

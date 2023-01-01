@@ -69,6 +69,7 @@ const LandingScreen = () => {
         const user = await defineUser(cau.attributes.sub);
         saveUserProfile(user);
         console.log('LS:147-->user:', user);
+        printObject('LS:72-->userProfile', userProfile);
     }
 
     useFocusEffect(

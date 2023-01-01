@@ -7,36 +7,33 @@ import {
     SafeAreaView,
     KeyboardAvoidingView,
     TouchableOpacity,
+    Modal,
 } from 'react-native';
 import Picker from '@react-native-picker/picker';
-import { useTheme, ActivityIndicator } from 'react-native-paper';
+import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
 import React, { useCallback, useState, useLayoutEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Input from '../components/ui/Input';
 import { Dropdown } from 'react-native-element-dropdown';
 import { API } from 'aws-amplify';
-import * as queries from '../jerichoQL/queries';
 import * as mutations from '../jerichoQL/mutations';
-import CustomButton from '../components/ui/Auth/CustomButton';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const AffiliationScreen = (props) => {
-    const affiliationOptions = [
-        { label: 'Wynnbrook', value: 'wbc' },
-        { label: 'Christ Community', value: 'ccc' },
-        { label: 'Village Church', value: 'vcp' },
-    ];
     const navigation = useNavigation();
     const mtrTheme = useTheme();
     const { userProfile, updateHeroMessage } = useUserContext();
+    // printObject('AFF:34-->userProfile:', userProfile);
+    const [showChangeModal, setShowChangeModal] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [affCode, setAffCode] = useState('');
+    const [availableAffiliations, setAvailableAffiliations] = useState([]);
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isAffiliationFocus, setIsAffiliationFocus] = useState(false);
     const [theMessage, setTheMessage] = useState();
-    const [affiliationSelected, setAffiliationSelected] = useState('item1');
+    const [affiliationSelected, setAffiliationSelected] = useState(null);
     useLayoutEffect(() => {
         navigation.setOptions({
             //title: meeter.appName,
@@ -46,20 +43,36 @@ const AffiliationScreen = (props) => {
     useFocusEffect(
         useCallback(() => {
             try {
-                async function getTheMessage() {
-                    const orgResponse = await API.graphql({
-                        query: queries.getOrganization,
-                        variables: {
-                            id: userProfile?.activeOrg?.id,
-                        },
-                    });
-                    printObject('HM:43-->orgResponse', orgResponse);
-
-                    setTheMessage(
-                        orgResponse.data.getOrganization.heroMessage || ''
-                    );
+                async function getAffList() {
+                    if (userProfile?.affiliations?.items) {
+                        if (userProfile?.affiliations.items.length > 1) {
+                            let affList = [];
+                            const allAffs = userProfile.affiliations.items;
+                            allAffs.forEach((a) => {
+                                if (
+                                    a.organization.id !=
+                                        userProfile.activeOrg.id &&
+                                    (a.status === 'active' ||
+                                        a.status === 'new')
+                                ) {
+                                    let entry = {
+                                        label: a.organization.name,
+                                        value: a.organization.id,
+                                    };
+                                    affList.push(entry);
+                                }
+                            });
+                            const uniqueAffs = affList.filter(
+                                (obj, index, self) =>
+                                    index ===
+                                    self.findIndex((t) => t.id === obj.id)
+                            );
+                            printObject('uniqueAffs:\n', uniqueAffs);
+                            setAvailableAffiliations(uniqueAffs);
+                        }
+                    }
                 }
-                getTheMessage();
+                getAffList();
             } catch (error) {
                 console.log('HM:51-->unexpected error:\n', error);
             }
@@ -73,33 +86,28 @@ const AffiliationScreen = (props) => {
         }
     };
     const handleSaveClick = () => {
-        return;
-        // need to update organization.heroMessage and
-        // and userProfile.activeOrg.heroMessage
-        setIsUpdating(true);
+        //* update the users default id
         try {
             const updateInfo = {
-                id: userProfile.activeOrg.id,
-                heroMessage: theMessage,
+                id: userProfile.id,
+                organizationDefaultUsersId: affiliationSelected,
             };
             API.graphql({
-                query: mutations.updateOrgHeroMessage,
+                query: mutations.updateUser,
                 variables: { input: updateInfo },
             })
                 .then((results) => {
-                    updateHeroMessage(
-                        results.data.updateOrganization.heroMessage
-                    );
+                    printObject('affiliation changed:\n', results);
+                    setShowChangeModal(true);
                 })
                 .catch((error) => {
                     console.log(error);
                     console.error(error);
                 });
         } catch (error) {
-            console.log('HM:58-->unexpected error:\n', error);
+            console.log('AS:114-->unexpected error:\n', error);
         }
         setIsUpdating(false);
-        Alert.alert('Message Updated');
     };
     function inputChangedHandler(inputIdentifier, enteredValue) {
         // console.log('inputChangeHandler::inputIdentifier:', inputIdentifier);
@@ -135,163 +143,214 @@ const AffiliationScreen = (props) => {
                 }}
             >
                 <KeyboardAvoidingView>
-                    <View>
-                        <View style={{ marginTop: 30 }}>
-                            <Text style={mtrTheme.screenTitle}>
-                                AFFILIATIONS
-                            </Text>
-                        </View>
-                        <View style={styles(mtrTheme).introContainer}>
-                            <Text style={styles(mtrTheme).introText}>
-                                Affiliations are how the system associates your
-                                activity with a specific organization.{' '}
-                            </Text>
-                        </View>
-                        <View style={styles(mtrTheme).introContainer}>
-                            <Text style={styles(mtrTheme).introText}>
-                                If you have access to other affiliates, you can
-                                switch to them by selecting them in the dropdown
-                                list, and tap "CHANGE"
-                            </Text>
-                        </View>
-                        <View
-                            style={{
-                                flexDirection: 'column',
-                                // borderWidth: 1,
-                                // borderColor: 'yellow',
-                                marginLeft: '20%',
-                            }}
-                        >
-                            <View style={styles(mtrTheme).dropDownContainer}>
-                                <View>
-                                    <Dropdown
-                                        style={[
-                                            styles(mtrTheme).dropdown,
-                                            isAffiliationFocus && {
-                                                borderColor: 'blue',
-                                            },
-                                        ]}
-                                        placeholderStyle={
-                                            styles(mtrTheme).placeholderStyle
-                                        }
-                                        selectedTextStyle={
-                                            styles(mtrTheme).selectedTextStyle
-                                        }
-                                        inputSearchStyle={
-                                            styles(mtrTheme).inputSearchStyle
-                                        }
-                                        containerStyle={
-                                            styles(mtrTheme).dropDownContainer
-                                        }
-                                        itemContainerStyle={{
-                                            paddingVertical: 0,
-                                            marginVertical: 0,
-                                        }}
-                                        iconStyle={styles(mtrTheme).iconStyle}
-                                        data={affiliationOptions}
-                                        search={false}
-                                        maxHeight={300}
-                                        labelField='label'
-                                        valueField='value'
-                                        // placeholder={!isShirtFocus ? 'Shirt' : '...'}
-                                        //searchPlaceholder='Search...'
-                                        value={affiliationSelected}
-                                        onFocus={() =>
-                                            setIsAffiliationFocus(true)
-                                        }
-                                        onBlur={() =>
-                                            setIsAffiliationFocus(false)
-                                        }
-                                        onChange={(item) => {
-                                            inputChangedHandler(
-                                                'affiliate',
-                                                item.value
-                                            ),
-                                                //setStateValue(item.value);
-                                                setIsAffiliationFocus(false);
-                                        }}
-                                    />
-                                </View>
+                    <Modal visible={showChangeModal} animationStyle='slide'>
+                        <Surface style={styles(mtrTheme).modalContainer}>
+                            <View>
+                                <Text style={styles(mtrTheme).modalTitle}>
+                                    NOTIFICATION
+                                </Text>
                             </View>
-                        </View>
-                        <View>
                             <View
-                                style={styles(mtrTheme).changeButtonContainer}
+                                style={styles(mtrTheme).modalMessageContainer}
                             >
+                                <Text style={styles(mtrTheme).modalMessageText}>
+                                    The affiliations change has been made. For
+                                    the change to take effect, please logout and
+                                    log back in to switch affiliations.
+                                </Text>
+                            </View>
+                            <View style={styles(mtrTheme).modalButtonContainer}>
                                 <TouchableOpacity
-                                    onPress={() =>
-                                        navigation.navigate('Affiliation')
-                                    }
-                                    style={styles(mtrTheme).changeButton}
+                                    style={styles(mtrTheme).modalButton}
+                                    onPress={() => setShowChangeModal(false)}
                                 >
                                     <Text
-                                        style={
-                                            styles(mtrTheme).changeButtonText
-                                        }
+                                        style={styles(mtrTheme).modalButtonText}
                                     >
-                                        CHANGE
+                                        OK
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                        </View>
-                        <View style={styles(mtrTheme).introContainer}>
-                            <Text style={styles(mtrTheme).introText}>
-                                If you have been invited to join a team, enter
-                                the code you were provided below and you can
-                                join.
-                            </Text>
-                        </View>
-                        <View style={mtrTheme.profileFormRowStyle}>
+                        </Surface>
+                    </Modal>
+                    <>
+                        <View>
+                            <View style={{ marginTop: 30 }}>
+                                <Text style={mtrTheme.screenTitle}>
+                                    AFFILIATIONS
+                                </Text>
+                            </View>
+                            <View style={styles(mtrTheme).introContainer}>
+                                <Text style={styles(mtrTheme).introText}>
+                                    Affiliations are how the system associates
+                                    your activity with a specific organization.{' '}
+                                </Text>
+                            </View>
+                            <View style={styles(mtrTheme).introContainer}>
+                                <Text style={styles(mtrTheme).introText}>
+                                    If you have access to other affiliates, you
+                                    can switch to them by selecting them in the
+                                    dropdown list, and tap "CHANGE"
+                                </Text>
+                            </View>
                             <View
                                 style={{
-                                    minWidth: '90%',
-                                    flexDirection: 'row',
-                                    justifyContent: 'center',
+                                    flexDirection: 'column',
+                                    // borderWidth: 1,
+                                    // borderColor: 'yellow',
+                                    marginLeft: '20%',
                                 }}
                             >
                                 <View
-                                    style={{
-                                        borderColor: 'white',
-                                        borderWidth: 1,
-                                        justifyContent: 'center',
-                                        marginRight: 10,
-                                    }}
+                                    style={styles(mtrTheme).dropDownContainer}
                                 >
-                                    <TextInput
-                                        minWidth={80}
-                                        backgroundColor='lightgrey'
-                                        value={affCode}
-                                        style={{
-                                            textAlign: 'center',
-                                            padding: 5,
-                                        }}
-                                        onChangeText={handleCodeChange}
-                                        keyboardType='default'
-                                        maxLength={3}
-                                    />
+                                    <View>
+                                        <Dropdown
+                                            style={[
+                                                styles(mtrTheme).dropdown,
+                                                isAffiliationFocus && {
+                                                    borderColor: 'blue',
+                                                },
+                                            ]}
+                                            placeholderStyle={
+                                                styles(mtrTheme)
+                                                    .placeholderStyle
+                                            }
+                                            selectedTextStyle={
+                                                styles(mtrTheme)
+                                                    .selectedTextStyle
+                                            }
+                                            inputSearchStyle={
+                                                styles(mtrTheme)
+                                                    .inputSearchStyle
+                                            }
+                                            containerStyle={
+                                                styles(mtrTheme)
+                                                    .dropDownContainer
+                                            }
+                                            itemContainerStyle={{
+                                                paddingVertical: 0,
+                                                marginVertical: 0,
+                                            }}
+                                            iconStyle={
+                                                styles(mtrTheme).iconStyle
+                                            }
+                                            data={availableAffiliations}
+                                            search={false}
+                                            maxHeight={300}
+                                            labelField='label'
+                                            placeholder='available affiliations'
+                                            valueField='value'
+                                            // placeholder={!isShirtFocus ? 'Shirt' : '...'}
+                                            //searchPlaceholder='Search...'
+                                            value={affiliationSelected}
+                                            onFocus={() =>
+                                                setIsAffiliationFocus(true)
+                                            }
+                                            onBlur={() =>
+                                                setIsAffiliationFocus(false)
+                                            }
+                                            onChange={(item) => {
+                                                inputChangedHandler(
+                                                    'affiliate',
+                                                    item.value
+                                                ),
+                                                    //setStateValue(item.value);
+                                                    setIsAffiliationFocus(
+                                                        false
+                                                    );
+                                            }}
+                                        />
+                                    </View>
                                 </View>
-
-                                <TouchableOpacity
-                                    onPress={() =>
-                                        navigation.navigate('Affiliation')
-                                    }
-                                    style={styles(mtrTheme).changeButton}
-                                >
-                                    <Text
+                            </View>
+                            {affiliationSelected && (
+                                <View>
+                                    <View
                                         style={
-                                            styles(mtrTheme).changeButtonText
+                                            styles(mtrTheme)
+                                                .changeButtonContainer
                                         }
                                     >
-                                        REQUEST
-                                    </Text>
-                                </TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={() => handleSaveClick()}
+                                            style={
+                                                styles(mtrTheme).changeButton
+                                            }
+                                        >
+                                            <Text
+                                                style={
+                                                    styles(mtrTheme)
+                                                        .changeButtonText
+                                                }
+                                            >
+                                                CHANGE
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                            <View style={styles(mtrTheme).introContainer}>
+                                <Text style={styles(mtrTheme).introText}>
+                                    If you have been invited to join a team,
+                                    enter the code you were provided below and
+                                    you can join.
+                                </Text>
                             </View>
+
+                            <View style={mtrTheme.profileFormRowStyle}>
+                                <View
+                                    style={{
+                                        minWidth: '90%',
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            borderColor: 'white',
+                                            borderWidth: 1,
+                                            justifyContent: 'center',
+                                            marginRight: 10,
+                                        }}
+                                    >
+                                        <TextInput
+                                            minWidth={80}
+                                            backgroundColor='lightgrey'
+                                            value={affCode}
+                                            style={{
+                                                textAlign: 'center',
+                                                padding: 5,
+                                            }}
+                                            onChangeText={handleCodeChange}
+                                            keyboardType='default'
+                                            maxLength={3}
+                                        />
+                                    </View>
+
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            navigation.navigate('Affiliation')
+                                        }
+                                        style={styles(mtrTheme).changeButton}
+                                    >
+                                        <Text
+                                            style={
+                                                styles(mtrTheme)
+                                                    .changeButtonText
+                                            }
+                                        >
+                                            REQUEST
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            {/* Use a light status bar on iOS to account for the black space above the modal */}
+                            <StatusBar
+                                style={Platform.OS === 'ios' ? 'light' : 'auto'}
+                            />
                         </View>
-                        {/* Use a light status bar on iOS to account for the black space above the modal */}
-                        <StatusBar
-                            style={Platform.OS === 'ios' ? 'light' : 'auto'}
-                        />
-                    </View>
+                    </>
                 </KeyboardAvoidingView>
             </SafeAreaView>
         </>
@@ -308,6 +367,43 @@ const styles = (mtrTheme) =>
         title: {
             fontSize: 20,
             fontWeight: 'bold',
+        },
+        modalContainer: {
+            flex: 1,
+            justifyContent: 'center',
+        },
+        modalTitle: {
+            fontSize: 28,
+            color: 'white',
+            fontFamily: 'Roboto-Bold',
+            textAlign: 'center',
+        },
+        modalMessageContainer: {
+            marginVertical: 20,
+            marginHorizontal: 15,
+        },
+        modalMessageText: {
+            color: 'white',
+            fontFamily: 'Roboto-Regular',
+            fontSize: 18,
+            textAlign: 'center',
+        },
+        modalButtonContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginTop: 15,
+        },
+        modalButton: {
+            backgroundColor: mtrTheme.colors.lightBlue,
+            borderRadius: 5,
+        },
+        modalButtonText: {
+            fontSize: 16,
+            color: 'white',
+            fontFamily: 'Roboto-Bold',
+            textAlign: 'center',
+            paddingHorizontal: 30,
+            paddingVertical: 5,
         },
         body: {
             color: 'white',

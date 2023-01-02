@@ -17,6 +17,7 @@ import {
     TouchableOpacity,
     Modal,
     ScrollView,
+    Linking,
 } from 'react-native';
 import { Storage } from 'aws-amplify';
 import { focusManager } from '@tanstack/react-query';
@@ -27,6 +28,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import PhoneInput from '../ui/PhoneInput';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useTheme, Surface, FAB } from 'react-native-paper';
+import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 // *  CAMERA INTEGRATION
@@ -504,6 +506,10 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             setProfilePic(result.assets[0].uri);
         }
     };
+    const handleCallRequest = () => {
+        let phoneNumber = '+1' + values.phone;
+        Linking.openURL(`tel: ${phoneNumber}`);
+    };
     const handlePictureClick = async () => {
         //* ---------------------------------
         //* take a picture
@@ -680,20 +686,42 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     Phone
                                                 </Text>
                                             </View>
-                                            <PhoneInput
-                                                overrideStyle={{
-                                                    borderColor: 'lightgrey',
-                                                    borderWidth: 2,
-                                                    borderRadius: 6,
-                                                    backgroundColor:
-                                                        'lightgrey',
-                                                }}
-                                                value={values.phone}
-                                                onChange={inputChangedHandler.bind(
-                                                    this,
-                                                    'phone'
-                                                )}
-                                            />
+                                            <View
+                                                style={{ flexDirection: 'row' }}
+                                            >
+                                                <View>
+                                                    <PhoneInput
+                                                        overrideStyle={
+                                                            styles(mtrTheme)
+                                                                .phoneInput
+                                                        }
+                                                        value={values.phone}
+                                                        onChange={inputChangedHandler.bind(
+                                                            this,
+                                                            'phone'
+                                                        )}
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={{
+                                                        paddingLeft: 10,
+                                                        justifyContent:
+                                                            'center',
+                                                    }}
+                                                >
+                                                    <TouchableOpacity
+                                                        onPress={() =>
+                                                            handleCallRequest()
+                                                        }
+                                                    >
+                                                        <FontAwesome
+                                                            name='phone'
+                                                            size={28}
+                                                            color='lightgrey'
+                                                        />
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
                                         </View>
                                     </View>
                                 </View>
@@ -1152,6 +1180,12 @@ const styles = (mtrTheme) =>
         },
         phoneWrapper: {
             marginBottom: 10,
+        },
+        phoneInput: {
+            borderColor: 'lightgrey',
+            borderWidth: 2,
+            borderRadius: 6,
+            backgroundColor: 'lightgrey',
         },
         phoneWrapperError: {
             marginBottom: 10,

@@ -41,12 +41,12 @@ export default PhoneInput;
 const styles = StyleSheet.create({
     textWrapper: {
         borderWidth: 1,
-        width: 170,
+        width: 250,
         alignItems: 'center',
     },
     textInput: {
-        fontSize: 18,
-
+        fontSize: 24,
+        fontFamily: 'Roboto-Bold',
         padding: 5,
     },
 });

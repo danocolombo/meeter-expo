@@ -31,6 +31,7 @@ import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
 import TeamMemberScreen from '../screens/TeamMemberScreen'; // import MeetingDelete from '../screens/MeetingDelete';
 import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
 import MeetingNewScreen from '../screens/MeetingNewScreen';
+import AffiliationScreen from '../screens/AffiliationScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
@@ -156,17 +157,6 @@ function MeeterStack(props) {
                     headerTintColor: 'white',
                 })}
             />
-            {/* <Stack.Screen
-                name='ProfilePicModal'
-                component={ProfilePicModal}
-                options={({ navigation }) => ({
-                    title: 'Meeter',
-                    headerStyle: {
-                        backgroundColor: mtrTheme.colors.background,
-                    },
-                    headerTintColor: 'white',
-                })}
-            /> */}
             <Stack.Screen
                 name='DeleteConfirm'
                 component={DeleteConfirmScreen}
@@ -191,18 +181,18 @@ function MeeterStack(props) {
             />
             <Stack.Screen
                 name='Profile'
-                options={({ navigation }) => ({
-                    drawerLabel: 'Profile',
-                    title: meeter.appName,
-                    drawerIcon: ({ color }) => (
-                        <Ionicons
-                            name='person-outline'
-                            size={22}
-                            color={color}
-                        />
-                    ),
-                })}
                 component={ProfileScreen}
+                options={({ navigation }) => ({
+                    title: meeter?.appName,
+                    headerStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+                    headerTintColor: 'white',
+                })}
+            />
+            <Stack.Screen
+                name='Affiliation'
+                component={AffiliationScreen}
                 options={({ navigation }) => ({
                     title: meeter?.appName,
                     headerStyle: {

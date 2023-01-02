@@ -56,6 +56,7 @@ import GroupForm from '../components/GroupForm';
 //   ================
 const GroupNewScreen = ({ route, navigation }) => {
     const meeting = route.params.meeting;
+    // printObject('GNS:59-->meeting', meeting);
     const meetingId = meeting.meetingId;
     const { userProfile } = useUserContext();
     let group = {};
@@ -69,27 +70,14 @@ const GroupNewScreen = ({ route, navigation }) => {
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
         useState(false);
 
-    //const [group, setGroup] = useState();
-    var data = new Date();
-    // printObject('data', data);
-    const yr = parseInt(data.getFullYear());
-    let mo = parseInt(data.getMonth());
-    const da = parseInt(data.getDate());
-    const hr = parseInt(data.getHours());
-    const mi = parseInt(data.getMinutes());
-    //month and day lengths if applicable
-    mo = mo + 1;
-    const moFix = ('0' + mo.toString()).slice(-2);
-    const daFix = ('0' + da.toString()).slice(-2);
-    const today = yr.toString() + '-' + moFix + '-' + daFix;
     const compKey =
         userProfile?.activeOrg.code.toLowerCase() +
         '#' +
-        yr.toString() +
+        meeting.meetingDate.slice(0, 4) +
         '#' +
-        moFix +
+        meeting.meetingDate.slice(5, 7) +
         '#' +
-        daFix;
+        meeting.meetingDate.slice(8, 10);
     const [values, setValues] = useState({
         meetingId: meetingId,
         groupId: '0',
@@ -103,31 +91,6 @@ const GroupNewScreen = ({ route, navigation }) => {
         notes: '',
     });
     const uns = useNavigationState((state) => state);
-    // useEffect(() => {
-    //     setIsLoading(true);
-    //     if (groupId !== '0') {
-    //         let grp = [];
-    //         groups.forEach((g) => {
-    //             if (g.groupId === groupId) {
-    //                 grp.push(g);
-    //             }
-    //         });
-    //         printObject('grp value', grp);
-    //         setValues(grp[0]);
-    //         setGroup(grp[0]);
-    //         if (grp[0].title.length < 3) {
-    //             setIsTitleValid(false);
-    //         } else {
-    //             setIsTitleValid(true);
-    //         }
-    //         if (grp[0].location.length < 3) {
-    //             setIsLocationValid(false);
-    //         } else {
-    //             setIsLocationValid(true);
-    //         }
-    //     }
-    //     setIsLoading(false);
-    // }, []);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -190,7 +153,7 @@ const GroupNewScreen = ({ route, navigation }) => {
         },
     });
     const handleFormSubmit = () => {
-        //printObject('GNS:173-->values', values);
+        // printObject('GNS:173-->values', values);
         mutation.mutate(values);
         navigation.navigate('MeetingDetails', meeting);
     };

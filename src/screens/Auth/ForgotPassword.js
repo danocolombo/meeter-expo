@@ -42,16 +42,16 @@ const ForgotPasswordScreen = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.root}>
                 <Text style={styles.title}>Reset your password</Text>
-
-                <CustomInput
-                    name='username'
-                    control={control}
-                    placeholder='Username'
-                    rules={{
-                        required: 'Username is required',
-                    }}
-                />
-
+                <View style={{ marginVertical: 10, width: '80%' }}>
+                    <CustomInput
+                        name='username'
+                        control={control}
+                        placeholder='Username'
+                        rules={{
+                            required: 'Username is required',
+                        }}
+                    />
+                </View>
                 <CustomButton
                     text='Send'
                     onPress={handleSubmit(onSendPressed)}
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
         padding: 20,
+        marginTop: 150,
     },
     title: {
         fontSize: 24,

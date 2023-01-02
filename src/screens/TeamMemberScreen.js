@@ -7,22 +7,27 @@ import {
     TouchableOpacity,
     StyleSheet,
     Alert,
+    Linking,
 } from 'react-native';
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
 import React, { useState } from 'react';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { updateAffiliations } from '../jerichoQL/providers/affiliations.provider';
-import Navigation from '../navigation/Navigation';
+
+import { useNavigation, NavigationActions } from '@react-navigation/native';
+// import Navigation from '../navigation/Navigation';
 
 const TeamMemberScreen = (props) => {
     const teamMember = props.route.params.teamMember;
+    const navigation = useNavigation();
     printObject('teamMember***** ', teamMember);
     const mtrTheme = useTheme();
     const [showNotice, setShowNotice] = useState(
         teamMember.activeRoles ? false : true
     );
-    const [showRemoveWarning, setShowRemoveWarning] = useState(false);
+    const [showDeleteWarning, setShowDeleteWarning] = useState(false);
     const { userProfile } = useUserContext();
     const [isUpdating, setIsUpdating] = useState(false);
     const [pictureObject, setPictureObject] = useState(
@@ -104,7 +109,28 @@ const TeamMemberScreen = (props) => {
     const allowReadOnly = () => {
         Alert.alert('READ ONLY GRANTED');
     };
-
+    const handleCallRequest = () => {
+        let phoneNumber = '+1' + teamMember.phone;
+        Linking.openURL(`tel: ${phoneNumber}`);
+    };
+    const handleTextRequest = () => {
+        Linking.openURL(`sms: ${teamMember.phone}`);
+    };
+    const handleEmailRequest = () => {
+        Linking.openURL(`mailto: ${teamMember.email}`);
+    };
+    const handleRemoveAllRequest = () => {
+        setShowDeleteWarning(true);
+    };
+    const handleRemoveAllApproval = () => {
+        console.log('maybe');
+        //setShowDeleteWarning(false);
+        console.log('GO!!');
+        setShowDeleteWarning(false);
+        navigation.goBack();
+        //props.navigation.navigate('Team');
+        //navigation.goBack();
+    };
     if (isUpdating) {
         return (
             <View
@@ -157,6 +183,60 @@ const TeamMemberScreen = (props) => {
                     </TouchableOpacity>
                 </Surface>
             </Modal>
+            <Modal visible={showDeleteWarning} animationStyle='slide'>
+                <Surface style={styles(mtrTheme).modalWrapper}>
+                    <View style={styles(mtrTheme).modalContentWrapper}>
+                        <Text style={styles(mtrTheme).modalNoticeHeader}>
+                            ATTENTION
+                        </Text>
+                    </View>
+                    <View style={styles(mtrTheme).modalContentWrapper}>
+                        <Text style={styles(mtrTheme).removeAllWarningText}>
+                            If you remove this user, they will not have any
+                            access to your information. They will need to
+                            request access by providing your affiliation code.
+                        </Text>
+                    </View>
+                    <View style={styles(mtrTheme).modalContentWrapper}>
+                        <Text style={styles(mtrTheme).removeAllWarningText}>
+                            After submitting your affiliation code, a manager on
+                            your team will need to approve the access.
+                        </Text>
+                    </View>
+                    <View style={styles(mtrTheme).modalContentWrapper}>
+                        <Text style={styles(mtrTheme).removeAllWarningText}>
+                            Your affiliation code is{' '}
+                            {userProfile.activeOrg.code.toUpperCase()}
+                        </Text>
+                    </View>
+                    <TouchableOpacity
+                        onPress={() => setShowDeleteWarning(false)}
+                        style={styles(mtrTheme).modalRemoveCancelButton}
+                    >
+                        <Text
+                            style={styles(mtrTheme).modalRemoveCancelButtonText}
+                        >
+                            CANCEL REQUEST
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        // onPress={() => handleRemoveAllApproval()}
+                        onPress={() => {
+                            navigation.goBack();
+                            // setShowDeleteWarning(false);
+                        }}
+                        style={styles(mtrTheme).modalRemoveApproveButton}
+                    >
+                        <Text
+                            style={
+                                styles(mtrTheme).modalRemoveApproveButtonText
+                            }
+                        >
+                            YES, REMOVE
+                        </Text>
+                    </TouchableOpacity>
+                </Surface>
+            </Modal>
             <View
                 style={{
                     backgroundColor: mtrTheme.colors.background,
@@ -191,11 +271,64 @@ const TeamMemberScreen = (props) => {
                     }}
                 >
                     {teamMember?.phone && (
-                        <Text style={{ color: 'white' }}>
-                            {teamMember.phone}
-                        </Text>
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ justifyContent: 'center' }}>
+                                <Text style={{ color: 'white' }}>
+                                    {teamMember.phone}
+                                </Text>
+                            </View>
+                            <View
+                                style={{
+                                    paddingLeft: 10,
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => handleCallRequest()}
+                                >
+                                    <MaterialIcons
+                                        name='phone'
+                                        size={20}
+                                        color='lightgrey'
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <View
+                                style={{
+                                    paddingLeft: 10,
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => handleTextRequest()}
+                                >
+                                    <MaterialIcons
+                                        name='chat'
+                                        size={20}
+                                        color='lightgrey'
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     )}
-                    <Text style={{ color: 'white' }}>{teamMember.email}</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={{ justifyContent: 'center' }}>
+                            <Text style={{ color: 'white' }}>
+                                {teamMember.email}
+                            </Text>
+                        </View>
+                        <View style={{ padding: 5 }}>
+                            <TouchableOpacity
+                                onPress={() => handleEmailRequest()}
+                            >
+                                <MaterialIcons
+                                    name='email'
+                                    size={20}
+                                    color='lightgrey'
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
 
                 <View
@@ -298,7 +431,7 @@ const TeamMemberScreen = (props) => {
                             !groups &&
                             !manage && (
                                 <TouchableOpacity
-                                    onPress={() => setShowRemoveWarning(true)}
+                                    onPress={() => handleRemoveAllRequest()}
                                     style={styles(mtrTheme).removeAllButton}
                                 >
                                     <Text
@@ -326,7 +459,7 @@ const TeamMemberScreen = (props) => {
                             !groups &&
                             !manage && (
                                 <TouchableOpacity
-                                    onPress={() => setShowRemoveWarning(true)}
+                                    onPress={() => handleRemoveAllRequest()}
                                     style={styles(mtrTheme).removeAllButton}
                                 >
                                     <Text
@@ -378,6 +511,30 @@ const styles = (mtrTheme) =>
             fontFamily: 'Roboto-Bold',
             fontSize: 20,
         },
+        modalRemoveCancelButton: {
+            backgroundColor: 'yellow',
+            borderRadius: 5,
+            marginTop: 10,
+        },
+        modalRemoveCancelButtonText: {
+            textAlign: 'center',
+            color: 'black',
+            padding: 10,
+            fontFamily: 'Roboto-Bold',
+            fontSize: 20,
+        },
+        modalRemoveApproveButton: {
+            backgroundColor: 'red',
+            borderRadius: 5,
+            marginTop: 30,
+        },
+        modalRemoveApproveButtonText: {
+            textAlign: 'center',
+            color: 'white',
+            padding: 10,
+            fontFamily: 'Roboto-Bold',
+            fontSize: 20,
+        },
         switchTextWrapper: {
             justifyContent: 'center',
             marginLeft: 20,
@@ -400,6 +557,14 @@ const styles = (mtrTheme) =>
             fontSize: 20,
             padding: 10,
             textAlign: 'center',
+        },
+        removeAllWarningText: {
+            color: 'white',
+            fontFamily: 'Roboto-Regular',
+            fontSize: 18,
+            paddingHorizontal: 20,
+            textAlign: 'center',
+            paddingBottom: 10,
         },
         removeAllButton: {
             marginTop: 15,

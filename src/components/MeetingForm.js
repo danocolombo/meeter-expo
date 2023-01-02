@@ -289,6 +289,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                         </View>
                     ) : null}
                     <KeyboardAvoidingView
+                        behavior='position'
                         style={[
                             styles.surface,
                             { backgroundColor: mtrTheme.colors.background },

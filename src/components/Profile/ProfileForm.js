@@ -28,7 +28,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import PhoneInput from '../ui/PhoneInput';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useTheme, Surface, FAB } from 'react-native-paper';
-import { FontAwesome } from '@expo/vector-icons';
+
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 // *  CAMERA INTEGRATION
@@ -506,10 +506,6 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             setProfilePic(result.assets[0].uri);
         }
     };
-    const handleCallRequest = () => {
-        let phoneNumber = '+1' + values.phone;
-        Linking.openURL(`tel: ${phoneNumber}`);
-    };
     const handlePictureClick = async () => {
         //* ---------------------------------
         //* take a picture
@@ -701,25 +697,6 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                             'phone'
                                                         )}
                                                     />
-                                                </View>
-                                                <View
-                                                    style={{
-                                                        paddingLeft: 10,
-                                                        justifyContent:
-                                                            'center',
-                                                    }}
-                                                >
-                                                    <TouchableOpacity
-                                                        onPress={() =>
-                                                            handleCallRequest()
-                                                        }
-                                                    >
-                                                        <FontAwesome
-                                                            name='phone'
-                                                            size={28}
-                                                            color='lightgrey'
-                                                        />
-                                                    </TouchableOpacity>
                                                 </View>
                                             </View>
                                         </View>

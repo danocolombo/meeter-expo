@@ -7,9 +7,11 @@ import {
     TouchableOpacity,
     StyleSheet,
     Alert,
+    Linking,
 } from 'react-native';
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
 import React, { useState } from 'react';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { updateAffiliations } from '../jerichoQL/providers/affiliations.provider';
@@ -103,7 +105,16 @@ const TeamMemberScreen = (props) => {
     const allowReadOnly = () => {
         Alert.alert('READ ONLY GRANTED');
     };
-
+    const handleCallRequest = () => {
+        let phoneNumber = '+1' + teamMember.phone;
+        Linking.openURL(`tel: ${phoneNumber}`);
+    };
+    const handleTextRequest = () => {
+        Linking.openURL(`sms: ${teamMember.phone}`);
+    };
+    const handleEmailRequest = () => {
+        Linking.openURL(`mailto: ${teamMember.email}`);
+    };
     if (isUpdating) {
         return (
             <View
@@ -190,11 +201,64 @@ const TeamMemberScreen = (props) => {
                     }}
                 >
                     {teamMember?.phone && (
-                        <Text style={{ color: 'white' }}>
-                            {teamMember.phone}
-                        </Text>
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ justifyContent: 'center' }}>
+                                <Text style={{ color: 'white' }}>
+                                    {teamMember.phone}
+                                </Text>
+                            </View>
+                            <View
+                                style={{
+                                    paddingLeft: 10,
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => handleCallRequest()}
+                                >
+                                    <MaterialIcons
+                                        name='phone'
+                                        size={20}
+                                        color='lightgrey'
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <View
+                                style={{
+                                    paddingLeft: 10,
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => handleTextRequest()}
+                                >
+                                    <MaterialIcons
+                                        name='chat'
+                                        size={20}
+                                        color='lightgrey'
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     )}
-                    <Text style={{ color: 'white' }}>{teamMember.email}</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={{ justifyContent: 'center' }}>
+                            <Text style={{ color: 'white' }}>
+                                {teamMember.email}
+                            </Text>
+                        </View>
+                        <View style={{ padding: 5 }}>
+                            <TouchableOpacity
+                                onPress={() => handleEmailRequest()}
+                            >
+                                <MaterialIcons
+                                    name='email'
+                                    size={20}
+                                    color='lightgrey'
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
 
                 <View

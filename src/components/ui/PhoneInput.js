@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     },
     textInput: {
         fontSize: 24,
-        fontFamily: 'Roboto-Bold',
+        fontFamily: 'Roboto-Medium',
         padding: 5,
     },
 });

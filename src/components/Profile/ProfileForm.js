@@ -699,6 +699,18 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     />
                                                 </View>
                                             </View>
+                                            {showPhoneError && (
+                                                <View>
+                                                    <Text
+                                                        style={
+                                                            styles(mtrTheme)
+                                                                .phoneError
+                                                        }
+                                                    >
+                                                        Phone number incomplete
+                                                    </Text>
+                                                </View>
+                                            )}
                                         </View>
                                     </View>
                                 </View>
@@ -1048,6 +1060,9 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                         backgroundColor:
                                             mtrTheme.colors.background,
                                     }}
+                                    dateTextStyle={{ color: 'white' }}
+                                    headerLabelColor={{ color: 'yellow' }}
+                                    headerBackTitle={{ color: 'yellow' }}
                                     onConfirm={onBirthDateConfirm}
                                     onCancel={onBirthDateCancel}
                                 />

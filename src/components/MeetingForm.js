@@ -778,14 +778,25 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                                     onPress={handleFormSubmit}
                                 />
                             </View>
-                            <DateTimePickerModal
-                                isVisible={modalMeetingDateVisible}
-                                mode='date'
-                                date={dateValue}
-                                display='inline'
-                                onConfirm={onMeetingDateConfirm}
-                                onCancel={onMeetingDateCancel}
-                            />
+                            <View styles={{ color: 'white' }}>
+                                <DateTimePickerModal
+                                    isVisible={modalMeetingDateVisible}
+                                    mode='date'
+                                    date={dateValue}
+                                    display='inline'
+                                    style={{
+                                        backgroundColor:
+                                            mtrTheme.colors.background,
+                                    }}
+                                    dayTextStyle={styles.calendarText}
+                                    dateTextStyle={styles.calendarText}
+                                    textColor={styles.calendarText}
+                                    monthTextStyle={styles.calendarText}
+                                    yearTextStyle={styles.calendarText}
+                                    onConfirm={onMeetingDateConfirm}
+                                    onCancel={onMeetingDateCancel}
+                                />
+                            </View>
                         </ScrollView>
                     </KeyboardAvoidingView>
                 </>
@@ -822,6 +833,9 @@ const styles = StyleSheet.create({
 
     dateWrapper: {
         margin: 5,
+    },
+    calendarText: {
+        color: 'white',
     },
     costLabel: {
         fontSize: 20,

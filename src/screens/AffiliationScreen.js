@@ -15,8 +15,9 @@ import React, { useCallback, useState, useLayoutEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Input from '../components/ui/Input';
 import { Dropdown } from 'react-native-element-dropdown';
-import { API } from 'aws-amplify';
+import { API, graphqlOperation } from 'aws-amplify';
 import * as mutations from '../jerichoQL/mutations';
+import * as queries from '../jerichoQL/queries';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -85,6 +86,69 @@ const AffiliationScreen = (props) => {
         if (regex.test(text)) {
             setAffCode(text.substr(0, 3).toUpperCase());
         }
+    };
+    const handleNewCodeClick = () => {
+        if (affCode.length !== 3) return;
+        setIsUpdating(true);
+        //todo - check the code
+        let org = {};
+        let theCode = 'WBC';
+        try {
+            async function getTheOrg() {
+                const orgResponse = await API.graphql(
+                    graphqlOperation(queries.listOrganizations, {
+                        filter: { code: { eq: affCode.toLowerCase() } },
+                    })
+                );
+                if (orgResponse.data.listOrganizations.items.length > 0) {
+                    console.log('YES');
+                    org = orgResponse.data.listOrganizations.items[0];
+                    //todo - add as userProfile default org
+                    const updateInfo = {
+                        id: userProfile.id,
+                        organizationDefaultUsersId: org.id,
+                    };
+                    try {
+                        const updatedUser = await API.graphql({
+                            query: mutations.updateUser,
+                            variables: { input: updateInfo },
+                        });
+                        printObject('AS:115-->updatedUser:', updatedUser);
+                    } catch (error) {
+                        printObject('unexpected error updating user:', error);
+                    }
+                    //todo - if valid add affiliation
+                    try {
+                        const insertInfo = {
+                            organizationAffiliationsId: org.id,
+                            role: 'new',
+                            status: 'active',
+                            userAffiliationsId: userProfile.id,
+                        };
+                        API.graphql({
+                            query: mutations.createAffiliation,
+                            variables: { input: insertInfo },
+                        })
+                            .then((results) => {
+                                console.log('affiliation inserted');
+                                printObject('AS:135-->results:\n', results);
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                console.error(error);
+                            });
+                    } catch (error) {
+                        console.log('a.p:142-->unexpected error:\n', error);
+                    }
+
+                    printObject('AS:103-->org', org);
+                }
+            }
+            getTheOrg();
+        } catch (error) {}
+
+        //todo - display Modal
+        setIsUpdating(false);
     };
     const handleSaveClick = () => {
         //* update the users default id
@@ -357,9 +421,7 @@ const AffiliationScreen = (props) => {
                                     </View>
 
                                     <TouchableOpacity
-                                        onPress={() =>
-                                            navigation.navigate('Affiliation')
-                                        }
+                                        onPress={() => handleNewCodeClick()}
                                         style={styles(mtrTheme).changeButton}
                                     >
                                         <Text

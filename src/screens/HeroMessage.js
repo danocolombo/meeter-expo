@@ -17,6 +17,7 @@ import CustomButton from '../components/ui/Auth/CustomButton';
 import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { useFocusEffect } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const HeroMessageScreen = (props) => {
     const mtrTheme = useTheme();
@@ -99,80 +100,85 @@ const HeroMessageScreen = (props) => {
                     paddingVertical: 20,
                 }}
             >
-                <KeyboardAvoidingView>
-                    <View>
-                        <View style={{ marginTop: 30 }}>
-                            <Text style={mtrTheme.screenTitle}>
-                                Welcome Message
-                            </Text>
-                        </View>
+                <ScrollView>
+                    <KeyboardAvoidingView behavior='padding'>
+                        <View>
+                            <View style={{ marginTop: 30 }}>
+                                <Text style={mtrTheme.screenTitle}>
+                                    Welcome Message
+                                </Text>
+                            </View>
 
-                        <View
-                            style={{
-                                paddingVertical: 10,
-                                paddingHorizontal: 20,
-                                marginBottom: 10,
-                                marginTop: 20,
-                                marginHorizontal: 30,
-                            }}
-                        >
-                            <Text style={mtrTheme.subTitleSmall}>
-                                Update the message your team will see on the
-                                home screen.
-                            </Text>
-                        </View>
-                        <View style={styles.rowStyle}>
-                            <Input
-                                label=''
-                                labelStyle={{
-                                    fontSize: 24,
-                                    color: 'white',
-                                    marginLeft: 20,
+                            <View
+                                style={{
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 20,
+                                    marginBottom: 10,
+                                    marginTop: 20,
+                                    marginHorizontal: 30,
                                 }}
-                                textInputConfig={{
-                                    backgroundColor: 'lightgrey',
-                                    paddingHorizontal: 10,
-                                    fontSize: 20,
-                                    color: 'black',
-                                    value: theMessage,
-                                    capitalize: 'sentence',
-                                    autoCorrect: true,
+                            >
+                                <Text style={mtrTheme.subTitleSmall}>
+                                    Update the message your team will see on the
+                                    home screen.
+                                </Text>
+                            </View>
+                            <View style={styles.rowStyle}>
+                                <Input
+                                    label=''
+                                    labelStyle={{
+                                        fontSize: 24,
+                                        color: 'white',
+                                        marginLeft: 20,
+                                    }}
+                                    textInputConfig={{
+                                        backgroundColor: 'lightgrey',
+                                        paddingHorizontal: 10,
+                                        fontSize: 20,
+                                        color: 'black',
+                                        value: theMessage,
+                                        capitalize: 'sentence',
+                                        autoCorrect: true,
+                                        marginHorizontal: 20,
+                                        placeholder: 'enter a welcome message',
+                                        style: {
+                                            color: 'black',
+                                            borderRadius: 5,
+                                        },
+                                        fontWeight: '500',
+                                        letterSpacing: 0,
+                                        multiline: true,
+                                        minHeight: 100,
+                                        onChangeText: (x) => setTheMessage(x),
+                                    }}
+                                />
+                            </View>
+                            <View
+                                style={{
                                     marginHorizontal: 20,
-                                    placeholder: 'enter a welcome message',
-                                    style: { color: 'black', borderRadius: 5 },
-                                    fontWeight: '500',
-                                    letterSpacing: 0,
-                                    multiline: true,
-                                    minHeight: 100,
-                                    onChangeText: (x) => setTheMessage(x),
+                                    paddingVertical: 20,
                                 }}
+                            >
+                                <CustomButton
+                                    text={
+                                        isUpdating
+                                            ? 'Updating...'
+                                            : 'UPDATE MESSAGE'
+                                    }
+                                    bgColor={mtrTheme.colors.success}
+                                    fgColor='white'
+                                    type='PRIMARY'
+                                    enabled='true'
+                                    onPress={() => handleSaveClick()}
+                                />
+                            </View>
+                            {/* Use a light status bar on iOS to account for the black space above the modal */}
+                            <StatusBar
+                                style={Platform.OS === 'ios' ? 'light' : 'auto'}
                             />
                         </View>
-                        <View
-                            style={{
-                                marginHorizontal: 20,
-                                paddingVertical: 20,
-                            }}
-                        >
-                            <CustomButton
-                                text={
-                                    isUpdating
-                                        ? 'Updating...'
-                                        : 'UPDATE MESSAGE'
-                                }
-                                bgColor={mtrTheme.colors.success}
-                                fgColor='white'
-                                type='PRIMARY'
-                                enabled='true'
-                                onPress={() => handleSaveClick()}
-                            />
-                        </View>
-                        {/* Use a light status bar on iOS to account for the black space above the modal */}
-                        <StatusBar
-                            style={Platform.OS === 'ios' ? 'light' : 'auto'}
-                        />
-                    </View>
-                </KeyboardAvoidingView>
+                    </KeyboardAvoidingView>
+                </ScrollView>
             </SafeAreaView>
         </>
     );

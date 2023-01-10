@@ -14,6 +14,8 @@ import {
     Button,
     AppState,
     Modal,
+    KeyboardAvoidingView,
+    ScrollView,
 } from 'react-native';
 import MeetingForm from '../components/MeetingForm';
 import { useSelector, useDispatch } from 'react-redux';
@@ -287,13 +289,20 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                 </Surface>
             </Modal>
             {meeting?.meetingId && (
-                <MeetingForm
-                    meeting={meeting}
-                    handleUpdate={handleUpdate}
-                    // handleDeleteRequest={() =>
-                    //     setModalDeleteConfirmVisible(true)
-                    // }
-                />
+                <ScrollView>
+                    <KeyboardAvoidingView
+                        behavior='padding'
+                        style={{ flex: 1 }}
+                    >
+                        <MeetingForm
+                            meeting={meeting}
+                            handleUpdate={handleUpdate}
+                            // handleDeleteRequest={() =>
+                            //     setModalDeleteConfirmVisible(true)
+                            // }
+                        />
+                    </KeyboardAvoidingView>
+                </ScrollView>
             )}
         </>
     );

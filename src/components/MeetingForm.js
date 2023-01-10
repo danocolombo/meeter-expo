@@ -271,314 +271,425 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
 
     return (
         <>
-            {mutation.isLoading ? (
-                'Adding meeting...'
-            ) : (
-                <>
-                    {mutation.isError ? (
-                        <View>
-                            <Text>
-                                An error occurred: {mutation.error.message}
-                            </Text>
-                        </View>
-                    ) : null}
-
-                    {mutation.isSuccess ? (
-                        <View>
-                            <Text>Meeting added!</Text>
-                        </View>
-                    ) : null}
-                    <KeyboardAvoidingView
-                        style={[
-                            styles.surface,
-                            { backgroundColor: mtrTheme.colors.background },
-                        ]}
-                    >
-                        <ScrollView>
-                            <View style={mtrTheme.meetingEditTypeSelectorRow}>
-                                <TypeSelectors
-                                    pick={values.meetingType}
-                                    setPick={handleTypeChange}
-                                />
+            <ScrollView>
+                {mutation.isLoading ? (
+                    'Adding meeting...'
+                ) : (
+                    <>
+                        {mutation.isError ? (
+                            <View>
+                                <Text>
+                                    An error occurred: {mutation.error.message}
+                                </Text>
                             </View>
-                            <View style={mtrTheme.meetingEditFirstRow}>
-                                <TouchableOpacity
-                                    onPress={() =>
-                                        userProfile.activeOrg.role === 'manage'
-                                            ? setModalMeetingDateVisible(true)
-                                            : null
-                                    }
+                        ) : null}
+
+                        {mutation.isSuccess ? (
+                            <View>
+                                <Text>Meeting added!</Text>
+                            </View>
+                        ) : null}
+                        <KeyboardAvoidingView
+                            behavior='padding'
+                            style={[
+                                styles.surface,
+                                { backgroundColor: mtrTheme.colors.background },
+                            ]}
+                        >
+                            <ScrollView>
+                                <View
+                                    style={mtrTheme.meetingEditTypeSelectorRow}
                                 >
-                                    <View
-                                        style={mtrTheme.meetingEditDateWrapper}
+                                    <TypeSelectors
+                                        pick={values.meetingType}
+                                        setPick={handleTypeChange}
+                                    />
+                                </View>
+                                <View style={mtrTheme.meetingEditFirstRow}>
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            userProfile.activeOrg.role ===
+                                            'manage'
+                                                ? setModalMeetingDateVisible(
+                                                      true
+                                                  )
+                                                : null
+                                        }
                                     >
-                                        {Platform.OS === 'ios' && (
-                                            <View
-                                                style={
-                                                    mtrTheme.meetingEditIOSDataCompContainer
-                                                }
-                                            >
-                                                <DateBall
-                                                    date={values.meetingDate}
-                                                />
-                                            </View>
-                                        )}
-                                        {Platform.OS === 'android' && (
-                                            <View
-                                                style={
-                                                    mtrTheme.meetingEditAndroidDataCompContainer
-                                                }
-                                            >
-                                                <DateStack
-                                                    date={values.meetingDate}
-                                                />
-                                            </View>
-                                        )}
-                                    </View>
-                                </TouchableOpacity>
-                                <View>
-                                    <View style={{ flexDirection: 'column' }}>
-                                        {meetingTypeRef.current ===
-                                            'Lesson' && (
-                                            <>
-                                                <Input
-                                                    label='Lesson'
-                                                    labelStyle={
-                                                        mtrTheme.meetingEditInputLabel
+                                        <View
+                                            style={
+                                                mtrTheme.meetingEditDateWrapper
+                                            }
+                                        >
+                                            {Platform.OS === 'ios' && (
+                                                <View
+                                                    style={
+                                                        mtrTheme.meetingEditIOSDataCompContainer
                                                     }
-                                                    textInputConfig={{
-                                                        backgroundColor:
-                                                            'white',
-                                                        value: values.title,
-                                                        paddingHorizontal: 1,
-                                                        fontSize: 24,
-                                                        color: 'black',
-                                                        editable:
-                                                            userProfile
-                                                                .activeOrg
-                                                                .role ===
-                                                            'manage'
-                                                                ? true
-                                                                : false,
-                                                        marginHorizontal: 10,
-                                                        placeholder:
-                                                            'Lesson Title',
-                                                        // style: { color: 'white' },
-                                                        fontWeight: '300',
-                                                        minWidth: '70%',
-                                                        letterSpacing: 0,
-                                                        onChangeText:
-                                                            inputChangedHandler.bind(
-                                                                this,
-                                                                'title'
-                                                            ),
-                                                    }}
-                                                />
-                                                <Input
-                                                    label='Contact'
-                                                    labelStyle={
-                                                        mtrTheme.meetingEditInputLabel
+                                                >
+                                                    <DateBall
+                                                        date={
+                                                            values.meetingDate
+                                                        }
+                                                    />
+                                                </View>
+                                            )}
+                                            {Platform.OS === 'android' && (
+                                                <View
+                                                    style={
+                                                        mtrTheme.meetingEditAndroidDataCompContainer
                                                     }
-                                                    textInputConfig={{
-                                                        backgroundColor:
-                                                            'white',
-                                                        value: values.supportContact,
-                                                        paddingHorizontal: 1,
-                                                        fontSize: 24,
-                                                        color: 'black',
-                                                        marginHorizontal: 10,
-                                                        placeholder: 'Contact',
-                                                        fontWeight: '300',
-                                                        minWidth: width * 0.6,
-                                                        letterSpacing: 0,
-                                                        onChangeText:
-                                                            inputChangedHandler.bind(
-                                                                this,
-                                                                'supportContact'
-                                                            ),
-                                                    }}
-                                                />
-                                            </>
-                                        )}
-                                        {meetingTypeRef.current ===
-                                            'Testimony' && (
-                                            <>
-                                                <Input
-                                                    label='Guest'
-                                                    labelStyle={
-                                                        mtrTheme.meetingEditInputLabel
-                                                    }
-                                                    textInputConfig={{
-                                                        backgroundColor:
-                                                            'white',
-                                                        value: values.title,
-                                                        paddingHorizontal: 1,
-                                                        fontSize: 24,
-                                                        editable:
-                                                            userProfile
-                                                                .activeOrg
-                                                                .role ===
-                                                            'manage'
-                                                                ? true
-                                                                : false,
-                                                        color: 'black',
-                                                        marginHorizontal: 10,
-                                                        autoCapitalize: 'words',
-                                                        placeholder: 'Guest',
-                                                        // style: { color: 'white' },
-                                                        fontWeight: '300',
-                                                        minWidth: '70%',
-                                                        letterSpacing: 0,
-                                                        onChangeText:
-                                                            inputChangedHandler.bind(
-                                                                this,
-                                                                'title'
-                                                            ),
-                                                    }}
-                                                />
-                                            </>
-                                        )}
-                                        {meetingTypeRef.current ===
-                                            'Special' && (
-                                            <>
-                                                <Input
-                                                    label='Event Title'
-                                                    labelStyle={
-                                                        mtrTheme.meetingEditInputLabel
-                                                    }
-                                                    textInputConfig={{
-                                                        backgroundColor:
-                                                            'white',
-                                                        value: values.title,
-                                                        paddingHorizontal: 1,
-                                                        fontSize: 24,
-                                                        color: 'black',
-                                                        marginHorizontal: 10,
-                                                        placeholder:
-                                                            'Event Title',
-                                                        // style: { color: 'white' },
-                                                        fontWeight: '300',
-                                                        minWidth: width * 0.6,
-                                                        letterSpacing: 0,
-                                                        onChangeText:
-                                                            inputChangedHandler.bind(
-                                                                this,
-                                                                'title'
-                                                            ),
-                                                    }}
-                                                />
-                                                <Input
-                                                    label='Contact'
-                                                    labelStyle={
-                                                        mtrTheme.meetingEditInputLabel
-                                                    }
-                                                    textInputConfig={{
-                                                        backgroundColor:
-                                                            'white',
-                                                        value: values.supportContact,
-                                                        paddingHorizontal: 1,
-                                                        fontSize: 24,
-                                                        color: 'black',
-                                                        marginHorizontal: 10,
-                                                        placeholder: 'Contact',
-                                                        fontWeight: '300',
-                                                        minWidth: width * 0.6,
-                                                        letterSpacing: 0,
-                                                        onChangeText:
-                                                            inputChangedHandler.bind(
-                                                                this,
-                                                                'supportContact'
-                                                            ),
-                                                    }}
-                                                />
-                                            </>
-                                        )}
+                                                >
+                                                    <DateStack
+                                                        date={
+                                                            values.meetingDate
+                                                        }
+                                                    />
+                                                </View>
+                                            )}
+                                        </View>
+                                    </TouchableOpacity>
+                                    <View>
+                                        <View
+                                            style={{ flexDirection: 'column' }}
+                                        >
+                                            {meetingTypeRef.current ===
+                                                'Lesson' && (
+                                                <>
+                                                    <Input
+                                                        label='Lesson'
+                                                        labelStyle={
+                                                            mtrTheme.meetingEditInputLabel
+                                                        }
+                                                        textInputConfig={{
+                                                            backgroundColor:
+                                                                'white',
+                                                            value: values.title,
+                                                            paddingHorizontal: 1,
+                                                            fontSize: 24,
+                                                            color: 'black',
+                                                            editable:
+                                                                userProfile
+                                                                    .activeOrg
+                                                                    .role ===
+                                                                'manage'
+                                                                    ? true
+                                                                    : false,
+                                                            marginHorizontal: 10,
+                                                            placeholder:
+                                                                'Lesson Title',
+                                                            // style: { color: 'white' },
+                                                            fontWeight: '300',
+                                                            minWidth: '70%',
+                                                            letterSpacing: 0,
+                                                            onChangeText:
+                                                                inputChangedHandler.bind(
+                                                                    this,
+                                                                    'title'
+                                                                ),
+                                                        }}
+                                                    />
+                                                    <Input
+                                                        label='Contact'
+                                                        labelStyle={
+                                                            mtrTheme.meetingEditInputLabel
+                                                        }
+                                                        textInputConfig={{
+                                                            backgroundColor:
+                                                                'white',
+                                                            value: values.supportContact,
+                                                            paddingHorizontal: 1,
+                                                            fontSize: 24,
+                                                            color: 'black',
+                                                            marginHorizontal: 10,
+                                                            placeholder:
+                                                                'Contact',
+                                                            fontWeight: '300',
+                                                            minWidth:
+                                                                width * 0.6,
+                                                            letterSpacing: 0,
+                                                            onChangeText:
+                                                                inputChangedHandler.bind(
+                                                                    this,
+                                                                    'supportContact'
+                                                                ),
+                                                        }}
+                                                    />
+                                                </>
+                                            )}
+                                            {meetingTypeRef.current ===
+                                                'Testimony' && (
+                                                <>
+                                                    <Input
+                                                        label='Guest'
+                                                        labelStyle={
+                                                            mtrTheme.meetingEditInputLabel
+                                                        }
+                                                        textInputConfig={{
+                                                            backgroundColor:
+                                                                'white',
+                                                            value: values.title,
+                                                            paddingHorizontal: 1,
+                                                            fontSize: 24,
+                                                            editable:
+                                                                userProfile
+                                                                    .activeOrg
+                                                                    .role ===
+                                                                'manage'
+                                                                    ? true
+                                                                    : false,
+                                                            color: 'black',
+                                                            marginHorizontal: 10,
+                                                            autoCapitalize:
+                                                                'words',
+                                                            placeholder:
+                                                                'Guest',
+                                                            // style: { color: 'white' },
+                                                            fontWeight: '300',
+                                                            minWidth: '70%',
+                                                            letterSpacing: 0,
+                                                            onChangeText:
+                                                                inputChangedHandler.bind(
+                                                                    this,
+                                                                    'title'
+                                                                ),
+                                                        }}
+                                                    />
+                                                </>
+                                            )}
+                                            {meetingTypeRef.current ===
+                                                'Special' && (
+                                                <>
+                                                    <Input
+                                                        label='Event Title'
+                                                        labelStyle={
+                                                            mtrTheme.meetingEditInputLabel
+                                                        }
+                                                        textInputConfig={{
+                                                            backgroundColor:
+                                                                'white',
+                                                            value: values.title,
+                                                            paddingHorizontal: 1,
+                                                            fontSize: 24,
+                                                            color: 'black',
+                                                            marginHorizontal: 10,
+                                                            placeholder:
+                                                                'Event Title',
+                                                            // style: { color: 'white' },
+                                                            fontWeight: '300',
+                                                            minWidth:
+                                                                width * 0.6,
+                                                            letterSpacing: 0,
+                                                            onChangeText:
+                                                                inputChangedHandler.bind(
+                                                                    this,
+                                                                    'title'
+                                                                ),
+                                                        }}
+                                                    />
+                                                    <Input
+                                                        label='Contact'
+                                                        labelStyle={
+                                                            mtrTheme.meetingEditInputLabel
+                                                        }
+                                                        textInputConfig={{
+                                                            backgroundColor:
+                                                                'white',
+                                                            value: values.supportContact,
+                                                            paddingHorizontal: 1,
+                                                            fontSize: 24,
+                                                            color: 'black',
+                                                            marginHorizontal: 10,
+                                                            placeholder:
+                                                                'Contact',
+                                                            fontWeight: '300',
+                                                            minWidth:
+                                                                width * 0.6,
+                                                            letterSpacing: 0,
+                                                            onChangeText:
+                                                                inputChangedHandler.bind(
+                                                                    this,
+                                                                    'supportContact'
+                                                                ),
+                                                        }}
+                                                    />
+                                                </>
+                                            )}
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
-                            <View
-                                style={{
-                                    borderWidth: 1,
-                                    borderColor: 'yellow',
-                                    borderRadius: 10,
-                                    padding: 5,
-                                    marginHorizontal: 10,
-                                    marginVertical: 5,
-                                }}
-                            >
                                 <View
                                     style={{
-                                        alignItems: 'center',
-                                        marginTop: 0,
+                                        borderWidth: 1,
+                                        borderColor: 'yellow',
+                                        borderRadius: 10,
+                                        padding: 5,
+                                        marginHorizontal: 10,
+                                        marginVertical: 5,
                                     }}
                                 >
-                                    <Text
-                                        style={mtrTheme.meetingEditInputLabel}
+                                    <View
+                                        style={{
+                                            alignItems: 'center',
+                                            marginTop: 0,
+                                        }}
                                     >
-                                        Meal Information
-                                    </Text>
-                                </View>
-                                {/* <View
+                                        <Text
+                                            style={
+                                                mtrTheme.meetingEditInputLabel
+                                            }
+                                        >
+                                            Meal Information
+                                        </Text>
+                                    </View>
+                                    {/* <View
                                 style={[
                                     mtrTheme.meetingEditBasicRow,
                                     mtrTheme.meetingEditMealRow,
                                 ]}
                             > */}
-                                <View style={{ flexDirection: 'column' }}>
-                                    <View>
-                                        <Input
-                                            label='Menu'
-                                            labelStyle={
-                                                mtrTheme.meetingEditInputLabel
+                                    <View style={{ flexDirection: 'column' }}>
+                                        <View>
+                                            <Input
+                                                label='Menu'
+                                                labelStyle={
+                                                    mtrTheme.meetingEditInputLabel
+                                                }
+                                                textInputConfig={{
+                                                    backgroundColor: 'white',
+                                                    value: values.meal,
+                                                    paddingHorizontal: 1,
+                                                    fontSize: 24,
+                                                    color: 'black',
+                                                    marginHorizontal: 10,
+                                                    //placeholder: 'Meal',
+                                                    fontWeight: '300',
+                                                    minWidth: width * 0.5,
+                                                    letterSpacing: 0,
+                                                    onChangeText:
+                                                        inputChangedHandler.bind(
+                                                            this,
+                                                            'meal'
+                                                        ),
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: 'column' }}>
+                                        <View>
+                                            <Input
+                                                label='Contact'
+                                                labelStyle={
+                                                    mtrTheme.meetingEditInputLabel
+                                                }
+                                                textInputConfig={{
+                                                    backgroundColor: 'white',
+                                                    value: values.mealContact,
+                                                    paddingHorizontal: 1,
+                                                    fontSize: 24,
+                                                    color: 'black',
+                                                    marginHorizontal: 10,
+                                                    //placeholder: 'Meal',
+                                                    fontWeight: '300',
+                                                    minWidth: width * 0.37,
+                                                    letterSpacing: 0,
+                                                    onChangeText:
+                                                        inputChangedHandler.bind(
+                                                            this,
+                                                            'mealContact'
+                                                        ),
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View
+                                        style={[styles.row, { paddingTop: 5 }]}
+                                    >
+                                        <View
+                                            style={[
+                                                mtrTheme.meetingEditNumberLabelContainer,
+                                                { minWidth: '50%' },
+                                            ]}
+                                        >
+                                            <Text
+                                                style={
+                                                    mtrTheme.meetingEditMealNumberText
+                                                }
+                                            >
+                                                Served:
+                                            </Text>
+                                        </View>
+                                        <View
+                                            style={[
+                                                mtrTheme.meetingEditMealNumberContainer,
+                                                { minWidth: '50%' },
+                                            ]}
+                                        >
+                                            <NumberInput
+                                                numberStyle={{
+                                                    color: 'white',
+                                                    borderColor: 'white',
+                                                }}
+                                                graphicStyle={{
+                                                    color: 'white',
+                                                    borderColor: 'white',
+                                                }}
+                                                value={values.mealCount}
+                                                onAction={inputChangedHandler.bind(
+                                                    this,
+                                                    'mealCount'
+                                                )}
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
+                                <View
+                                    style={[styles.row, { marginVertical: 4 }]}
+                                >
+                                    <View
+                                        style={[
+                                            mtrTheme.meetingEditNumberLabelContainer2,
+                                            {
+                                                minWidth: '50%',
+                                            },
+                                        ]}
+                                    >
+                                        <Text
+                                            style={
+                                                mtrTheme.meetingEditMealNumberText
                                             }
-                                            textInputConfig={{
-                                                backgroundColor: 'white',
-                                                value: values.meal,
-                                                paddingHorizontal: 1,
-                                                fontSize: 24,
-                                                color: 'black',
-                                                marginHorizontal: 10,
-                                                //placeholder: 'Meal',
-                                                fontWeight: '300',
-                                                minWidth: width * 0.5,
-                                                letterSpacing: 0,
-                                                onChangeText:
-                                                    inputChangedHandler.bind(
-                                                        this,
-                                                        'meal'
-                                                    ),
+                                        >
+                                            Attendance:
+                                        </Text>
+                                    </View>
+                                    <View
+                                        style={[
+                                            mtrTheme.meetingEditMealNumberContainer,
+                                            {
+                                                minWidth: '50%',
+                                            },
+                                        ]}
+                                    >
+                                        <NumberInput
+                                            numberStyle={{
+                                                color: 'white',
+                                                borderColor: 'white',
                                             }}
+                                            graphicStyle={{
+                                                color: 'white',
+                                                borderColor: 'white',
+                                            }}
+                                            value={values.attendanceCount}
+                                            onAction={inputChangedHandler.bind(
+                                                this,
+                                                'attendanceCount'
+                                            )}
                                         />
                                     </View>
                                 </View>
-                                <View style={{ flexDirection: 'column' }}>
-                                    <View>
-                                        <Input
-                                            label='Contact'
-                                            labelStyle={
-                                                mtrTheme.meetingEditInputLabel
-                                            }
-                                            textInputConfig={{
-                                                backgroundColor: 'white',
-                                                value: values.mealContact,
-                                                paddingHorizontal: 1,
-                                                fontSize: 24,
-                                                color: 'black',
-                                                marginHorizontal: 10,
-                                                //placeholder: 'Meal',
-                                                fontWeight: '300',
-                                                minWidth: width * 0.37,
-                                                letterSpacing: 0,
-                                                onChangeText:
-                                                    inputChangedHandler.bind(
-                                                        this,
-                                                        'mealContact'
-                                                    ),
-                                            }}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={[styles.row, { paddingTop: 5 }]}>
+                                <View
+                                    style={[styles.row, { marginVertical: 0 }]}
+                                >
                                     <View
                                         style={[
                                             mtrTheme.meetingEditNumberLabelContainer,
@@ -590,7 +701,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                                                 mtrTheme.meetingEditMealNumberText
                                             }
                                         >
-                                            Served:
+                                            Newcomers:
                                         </Text>
                                     </View>
                                     <View
@@ -608,199 +719,120 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                                                 color: 'white',
                                                 borderColor: 'white',
                                             }}
-                                            value={values.mealCount}
+                                            value={values.newcomersCount}
                                             onAction={inputChangedHandler.bind(
                                                 this,
-                                                'mealCount'
+                                                'newcomersCount'
                                             )}
                                         />
                                     </View>
                                 </View>
-                            </View>
-                            <View style={[styles.row, { marginVertical: 4 }]}>
-                                <View
-                                    style={[
-                                        mtrTheme.meetingEditNumberLabelContainer2,
-                                        {
-                                            minWidth: '50%',
-                                        },
-                                    ]}
-                                >
-                                    <Text
-                                        style={
-                                            mtrTheme.meetingEditMealNumberText
-                                        }
+                                <View style={[styles.row, { marginTop: 10 }]}>
+                                    <View
+                                        style={[
+                                            mtrTheme.meetingEditNumberLabelContainer,
+                                            { minWidth: '50%' },
+                                        ]}
                                     >
-                                        Attendance:
-                                    </Text>
-                                </View>
-                                <View
-                                    style={[
-                                        mtrTheme.meetingEditMealNumberContainer,
-                                        {
-                                            minWidth: '50%',
-                                        },
-                                    ]}
-                                >
-                                    <NumberInput
-                                        numberStyle={{
-                                            color: 'white',
-                                            borderColor: 'white',
-                                        }}
-                                        graphicStyle={{
-                                            color: 'white',
-                                            borderColor: 'white',
-                                        }}
-                                        value={values.attendanceCount}
-                                        onAction={inputChangedHandler.bind(
-                                            this,
-                                            'attendanceCount'
-                                        )}
-                                    />
-                                </View>
-                            </View>
-                            <View style={[styles.row, { marginVertical: 0 }]}>
-                                <View
-                                    style={[
-                                        mtrTheme.meetingEditNumberLabelContainer,
-                                        { minWidth: '50%' },
-                                    ]}
-                                >
-                                    <Text
-                                        style={
-                                            mtrTheme.meetingEditMealNumberText
-                                        }
-                                    >
-                                        Newcomers:
-                                    </Text>
-                                </View>
-                                <View
-                                    style={[
-                                        mtrTheme.meetingEditMealNumberContainer,
-                                        { minWidth: '50%' },
-                                    ]}
-                                >
-                                    <NumberInput
-                                        numberStyle={{
-                                            color: 'white',
-                                            borderColor: 'white',
-                                        }}
-                                        graphicStyle={{
-                                            color: 'white',
-                                            borderColor: 'white',
-                                        }}
-                                        value={values.newcomersCount}
-                                        onAction={inputChangedHandler.bind(
-                                            this,
-                                            'newcomersCount'
-                                        )}
-                                    />
-                                </View>
-                            </View>
-                            <View style={[styles.row, { marginTop: 10 }]}>
-                                <View
-                                    style={[
-                                        mtrTheme.meetingEditNumberLabelContainer,
-                                        { minWidth: '50%' },
-                                    ]}
-                                >
-                                    <Text
+                                        <Text
+                                            style={{
+                                                color: 'white',
+                                                fontSize: 24,
+                                                textAlign: 'right',
+                                            }}
+                                        >
+                                            Donations:
+                                        </Text>
+                                    </View>
+                                    <View
                                         style={{
-                                            color: 'white',
-                                            fontSize: 24,
-                                            textAlign: 'right',
+                                            paddingRight: 'auto',
+                                            paddingLeft: 10,
+                                            minWidth: '50%',
                                         }}
                                     >
-                                        Donations:
-                                    </Text>
+                                        <CurrencyInput
+                                            value={values.donations}
+                                            onChangeValue={inputChangedHandler.bind(
+                                                this,
+                                                'donations'
+                                            )}
+                                            prefix='$'
+                                            placeholder='Donations'
+                                            minValue={0}
+                                            delimiter=','
+                                            separator='.'
+                                            precision={2}
+                                            editable={true}
+                                            style={styles.costInput}
+                                        />
+                                    </View>
                                 </View>
-                                <View
-                                    style={{
-                                        paddingRight: 'auto',
-                                        paddingLeft: 10,
-                                        minWidth: '50%',
-                                    }}
-                                >
-                                    <CurrencyInput
-                                        value={values.donations}
-                                        onChangeValue={inputChangedHandler.bind(
-                                            this,
-                                            'donations'
-                                        )}
-                                        prefix='$'
-                                        placeholder='Donations'
-                                        minValue={0}
-                                        delimiter=','
-                                        separator='.'
-                                        precision={2}
-                                        editable={true}
-                                        style={styles.costInput}
+                                <View style={styles.rowStyle}>
+                                    <Input
+                                        label='Notes'
+                                        labelStyle={{
+                                            fontSize: 24,
+                                            color: 'white',
+                                            marginLeft: 20,
+                                        }}
+                                        textInputConfig={{
+                                            backgroundColor: 'lightgrey',
+                                            paddingHorizontal: 10,
+                                            fontSize: 20,
+                                            color: 'black',
+                                            value: values.notes,
+                                            capitalize: 'sentence',
+                                            autoCorrect: true,
+                                            marginHorizontal: 20,
+                                            placeholder: '',
+                                            style: { color: 'black' },
+                                            fontWeight: '500',
+                                            letterSpacing: 0,
+                                            multiline: true,
+                                            minHeight: 100,
+                                            onChangeText:
+                                                inputChangedHandler.bind(
+                                                    this,
+                                                    'notes'
+                                                ),
+                                        }}
                                     />
                                 </View>
-                            </View>
-                            <View style={styles.rowStyle}>
-                                <Input
-                                    label='Notes'
-                                    labelStyle={{
-                                        fontSize: 24,
-                                        color: 'white',
-                                        marginLeft: 20,
-                                    }}
-                                    textInputConfig={{
-                                        backgroundColor: 'lightgrey',
-                                        paddingHorizontal: 10,
-                                        fontSize: 20,
-                                        color: 'black',
-                                        value: values.notes,
-                                        capitalize: 'sentence',
-                                        autoCorrect: true,
-                                        marginHorizontal: 20,
-                                        placeholder: '',
-                                        style: { color: 'black' },
-                                        fontWeight: '500',
-                                        letterSpacing: 0,
-                                        multiline: true,
-                                        minHeight: 100,
-                                        onChangeText: inputChangedHandler.bind(
-                                            this,
-                                            'notes'
-                                        ),
-                                    }}
-                                />
-                            </View>
-                            <View style={styles.buttonContainer}>
-                                <CustomButton
-                                    text='SAVE'
-                                    bgColor={mtrTheme.colors.success}
-                                    fgColor='white'
-                                    type='PRIMARY'
-                                    enabled={isTitleValid}
-                                    onPress={handleFormSubmit}
-                                />
-                            </View>
-                            <View styles={{ color: 'white' }}>
-                                <DateTimePickerModal
-                                    isVisible={modalMeetingDateVisible}
-                                    mode='date'
-                                    date={dateValue}
-                                    display='inline'
-                                    style={{
-                                        backgroundColor:
-                                            mtrTheme.colors.background,
-                                    }}
-                                    dayTextStyle={styles.calendarText}
-                                    dateTextStyle={styles.calendarText}
-                                    textColor={styles.calendarText}
-                                    monthTextStyle={styles.calendarText}
-                                    yearTextStyle={styles.calendarText}
-                                    onConfirm={onMeetingDateConfirm}
-                                    onCancel={onMeetingDateCancel}
-                                />
-                            </View>
-                        </ScrollView>
-                    </KeyboardAvoidingView>
-                </>
-            )}
+                                <View style={styles.buttonContainer}>
+                                    <CustomButton
+                                        text='SAVE'
+                                        bgColor={mtrTheme.colors.success}
+                                        fgColor='white'
+                                        type='PRIMARY'
+                                        enabled={isTitleValid}
+                                        onPress={handleFormSubmit}
+                                    />
+                                </View>
+                                <View styles={{ color: 'white' }}>
+                                    <DateTimePickerModal
+                                        isVisible={modalMeetingDateVisible}
+                                        mode='date'
+                                        date={dateValue}
+                                        display='inline'
+                                        style={{
+                                            backgroundColor:
+                                                mtrTheme.colors.background,
+                                        }}
+                                        dayTextStyle={styles.calendarText}
+                                        dateTextStyle={styles.calendarText}
+                                        textColor={styles.calendarText}
+                                        monthTextStyle={styles.calendarText}
+                                        yearTextStyle={styles.calendarText}
+                                        onConfirm={onMeetingDateConfirm}
+                                        onCancel={onMeetingDateCancel}
+                                    />
+                                </View>
+                            </ScrollView>
+                        </KeyboardAvoidingView>
+                    </>
+                )}
+            </ScrollView>
         </>
     );
 };

@@ -119,9 +119,9 @@ const MeetingNewScreen = ({ route, navigation }) => {
 
     return (
         <>
-            <ScrollView>
-                {/* <KeyboardAvoidingView style={{ flex: 1 }}> */}
-                <KeyboardAvoidingView behavior='padding'>
+            {/* <KeyboardAvoidingView style={{ flex: 1 }}> */}
+            <KeyboardAvoidingView behavior='padding'>
+                <ScrollView>
                     <Surface style={mtrTheme.screenSurface}>
                         <View>
                             <Text style={mtrTheme.screenTitle}>
@@ -133,8 +133,8 @@ const MeetingNewScreen = ({ route, navigation }) => {
                             handleUpdate={handleUpdate}
                         />
                     </Surface>
-                </KeyboardAvoidingView>
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </>
     );
 };

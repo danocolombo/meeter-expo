@@ -89,18 +89,18 @@ export const profilesSlice = createSlice({
             return state;
         },
     },
-    extraReducers: {
-        [getProfiles.pending]: (state) => {
+    extraReducers: (builder) => {
+        builder.addCase(getProfiles.pending, (state) => {
             state.isLoading = true;
-        },
-        [getProfiles.fulfilled]: (state, action) => {
-            state.isLoading = false;
-            state.allProfiles = action.payload;
-        },
-        [getProfiles.rejected]: (state, action) => {
-            console.log(action);
-            state.isLoading = false;
-        },
+        }),
+            builder.addCase(getProfiles.fulfilled, (state) => {
+                state.isLoading = false;
+                state.allProfiles = action.payload;
+            }),
+            builder.addCase(getProfiles.rejected, (state) => {
+                console.log(action);
+                state.isLoading = false;
+            });
     },
 });
 

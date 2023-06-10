@@ -5,26 +5,35 @@ import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import TeamGroupCard from '../components/teams/Team.Group.Card';
 // import { getTeam } from '../jerichoQL/providers/team.provider';
+import { getProfiles } from '../features/profilesSlice';
 import { getAffiliationsForTeam } from '../jerichoQL/providers/affiliations.provider';
 import { useFocusEffect } from '@react-navigation/native';
-
+import { useDispatch, useSelector } from 'react-redux';
 const TeamScreen = () => {
+    const dispatch = useDispatch();
+    const [storedProfiles, setStoredProfiles] = useState([]);
+    const allProfiles = useSelector((store) => store.profiles.allProfiles);
     const [teamMembers, setTeamMembers] = useState([]);
     const mtrTheme = useTheme();
     const { userProfile } = useUserContext();
     useFocusEffect(
         useCallback(() => {
-            getAffiliationsForTeam(userProfile.activeOrg.id)
-                .then((theTeam) => {
-                    printObject('TS:19-->theTeam:\n', theTeam);
-                    setTeamMembers(theTeam);
-                })
-                .catch((error) => {
-                    printObject('getTeam error:\n', error);
-                });
+            printObject('TS:20-->allProfiles:\n', allProfiles);
+            dispatch(getProfiles);
+            // getAffiliationsForTeam(userProfile.activeOrg.id)
+            //     .then((theTeam) => {
+            //         printObject('TS:19-->theTeam:\n', theTeam);
+            //         setTeamMembers(theTeam);
+            //     })
+            //     .catch((error) => {
+            //         printObject('getTeam error:\n', error);
+            //     });
         }, [])
     );
-
+    useEffect(() => {
+        setStoredProfiles(allProfiles);
+        printObject('storedProfiles:', storedProfiles);
+    }, [allProfiles]);
     return (
         <>
             <View

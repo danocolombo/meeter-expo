@@ -9,12 +9,17 @@ const initialState = {
     isLoading: false,
 };
 export const getProfiles = createAsyncThunk(
-    'rallies/getProfiles',
-    async (affiliateCode, thunkAPI) => {
+    'profiles/getProfiles',
+    async (_, thunkAPI) => {
         try {
-            console.log('trying...');
-            console.log('affiliate:', affiliateCode);
-            return affiliateCode;
+            // we get the data here but will simulate for now
+            const profiles = [
+                { id: '23323-2323-888', name: 'One Thing', role: 'guest' },
+                { id: '23323-2323-222', name: 'Two Thing', role: 'lead' },
+                { id: '23323-2323-111', name: 'Three Thing', role: 'regp' },
+                { id: '23323-2323-212', name: 'Four Thing', role: 'guest' },
+            ];
+            return profiles;
         } catch (error) {
             return thunkAPI.rejectWithValue(
                 'PS:16-->>> something went wrong in createAsyncThunk'
@@ -84,27 +89,19 @@ export const profilesSlice = createSlice({
             return state;
         },
     },
-    // extraReducers: {
-    //     [getProfiles.pending]: (state) => {
-    //         state.isLoading = true;
-    //     },
-    //     [getProfiles.fulfilled]: (state, action) => {
-    //         // console.log(action);
-    //         // printObject('RS:70-->results...affiliate:', action);
-    //         state.isLoading = false;
-    //         // printObject('RS:223--> action', action);
-    //         // state.displayRallies = state.allRallies.filter(
-    //         //     (r) =>
-    //         //         r.eventDate >= action.payload &&
-    //         //         r.eventRegion === 'test' &&
-    //         //         r.approved === true
-    //         // );
-    //     },
-    //     [getProfiles.rejected]: (state, action) => {
-    //         console.log(action);
-    //         state.isLoading = false;
-    //     },
-    // },
+    extraReducers: {
+        [getProfiles.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [getProfiles.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            state.allProfiles = action.payload;
+        },
+        [getProfiles.rejected]: (state, action) => {
+            console.log(action);
+            state.isLoading = false;
+        },
+    },
 });
 
 // Action creators are generated for each case reducer function

@@ -13,6 +13,7 @@ import {
     FlatList,
     TouchableOpacity,
     useWindowDimensions,
+    SafeAreaView,
     Platform,
     AppState,
 } from 'react-native';
@@ -77,7 +78,7 @@ const MeetingDetails = (props) => {
 
     let meeting = {};
     const { width, height } = useWindowDimensions();
-    printObject('MDS:80-->userProfile:\n', userProfile);
+    // printObject('MDS:80-->userProfile:\n', userProfile);
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
@@ -112,12 +113,14 @@ const MeetingDetails = (props) => {
     }, [navigation, meeter]);
     async function getDefaultGroups() {
         try {
+            printObject('getDefaultGroups:', userProfile.activeOrg.id);
             const systemInfo = await API.graphql({
                 query: queries.getOrganizationDefaultGroups,
                 variables: { id: userProfile.activeOrg.id },
             });
             const defaultGroups =
                 systemInfo.data.getOrganization.defaultGroups.items;
+            printObject('defaultGroups:\n', defaultGroups);
             setGroups(defaultGroups);
             setShowDefaultButton(true);
         } catch (error) {
@@ -144,6 +147,9 @@ const MeetingDetails = (props) => {
             return () => subscription.remove();
         }, [])
     );
+    useEffect(() => {
+        console.log('GROUPS REFRESHED');
+    }, [GROUPS]);
 
     const MEETING = useQuery(
         ['mtg', meetingId],
@@ -160,10 +166,10 @@ const MeetingDetails = (props) => {
         enabled: true,
     });
     const handleAddDefaults = async () => {
-        // console.log('handleAddDefaults');
+        console.log('handleAddDefaults');
         // printObject('MDS:160-->meeting:\n', meeting);
         groups.map((group) => {
-            // console.log('group.id:', group.id);
+            console.log('group.id:', group.id);
             const values = {
                 meetingId: meetingId,
                 groupId: '0',
@@ -195,7 +201,7 @@ const MeetingDetails = (props) => {
         meeting = MEETING.data.body;
     }
 
-    if (MEETING.isLoading) {
+    if (MEETING.isLoading || GROUPS.isLoading) {
         return (
             <View
                 style={{
@@ -224,6 +230,7 @@ const MeetingDetails = (props) => {
     return (
         <>
             <Surface style={styles.surface}>
+                {/* <SafeAreaView> */}
                 <View>
                     <Text style={mtrTheme.screenTitle}>
                         {meeting?.meetingType}
@@ -416,13 +423,20 @@ const MeetingDetails = (props) => {
                 {userProfile.activeOrg.role === 'manage' &&
                     groups.length > 0 &&
                     showDefaultsButton && (
-                        <CustomButton
-                            text='Add Default Groups'
-                            bgColor='blue'
-                            fgColor={'white'}
-                            type='STANDARD'
-                            onPress={handleAddDefaults}
-                        />
+                        <View
+                            style={{
+                                marginHorizontal: 20,
+                                paddingBottom: 20,
+                            }}
+                        >
+                            <CustomButton
+                                text='Add Default Groups'
+                                bgColor='blue'
+                                fgColor={'white'}
+                                type='STANDARD'
+                                onPress={() => handleAddDefaults()}
+                            />
+                        </View>
                     )}
                 {/* <GroupList meetingId={meetingId} /> */}
                 {/* <View>
@@ -438,6 +452,7 @@ const MeetingDetails = (props) => {
                     />
                     }
                 </View> */}
+                {/* </SafeAreaView> */}
             </Surface>
         </>
     );

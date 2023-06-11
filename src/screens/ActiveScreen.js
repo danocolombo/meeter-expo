@@ -102,7 +102,7 @@ const ActiveScreen = () => {
             </View>
         );
     }
-    printObject('AS:105-->userProfile:\n ', userProfile);
+    // printObject('AS:105-->userProfile:\n ', userProfile);
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>

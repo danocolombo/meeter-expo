@@ -75,11 +75,12 @@ const CustomDrawer = (props) => {
         React.useCallback(() => {
             getPictureDetails()
                 .then(() => {
-                    console.log('CD:78-->picRef:', picRef);
-                    console.log('CD:79-->pictureObject:', pictureObject);
+                    console.log('CD:78-->in getPicDetails()');
+                    console.log('CD:80-->in getPicDetails()');
+                    console.log('CD:81-->pictureObject:', pictureObject);
                 })
                 .catch((error) => {
-                    printObject('CD:82-->ERROR:\n', error);
+                    printObject('CD:83-->ERROR:\n', error);
                 });
         }, [userProfile])
     );

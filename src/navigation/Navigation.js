@@ -35,7 +35,7 @@ import AffiliationScreen from '../screens/AffiliationScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
-import ProfileScreen from '../screens/profille/ProfileScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
 import { logout } from '../features/usersSlice';
 // import { logout as meetingsSignout } from '../features/meetingsSlice';
 // import { logout as profilesLogout } from '../features/profilesSlice';

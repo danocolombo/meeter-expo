@@ -5,6 +5,46 @@
 import { printObject } from '../../utils/helpers';
 import * as queries from '../queries';
 import { API } from 'aws-amplify';
+
+export async function getAffiliationsUsersByOrgId(orgId) {
+    const gqlAffOrgUserData = await API.graphql({
+        query: queries.listAffiliationsUsersByOrg,
+        variables: { id: orgId },
+    });
+    const items = gqlAffOrgUserData.data.listAffiliations.items;
+    const returnValue = [];
+    items.forEach((item) => {
+        const user = item.user;
+        const existingItem = returnValue.find(
+            (outputItem) => outputItem.id === user.id
+        );
+
+        if (existingItem) {
+            existingItem.roles.push({
+                id: item.id,
+                role: item.role,
+                status: item.status,
+            });
+        } else {
+            returnValue.push({
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                username: user.username,
+                roles: [
+                    {
+                        id: item.id,
+                        role: item.role,
+                        status: item.status,
+                    },
+                ],
+            });
+        }
+    });
+    printObject('USERS:\n', returnValue);
+    return returnValue;
+}
+
 export async function getTeam(teamId) {
     //* get team members and their details for an organization
     //*  NOTE: teamId = organization.id

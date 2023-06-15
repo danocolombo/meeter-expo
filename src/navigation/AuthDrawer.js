@@ -8,14 +8,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import MeetingsConfig from './BottomNav';
+import TeamConfig from './TeamNav';
 import CustomDrawer from './CustomDrawer';
 import LandingScreen from '../screens/LandingScreen';
 import DefaultGroupsScreen from '../screens/DefaultGroupsScreen';
 import TeamScreen from '../screens/TeamScreen';
+// import TeamScreen from '../screens/TeamMemberScreen';
 import HeroMessageScreen from '../screens/HeroMessage';
 import ActiveScreen from '../screens/ActiveScreen';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
-import ProfileScreen from '../screens/profille/ProfileScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
 import { useAuthContext } from '../contexts/AuthContext';
 //import { Colors } from '../constants/colors';
 import { printObject } from '../utils/helpers';
@@ -120,6 +122,31 @@ const AuthDrawer = (navigation) => {
                         <Ionicons
                             name='calendar-outline'
                             size={22}
+                            color={color}
+                        />
+                    ),
+                    headerStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+
+                    headerTintColor: 'white',
+                    tabBarStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+                    tabBarActiveTintColor: 'white',
+                })}
+            />
+            <Drawer.Screen
+                name='Your Team'
+                component={TeamConfig}
+                options={({ navigation }) => ({
+                    title: meeter.appName,
+
+                    drawerLabel: 'My Team',
+                    drawerIcon: ({ color }) => (
+                        <Ionicons
+                            name='people-outline'
+                            size={28}
                             color={color}
                         />
                     ),

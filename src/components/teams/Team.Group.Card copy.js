@@ -13,17 +13,12 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Storage } from 'aws-amplify';
 import { useSysContext } from '../../contexts/SysContext';
 import { printObject } from '../../utils/helpers';
-const TeamGroupListCard = (props) => {
+const TeamGroupListCard = ({ team, active, handleDelete }) => {
     const navigation = useNavigation();
-    const { team, listType, active, handleDelete } = props;
     const mtrTheme = useTheme();
     const { meeter } = useSysContext();
     const [pictureObject, setPictureObject] = useState(null);
-    const [cardStyle, setCardStyle] = useState({
-        backgroundColor: 'yellow',
-        mainColor: 'black',
-        accentColor: 'blue',
-    });
+
     useFocusEffect(
         useCallback(() => {
             async function fetchImage() {
@@ -40,35 +35,6 @@ const TeamGroupListCard = (props) => {
                     setPictureObject(url);
                 } catch (error) {
                     console.error(error);
-                }
-                switch (listType) {
-                    case 'active':
-                        setCardStyle((prevCardStyle) => ({
-                            ...prevCardStyle,
-                            backgroundColor: 'blue',
-                            mainColor: 'white',
-                            accentColor: 'yellow',
-                        }));
-                        break;
-                    case 'inactive':
-                        setCardStyle((prevCardStyle) => ({
-                            ...prevCardStyle,
-                            backgroundColor: 'black',
-                            mainColor: 'yellow',
-                        }));
-                        break;
-                    case 'new':
-                        setCardStyle((prevCardStyle) => ({
-                            ...prevCardStyle,
-                            mainColor: 'white',
-                            backgroundColor: 'green',
-                        }));
-                        break;
-                    default:
-                        setCardStyle((prevCardStyle) => ({
-                            ...prevCardStyle,
-                            backgroundColor: 'white',
-                        }));
                 }
             }
             fetchImage();
@@ -95,12 +61,7 @@ const TeamGroupListCard = (props) => {
                     onPress={handleDetailsPress}
                     style={({ pressed }) => pressed && styles.pressed}
                 >
-                    <View
-                        style={[
-                            styles.teamMemberItem,
-                            { backgroundColor: cardStyle.backgroundColor },
-                        ]}
-                    >
+                    <View style={[styles.teamMemberItem]}>
                         <View
                             style={{
                                 borderWidth: 1,
@@ -143,9 +104,9 @@ const TeamGroupListCard = (props) => {
                                                             uri: pictureObject,
                                                         }}
                                                         style={{
-                                                            height: 50,
-                                                            width: 50,
-                                                            borderRadius: 25,
+                                                            height: 80,
+                                                            width: 80,
+                                                            borderRadius: 40,
                                                         }}
                                                     />
                                                 </View>
@@ -160,16 +121,14 @@ const TeamGroupListCard = (props) => {
                                     }}
                                 >
                                     <Text
-                                        style={[
-                                            styles.mainText,
-                                            {
-                                                color: cardStyle.mainColor,
-                                            },
-                                        ]}
+                                        style={{
+                                            fontFamily: 'Roboto-Bold',
+                                            fontSize: 20,
+                                        }}
                                     >
                                         {team.firstName} {team.lastName}
                                     </Text>
-                                    {/* <Text
+                                    <Text
                                         style={{
                                             fontFamily: 'Roboto-Regular',
                                             fontSize: 20,
@@ -178,9 +137,9 @@ const TeamGroupListCard = (props) => {
                                         {team.activeRoles.length > 0
                                             ? team.activeRoles
                                             : 'READ-ONLY'}
-                                    </Text> */}
+                                    </Text>
                                 </View>
-                                {/* {team.activeRoles &&
+                                {team.activeRoles &&
                                     team.activeRoles.includes('new') && (
                                         <View
                                             style={{
@@ -195,7 +154,7 @@ const TeamGroupListCard = (props) => {
                                                 color='yellow'
                                             />
                                         </View>
-                                    )} */}
+                                    )}
                             </View>
                         </View>
                     </View>
@@ -226,14 +185,5 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.4,
-    },
-    mainText: {
-        fontFamily: 'Roboto-Bold',
-        fontSize: 20,
-        fontWeight: '500',
-    },
-    accentText: {
-        fontSize: 16,
-        fontWeight: '400',
     },
 });

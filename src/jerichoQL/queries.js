@@ -474,6 +474,38 @@ export const listSystems = /* GraphQL */ `
         }
     }
 `;
+export const listAffiliationsUsersByOrg = /* GraphQL */ `
+    query ListAffUsers(
+        $filter: ModelAffiliationFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listAffiliations(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                role
+                status
+                user {
+                    id
+                    firstName
+                    lastName
+                    username
+                    email
+                    phone
+                    picture
+                    birthday
+                }
+            }
+            nextToken
+        }
+    }
+`;
+/* filter: {organizationAffiliationsId: {eq: "c9d00915-fc0c-4f0e-ac23-d75acd1b80e2"}} */
+
 export const listUsers = /* GraphQL */ `
     query ListUsers(
         $filter: ModelUserFilterInput

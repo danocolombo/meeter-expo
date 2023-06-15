@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import meetingsReducer from '../features/meetingsSlice';
 import usersReducer from '../features/usersSlice';
+import teamReducer from '../features/teamSlice';
 import profilesReducer from '../features/profilesSlice';
 import systemReducer from '../features/systemSlice';
 export const store = configureStore({
@@ -9,5 +10,6 @@ export const store = configureStore({
         users: usersReducer,
         profiles: profilesReducer,
         system: systemReducer,
+        team: teamReducer,
     },
 });

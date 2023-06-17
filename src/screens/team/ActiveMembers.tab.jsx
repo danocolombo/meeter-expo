@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Pressable } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import { useTeamContext } from '../../contexts/TeamContext';
 import { useUserContext } from '../../contexts/UserContext';
@@ -13,71 +13,65 @@ const ActiveMembers = () => {
     const [editFlag, setEditFlag] = useState(false);
     useFocusEffect(
         useCallback(() => {
-            printObject('userProfile:\n', userProfile);
-            printObject('activeOrg:', userProfile?.activeOrg?.id);
+            // printObject('userProfile:\n', userProfile);
+            // printObject('activeOrg:', userProfile?.activeOrg?.id);
             loadTeam(userProfile?.activeOrg?.id);
             console.log('loaded');
         }, [])
     );
-    // printObject('members:\n', members);
-    // printObject('newMembers:\n', newMembers);
-    // printObject('inactiveMembers:\n', inactiveMembers);
-    // printObject('activeMembers:\n', activeMembers);
-
+    const styles = StyleSheet.create({
+        pageTitleContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            paddingVertical: 10,
+        },
+        pageTitle: {
+            fontSize: 24,
+            fontWeight: '700',
+        },
+        editContainer: {
+            flexDirection: 'row',
+        },
+        editButton: {
+            marginLeft: 'auto',
+            marginRight: 10,
+        },
+        editButtonText: {
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: editFlag ? 'black' : 'white',
+            padding: 5,
+        },
+    });
     return (
         <View style={{ flex: 1, flexDirection: 'column' }}>
-            <Text style={{ padding: 10, fontSize: 18 }}>
-                New Requests: {newMembers?.length || 0}
-            </Text>
-            <Text style={{ padding: 10, fontSize: 18 }}>
-                ActiveMembers: {activeMembers?.length || 0}
-            </Text>
-            <Text style={{ padding: 10, fontSize: 18 }}>
-                Inactive Members: {inactiveMembers?.length || 0}
-            </Text>
-            <FlatList
-                data={members}
-                renderItem={({ item }) => (
-                    <MemberCard member={item} editFlag={editFlag} />
-                )}
-                keyExtractor={(item) => item.id}
-            />
-            {/* <View style={{ view: 1 }}>
-                {members.map((member, index) => (
-                    <View
-                        key={index}
-                        style={{
-                            flexDirection: 'row',
-                            backgroundColor: 'lightgrey',
-                            padding: 5,
-                            marginVertical: 5,
-                            marginHorizontal: 10,
-                            flex: 1, // Take up remaining vertical space
-                        }}
-                    >
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                flex: 1,
-                                height: 20,
-                            }}
-                        >
-                            <Text style={{ fontSize: 20, fontWeight: '500' }}>
-                                {member.firstName} {member.lastName}
-                            </Text>
-                            <View style={{ flexDirection: 'column' }}>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <Text>ONE</Text>
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                ))}
-            </View> */}
+            <View style={styles.pageTitleContainer}>
+                <Text style={styles.pageTitle}>Active Members</Text>
+            </View>
+            <View style={{ marginLeft: 'auto' }}>
+                <Pressable
+                    onPress={() => setEditFlag(!editFlag)}
+                    style={[
+                        styles.editButton,
+                        { backgroundColor: editFlag ? 'yellow' : 'blue' },
+                    ]}
+                >
+                    <Text style={styles.editButtonText}>
+                        {editFlag ? 'SAVE' : 'EDIT'}
+                    </Text>
+                </Pressable>
+            </View>
+            <View style={{ paddingHorizontal: 5 }}>
+                <FlatList
+                    data={activeMembers}
+                    renderItem={({ item }) => (
+                        <MemberCard member={item} editFlag={editFlag} />
+                    )}
+                    keyExtractor={(item) => item.id}
+                />
+            </View>
         </View>
     );
 };
 
 export default ActiveMembers;
-
-const styles = StyleSheet.create({});

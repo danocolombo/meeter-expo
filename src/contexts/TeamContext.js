@@ -157,7 +157,7 @@ const TeamContextProvider = ({ children }) => {
                     setActiveMembers(members.activeMembers);
                     setInactiveMembers(members.inactiveMembers);
                     setNewMembers(members.newMembers);
-                    printObject('TC:63-->members:\n', members);
+                    // printObject('TC:63-->members:\n', members);
                 })
                 .catch((err) => {
                     printObject('TC:53-->error getting teamInfo:\n', err);

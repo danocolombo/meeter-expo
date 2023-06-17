@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Checkbox from 'expo-checkbox';
+import { printObject } from '../../utils/helpers';
 type PermissionType = {
     manage: boolean,
     meals: boolean,
     groups: boolean,
 };
 function Permissions({ permissions, editFlag, togglePermission }) {
-    const [manageIsChecked, setManageIsChecked] = useState(permissions.manage);
-    const [mealsIsChecked, setMealsIsChecked] = useState(permissions.meals);
-    const [groupsIsChecked, setGroupsIsChecked] = useState(permissions.groups);
+    const [manageIsChecked, setManageIsChecked] = useState(permissions?.manage);
+    const [mealsIsChecked, setMealsIsChecked] = useState(permissions?.meals);
+    const [groupsIsChecked, setGroupsIsChecked] = useState(permissions?.groups);
 
     const changeManagerRole = () => {
         if (editFlag == true) {
@@ -29,6 +30,7 @@ function Permissions({ permissions, editFlag, togglePermission }) {
             setMealsIsChecked(!mealsIsChecked);
         }
     };
+    printObject('permissions:\n', permissions);
     return (
         <View
             style={[

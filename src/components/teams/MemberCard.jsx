@@ -4,7 +4,7 @@ import Permissions from './Permissions';
 import { printObject } from '../../utils/helpers';
 
 function MemberCard({ member, editFlag }) {
-    const [response, setResponse] = useState('nope');
+    const [response, setResponse] = useState('<>');
     const [permissions, setPermissions] = useState(null);
 
     useEffect(() => {
@@ -30,32 +30,11 @@ function MemberCard({ member, editFlag }) {
         });
     }, []);
 
-    // useEffect(() => {
-    //     let manage = false;
-    //     let meals = false;
-    //     let groups = false;
-    // member?.roles?.foreach((r) => {
-    //     if ((r?.role === 'manage') & (r?.status === 'active')) {
-    //         manage = true;
-    //     }
-    //     if ((r?.role === 'groups') & (r?.status === 'active')) {
-    //         groups = true;
-    //     }
-    //     if ((r?.role === 'meals') & (r?.status === 'active')) {
-    //         meals = true;
-    //     }
-    //     setPermissions({
-    //         manage: manage,
-    //         groups: groups,
-    //         meals: meals,
-    //     });
-    //     }, []);
-    // });
     const handleToggleValue = (value) => {
         setResponse(value);
     };
-    printObject('MC:34-->member:\n', member);
-    printObject('MC:35-->permissions:\n', permissions);
+    // printObject('MC:34-->member:\n', member);
+    // printObject('MC:35-->permissions:\n', permissions);
     return (
         <View
             style={[
@@ -76,9 +55,7 @@ function MemberCard({ member, editFlag }) {
                 </View>
             </View>
             <View>
-                <Text>
-                    RESPONSE:{member.id}:{response}
-                </Text>
+                <Text>RESPONSE: {response}</Text>
             </View>
         </View>
     );

@@ -47,7 +47,7 @@ const TeamContextProvider = ({ children }) => {
             const identifyNewRequests = async (members) => {
                 // just return the members that have a role of
                 // guest === active
-                printObject('TC:49-->members:\n', members);
+                // printObject('TC:49-->members:\n', members);
                 let nMembers = [];
                 members.forEach((m) => {
                     let newConfirmed = m.roles.find(
@@ -62,7 +62,7 @@ const TeamContextProvider = ({ children }) => {
             const identifyInactiveRequests = async (members) => {
                 // just return the members that have a role of
                 // guest === active
-                printObject('TC:63-->members:\n', members);
+                // printObject('TC:63-->members:\n', members);
                 let iMembers = [];
                 members.forEach((m) => {
                     let activeConfirmed = m.roles.find(
@@ -164,7 +164,7 @@ const TeamContextProvider = ({ children }) => {
                         .then((results) => {
                             // printObject('TC:158-->results:\n', results);
                             tInfo = results.all;
-                            printObject('TC:163-->tInfo:\n', tInfo);
+                            // printObject('TC:163-->tInfo:\n', tInfo);
                             summarizeTeamInfo(results.all).then((r) => {
                                 // printObject(
                                 //     'TC:161--> summarizeTeamInfo results:\n',
@@ -172,10 +172,10 @@ const TeamContextProvider = ({ children }) => {
                                 // );
                                 identifyActiveMembers(r)
                                     .then((actives) => {
-                                        printObject(
-                                            'TC:167-->actives:\n',
-                                            actives
-                                        );
+                                        // printObject(
+                                        //     'TC:167-->actives:\n',
+                                        //     actives
+                                        // );
                                         setActiveMembers(actives);
                                     })
                                     .catch((error) => {
@@ -187,10 +187,10 @@ const TeamContextProvider = ({ children }) => {
 
                                 identifyNewRequests(tInfo)
                                     .then((requests) => {
-                                        printObject(
-                                            'TC175-->requests:\n',
-                                            requests
-                                        );
+                                        // printObject(
+                                        //     'TC:175-->requests:\n',
+                                        //     requests
+                                        // );
                                         setNewMembers(requests);
                                     })
                                     .catch((error) => {
@@ -202,20 +202,16 @@ const TeamContextProvider = ({ children }) => {
 
                                 identifyInactiveRequests(tInfo)
                                     .then((requests) => {
-                                        console.log('tInfo:\n', tInfo);
-                                        printObject(
-                                            'TC175-->requests:\n',
-                                            requests
-                                        );
+                                        // console.log('tInfo:\n', tInfo);
+                                        // printObject(
+                                        //     'TC175-->requests:\n',
+                                        //     requests
+                                        // );
                                         setInactiveMembers(requests);
-                                        console.log(
-                                            'ID: ',
-                                            createAWSUniqueID()
-                                        );
-                                        console.log(
-                                            'inactives:',
-                                            requests.length
-                                        );
+                                        // console.log(
+                                        //     'inactives:',
+                                        //     requests.length
+                                        // );
                                     })
                                     .catch((error) => {
                                         console.log(

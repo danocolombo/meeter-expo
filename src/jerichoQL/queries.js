@@ -498,6 +498,12 @@ export const listAffiliationsUsersByOrg = /* GraphQL */ `
                     phone
                     picture
                     birthday
+                    location {
+                        street
+                        city
+                        stateProv
+                        postalCode
+                    }
                 }
             }
             nextToken

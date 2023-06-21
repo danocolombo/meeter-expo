@@ -103,8 +103,89 @@ export const getAffiliationsForTeam = async (teamId) => {
     printObject('A.P:98-->team:', team);
     return team;
 };
+export const addNewAffiliationForUser = async (newValues) => {
+    /***********************************************************
+     *      {
+     *          userId: "abc123",           // user id
+     *          organizationId: "123abc",   // organization id
+     *          role: "manage",             // role
+     *          status: "active"            // status
+     *      }
+     ***********************************************************/
+    printObject('AP:115-->newValues:', newValues);
+    let tmpReturnValue = {
+        status: 200,
+        results: newValues,
+    };
+    return tmpReturnValue;
+    try {
+        const insertInfo = {
+            organizationAffiliationsId: newValues.organizationId,
+            role: newValues.role,
+            status: newValues.status,
+            userAffiliationsId: newValues.userId,
+        };
+        API.graphql({
+            query: mutations.createAffiliation,
+            variables: { input: insertInfo },
+        })
+            .then((results) => {
+                console.log('AP:122-->affiliation inserted');
+                printObject('AP:123-->results:\n', results);
+                returnValue = {
+                    status: 200,
+                    results: results,
+                };
+                return returnValue;
+            })
+            .catch((error) => {
+                console.log('AP:132-->', error);
+                console.error(error);
+                let returnValue = {
+                    status: 404,
+                    details: 'error inserting new affiliation',
+                    request: newValues,
+                    error: error,
+                };
+                return returnValue;
+            });
+    } catch (error) {
+        console.log('AP:143-->unexpected error:\n', error);
+        let returnValue = {
+            status: 404,
+            details: 'unexpected error inserting new affiliation',
+            request: newValues,
+            error: error,
+        };
+    }
+};
+export const updateAffiliationStatus = async (changeRequest) => {
+    // set changeRequest.id, status = changeRequest.status
+    return true;
+    try {
+        const updateInfo = {
+            id: changeRequest.id,
+            status: changeRequest.status,
+        };
+        API.graphql({
+            query: mutations.updateAffiliation,
+            variables: { input: updateInfo },
+        })
+            .then((results) => {
+                console.log('AP:118-->affiliation updated');
+            })
+            .catch((error) => {
+                console.log(error);
+                console.error(error);
+            });
+    } catch (error) {
+        console.log('AP:125-->unexpected error:\n', error);
+        return false;
+    }
+    return true;
+};
 export const updateAffiliations = async (changeRequest) => {
-    printObject('a.p:10--changeRequest', changeRequest);
+    printObject('AP:131--changeRequest', changeRequest);
 
     //* get current affiliations for org/user
     const affiliationResponse = await API.graphql({
@@ -116,7 +197,7 @@ export const updateAffiliations = async (changeRequest) => {
     });
     const existingAffiliations =
         affiliationResponse.data.listAffiliations.items;
-    printObject('a.p:19-->existingAffiliations:\n', existingAffiliations);
+    printObject('AP:143-->existingAffiliations:\n', existingAffiliations);
     //* identify "add" requests
     const addRequests = changeRequest.add;
     if (addRequests.length > 0) {
@@ -128,7 +209,7 @@ export const updateAffiliations = async (changeRequest) => {
                 (item) => item.role === r
             );
             if (existing.length > 0) {
-                console.log('the role (', r, ') exists');
+                console.log('AP:155-->the role (', r, ') exists');
 
                 try {
                     const updateInfo = {
@@ -140,24 +221,24 @@ export const updateAffiliations = async (changeRequest) => {
                         variables: { input: updateInfo },
                     })
                         .then((results) => {
-                            console.log('affiliation updated');
+                            console.log('AP:167-->affiliation updated');
                         })
                         .catch((error) => {
                             console.log(error);
                             console.error(error);
                         });
                 } catch (error) {
-                    console.log('a.p:59-->unexpected error:\n', error);
+                    console.log('AP:174-->unexpected error:\n', error);
                 }
             } else {
-                console.log('the role (', r, ') is new');
+                console.log('AP:177-->the role (', r, ') is new');
                 const addInfo = {
                     organizationId: changeRequest.organizationId,
                     userId: changeRequest.userId,
                     role: r,
                     status: 'active',
                 };
-                printObject('addInfo:\n', addInfo);
+                printObject('AP: 184-->addInfo:\n', addInfo);
                 //todo: insert new affiliation for the org/user
                 try {
                     const insertInfo = {
@@ -172,28 +253,28 @@ export const updateAffiliations = async (changeRequest) => {
                         variables: { input: insertInfo },
                     })
                         .then((results) => {
-                            console.log('affiliation inserted');
-                            printObject('results:\n', results);
+                            console.log('AP:199-->affiliation inserted');
+                            printObject('AP:200-->results:\n', results);
                         })
                         .catch((error) => {
-                            console.log(error);
+                            console.log('AP:203-->', error);
                             console.error(error);
                         });
                 } catch (error) {
-                    console.log('a.p:91-->unexpected error:\n', error);
+                    console.log('AP:207-->unexpected error:\n', error);
                 }
             }
         });
     } else {
-        console.log('No add requests received');
+        console.log('AP:212-->No add requests received');
     }
     //* identify "remove" requests
     const removeRequests = changeRequest.remove;
     if (removeRequests.length > 0) {
-        printObject('A.P:102-->removeRequests:\n', removeRequests);
+        printObject('AP:217-->removeRequests:\n', removeRequests);
 
         removeRequests.forEach((r) => {
-            console.log('remove ', r, ' from the user');
+            console.log('AP:220-->remove ', r, ' from the user');
 
             //* check if the role is already defined
             const existing = existingAffiliations.filter(
@@ -210,23 +291,23 @@ export const updateAffiliations = async (changeRequest) => {
                         variables: { input: updateInfo },
                     })
                         .then((results) => {
-                            console.log('affiliation updated');
+                            console.log('AP:237-->affiliation updated');
                         })
                         .catch((error) => {
                             console.log(error);
                             console.error(error);
                         });
                 } catch (error) {
-                    console.log('a.p:130-->unexpected error:\n', error);
+                    console.log('AP:244-->unexpected error:\n', error);
                 }
                 //todo: update existing affiliation status = "inactive"
             } else {
-                console.log('the role (', r, ') is not existing');
+                console.log('AP:248-->the role (', r, ') is not existing');
                 //      believe it is okay to ignore action.
             }
         });
     } else {
-        console.log('No remove requests received');
+        console.log('AP:253-->No remove requests received');
     }
 
     return true;

@@ -1,36 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Checkbox from 'expo-checkbox';
 import { printObject } from '../../utils/helpers';
-type PermissionType = {
-    manage: boolean,
-    meals: boolean,
-    groups: boolean,
-};
+
 function Permissions({ permissions, editFlag, togglePermission }) {
     const [manageIsChecked, setManageIsChecked] = useState(permissions?.manage);
     const [mealsIsChecked, setMealsIsChecked] = useState(permissions?.meals);
     const [groupsIsChecked, setGroupsIsChecked] = useState(permissions?.groups);
 
-    const changeManagerRole = () => {
+    useFocusEffect(
+        useCallback(() => {
+            setManageIsChecked(permissions?.manage);
+            setGroupsIsChecked(permissions?.groups);
+            setMealsIsChecked(permissions?.meals);
+        }, [permissions])
+    );
+    const changeManagerRole = (checkboxValue) => {
         if (editFlag == true) {
-            togglePermission('manager');
+            console.log('P:25-->checkboxValue: ', checkboxValue);
+            let returnValue = 'manage.' + (checkboxValue ? 'add' : 'remove');
+            togglePermission(returnValue);
             setManageIsChecked(!manageIsChecked);
         }
     };
-    const changeGroupsRole = () => {
+    const changeGroupsRole = (checkboxValue) => {
         if (editFlag === true) {
             togglePermission('groups');
             setGroupsIsChecked(!groupsIsChecked);
         }
     };
-    const changeMealsRole = () => {
+    const changeMealsRole = (checkboxValue) => {
         if (editFlag === true) {
             togglePermission('meals');
             setMealsIsChecked(!mealsIsChecked);
         }
     };
-    printObject('permissions:\n', permissions);
+    // printObject('P:41-->permissions:\n', permissions);
     return (
         <View
             style={[

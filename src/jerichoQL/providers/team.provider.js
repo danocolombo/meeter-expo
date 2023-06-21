@@ -7,6 +7,7 @@ import * as queries from '../queries';
 import { API } from 'aws-amplify';
 
 export async function getAffiliationsUsersByOrgId(orgId) {
+    console.log('TP:10-->orgId', orgId);
     const gqlAffOrgUserData = await API.graphql({
         query: queries.listAffiliationsUsersByOrg,
         variables: { id: orgId },
@@ -44,7 +45,24 @@ export async function getAffiliationsUsersByOrgId(orgId) {
     printObject('USERS:\n', returnValue);
     return returnValue;
 }
-
+export async function updateTeamMemberPermissions(newValues) {
+    /********************************************
+     * {
+     *      id: "abc123",   //  teamMember id
+     *      role: {
+     *          id: "123abc",
+     *          role: "manage",
+     *          status: "active"
+     *      }
+     *  }
+     * }
+     *
+     *******************************************/
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
+    printObject('newValues:\n', newValues);
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
+    return true;
+}
 export async function getTeam(teamId) {
     //* get team members and their details for an organization
     //*  NOTE: teamId = organization.id

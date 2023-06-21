@@ -43,6 +43,8 @@ const ActiveMembers = () => {
             padding: 5,
         },
     });
+    // printObject('AM:46-->members:\n', members);
+    // printObject('AM:47-->activeMembers:\n', activeMembers);
     return (
         <View style={{ flex: 1, flexDirection: 'column' }}>
             <View style={styles.pageTitleContainer}>

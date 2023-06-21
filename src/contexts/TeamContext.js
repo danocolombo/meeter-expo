@@ -4,6 +4,7 @@ import { API } from 'aws-amplify';
 import {
     dateDashMadePretty,
     isDateDashBeforeToday,
+    createAWSUniqueID,
     printObject,
 } from '../utils/helpers';
 const TeamContext = createContext({});
@@ -29,22 +30,72 @@ const TeamContextProvider = ({ children }) => {
     };
     const loadTeam = async (id) => {
         try {
-            // const teamInfo = await API.graphql(
-            //     graphqlOperation(queries.listAffiliationsUsersByOrg, {
-            //         filter: {
-            //             organizationAffiliationsId: {
-            //                 eq: id,
-            //             },
-            //         },
-            //     })
-            // );
-            // const teamInfo = await API.graphql({
-            //     query: queries.listAffiliationsUsersByOrg,
-            //     filter: {
-            //         organizationAffiliationsId: { eq: id },
-            //     },
-            // });
+            const identifyActiveMembers = async (members) => {
+                // just return the members that have a role of
+                // guest === active
+                let aMembers = [];
+                members.forEach((m) => {
+                    let guestConfirmed = m.roles.find(
+                        (r) => r.role === 'guest' && r.status === 'active'
+                    );
+                    if (guestConfirmed) {
+                        aMembers.push(m);
+                    }
+                });
+                return aMembers;
+            };
+            const identifyNewRequests = async (members) => {
+                // just return the members that have a role of
+                // guest === active
+                printObject('TC:49-->members:\n', members);
+                let nMembers = [];
+                members.forEach((m) => {
+                    let newConfirmed = m.roles.find(
+                        (r) => r.role === 'new' && r.status === 'active'
+                    );
+                    if (newConfirmed) {
+                        nMembers.push(m);
+                    }
+                });
+                return nMembers;
+            };
+            const identifyInactiveRequests = async (members) => {
+                // just return the members that have a role of
+                // guest === active
+                printObject('TC:63-->members:\n', members);
+                let iMembers = [];
+                members.forEach((m) => {
+                    let activeConfirmed = m.roles.find(
+                        (r) => r.role === 'guest' && r.status === 'active'
+                    );
+                    if (!activeConfirmed) {
+                        iMembers.push(m);
+                    }
+                });
+                return iMembers;
+            };
+            const summarizeTeamInfo = async (teamInfo) => {
+                // printObject('TC:75-->teamInfo:\n', teamInfo);
+                try {
+                    let teamMembers = [];
+                    let nonMembers = [];
+                    teamInfo.forEach((item) => {
+                        let guestApproved = item.roles.find(
+                            (r) => r.role === 'guest' && r.status === 'active'
+                        );
+                        if (guestApproved) {
+                            // console.log(item.username + ' guest');
+                            teamMembers.push(item);
+                        }
+                    });
+                    return teamMembers;
+                } catch (error) {
+                    throw new Error('Failed to summerize team info.');
+                }
+            };
+
             const convertTeamInfo = async (teamInfo) => {
+                // printObject('TC:48-->teamInfo:\n', teamInfo);
                 try {
                     let all = [];
                     let newMembers = [];
@@ -57,68 +108,30 @@ const TeamContextProvider = ({ children }) => {
                         );
 
                         if (existingItem) {
+                            // printObject(
+                            //     'TC:109-->existingItem:\n',
+                            //     existingItem
+                            // );
+                            // printObject('TC:47-->item:\n', item);
                             existingItem.roles.push({
                                 id: item.id,
                                 role: item.role,
                                 status: item.status,
                             });
+                            // printObject(
+                            //     'TC:119-->existingItem:\n',
+                            //     existingItem
+                            // );
                         } else {
-                            if (
-                                item.status === 'active' &&
-                                item.role !== 'new'
-                            ) {
-                                activeMembers.push({
-                                    id: user.id,
-                                    firstName: user.firstName,
-                                    lastName: user.lastName,
-                                    username: user.username,
-                                    roles: [
-                                        {
-                                            id: item.id,
-                                            role: item.role,
-                                            status: item.status,
-                                        },
-                                    ],
-                                });
-                            }
-                            if (
-                                item.status === 'active' &&
-                                item.role === 'new'
-                            ) {
-                                newMembers.push({
-                                    id: user.id,
-                                    firstName: user.firstName,
-                                    lastName: user.lastName,
-                                    username: user.username,
-                                    roles: [
-                                        {
-                                            id: item.id,
-                                            role: item.role,
-                                            status: item.status,
-                                        },
-                                    ],
-                                });
-                            }
-                            if (item.status !== 'active') {
-                                inactiveMembers.push({
-                                    id: user.id,
-                                    firstName: user.firstName,
-                                    lastName: user.lastName,
-                                    username: user.username,
-                                    roles: [
-                                        {
-                                            id: item.id,
-                                            role: item.role,
-                                            status: item.status,
-                                        },
-                                    ],
-                                });
-                            }
                             all.push({
                                 id: user.id,
                                 firstName: user.firstName,
                                 lastName: user.lastName,
                                 username: user.username,
+                                email: user?.email || '',
+                                phone: user?.phone || '',
+                                organizationId: id,
+                                location: user?.location || null,
                                 roles: [
                                     {
                                         id: item.id,
@@ -131,9 +144,6 @@ const TeamContextProvider = ({ children }) => {
                     }
                     const theTeam = {
                         all: all,
-                        newMembers: newMembers,
-                        activeMembers: activeMembers,
-                        inactiveMembers: inactiveMembers,
                     };
                     return theTeam;
                 } catch (error) {
@@ -148,23 +158,88 @@ const TeamContextProvider = ({ children }) => {
                 .then((teamInfo) => {
                     const affiliations =
                         teamInfo?.data?.listAffiliations?.items;
-                    // printObject('TC:51-->affiliations:\n', affiliations);
-                    return convertTeamInfo(affiliations);
+                    // printObject('TC:150-->teamInfo:\n', teamInfo);
+                    let tInfo = [];
+                    convertTeamInfo(teamInfo.data.listAffiliations.items)
+                        .then((results) => {
+                            // printObject('TC:158-->results:\n', results);
+                            tInfo = results.all;
+                            printObject('TC:163-->tInfo:\n', tInfo);
+                            summarizeTeamInfo(results.all).then((r) => {
+                                // printObject(
+                                //     'TC:161--> summarizeTeamInfo results:\n',
+                                //     r
+                                // );
+                                identifyActiveMembers(r)
+                                    .then((actives) => {
+                                        printObject(
+                                            'TC:167-->actives:\n',
+                                            actives
+                                        );
+                                        setActiveMembers(actives);
+                                    })
+                                    .catch((error) => {
+                                        console.log(
+                                            'TC:190--> error identifyNewRequests\nError:\n',
+                                            error
+                                        );
+                                    });
+
+                                identifyNewRequests(tInfo)
+                                    .then((requests) => {
+                                        printObject(
+                                            'TC175-->requests:\n',
+                                            requests
+                                        );
+                                        setNewMembers(requests);
+                                    })
+                                    .catch((error) => {
+                                        console.log(
+                                            'TC:190--> error identifyNewRequests\nError:\n',
+                                            error
+                                        );
+                                    });
+
+                                identifyInactiveRequests(tInfo)
+                                    .then((requests) => {
+                                        console.log('tInfo:\n', tInfo);
+                                        printObject(
+                                            'TC175-->requests:\n',
+                                            requests
+                                        );
+                                        setInactiveMembers(requests);
+                                        console.log(
+                                            'ID: ',
+                                            createAWSUniqueID()
+                                        );
+                                        console.log(
+                                            'inactives:',
+                                            requests.length
+                                        );
+                                    })
+                                    .catch((error) => {
+                                        console.log(
+                                            'TC:206--> error identifyInactiveRequests\nError:\n',
+                                            error
+                                        );
+                                    });
+                            });
+
+                            // return convertTeamInfo(affiliations);
+                        })
+                        .catch((err) => {
+                            printObject(
+                                'TC:214-->error getting teamInfo:\n',
+                                err
+                            );
+                        });
                 })
-                .then((members) => {
-                    // console.log(members);
-                    setMembers(members.all);
-                    setActiveMembers(members.activeMembers);
-                    setInactiveMembers(members.inactiveMembers);
-                    setNewMembers(members.newMembers);
-                    // printObject('TC:63-->members:\n', members);
-                })
-                .catch((err) => {
-                    printObject('TC:53-->error getting teamInfo:\n', err);
+                .catch((error) => {
+                    printObject('TC:221 Error:\n', error);
                 });
         } catch (error) {
-            printObject('TC:38-->teamInfo TryCatch failure:\n', error);
-            printObject('TC:39 -> id:', id);
+            printObject('TC:223-->teamInfo TryCatch failure:\n', error);
+            printObject('TC:224 -> id:', id);
             return;
         }
     };

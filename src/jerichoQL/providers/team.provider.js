@@ -63,6 +63,7 @@ export async function updateTeamMemberPermissions(newValues) {
     console.log('&&&&&&&&&&&&&&&&&&&&&&&&');
     return true;
 }
+
 export async function getTeam(teamId) {
     //* get team members and their details for an organization
     //*  NOTE: teamId = organization.id

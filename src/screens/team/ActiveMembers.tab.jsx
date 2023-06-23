@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { useTeamContext } from '../../contexts/TeamContext';
 import { useUserContext } from '../../contexts/UserContext';
 import { useFocusEffect } from '@react-navigation/native';
+import { deactivateUser } from '../../jerichoQL/providers/affiliations.provider';
 import { printObject } from '../../utils/helpers';
 import MemberCard from '../../components/teams/MemberCard';
 const ActiveMembers = () => {
@@ -16,7 +17,6 @@ const ActiveMembers = () => {
             // printObject('userProfile:\n', userProfile);
             // printObject('activeOrg:', userProfile?.activeOrg?.id);
             loadTeam(userProfile?.activeOrg?.id);
-            console.log('loaded');
         }, [])
     );
     const styles = StyleSheet.create({
@@ -43,6 +43,16 @@ const ActiveMembers = () => {
             padding: 5,
         },
     });
+    function deactivateHandler(settings) {
+        console.log('DE-ACTIVATE....', settings?.memberId);
+        deactivateUser(settings)
+            .then(() => {
+                loadTeam();
+            })
+            .catch((err) => {
+                printObject('AMT:48-->error deactivateUser:\n', err);
+            });
+    }
     // printObject('AM:46-->members:\n', members);
     // printObject('AM:47-->activeMembers:\n', activeMembers);
     return (
@@ -67,7 +77,11 @@ const ActiveMembers = () => {
                 <FlatList
                     data={activeMembers}
                     renderItem={({ item }) => (
-                        <MemberCard member={item} editFlag={editFlag} />
+                        <MemberCard
+                            member={item}
+                            editFlag={editFlag}
+                            deactivate={deactivateHandler}
+                        />
                     )}
                     keyExtractor={(item) => item.id}
                 />

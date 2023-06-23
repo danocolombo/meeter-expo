@@ -2,10 +2,36 @@ import { StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import NewMemberCard from '../../components/teams/NewMemberCard';
 import { useTeamContext } from '../../contexts/TeamContext';
+import { changeAffiliation } from '../../jerichoQL/providers/affiliations.provider';
+import { printObject } from '../../utils/helpers';
 const NewMembers = () => {
     // need orgId
-    const { newMembers } = useTeamContext();
-    const [editFlag, setEditFlag] = useState(false);
+    const { newMembers, loadTeam } = useTeamContext();
+    function actionHandler({ action, userId, orgId, roleId }) {
+        if (action === 'ACCEPT') {
+            console.log(
+                'SET affiliation ' + roleId + ' role: guest, status: active'
+            );
+            const newValues = {
+                affiliationId: roleId,
+                newRoleValue: 'guest',
+                newStatusValue: 'active',
+            };
+            changeAffiliation(newValues)
+                .then((response) => {
+                    printObject('changeAffiliation response:\n', response);
+                })
+                .then((response) => {
+                    loadTeam().then(() => {
+                        console.log('done');
+                    });
+                });
+
+            /* insert role: 'guest', status: active for organizationId */
+        } else if (action === 'DECLINE') {
+            console.log('DECLINE USER:', userId, ' on ', orgId);
+        }
+    }
     if (newMembers.length < 1) {
         return (
             <View style={{ flex: 1, flexDirection: 'column' }}>
@@ -27,17 +53,16 @@ const NewMembers = () => {
                 <Text
                     style={{ fontSize: 18, padding: 10, marginHorizontal: 10 }}
                 >
-                    These users have either previously been a part of the team
-                    or have requested access, but all of these users do not have
-                    access at this time. You can grant access as guest (view
-                    only) and adjust permissions on the ACTIVE tab.
+                    These are new membership requests. Pressing ACCEPT will
+                    allow the user to be a guest in this project. If DECLINE is
+                    selected the user will be placed in the Inactive list.
                 </Text>
             </View>
             <View style={{ paddingHorizontal: 5 }}>
                 <FlatList
                     data={newMembers}
                     renderItem={({ item }) => (
-                        <NewMemberCard member={item} editFlag={editFlag} />
+                        <NewMemberCard member={item} action={actionHandler} />
                     )}
                     keyExtractor={(item) => item.id}
                 />

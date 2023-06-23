@@ -6,6 +6,7 @@ import { printObject } from '../../utils/helpers';
 import * as queries from '../queries';
 import * as mutations from '../mutations';
 import { API } from 'aws-amplify';
+import { printLocation } from 'graphql';
 export const getAffiliationsForTeam = async (teamId) => {
     //      get all affiliations for org
     //      organize by user
@@ -184,6 +185,65 @@ export const updateAffiliationStatus = async (changeRequest) => {
     }
     return true;
 };
+export const changeAffiliation = async (affiliationValues) => {
+    //this updates an existing affiliation
+    // id is required, as well as role and status
+    const { affiliationId, newRoleValue, newStatusValue } = affiliationValues;
+    printObject('affiliation:\n', affiliationValues);
+    console.log('affiliationId: ', affiliationId);
+    console.log('newRoleValue: ', newRoleValue);
+    console.log('newStatusValue: ', newStatusValue);
+    if (
+        affiliationId === undefined ||
+        newRoleValue === undefined ||
+        newStatusValue === undefined
+    ) {
+        let returnValue = {
+            statusCode: 404,
+            details: 'required fields not provided',
+            error: 'required fields not provided',
+        };
+        return returnValue;
+    } else {
+        // ---------------------------------------
+        // update the affiliation values
+        try {
+            const updateInfo = {
+                id: affiliationId,
+                role: newRoleValue,
+                status: newStatusValue,
+            };
+            API.graphql({
+                query: mutations.updateAffiliation,
+                variables: { input: updateInfo },
+            })
+                .then((results) => {
+                    console.log('AP:222=>affiliation updated');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.error(error);
+                });
+        } catch (error) {
+            console.log('AP:229-->unexpected error:\n', error);
+        }
+        let returnValue = {
+            statusCode: 200,
+            details: 'good to go',
+            id: affiliationId,
+            role: newRoleValue,
+            status: newStatusValue,
+        };
+        return returnValue;
+    }
+    /* 
+        {
+            id: affiliationId,
+            role: newRoleValue,
+            status: newStateValue
+        }
+    */
+};
 export const updateAffiliations = async (changeRequest) => {
     printObject('AP:131--changeRequest', changeRequest);
 
@@ -311,4 +371,60 @@ export const updateAffiliations = async (changeRequest) => {
     }
 
     return true;
+};
+export const deactivateUser = async (memberInfo) => {
+    //* * * * * * * * * * * * * * * * * * *
+    //* This function gets the member from
+    //* authContext then update GQL entries
+    //* 1. set guest role to inactive
+    //* 2. delete any other roles defined.
+    //*
+    //* * * * * * * * * * * * * * * * * * *
+    const { memberId, roles } = memberInfo;
+    printObject('AP:383-->member:\n', memberInfo);
+    // get guest affiliationId
+    const guest = roles.find((r) => r.role === 'guest');
+    printObject('AP:387-->guest:', guest);
+    changeAffiliation({
+        affiliationId: guest.id,
+        newRoleValue: 'guest',
+        newStatusValue: 'inactive',
+    }).then((guestChangeResponse) => {
+        // for each affiliation != guest, delete
+        if (guestChangeResponse.statusCode === 200) {
+            roles.forEach((r) => {
+                if (r.role !== 'guest') {
+                    printObject('AP:395-->delete aff: ', r.id);
+                    try {
+                        API.graphql({
+                            query: mutations.deleteAffiliation,
+                            variables: { input: { id: r.id } },
+                        })
+                            .then(() => {
+                                printObject(
+                                    'AP:400-->affiliation deleted: ',
+                                    r.id
+                                );
+                            })
+                            .catch((err) => {
+                                printObject(
+                                    'AP:403-->error deleting affiliation\n',
+                                    err
+                                );
+                            });
+                    } catch (error) {
+                        printObject(
+                            'AP:406-->catch failure to delete affilation:',
+                            error
+                        );
+                    }
+                }
+            });
+        } else {
+            printObject(
+                'AP:413-->changeAffiliation FAILURE:\n',
+                guestChangeResponse
+            );
+        }
+    });
 };

@@ -176,6 +176,7 @@ const TeamContextProvider = ({ children }) => {
                                         //     'TC:167-->actives:\n',
                                         //     actives
                                         // );
+                                        console.log('setActiveMembers');
                                         setActiveMembers(actives);
                                     })
                                     .catch((error) => {

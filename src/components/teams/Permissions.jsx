@@ -41,7 +41,7 @@ function Permissions({ permissions, editFlag, togglePermission }) {
         <View
             style={[
                 styles.item,
-                { backgroundColor: editFlag ? 'yellow' : '#f9c2ff' },
+                { backgroundColor: editFlag ? 'yellow' : '#A1C2F1' },
             ]}
         >
             <View style={{ flexDirection: 'row' }}>
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     },
     checkbox: {
         margin: 1,
+        backgroundColor: 'white',
     },
     title: {
         fontSize: 20,

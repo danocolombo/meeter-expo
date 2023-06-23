@@ -18,7 +18,7 @@ function InactiveMemberCard({ member, editFlag }) {
     };
     // printObject('MC:34-->member:\n', member);
     // printObject('MC:35-->permissions:\n', permissions);
-    printObject('IMC:18-->member:\n', member);
+    // printObject('IMC:18-->member:\n', member);
     return (
         <View style={styles.item}>
             <View
@@ -35,7 +35,7 @@ function InactiveMemberCard({ member, editFlag }) {
                         style={{
                             marginLeft: 'auto',
                             width: 75,
-                            backgroundColor: 'cornflowerblue',
+                            backgroundColor: '#0A6EBD',
                             borderRadius: 15,
                             justifyContent: 'center',
                             alignItems: 'center',
@@ -73,7 +73,7 @@ function InactiveMemberCard({ member, editFlag }) {
                     <Text>{member?.email}</Text>
                 </View>
             </View>
-            {displayPhone.length > 0 && (
+            {displayPhone?.length > 0 && (
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View>
                         <Text>{displayPhone}</Text>
@@ -96,10 +96,11 @@ function InactiveMemberCard({ member, editFlag }) {
 export default InactiveMemberCard;
 const styles = StyleSheet.create({
     item: {
-        backgroundColor: '#f9c2ff',
+        backgroundColor: '#A1C2F1',
         padding: 10,
         marginVertical: 8,
         marginHorizontal: 5,
+        borderRadius: 10,
         // width: "100%",
         flex: 1,
         shadowColor: '#000',

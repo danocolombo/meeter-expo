@@ -5,9 +5,9 @@ import Checkbox from 'expo-checkbox';
 import { printObject } from '../../utils/helpers';
 
 function Permissions({ permissions, editFlag, togglePermission }) {
-    const [manageIsChecked, setManageIsChecked] = useState(permissions?.manage);
-    const [mealsIsChecked, setMealsIsChecked] = useState(permissions?.meals);
-    const [groupsIsChecked, setGroupsIsChecked] = useState(permissions?.groups);
+    const [manageIsChecked, setManageIsChecked] = useState();
+    const [mealsIsChecked, setMealsIsChecked] = useState();
+    const [groupsIsChecked, setGroupsIsChecked] = useState();
 
     useFocusEffect(
         useCallback(() => {
@@ -26,13 +26,15 @@ function Permissions({ permissions, editFlag, togglePermission }) {
     };
     const changeGroupsRole = (checkboxValue) => {
         if (editFlag === true) {
-            togglePermission('groups');
+            let returnValue = 'groups.' + (checkboxValue ? 'add' : 'remove');
+            togglePermission(returnValue);
             setGroupsIsChecked(!groupsIsChecked);
         }
     };
     const changeMealsRole = (checkboxValue) => {
         if (editFlag === true) {
-            togglePermission('meals');
+            let returnValue = 'meals.' + (checkboxValue ? 'add' : 'remove');
+            togglePermission(returnValue);
             setMealsIsChecked(!mealsIsChecked);
         }
     };

@@ -21,15 +21,22 @@ const TeamContextProvider = ({ children }) => {
         setInactiveMembers(null);
         setNewMembers(null);
     };
-    const loadMembers = async () => {
-        const sampleMembers = [
-            { id: 1243, firstName: 'John', lastName: 'Doe' },
-            { id: 33, firstName: 'Jane', lastName: 'Doe' },
-        ];
-        setMembers(sampleMembers);
+    const addAffiliation = async (affiliation) => {
+        const ambrs = [...activeMembers];
+        const mbrs = [...members];
+        printObject('TC:27-->affiliation to add...\n', affiliation);
+        printObject('TC:28-->members:\n', mbrs);
+        printObject('TC:29-->activeMembers:\n', ambrs);
+
+        returnValue = {
+            statusCode: 200,
+            request: affiliation,
+        };
+        return returnValue;
     };
     const loadTeam = async (id) => {
         try {
+            setMembers(null);
             const identifyActiveMembers = async (members) => {
                 // just return the members that have a role of
                 // guest === active
@@ -44,6 +51,7 @@ const TeamContextProvider = ({ children }) => {
                 });
                 return aMembers;
             };
+
             const identifyNewRequests = async (members) => {
                 // just return the members that have a role of
                 // guest === active
@@ -249,7 +257,7 @@ const TeamContextProvider = ({ children }) => {
                 activeMembers,
                 inactiveMembers,
                 newMembers,
-                loadMembers,
+                addAffiliation,
                 clearMembers,
                 loadTeam,
             }}

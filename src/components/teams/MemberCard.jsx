@@ -4,7 +4,9 @@ import Permissions from './Permissions';
 import {
     updateAffiliationStatus,
     addNewAffiliationForUser,
+    removeAffiliation,
 } from '../../jerichoQL/providers/affiliations.provider';
+import { useTeamContext } from '../../contexts/TeamContext';
 import { updateTeamMemberPermissions } from '../../jerichoQL/providers/team.provider';
 import { printObject, transformPatePhone } from '../../utils/helpers';
 
@@ -12,6 +14,7 @@ function MemberCard({ member, editFlag, deactivate }) {
     const [response, setResponse] = useState('<>');
     const [permissions, setPermissions] = useState(null);
     const [displayPhone, setDisplayPhone] = useState('');
+    const { addAffiliation } = useTeamContext();
     useEffect(() => {
         if (member?.phone) {
             let tmp = transformPatePhone(member.phone);
@@ -47,79 +50,90 @@ function MemberCard({ member, editFlag, deactivate }) {
             roles: member.roles,
         });
     };
-    const handleToggleValue = (value) => {
+    const permissionHandler = async (value) => {
         setResponse(value);
         let response = value.split('.');
         switch (response[0]) {
             case 'manage':
-                if (response[1] === 'add') {
-                    let aff = member?.roles.find((r) => r.role === 'manage');
-                    printObject('MC:41-->AFF:\n', aff);
-                    if (aff?.id) {
-                        updateAffiliationStatus({
-                            id: aff.id,
-                            status: 'active',
-                        })
-                            .then((results) => {
-                                if (results) {
-                                    updateTeamMemberPermissions({
-                                        id: member.id,
-                                        role: {
-                                            id: aff.id,
-                                            role: 'manage',
-                                            status: 'active',
-                                        },
-                                    })
-                                        .then((results) => {
-                                            console.warn(
-                                                'Team context updated!!'
-                                            );
-                                            return;
+                const manageCheck = member.roles.find(
+                    (auth) => auth.role === 'manage'
+                );
+                printObject('MC:178-->manageCheck\n', manageCheck);
+                if (manageCheck === undefined) {
+                    if (response[1] === 'add') {
+                        let aff = member?.roles.find(
+                            (r) => r.role === 'manage'
+                        );
+                        printObject('MC:41-->AFF:\n', aff);
+                        if (aff?.id) {
+                            updateAffiliationStatus({
+                                id: aff.id,
+                                status: 'active',
+                            })
+                                .then((results) => {
+                                    if (results) {
+                                        updateTeamMemberPermissions({
+                                            id: member.id,
+                                            role: {
+                                                id: aff.id,
+                                                role: 'manage',
+                                                status: 'active',
+                                            },
                                         })
-                                        .catch((error) => {
-                                            console.warn(
-                                                'ERROR team.provider, see console'
-                                            );
-                                            printObject(
-                                                'Error updating team permissions:\n',
-                                                error
-                                            );
-                                        });
-                                } else {
-                                    console.warn('GQL update failed');
-                                }
+                                            .then((results) => {
+                                                console.warn(
+                                                    'Team context updated!!'
+                                                );
+                                                return;
+                                            })
+                                            .catch((error) => {
+                                                console.warn(
+                                                    'ERROR team.provider, see console'
+                                                );
+                                                printObject(
+                                                    'Error updating team permissions:\n',
+                                                    error
+                                                );
+                                            });
+                                    } else {
+                                        console.warn('GQL update failed');
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.warn(
+                                        'ERROR trying to update affiliation status'
+                                    );
+                                });
+                        } else {
+                            console.log(
+                                'NEED TO ADD AUTH TO ',
+                                member.firstName
+                            );
+                            addNewAffiliationForUser({
+                                userId: member.id,
+                                organizationId: member.organizationId,
+                                role: 'manage',
+                                status: 'active',
                             })
-                            .catch((error) => {
-                                console.warn(
-                                    'ERROR trying to update affiliation status'
-                                );
-                            });
-                    } else {
-                        console.log('NEED TO ADD AUTH TO ', member.firstName);
-                        addNewAffiliationForUser({
-                            userId: member.id,
-                            organizationId: member.organizationId,
-                            role: 'manage',
-                            status: 'active',
-                        })
-                            .then((results) => {
-                                printObject(
-                                    'MC:97-->addNewAffiliationForUser results:\n',
-                                    results
-                                );
-                                console.warn('Team context updated!!');
-                                return;
-                            })
-                            .catch((error) => {
-                                console.warn(
-                                    'ERROR team.provider, see console'
-                                );
-                                printObject(
-                                    'Error updating team permissions:\n',
-                                    error
-                                );
-                            });
-                        // console.warn(member.firstName + 'EXCEPTION');
+                                .then((results) => {
+                                    printObject(
+                                        'MC:97-->addNewAffiliationForUser results:\n',
+                                        results
+                                    );
+                                    console.warn('Team context updated!!');
+                                    return;
+                                })
+                                .catch((error) => {
+                                    console.warn(
+                                        'ERROR team.provider, see console'
+                                    );
+                                    printObject(
+                                        'Error updating team permissions:\n',
+                                        error
+                                    );
+                                });
+                            // console.warn(member.firstName + 'EXCEPTION');
+                        }
                     }
                 }
                 if (response[1] === 'remove') {
@@ -170,7 +184,84 @@ function MemberCard({ member, editFlag, deactivate }) {
                 }
                 break;
             case 'meals':
-                console.warn(member.firstName, ' MEALS ', !permissions.meals);
+                printObject('MC:173-->member:\n', member);
+                printObject('MC:174-->value:', value);
+                const mealCheck = member.roles.find(
+                    (auth) => auth.role === 'meals'
+                );
+                printObject('MC:178-->mealCheck\n', mealCheck);
+                if (mealCheck === undefined) {
+                    if (response[1] === 'add') {
+                        /***********************************************************
+                         *      addNewAffiliationForUser(newValues)
+                         *      {
+                         *          userId: "abc123",           // user id
+                         *          organizationId: "123abc",   // organization id
+                         *          role: "manage",             // role
+                         *          status: "active"            // status
+                         *      }
+                         ***********************************************************/
+                        const newValues = {
+                            userId: member.id,
+                            organizationId: member.organizationId,
+                            role: 'meals',
+                            status: 'active',
+                        };
+                        printObject('MC:207-->newValues:\n', newValues);
+                        let DANO = false;
+                        if (DANO) {
+                            return;
+                        }
+                        addNewAffiliationForUser(newValues).then((response) => {
+                            printObject('MC:214-->response:\n', response);
+                            if (response?.status === 200) {
+                                printObject(
+                                    'MC:198-->GQL SUCCESS:\n',
+                                    response.results
+                                );
+                                console.log('Now add affiliation to context');
+                                const contextUpdate = {
+                                    id: response.results.data.createAffiliation
+                                        .id,
+                                    ...newValues,
+                                };
+                                addAffiliation(contextUpdate).then(
+                                    (contextResponse) => {
+                                        printObject(
+                                            'MC:228-->contextResponse:\n',
+                                            contextResponse
+                                        );
+                                    }
+                                );
+                                printObject(
+                                    'MC:223-->contextUpdate:\n',
+                                    contextUpdate
+                                );
+                            } else {
+                                printObject(
+                                    'MC:200-->FAILURE:\n',
+                                    response.results
+                                );
+                            }
+                        });
+                    }
+                } else {
+                    printObject('MC:211-->meals aff already defined', '');
+                    if (response[1] === 'remove') {
+                        printObject(
+                            'MC:213-->aff existing, request to remove',
+                            ''
+                        );
+                        removeAffiliation({ id: mealCheck.id }).then(() => {
+                            console.log('affiliation removed');
+                        });
+                    } else {
+                        printObject(
+                            'MC:215-->aff exists, request was: ',
+                            response[1]
+                        );
+                    }
+                }
                 break;
             case 'groups':
                 console.warn(member.firstName, ' GROUPS ', !permissions.groups);
@@ -237,7 +328,7 @@ function MemberCard({ member, editFlag, deactivate }) {
                     <Permissions
                         permissions={permissions}
                         editFlag={editFlag}
-                        togglePermission={handleToggleValue}
+                        togglePermission={permissionHandler}
                     />
                 </View>
             </View>

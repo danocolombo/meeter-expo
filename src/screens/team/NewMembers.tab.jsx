@@ -30,6 +30,20 @@ const NewMembers = () => {
             /* insert role: 'guest', status: active for organizationId */
         } else if (action === 'DECLINE') {
             console.log('DECLINE USER:', userId, ' on ', orgId);
+            const newValues = {
+                affiliationId: roleId,
+                newRoleValue: 'guest',
+                newStatusValue: 'inactive',
+            };
+            changeAffiliation(newValues)
+                .then((response) => {
+                    printObject('changeAffiliation response:\n', response);
+                })
+                .then((response) => {
+                    loadTeam().then(() => {
+                        console.log('done');
+                    });
+                });
         }
     }
     if (newMembers.length < 1) {

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 
 import { printObject, transformPatePhone } from '../../utils/helpers';
 
-function InactiveMemberCard({ member, editFlag }) {
+function InactiveMemberCard({ member, action }) {
     const [response, setResponse] = useState('<>');
     const [displayPhone, setDisplayPhone] = useState('');
     useEffect(() => {
@@ -14,7 +14,14 @@ function InactiveMemberCard({ member, editFlag }) {
     }, []);
 
     const grantHandler = (value) => {
-        console.log('UPDATE');
+        const inactiveRole = member.roles.find((r) => r.role === 'guest');
+        printObject('IMC:18-->inactiveRole:', inactiveRole);
+        action({
+            action: 'GRANT',
+            userId: member.id,
+            orgId: member.organizationId,
+            roleId: inactiveRole.id,
+        });
     };
     // printObject('MC:34-->member:\n', member);
     // printObject('MC:35-->permissions:\n', permissions);

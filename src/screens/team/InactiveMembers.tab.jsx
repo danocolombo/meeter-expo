@@ -1,11 +1,73 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { useState } from 'react';
+import { changeAffiliation } from '../../jerichoQL/providers/affiliations.provider';
 import InactiveMemberCard from '../../components/teams/InactiveMemberCard';
 import { useTeamContext } from '../../contexts/TeamContext';
+import { printObject } from '../../utils/helpers';
 const InactiveMembers = () => {
     // need orgId
-    const { inactiveMembers } = useTeamContext();
-    const [editFlag, setEditFlag] = useState(false);
+    const { inactiveMembers, loadTeam } = useTeamContext();
+    function actionHandler({ action, userId, orgId, roleId }) {
+        if (action === 'GRANT') {
+            console.log(
+                'IMT:11-->GRANT ' + roleId + ' role: guest, status: active'
+            );
+            const newValues = {
+                affiliationId: roleId,
+                newRoleValue: 'guest',
+                newStatusValue: 'active',
+            };
+            changeAffiliation(newValues)
+                .then((response) => {
+                    printObject(
+                        'IMT:20-->changeAffiliation response:\n',
+                        response
+                    );
+                })
+                .then((response) => {
+                    loadTeam().then(() => {
+                        console.log('done');
+                    });
+                });
+        }
+        if (action === 'ACCEPT') {
+            console.log(
+                'SET affiliation ' + roleId + ' role: guest, status: active'
+            );
+            const newValues = {
+                affiliationId: roleId,
+                newRoleValue: 'guest',
+                newStatusValue: 'active',
+            };
+            changeAffiliation(newValues)
+                .then((response) => {
+                    printObject('changeAffiliation response:\n', response);
+                })
+                .then((response) => {
+                    loadTeam().then(() => {
+                        console.log('done');
+                    });
+                });
+
+            /* insert role: 'guest', status: active for organizationId */
+        } else if (action === 'DECLINE') {
+            console.log('DECLINE USER:', userId, ' on ', orgId);
+            const newValues = {
+                affiliationId: roleId,
+                newRoleValue: 'guest',
+                newStatusValue: 'inactive',
+            };
+            changeAffiliation(newValues)
+                .then((response) => {
+                    printObject('changeAffiliation response:\n', response);
+                })
+                .then((response) => {
+                    loadTeam().then(() => {
+                        console.log('done');
+                    });
+                });
+        }
+    }
     if (inactiveMembers.length < 1) {
         return (
             <View style={{ flex: 1, flexDirection: 'column' }}>
@@ -37,7 +99,10 @@ const InactiveMembers = () => {
                 <FlatList
                     data={inactiveMembers}
                     renderItem={({ item }) => (
-                        <InactiveMemberCard member={item} editFlag={editFlag} />
+                        <InactiveMemberCard
+                            member={item}
+                            action={actionHandler}
+                        />
                     )}
                     keyExtractor={(item) => item.id}
                 />

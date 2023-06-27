@@ -2,7 +2,7 @@
 //* ======================================
 //      this file deals with custom work relating
 //      to affiliations (permissions/roles)
-import { printObject } from '../../utils/helpers';
+import { createAWSUniqueID, printObject } from '../../utils/helpers';
 import * as queries from '../queries';
 import * as mutations from '../mutations';
 import { API } from 'aws-amplify';
@@ -105,6 +105,40 @@ export const getAffiliationsForTeam = async (teamId) => {
     return team;
 };
 export const addNewAffiliationForUser = async (newValues) => {
+    try {
+        const newAffId = createAWSUniqueID();
+        const insertInfo = {
+            organizationAffiliationsId: newValues.organizationId,
+            id: newAffId,
+            role: newValues.role,
+            status: newValues.status,
+            userAffiliationsId: newValues.userId,
+        };
+        printObject('AP:131-->insertInfo:\n', insertInfo);
+        const results = await API.graphql({
+            query: mutations.createAffiliation,
+            variables: { input: insertInfo },
+        });
+        console.log('AP:122-->affiliation inserted');
+        printObject('AP:123-->results:\n', results);
+        const returnValue = {
+            status: 200,
+            results: results,
+        };
+        return returnValue;
+    } catch (error) {
+        console.log('AP:143-->unexpected error:\n', error);
+        let returnValue = {
+            status: 404,
+            details: 'unexpected error inserting new affiliation',
+            request: newValues,
+            error: error,
+        };
+        return returnValue;
+    }
+};
+
+export const addNewAffiliationForUser1 = async (newValues) => {
     /***********************************************************
      *      {
      *          userId: "abc123",           // user id
@@ -114,18 +148,21 @@ export const addNewAffiliationForUser = async (newValues) => {
      *      }
      ***********************************************************/
     printObject('AP:115-->newValues:', newValues);
-    let tmpReturnValue = {
-        status: 200,
-        results: newValues,
-    };
-    return tmpReturnValue;
+    // let tmpReturnValue = {
+    //     status: 200,
+    //     results: newValues,
+    // };
+    // return tmpReturnValue;
     try {
+        const newAffId = createAWSUniqueID();
         const insertInfo = {
             organizationAffiliationsId: newValues.organizationId,
+            id: newAffId,
             role: newValues.role,
             status: newValues.status,
             userAffiliationsId: newValues.userId,
         };
+        printObject('AP:131-->insertInfo:\n', insertInfo);
         API.graphql({
             query: mutations.createAffiliation,
             variables: { input: insertInfo },
@@ -133,7 +170,7 @@ export const addNewAffiliationForUser = async (newValues) => {
             .then((results) => {
                 console.log('AP:122-->affiliation inserted');
                 printObject('AP:123-->results:\n', results);
-                returnValue = {
+                const returnValue = {
                     status: 200,
                     results: results,
                 };
@@ -158,6 +195,7 @@ export const addNewAffiliationForUser = async (newValues) => {
             request: newValues,
             error: error,
         };
+        return returnValue;
     }
 };
 export const updateAffiliationStatus = async (changeRequest) => {
@@ -427,4 +465,23 @@ export const deactivateUser = async (memberInfo) => {
             );
         }
     });
+};
+export const removeAffiliation = async (removeRequest) => {
+    // this is a request to delete a specific
+    console.log('DELETE AFFILIATION: ', removeRequest.id);
+    try {
+        API.graphql({
+            query: mutations.deleteAffiliation,
+            variables: { input: { id: removeRequest.id } },
+        })
+            .then(() => {
+                printObject('AP:442-->affiliation deleted: ', removeRequest.id);
+            })
+            .catch((err) => {
+                printObject('AP:445-->error deleting affiliation\n', err);
+            });
+        printObject('removeRequest:', removeRequest);
+    } catch (error) {
+        printObject('AP:448-->catch failure to delete affiliation:', error);
+    }
 };

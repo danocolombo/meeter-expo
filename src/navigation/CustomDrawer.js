@@ -71,19 +71,18 @@ const CustomDrawer = (props) => {
             console.log('CD:71-->error Storeage.get\n', error);
         }
     }
-    useFocusEffect(
-        React.useCallback(() => {
-            getPictureDetails()
-                .then(() => {
-                    console.log('CD:78-->in getPicDetails()');
-                    console.log('CD:80-->in getPicDetails()');
-                    console.log('CD:81-->pictureObject:', pictureObject);
-                })
-                .catch((error) => {
-                    printObject('CD:83-->ERROR:\n', error);
-                });
-        }, [userProfile])
-    );
+    // useFocusEffect(
+    React.useCallback(() => {
+        getPictureDetails()
+            .then(() => {
+                console.log('CD:78-->in getPicDetails()');
+                console.log('CD:80-->in getPicDetails()');
+                console.log('CD:81-->pictureObject:', pictureObject);
+            })
+            .catch((error) => {
+                printObject('CD:83-->ERROR:\n', error);
+            });
+    }, [userProfile]);
 
     const signUserOut = async () => {
         Auth.signOut();

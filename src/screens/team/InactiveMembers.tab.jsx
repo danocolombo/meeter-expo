@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import { changeAffiliation } from '../../jerichoQL/providers/affiliations.provider';
+import { useSelector, useDispatch } from 'react-redux';
 import InactiveMemberCard from '../../components/teams/InactiveMemberCard';
 import { useTeamContext } from '../../contexts/TeamContext';
 import { printObject } from '../../utils/helpers';
 const InactiveMembers = () => {
     // need orgId
-    const { inactiveMembers, loadTeam } = useTeamContext();
+    const inactiveMembers = useSelector((state) => state.team.inactiveMembers);
+    // const { inactiveMembers, loadTeam } = useTeamContext();
     function actionHandler({ action, userId, orgId, roleId }) {
         if (action === 'GRANT') {
             console.log(

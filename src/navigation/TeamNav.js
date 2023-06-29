@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
-import { useSelector } from 'react-redux';
 import { useTheme } from 'react-native-paper';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useUserContext } from '../contexts/UserContext';
+import { useSelector } from 'react-redux';
 import { FontAwesome, AntDesign, Entypo } from '@expo/vector-icons';
-import { useTeamContext } from '../contexts/TeamContext';
 import systemSlice from '../features/systemSlice';
 import NewMembers from '../screens/team/NewMembers.tab';
 import ActiveMembers from '../screens/team/ActiveMembers.tab';
@@ -14,7 +13,7 @@ const BottomTab = createBottomTabNavigator();
 const TeamConfig = () => {
     const mtrTheme = useTheme();
     const { userProfile } = useUserContext();
-    const { newMembers } = useTeamContext();
+    const newMembers = useSelector((state) => state.team.newMembers);
     const { appName } = useSelector((state) => state.system);
     const [newCountLabel, setNewCountLabel] = useState(0);
 

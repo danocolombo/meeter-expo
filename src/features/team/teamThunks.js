@@ -3,6 +3,26 @@ import { API } from 'aws-amplify';
 import * as queries from '../../jerichoQL/queries';
 import { printObject } from '../../utils/helpers';
 
+export const deactivateMember = createAsyncThunk(
+    'team/deactivateMember',
+    async (id, thunkAPI) => {
+        try {
+            //* * * * * * * * * * * * * * * * * * *
+            //* This function gets the member from
+            //* authContext then update GQL entries
+            //* 1. get member affiliations
+            //* 2. update affiliation for "guest" role to "inactive"
+            //* 3. delete affiliation not "guest"
+            //* * * * * * * * * * * * * * * * * * *
+            console.log('TT:17-->id:', id);
+            return { memberId: id };
+        } catch (error) {
+            console.log(error);
+            throw new Error('Failed to deactivate team member.');
+        }
+    }
+);
+
 export const loadTeam = createAsyncThunk(
     'team/loadTeam',
     async (id, thunkAPI) => {
@@ -14,7 +34,9 @@ export const loadTeam = createAsyncThunk(
                     let iMembers = [];
                     members.forEach((m) => {
                         let activeConfirmed = m.roles.find(
-                            (r) => r.role === 'guest' && r.status === 'active'
+                            (r) =>
+                                (r.role === 'guest' && r.status === 'active') ||
+                                (r.role === 'new' && r.status === 'active')
                         );
                         if (!activeConfirmed) {
                             iMembers.push(m);
@@ -116,44 +138,22 @@ export const loadTeam = createAsyncThunk(
                 query: queries.listAffiliationsUsersByOrg,
                 filter: { organizationAffiliationsId: { eq: id } },
             });
-
             const affiliations = teamInfo?.data?.listAffiliations?.items;
             const convertedTeamInfo = await convertTeamInfo(affiliations);
             const TEAM = await summarizeTeamInfo(convertedTeamInfo.all);
-            let newMembers = [];
-            let activeMembers = [];
-            let inactiveMembers = [];
-            identifyActiveMembers(TEAM)
-                .then((actives) => {
-                    activeMembers = [...actives];
-                    printObject('TT:129-->activeMembers\n:', activeMembers);
-                })
-                .catch((error) => {
-                    console.log('Error in identifyActiveMembers:', error);
-                });
 
-            identifyNewMembers(TEAM)
-                .then((requests) => {
-                    newMembers = [...requests];
-                    printObject('TT:129-->newMembers\n:', newMembers);
-                })
-                .catch((error) => {
-                    console.log('Error in identifyNewMembers:', error);
-                });
-
-            identifyInactiveRequests(TEAM)
-                .then((requests) => {
-                    inactiveMembers = [...requests];
-                    printObject('TT:129-->inactiveMembers\n:', inactiveMembers);
-                })
-                .catch((error) => {
-                    console.log('Error in identifyInactiveRequests:', error);
-                });
+            const activeMembers = await identifyActiveMembers(
+                convertedTeamInfo.all
+            );
+            const newMembers = await identifyNewMembers(convertedTeamInfo.all);
+            const inactiveMembers = await identifyInactiveRequests(
+                convertedTeamInfo.all
+            );
 
             return {
-                activeMembers,
-                inactiveMembers,
-                newMembers,
+                actives: activeMembers,
+                inactives: inactiveMembers,
+                newMembers: newMembers,
                 team: TEAM,
             };
         } catch (error) {

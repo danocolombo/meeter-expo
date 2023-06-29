@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import NewMemberCard from '../../components/teams/NewMemberCard';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTeamContext } from '../../contexts/TeamContext';
 import { changeAffiliation } from '../../jerichoQL/providers/affiliations.provider';
 import { printObject } from '../../utils/helpers';
 const NewMembers = () => {
     // need orgId
-    const { newMembers, loadTeam } = useTeamContext();
+    const newMembers = useSelector((state) => state.team.newMembers);
     function actionHandler({ action, userId, orgId, roleId }) {
         if (action === 'ACCEPT') {
             console.log(
@@ -46,7 +47,7 @@ const NewMembers = () => {
                 });
         }
     }
-    if (newMembers.length < 1) {
+    if (newMembers?.length < 1) {
         return (
             <View style={{ flex: 1, flexDirection: 'column' }}>
                 <View style={styles.pageTitleContainer}>

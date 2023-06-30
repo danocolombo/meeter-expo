@@ -1,21 +1,98 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { API } from 'aws-amplify';
 import * as queries from '../../jerichoQL/queries';
+import * as mutations from '../../jerichoQL/mutations';
 import { printObject } from '../../utils/helpers';
 
 export const deactivateMember = createAsyncThunk(
     'team/deactivateMember',
-    async (id, thunkAPI) => {
+    async (member, thunkAPI) => {
         try {
             //* * * * * * * * * * * * * * * * * * *
             //* This function gets the member from
             //* authContext then update GQL entries
-            //* 1. get member affiliations
-            //* 2. update affiliation for "guest" role to "inactive"
-            //* 3. delete affiliation not "guest"
+            //* 1. update guest affiliation to inactive
+            //* 2. delete non-guest roles
+            //* 3. modify member object for slice
             //* * * * * * * * * * * * * * * * * * *
-            console.log('TT:17-->id:', id);
-            return { memberId: id };
+            printObject('TT:17-->member:', member);
+
+            // updateAffiliation
+
+            // loop and delete non guest roles
+            member.roles.forEach((r) => {
+                if (r.role === 'guest') {
+                    //      update guest
+                    try {
+                        API.graphql({
+                            query: mutations.updateAffiliation,
+                            variables: {
+                                input: { id: r.id, status: 'inactive' },
+                            },
+                        })
+                            .then(() => {
+                                printObject(
+                                    'TT:34-->affiliation updated: ',
+                                    r.id
+                                );
+                            })
+                            .catch((err) => {
+                                printObject(
+                                    'TT:40-->error updating affiliation\n',
+                                    err
+                                );
+                            });
+                    } catch (error) {
+                        printObject(
+                            'TT:46-->catch failure to update affiliation:',
+                            error
+                        );
+                    }
+                } else {
+                    //      delete role
+                    try {
+                        API.graphql({
+                            query: mutations.deleteAffiliation,
+                            variables: { input: { id: r.id } },
+                        })
+                            .then(() => {
+                                printObject(
+                                    'TT:59-->affiliation deleted: ',
+                                    r.id
+                                );
+                            })
+                            .catch((err) => {
+                                printObject(
+                                    'TT:65-->error deleting affiliation\n',
+                                    err
+                                );
+                                console.log('id:', r.id);
+                            });
+                    } catch (error) {
+                        printObject(
+                            'TT:71-->catch failure to delete affiliation:',
+                            error
+                        );
+                        console.log('id:', r.id);
+                    }
+                }
+            });
+            // API.graphql({
+            //     query: mutations.deleteAffiliation,
+            //     variables: { input: { id: r.id } },
+            // });
+
+            //      modify user to send to slice
+            const singleRole = member.roles
+                .filter((r) => r.role === 'guest')
+                .map((r) => ({ ...r, status: 'inactive' }));
+
+            //      3. member updated to send to slice
+            const newMember = {
+                ...member,
+                roles: singleRole,
+            };
+            return newMember;
         } catch (error) {
             console.log(error);
             throw new Error('Failed to deactivate team member.');

@@ -62,8 +62,11 @@ const ActiveMembers = () => {
     });
     function addAffiliationHandler(settings) {}
     function deactivateHandler(settings) {
-        console.log('DE-ACTIVATE....', settings?.memberId);
-        dispatch(deactivateMember(settings?.memberId));
+        const exiledMember = activeMembers.find(
+            (m) => m.id === settings?.memberId
+        );
+
+        dispatch(deactivateMember(exiledMember));
         // deactivateUser(settings)
         //     .then(() => {
         //         loadTeam();

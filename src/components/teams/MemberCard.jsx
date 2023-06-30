@@ -44,7 +44,7 @@ function MemberCard({ member, editFlag, deactivate }) {
         });
     }, []);
     const deactivateUser = () => {
-        printObject('member:\n', member);
+        // printObject('member:\n', member);
         deactivate({
             memberId: member.id,
             roles: member.roles,

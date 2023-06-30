@@ -63,8 +63,24 @@ const teamSlice = createSlice({
                 //* 3. update allMembers
                 //*
                 //* * * * * * * * * * * * * * * * * * *
-                printObject('TS:66-->action.payload:\n', action.payload);
-                printObject('TS:67-->memberId:', action?.payload?.memberId);
+                //      1 remove member from activeMembers
+                const newActives = state.activeMembers.filter(
+                    (member) => member.id !== action.payload.id
+                );
+                state.activeMembers = newActives;
+
+                //      2. add member to inactiveMembers
+                const newInactives = [...state.inactiveMembers, action.payload];
+                state.inactiveMembers = newInactives;
+
+                //      3. update allMembers
+                const updatedMembers = state.allMembers.map((m) => {
+                    if (m.id === action.payload.id) {
+                        return action.payload;
+                    }
+                    return m;
+                });
+                state.allMembers = updatedMembers;
                 state.isLoading = false;
             })
             .addCase(deactivateMember.rejected, (state, action) => {

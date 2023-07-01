@@ -15,7 +15,6 @@ function InactiveMemberCard({ member, action }) {
 
     const grantHandler = (value) => {
         const inactiveRole = member.roles.find((r) => r.role === 'guest');
-        printObject('IMC:18-->inactiveRole:', inactiveRole);
         action({
             action: 'GRANT',
             userId: member.id,

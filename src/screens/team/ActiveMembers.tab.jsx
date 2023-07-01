@@ -67,13 +67,6 @@ const ActiveMembers = () => {
         );
 
         dispatch(deactivateMember(exiledMember));
-        // deactivateUser(settings)
-        //     .then(() => {
-        //         loadTeam();
-        //     })
-        //     .catch((err) => {
-        //         printObject('AMT:48-->error deactivateUser:\n', err);
-        //     });
     }
     if (isLoading) {
         return (

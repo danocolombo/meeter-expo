@@ -4,6 +4,45 @@ import * as queries from '../../jerichoQL/queries';
 import * as mutations from '../../jerichoQL/mutations';
 import { printObject } from '../../utils/helpers';
 
+export const activateMember = createAsyncThunk(
+    'team/activateMember',
+    async (member, thunkAPI) => {
+        try {
+            //* * * * * * * * * * * * * * * * * * *
+            //* This function gets member
+            //* 1. update guest affiliation to active
+            //* 2. modify member object for slice
+            //* * * * * * * * * * * * * * * * * * *
+            //      1. update GQL affiliation
+            API.graphql({
+                query: mutations.updateAffiliation,
+                variables: {
+                    input: { id: member.roles[0].id, status: 'active' },
+                },
+            })
+                .then(() => {
+                    printObject('TT:24-->affiliation updated: ', member.id);
+                })
+                .catch((err) => {
+                    printObject('TT:27-->error updating affiliation\n', err);
+                });
+            //      modify user to send to slice
+            const singleRole = member.roles
+                .filter((r) => r.role === 'guest')
+                .map((r) => ({ ...r, status: 'active' }));
+
+            //      2. member updated to send to slice
+            const newMember = {
+                ...member,
+                roles: singleRole,
+            };
+            return newMember;
+        } catch (error) {
+            console.log(error);
+            throw new Error('TT:32-->Failed to activate team member.');
+        }
+    }
+);
 export const deactivateMember = createAsyncThunk(
     'team/deactivateMember',
     async (member, thunkAPI) => {
@@ -15,10 +54,6 @@ export const deactivateMember = createAsyncThunk(
             //* 2. delete non-guest roles
             //* 3. modify member object for slice
             //* * * * * * * * * * * * * * * * * * *
-            printObject('TT:17-->member:', member);
-
-            // updateAffiliation
-
             // loop and delete non guest roles
             member.roles.forEach((r) => {
                 if (r.role === 'guest') {
@@ -77,11 +112,6 @@ export const deactivateMember = createAsyncThunk(
                     }
                 }
             });
-            // API.graphql({
-            //     query: mutations.deleteAffiliation,
-            //     variables: { input: { id: r.id } },
-            // });
-
             //      modify user to send to slice
             const singleRole = member.roles
                 .filter((r) => r.role === 'guest')

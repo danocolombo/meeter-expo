@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { loadTeam, deactivateMember } from './teamThunks';
+import { loadTeam, deactivateMember, activateMember } from './teamThunks';
 import { printObject } from '../../utils/helpers';
 
 const initialState = {
@@ -48,6 +48,40 @@ const teamSlice = createSlice({
                 state.newMembers = action.payload.newMembers;
             })
             .addCase(loadTeam.rejected, (state, action) => {
+                console.log(action);
+                state.isLoading = false;
+            })
+            .addCase(activateMember.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(activateMember.fulfilled, (state, action) => {
+                //* * * * * * * * * * * * * * * * * * *
+                //* This reducer does the following actions
+                //*
+                //* 1. add member to activeMembers
+                //* 2. remove member from inactiveMembers
+                //* 3. update allMembers
+                //*
+                //* * * * * * * * * * * * * * * * * * *
+                //      1. add member to activeMembers
+                const newActives = [...state.activeMembers, action.payload];
+                state.activeMembers = newActives;
+                //      2 remove member from inactiveMembers
+                const newInactives = state.inactiveMembers.filter(
+                    (member) => member.id !== action.payload.id
+                );
+                state.inactiveMembers = newInactives;
+                //      3. update allMembers
+                const updatedMembers = state.allMembers.map((m) => {
+                    if (m.id === action.payload.id) {
+                        return action.payload;
+                    }
+                    return m;
+                });
+                state.allMembers = updatedMembers;
+                state.isLoading = false;
+            })
+            .addCase(activateMember.rejected, (state, action) => {
                 console.log(action);
                 state.isLoading = false;
             })

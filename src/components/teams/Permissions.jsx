@@ -27,8 +27,8 @@ function Permissions({ permissions, editFlag, togglePermission }) {
     const changeGroupsRole = (checkboxValue) => {
         if (editFlag === true) {
             let returnValue = 'groups.' + (checkboxValue ? 'add' : 'remove');
-            togglePermission(returnValue);
             setGroupsIsChecked(!groupsIsChecked);
+            togglePermission(returnValue);
         }
     };
     const changeMealsRole = (checkboxValue) => {

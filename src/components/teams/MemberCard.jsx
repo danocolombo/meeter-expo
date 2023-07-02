@@ -10,7 +10,7 @@ import { useTeamContext } from '../../contexts/TeamContext';
 import { updateTeamMemberPermissions } from '../../jerichoQL/providers/team.provider';
 import { printObject, transformPatePhone } from '../../utils/helpers';
 
-function MemberCard({ member, editFlag, deactivate }) {
+function MemberCard({ member, editFlag, deactivate, updatePermission }) {
     const [response, setResponse] = useState('<>');
     const [permissions, setPermissions] = useState(null);
     const [displayPhone, setDisplayPhone] = useState('');
@@ -184,6 +184,32 @@ function MemberCard({ member, editFlag, deactivate }) {
                 }
                 break;
             case 'meals':
+                if (response[1] === 'add') {
+                    // printObject('MC:187-->member:', member);
+                    const response = {
+                        member: member,
+                        action: 'addPermission',
+                        value: {
+                            id: 'AWS-UNIQUE-ID',
+                            organizationAffiliationsId: member.organizationId,
+                            userAffiliationsId: member.id,
+                            role: 'meals',
+                            status: 'active',
+                        },
+                    };
+                    updatePermission(response);
+                } else if (response[1] === 'remove') {
+                    const response = {
+                        member: member,
+                        action: 'removePermission',
+                        value: {
+                            role: 'meals',
+                        },
+                    };
+                    updatePermission(response);
+                }
+                break;
+            case 'mealsOLD':
                 printObject('MC:173-->member:\n', member);
                 printObject('MC:174-->value:', value);
                 const mealCheck = member.roles.find(

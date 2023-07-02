@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { API } from 'aws-amplify';
 import * as queries from '../../jerichoQL/queries';
 import * as mutations from '../../jerichoQL/mutations';
-import { printObject } from '../../utils/helpers';
+import { createAWSUniqueID, printObject } from '../../utils/helpers';
 
 export const activateMember = createAsyncThunk(
     'team/activateMember',
@@ -269,3 +269,112 @@ export const loadTeam = createAsyncThunk(
         }
     }
 );
+export const updateActiveMember = createAsyncThunk(
+    'team/updateActiveMember',
+    async (input, thunkAPI) => {
+        //* * * * * * * * * * * * * * * * * * *
+        //* This thunk requires input. Supported
+        //* input: {
+        //*  member: {id: "abc", firstName:...},
+        //*  action: "addPermission",
+        //*  value: {affId, role, status}
+        //* }
+
+        const { member, action, value } = input;
+        try {
+            //* * * * * * * * * * * * * * * * * * *
+            //* This function gets the member and
+            //* action from options passed in.
+            //* Take action updating member based
+            //* on supported "action".
+            //* Supported actions:
+            //* 1. addPermission
+            //* 2. removePermission
+            //* * * * * * * * * * * * * * * * * * *
+            switch (action) {
+                case 'addPermission':
+                    try {
+                        const newId = createAWSUniqueID();
+                        const newAff = {
+                            id: newId,
+                            organizationAffiliationsId: member.organizationId,
+                            userAffiliationsId: member.id,
+                            role: value.role,
+                            status: 'active',
+                        };
+                        printObject('TT:296-->addPermission:\n', newAff);
+                        const memberInfo = await API.graphql({
+                            query: mutations.createAffiliation,
+                            variables: { input: newAff },
+                        });
+                        printObject('TT:309-->memberInfo:\n', memberInfo);
+                        let modRoles = [...member.roles];
+                        //reduce aff for redux
+                        delete newAff.organizationAffiliationsId;
+                        delete newAff.userAffiliationsId;
+                        modRoles.push(newAff);
+                        const updatedUser = {
+                            ...member,
+                            roles: modRoles,
+                        };
+                        return updatedUser;
+                    } catch (error) {
+                        console.log(error);
+                        throw new Error('Failed to addPermission.');
+                    }
+                    break;
+                case 'removePermission':
+                    try {
+                        // need to get the role id
+                        const role = member.roles.find(
+                            (r) => r.role === value.role
+                        );
+                        const results = await API.graphql({
+                            query: mutations.deleteAffiliation,
+                            variables: { input: { id: role.id } },
+                        });
+                        let modRoles = member.roles.filter(
+                            (r) => r.role !== value.role
+                        );
+                        const updatedUser = {
+                            ...member,
+                            roles: modRoles,
+                        };
+                        return updatedUser;
+
+                        // .catch((err) => {
+                        //     printObject(
+                        //         'TT:65-->error deleting affiliation\n',
+                        //         err
+                        //     );
+                        //     console.log('id:', roleId);
+                        //     throw new Error('Failed to delete permission');
+                        // });
+                    } catch (error) {
+                        console.log(error);
+                        throw new Error('Failed to deactivate team member.');
+                    }
+                    printObject('TT:299-->removePermission:\n', value);
+                    break;
+                default:
+                    printObject('TT:302-->unsupported action:', action);
+            }
+            //      modify user to send to slice
+            const singleRole = member.roles
+                .filter((r) => r.role === 'guest')
+                .map((r) => ({ ...r, status: 'inactive' }));
+
+            //      3. member updated to send to slice
+            const memberUpdate = {
+                ...member,
+                roles: singleRole,
+            };
+            // return memberUpdate;
+            return member;
+        } catch (error) {
+            console.log(error);
+            throw new Error('Failed to deactivate team member.');
+        }
+    }
+);
+export const removeRole = createAsyncThunk();

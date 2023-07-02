@@ -8,11 +8,14 @@ import {
 } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { loadTeam, deactivateMember } from '../../features/team/teamThunks';
+import {
+    loadTeam,
+    deactivateMember,
+    updateActiveMember,
+} from '../../features/team/teamThunks';
 
 import { useUserContext } from '../../contexts/UserContext';
 import { useFocusEffect } from '@react-navigation/native';
-import { deactivateUser } from '../../jerichoQL/providers/affiliations.provider';
 import { printObject } from '../../utils/helpers';
 import MemberCard from '../../components/teams/MemberCard';
 const ActiveMembers = () => {
@@ -68,6 +71,9 @@ const ActiveMembers = () => {
 
         dispatch(deactivateMember(exiledMember));
     }
+    function updatePermissionHandler(settings) {
+        dispatch(updateActiveMember(settings));
+    }
     if (isLoading) {
         return (
             <View style={styles.loadingContainer}>
@@ -106,6 +112,7 @@ const ActiveMembers = () => {
                             editFlag={editFlag}
                             deactivate={deactivateHandler}
                             addAffiliation={addAffiliationHandler}
+                            updatePermission={updatePermissionHandler}
                         />
                     )}
                     keyExtractor={(item) => item.id}

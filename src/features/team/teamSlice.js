@@ -1,5 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { loadTeam, deactivateMember, activateMember } from './teamThunks';
+import {
+    loadTeam,
+    deactivateMember,
+    activateMember,
+    updateActiveMember,
+} from './teamThunks';
 import { printObject } from '../../utils/helpers';
 
 const initialState = {
@@ -48,6 +53,32 @@ const teamSlice = createSlice({
                 state.newMembers = action.payload.newMembers;
             })
             .addCase(loadTeam.rejected, (state, action) => {
+                console.log(action);
+                state.isLoading = false;
+            })
+            .addCase(updateActiveMember.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateActiveMember.fulfilled, (state, action) => {
+                //* * * * * * * * * * * * * * * * * * *
+                //* This reducer does the following actions
+                //*
+                //* 1. update member in activeMembers
+                //* 2. update member in allMembers
+                //*
+                //* * * * * * * * * * * * * * * * * * *
+                const index = state.activeMembers.findIndex(
+                    (member) => member.id === action.payload.id
+                );
+                // printObject(
+                //     'TS:73-->replace this...\n',
+                //     state.activeMembers[index]
+                // );
+                // printObject('TS:65-->update this:\n', action.payload);
+                state.activeMembers[index] = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(updateActiveMember.rejected, (state, action) => {
                 console.log(action);
                 state.isLoading = false;
             })

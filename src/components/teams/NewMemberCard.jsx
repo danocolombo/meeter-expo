@@ -22,12 +22,14 @@ function NewMemberCard({ member, action }) {
             roleId: guestRole.id,
         });
     };
-    const rejectHandler = (value) => {
+    const declineHandler = (value) => {
+        console.log('DECLINE');
         action({
             action: 'DECLINE',
             userId: member.id,
             orgId: member.organizationId,
         });
+        return;
     };
 
     return (
@@ -89,7 +91,7 @@ function NewMemberCard({ member, action }) {
                             </Text>
                         </View>
                     </Pressable>
-                    <Pressable onPress={rejectHandler}>
+                    <Pressable onPress={declineHandler}>
                         <View
                             style={{
                                 marginLeft: 'auto',

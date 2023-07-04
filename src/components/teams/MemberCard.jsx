@@ -25,7 +25,8 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
         let manage = false;
         let groups = false;
         let meals = false;
-        member?.roles.forEach((role) => {
+        //printObject('MC:28-->member:\n', member);
+        member?.roles?.forEach((role) => {
             // printObject('MC:11-->role:', role);
             if ((role?.role === 'manage') & (role?.status === 'active')) {
                 manage = true;
@@ -55,6 +56,32 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
         let response = value.split('.');
         switch (response[0]) {
             case 'manage':
+                if (response[1] === 'add') {
+                    // printObject('MC:187-->member:', member);
+                    const response = {
+                        member: member,
+                        action: 'addPermission',
+                        value: {
+                            id: 'AWS-UNIQUE-ID',
+                            organizationAffiliationsId: member.organizationId,
+                            userAffiliationsId: member.id,
+                            role: 'manage',
+                            status: 'active',
+                        },
+                    };
+                    updatePermission(response);
+                } else if (response[1] === 'remove') {
+                    const response = {
+                        member: member,
+                        action: 'removePermission',
+                        value: {
+                            role: 'manage',
+                        },
+                    };
+                    updatePermission(response);
+                }
+                break;
+            case 'OLDmanage':
                 const manageCheck = member.roles.find(
                     (auth) => auth.role === 'manage'
                 );
@@ -290,7 +317,29 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
                 }
                 break;
             case 'groups':
-                console.warn(member.firstName, ' GROUPS ', !permissions.groups);
+                if (response[1] === 'add') {
+                    const response = {
+                        member: member,
+                        action: 'addPermission',
+                        value: {
+                            id: 'AWS-UNIQUE-ID',
+                            organizationAffiliationsId: member.organizationId,
+                            userAffiliationsId: member.id,
+                            role: 'groups',
+                            status: 'active',
+                        },
+                    };
+                    updatePermission(response);
+                } else if (response[1] === 'remove') {
+                    const response = {
+                        member: member,
+                        action: 'removePermission',
+                        value: {
+                            role: 'groups',
+                        },
+                    };
+                    updatePermission(response);
+                }
                 break;
             default:
                 console.warn('missed it:', value);

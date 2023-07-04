@@ -240,12 +240,26 @@ export const loadTeam = createAsyncThunk(
                     throw new Error('Failed to convert team info.');
                 }
             };
-
             const teamInfo = await API.graphql({
-                query: queries.listAffiliationsUsersByOrg,
+                query: queries.listAffiliationsForOrg,
                 filter: { organizationAffiliationsId: { eq: id } },
             });
-            const affiliations = teamInfo?.data?.listAffiliations?.items;
+            // make sure there are only members for this org
+            const validatedTeamInfo = {
+                ...teamInfo,
+                data: {
+                    ...teamInfo.data,
+                    listAffiliations: {
+                        ...teamInfo.data.listAffiliations,
+                        items: teamInfo.data.listAffiliations.items.filter(
+                            (item) => item.organizationAffiliationsId === id
+                        ),
+                    },
+                },
+            };
+
+            const affiliations =
+                validatedTeamInfo?.data?.listAffiliations?.items;
             const convertedTeamInfo = await convertTeamInfo(affiliations);
             const TEAM = await summarizeTeamInfo(convertedTeamInfo.all);
 
@@ -341,15 +355,6 @@ export const updateActiveMember = createAsyncThunk(
                             roles: modRoles,
                         };
                         return updatedUser;
-
-                        // .catch((err) => {
-                        //     printObject(
-                        //         'TT:65-->error deleting affiliation\n',
-                        //         err
-                        //     );
-                        //     console.log('id:', roleId);
-                        //     throw new Error('Failed to delete permission');
-                        // });
                     } catch (error) {
                         console.log(error);
                         throw new Error('Failed to deactivate team member.');
@@ -378,3 +383,237 @@ export const updateActiveMember = createAsyncThunk(
     }
 );
 export const removeRole = createAsyncThunk();
+
+export const acceptMember = createAsyncThunk(
+    'team/acceptNewMember',
+    async (input, thunkAPI) => {
+        //* * * * * * * * * * * * * * * * * * *
+        //* This thunk requires input. Supported
+        //* input: {
+        //*  member: {id: "abc", firstName:...},
+        //*  action: "acceptMember",
+        //* }
+        const { member } = input;
+        try {
+            //* * * * * * * * * * * * * * * * * * *
+            //* This function gets the member and
+            //* action from options passed in.
+            //* Take action updating member based
+            //* on supported "action" (acceptMember)
+            //* Supported actions:
+            //* 1. update aff role:"new" to "guest"
+            //* 2. remove other roles
+            //* * * * * * * * * * * * * * * * * * *
+
+            printObject('TT:398-->member:\n', member);
+            member.roles.forEach((r) => {
+                if (r.role === 'new') {
+                    //      update guest
+                    try {
+                        API.graphql({
+                            query: mutations.updateAffiliation,
+                            variables: {
+                                input: { id: r.id, role: 'guest' },
+                            },
+                        })
+                            .then(() => {
+                                printObject(
+                                    'TT:410-->affiliation updated: ',
+                                    r.id
+                                );
+                            })
+                            .catch((err) => {
+                                printObject(
+                                    'TT:416-->error updating affiliation\n',
+                                    err
+                                );
+                            });
+                    } catch (error) {
+                        printObject(
+                            'TT:46-->catch failure to update affiliation:',
+                            error
+                        );
+                    }
+                } else {
+                    //      delete role
+                    try {
+                        API.graphql({
+                            query: mutations.deleteAffiliation,
+                            variables: { input: { id: r.id } },
+                        })
+                            .then(() => {
+                                printObject(
+                                    'TT:59-->affiliation deleted: ',
+                                    r.id
+                                );
+                            })
+                            .catch((err) => {
+                                printObject(
+                                    'TT:65-->error deleting affiliation\n',
+                                    err
+                                );
+                                console.log('id:', r.id);
+                            });
+                    } catch (error) {
+                        printObject(
+                            'TT:71-->catch failure to delete affiliation:',
+                            error
+                        );
+                        console.log('id:', r.id);
+                    }
+                }
+            });
+            //      modify user to send to slice
+
+            const newRole = member.roles.find((r) => r.role === 'new');
+            const singleRole = {
+                id: newRole.id,
+                role: 'guest',
+                status: 'active',
+            };
+            printObject('TT:460-->singleRole:\n', singleRole);
+            //      3. member updated to send to slice
+            const newMember = {
+                ...member,
+                roles: [singleRole],
+            };
+            printObject('TT:470-->sliceInput:\n', newMember);
+            return newMember;
+
+            // const keepRole = member.roles
+            //     .filter((r) => r.role === 'new')
+            //     .map((r) => ({ ...r, status: 'active' }));
+            // const modRoles = [
+            //     {
+            //         id: keepRole.id,
+            //         role: 'guest',
+            //         status: 'active',
+            //     },
+            // ];
+            // async function deleteAff(id) {
+            //     console.log('DELETE ID: ', id);
+            //     const deletedResults = await API.graphql({
+            //         query: mutations.deleteAffiliation,
+            //         variables: { input: { id: id } },
+            //     });
+            // }
+            // if (member.roles.length > 1) {
+            //     const deleteRoles = member.roles.filter(
+            //         (r) => r.role !== 'new'
+            //     );
+            //     deleteRoles.forEach((r) => {
+            //         printObject('DELETE THIS ROLE:\n', r);
+            //         deleteAff(r.id).then(() => console.log(r.id + 'deleted'));
+            //     });
+            //     return true;
+            // } else {
+            //     console.log('only 1 role');
+            // }
+            // //* --------------------------------------
+            // //* update guest aff
+            // //* --------------------------------------
+            // const updateResults = await API.graphql({
+            //     query: mutations.updateAffiliation,
+            //     variables: {
+            //         input: { id: keepRole.id, status: 'active' },
+            //     },
+            // });
+            // const sliceInput = {
+            //     ...member,
+            //     roles: modRoles,
+            // };
+            // return sliceInput;
+        } catch (error) {
+            console.log(error);
+            throw new Error('Failed to acceptMember.');
+        }
+    }
+);
+export const declineMember = createAsyncThunk(
+    'team/declineNewMember',
+    async (input, thunkAPI) => {
+        //* * * * * * * * * * * * * * * * * * *
+        //* This thunk requires input. Supported
+        //* input: {
+        //*  member: {id: "abc", firstName:...},
+        //*  action: "declineMember",
+        //* }
+        console.log('declineMember THUNK');
+        printObject('TT:395-->input:\n', input);
+        try {
+            //* * * * * * * * * * * * * * * * * * *
+            //* This function gets the member and
+            //* action from options passed in.
+            //* Take action updating member based
+            //* on supported "action" (acceptMember)
+            //* Supported actions:
+            //* 1. update aff role:"new" status to "rejected"
+            //* 2. pass member to slice
+            //* * * * * * * * * * * * * * * * * * *
+            console.log('TRYING to decline');
+            const { member } = input;
+            member.roles.forEach((r) => {
+                if (r.role === 'new') {
+                    //      update guest
+                    try {
+                        API.graphql({
+                            query: mutations.updateAffiliation,
+                            variables: {
+                                input: { id: r.id, status: 'rejected' },
+                            },
+                        })
+                            .then(() => {
+                                printObject(
+                                    'TT:410-->affiliation updated: ',
+                                    r.id
+                                );
+                            })
+                            .catch((err) => {
+                                printObject(
+                                    'TT:416-->error updating affiliation\n',
+                                    err
+                                );
+                            });
+                    } catch (error) {
+                        printObject(
+                            'TT:46-->catch failure to update affiliation:',
+                            error
+                        );
+                    }
+                } else {
+                    //      delete role
+                    try {
+                        API.graphql({
+                            query: mutations.deleteAffiliation,
+                            variables: { input: { id: r.id } },
+                        })
+                            .then(() => {
+                                printObject(
+                                    'TT:59-->affiliation deleted: ',
+                                    r.id
+                                );
+                            })
+                            .catch((err) => {
+                                printObject(
+                                    'TT:65-->error deleting affiliation\n',
+                                    err
+                                );
+                                console.log('id:', r.id);
+                            });
+                    } catch (error) {
+                        printObject(
+                            'TT:71-->catch failure to delete affiliation:',
+                            error
+                        );
+                        console.log('id:', r.id);
+                    }
+                }
+            });
+            //      pass member on to slice
+            return member;
+        } catch (error) {
+            console.log(error);
+            throw new Error('Failed to declineMember.');
+        }
+    }
+);

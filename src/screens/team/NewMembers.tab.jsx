@@ -2,49 +2,31 @@ import { StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import NewMemberCard from '../../components/teams/NewMemberCard';
 import { useSelector, useDispatch } from 'react-redux';
+import { acceptMember, declineMember } from '../../features/team/teamThunks';
 import { useTeamContext } from '../../contexts/TeamContext';
-import { changeAffiliation } from '../../jerichoQL/providers/affiliations.provider';
 import { printObject } from '../../utils/helpers';
+import { acc } from 'react-native-reanimated';
 const NewMembers = () => {
+    const dispatch = useDispatch();
     // need orgId
     const newMembers = useSelector((state) => state.team.newMembers);
     function actionHandler({ action, userId, orgId, roleId }) {
-        if (action === 'ACCEPT') {
-            console.log(
-                'SET affiliation ' + roleId + ' role: guest, status: active'
-            );
-            const newValues = {
-                affiliationId: roleId,
-                newRoleValue: 'guest',
-                newStatusValue: 'active',
-            };
-            changeAffiliation(newValues)
-                .then((response) => {
-                    printObject('changeAffiliation response:\n', response);
-                })
-                .then((response) => {
-                    loadTeam().then(() => {
-                        console.log('done');
-                    });
-                });
+        console.log('action:', action);
+        console.log('userId:', userId);
+        console.log('orgId:', orgId);
+        console.log('roleId:', roleId);
 
-            /* insert role: 'guest', status: active for organizationId */
+        if (action === 'ACCEPT') {
+            let acceptedMember = newMembers.find((m) => m.id === userId);
+            // acceptedMember.action = 'acceptMember';
+            // printObject('NMT:22-->acceptedMember:\n', acceptedMember);
+            let input = { member: { ...acceptedMember } };
+            dispatch(acceptMember(input));
         } else if (action === 'DECLINE') {
-            console.log('DECLINE USER:', userId, ' on ', orgId);
-            const newValues = {
-                affiliationId: roleId,
-                newRoleValue: 'guest',
-                newStatusValue: 'inactive',
-            };
-            changeAffiliation(newValues)
-                .then((response) => {
-                    printObject('changeAffiliation response:\n', response);
-                })
-                .then((response) => {
-                    loadTeam().then(() => {
-                        console.log('done');
-                    });
-                });
+            const declinedMember = newMembers.find((m) => m.id === userId);
+            printObject('NMT:40-->declinedMember:\n', declinedMember);
+            let input = { member: { ...declinedMember } };
+            dispatch(declineMember(input));
         }
     }
     if (newMembers?.length < 1) {

@@ -4,6 +4,8 @@ import {
     deactivateMember,
     activateMember,
     updateActiveMember,
+    acceptMember,
+    declineMember,
 } from './teamThunks';
 import { printObject } from '../../utils/helpers';
 
@@ -45,7 +47,7 @@ const teamSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(loadTeam.fulfilled, (state, action) => {
-                printObject('TS:43-->action.payload:\n', action.payload);
+                // printObject('TS:43-->action.payload:\n', action.payload);
                 state.isLoading = false;
                 state.allMembers = action.payload.team;
                 state.activeMembers = action.payload.actives;
@@ -149,6 +151,69 @@ const teamSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(deactivateMember.rejected, (state, action) => {
+                console.log(action);
+                state.isLoading = false;
+            })
+
+            .addCase(acceptMember.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(acceptMember.fulfilled, (state, action) => {
+                //* * * * * * * * * * * * * * * * * * *
+                //* This reducer does the following actions
+                //*
+                //* 1. remove member from newMembers
+                //* 2. add member to activeMembers
+                //* 3. update allMembers
+                //*
+                //* * * * * * * * * * * * * * * * * * *
+                const newUpdates = state.newMembers.filter(
+                    (member) => member.id !== action.payload.id
+                );
+                state.newMembers = newUpdates;
+                printObject('TS:173-->newMembers result:\n', state.newMembers);
+                //      2. add member to activeMembers
+                const newActives = [...state.activeMembers, action.payload];
+                state.activeMembers = newActives;
+                //      3. update allMembers
+                const updatedMembers = state.allMembers.map((m) => {
+                    if (m.id === action.payload.id) {
+                        return action.payload;
+                    }
+                    return m;
+                });
+                state.allMembers = updatedMembers;
+                state.isLoading = false;
+            })
+            .addCase(acceptMember.rejected, (state, action) => {
+                console.log(action);
+                state.isLoading = false;
+            })
+            .addCase(declineMember.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(declineMember.fulfilled, (state, action) => {
+                //* * * * * * * * * * * * * * * * * * *
+                //* This reducer does the following actions
+                //*
+                //* 1. removes member from newMembers
+                //* 2. removes member from allMembers
+                //*
+                //* * * * * * * * * * * * * * * * * * *
+                //      1. remove member from  newMembers
+                const newUpdates = state.newMembers.filter(
+                    (member) => member.id !== action.payload.id
+                );
+                state.newMembers = newUpdates;
+
+                //      2. remove member from  allMembers
+                const allUpdates = state.allMembers.filter(
+                    (member) => member.id !== action.payload.id
+                );
+                state.allMembers = allUpdates;
+                state.isLoading = false;
+            })
+            .addCase(declineMember.rejected, (state, action) => {
                 console.log(action);
                 state.isLoading = false;
             });

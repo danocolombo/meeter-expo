@@ -18,7 +18,6 @@ function Permissions({ permissions, editFlag, togglePermission }) {
     );
     const changeManagerRole = (checkboxValue) => {
         if (editFlag == true) {
-            console.log('P:25-->checkboxValue: ', checkboxValue);
             let returnValue = 'manage.' + (checkboxValue ? 'add' : 'remove');
             togglePermission(returnValue);
             setManageIsChecked(!manageIsChecked);

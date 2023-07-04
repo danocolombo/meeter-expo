@@ -474,6 +474,61 @@ export const listSystems = /* GraphQL */ `
         }
     }
 `;
+export const listAffiliationsForOrg = /* GraphQL */ `
+    query ListAffiliations(
+        $filter: ModelAffiliationFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listAffiliations(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                role
+                status
+                organizationAffiliationsId
+                user {
+                    id
+                    sub
+                    username
+                    firstName
+                    lastName
+                    email
+                    phone
+                    shirt
+                    birthday
+                    picture
+                    createdAt
+                    updatedAt
+                    organizationDefaultUsersId
+                    locationUsersId
+                    location {
+                        street
+                        city
+                        stateProv
+                        postalCode
+                    }
+                }
+                organization {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                createdAt
+                updatedAt
+                userAffiliationsId
+            }
+            nextToken
+        }
+    }
+`;
 export const listAffiliationsUsersByOrg = /* GraphQL */ `
     query ListAffUsers(
         $filter: ModelAffiliationFilterInput
@@ -489,6 +544,7 @@ export const listAffiliationsUsersByOrg = /* GraphQL */ `
                 id
                 role
                 status
+                organizationAffiliationsId
                 user {
                     id
                     firstName

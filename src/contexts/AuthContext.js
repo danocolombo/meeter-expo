@@ -30,7 +30,7 @@ const AuthContextProvider = ({ children }) => {
             });
             printObject('AC:31-->gqlProfileData:\n', gqlProfileData);
             //*****************************************
-            //* check if user has proflile
+            //* check if user has profile
             //*****************************************
             if (gqlProfileData?.data?.usersBySub?.items[0]?.id) {
                 console.log('IF---- where we belong');

@@ -48,6 +48,7 @@ const LandingScreen = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
+    const [teamApproved, setTeamApproved] = useState(false);
     const [activeMeeting, setActiveMeeting] = useState();
     const [nextMeeting, setNextMeeting] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -68,7 +69,7 @@ const LandingScreen = () => {
         const cau = await Auth.currentAuthenticatedUser();
         const user = await defineUser(cau.attributes.sub);
         saveUserProfile(user);
-        console.log('LS:147-->user:', user);
+        printObject('LS:71--user:\n', user);
         printObject('LS:72-->userProfile', userProfile);
     }
 
@@ -97,6 +98,12 @@ const LandingScreen = () => {
             //     console.log('LS:187-->catch:', e);
             // });
             setIsLoading(false);
+        }
+        if (userProfile?.activeOrg?.status !== 'active') {
+            console.log('LS:102-->NOT ACTIVE');
+            setTeamApproved(false);
+        } else {
+            setTeamApproved(true);
         }
     }, []);
     if (isLoading) {
@@ -151,16 +158,28 @@ const LandingScreen = () => {
                         />
                     </View>r
                 </> */}
-
-                <>
-                    {userProfile?.activeOrg?.heroMessage && (
+                {teamApproved && (
+                    <>
+                        {userProfile?.activeOrg?.heroMessage && (
+                            <View style={mtrTheme.landingHeroMessageContainer}>
+                                <Text style={mtrTheme.landingHeroMessageText}>
+                                    {userProfile.activeOrg.heroMessage}
+                                </Text>
+                            </View>
+                        )}
+                    </>
+                )}
+                {!teamApproved && (
+                    <>
                         <View style={mtrTheme.landingHeroMessageContainer}>
                             <Text style={mtrTheme.landingHeroMessageText}>
-                                {userProfile.activeOrg.heroMessage}
+                                You do not have authorization to access the
+                                default affiliation. Please go to your profile
+                                and change your affiliation.
                             </Text>
                         </View>
-                    )}
-                </>
+                    </>
+                )}
             </Surface>
         </>
     );

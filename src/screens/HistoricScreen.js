@@ -69,7 +69,7 @@ const HistoricScreen = (props) => {
                     let filteredMeetings = currentMeetings.filter(
                         (m) => m.mtgCompKey < key
                     );
-                    printObject('filteredMeeings', filteredMeetings);
+                    printObject('filteredMeetings', filteredMeetings);
                     function quickSort(prop) {
                         return function (b, a) {
                             if (a[prop] > b[prop]) {

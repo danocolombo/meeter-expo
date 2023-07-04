@@ -62,10 +62,10 @@ const ActiveScreen = () => {
             );
             refetch();
             printObject('AS:64-->REFETCH', null);
-
             return () => subscription.remove();
         }, [])
     );
+
     let meetings = [];
     const { data, isError, isLoading, isFetching, refetch } = useQuery(
         ['meetings', 'active'],
@@ -79,6 +79,7 @@ const ActiveScreen = () => {
     const handleNewRequest = () => {
         navigation.navigate('MeetingNew');
     };
+
     if (isLoading) {
         return (
             <View
@@ -102,7 +103,7 @@ const ActiveScreen = () => {
             </View>
         );
     }
-    // printObject('AS:105-->userProfile:\n ', userProfile);
+
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
@@ -119,7 +120,7 @@ const ActiveScreen = () => {
 
                 <View style={{ padding: 10 }}>
                     <Text style={mtrTheme.subTitleSmall}>
-                        Click event for details.
+                        Click event for details!
                     </Text>
                 </View>
                 {meetings && (

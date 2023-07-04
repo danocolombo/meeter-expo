@@ -37,6 +37,7 @@ const AuthDrawer = (navigation) => {
     let manager = false;
     let patron = false;
     if (userProfile) {
+        printObject('AD:40-->userProfile:\n', userProfile);
         if (
             userProfile.activeOrg?.role === 'manage' ||
             userProfile.activeOrg?.role === 'director' ||
@@ -97,70 +98,73 @@ const AuthDrawer = (navigation) => {
                     tabBarActiveTintColor: 'white',
                 })}
             />
+            {userProfile?.activeOrg?.status === 'active' && (
+                <Drawer.Screen
+                    name='Meetings'
+                    // component={() => <LandingScreen theme={props.theme} />}
+                    component={MeetingsConfig}
+                    options={({ navigation }) => ({
+                        title: meeter.appName,
+                        // headerRight: () => (
+                        //     <>
+                        //         <Button
+                        //             onPress={() =>
+                        //                 navigation.navigate('MeeterEdit', {
+                        //                     meetingId: meeting.meetingId,
+                        //                 })
+                        //             }
+                        //             color='white'
+                        //             title='NEW'
+                        //         />
+                        //     </>
+                        // ),
+                        drawerLabel: 'Meetings',
+                        drawerIcon: ({ color }) => (
+                            <Ionicons
+                                name='calendar-outline'
+                                size={22}
+                                color={color}
+                            />
+                        ),
+                        headerStyle: {
+                            backgroundColor: mtrTheme.colors.background,
+                        },
 
-            <Drawer.Screen
-                name='Meetings'
-                // component={() => <LandingScreen theme={props.theme} />}
-                component={MeetingsConfig}
-                options={({ navigation }) => ({
-                    title: meeter.appName,
-                    // headerRight: () => (
-                    //     <>
-                    //         <Button
-                    //             onPress={() =>
-                    //                 navigation.navigate('MeeterEdit', {
-                    //                     meetingId: meeting.meetingId,
-                    //                 })
-                    //             }
-                    //             color='white'
-                    //             title='NEW'
-                    //         />
-                    //     </>
-                    // ),
-                    drawerLabel: 'Meetings',
-                    drawerIcon: ({ color }) => (
-                        <Ionicons
-                            name='calendar-outline'
-                            size={22}
-                            color={color}
-                        />
-                    ),
-                    headerStyle: {
-                        backgroundColor: mtrTheme.colors.background,
-                    },
+                        headerTintColor: 'white',
+                        tabBarStyle: {
+                            backgroundColor: mtrTheme.colors.background,
+                        },
+                        tabBarActiveTintColor: 'white',
+                    })}
+                />
+            )}
+            {userProfile?.activeOrg?.role === 'manage' && (
+                <Drawer.Screen
+                    name='Your Team'
+                    component={TeamConfig}
+                    options={({ navigation }) => ({
+                        title: meeter.appName,
 
-                    headerTintColor: 'white',
-                    tabBarStyle: {
-                        backgroundColor: mtrTheme.colors.background,
-                    },
-                    tabBarActiveTintColor: 'white',
-                })}
-            />
-            <Drawer.Screen
-                name='Your Team'
-                component={TeamConfig}
-                options={({ navigation }) => ({
-                    title: meeter.appName,
+                        drawerLabel: 'My Team',
+                        drawerIcon: ({ color }) => (
+                            <Ionicons
+                                name='people-outline'
+                                size={28}
+                                color={color}
+                            />
+                        ),
+                        headerStyle: {
+                            backgroundColor: mtrTheme.colors.background,
+                        },
 
-                    drawerLabel: 'My Team',
-                    drawerIcon: ({ color }) => (
-                        <Ionicons
-                            name='people-outline'
-                            size={28}
-                            color={color}
-                        />
-                    ),
-                    headerStyle: {
-                        backgroundColor: mtrTheme.colors.background,
-                    },
-
-                    headerTintColor: 'white',
-                    tabBarStyle: {
-                        backgroundColor: mtrTheme.colors.background,
-                    },
-                    tabBarActiveTintColor: 'white',
-                })}
-            />
+                        headerTintColor: 'white',
+                        tabBarStyle: {
+                            backgroundColor: mtrTheme.colors.background,
+                        },
+                        tabBarActiveTintColor: 'white',
+                    })}
+                />
+            )}
             {userProfile?.activeOrg?.role === 'manage' && (
                 <Stack.Screen
                     name='Groups'

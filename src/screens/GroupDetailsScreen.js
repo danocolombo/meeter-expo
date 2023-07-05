@@ -11,6 +11,7 @@ import {
     useTheme,
     ActivityIndicator,
 } from 'react-native-paper';
+import { useUserContext } from '../contexts/UserContext';
 import { useQuery } from '@tanstack/react-query';
 import { FetchGroup } from '../components/common/hooks/groupQueries';
 import { printObject } from '../utils/helpers';
@@ -19,6 +20,7 @@ import { printObject } from '../utils/helpers';
 const GroupDetailsScreen = ({ route, navigation }) => {
     let group = route.params.group;
     let groupId = group?.groupId;
+    const { perms } = useUserContext();
     const meeting = route.params.meeting;
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
@@ -28,7 +30,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
         if (Platform.OS === 'ios') {
             headerLabelColor = 'white';
         }
-        if (meeter.userRole !== 'guest') {
+        if (perms.includes('manage') || perms.includes('groups')) {
             navigation.setOptions({
                 title: meeter.appName,
                 headerBackTitle: 'Back',

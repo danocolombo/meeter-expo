@@ -66,11 +66,10 @@ import CustomButton from '../components/ui/CustomButton';
 const MeetingDetails = (props) => {
     const meetingId = props.route.params.meetingId;
     const mtrTheme = useTheme();
-    const { userProfile } = useUserContext();
+    const { userProfile, perms } = useUserContext();
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const [authority, setAuthority] = useState([]);
     const [groups, setGroups] = useState([]);
     const meeter = useSelector((state) => state.system);
     const navigation = useNavigation();
@@ -81,32 +80,12 @@ const MeetingDetails = (props) => {
     const { width, height } = useWindowDimensions();
     // printObject('MDS:80-->userProfile:\n', userProfile);
     useLayoutEffect(() => {
-        let perms = [];
-        async function defineAuthority() {
-            const applicableAffiliations =
-                userProfile.affiliations.items.filter(
-                    (item) => item.organization.id === userProfile.activeOrg.id
-                );
-
-            applicableAffiliations.forEach((perm) => {
-                printObject('MDS:91-->perm', perm);
-                if (perm.status === 'active' && perm.role !== 'guest') {
-                    perms.push(perm.role);
-                }
-            });
-        }
-        defineAuthority();
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
             headerLabelColor = 'white';
         }
         // printObject('MDS:87-->userProfile:\n', userProfile);
-        // printObject('MDS:105-->authority:\n', authority);
-        // console.log('MDS:106-->meals:', authority.includes('meals'));
-        // if (
-        //     userProfile.activeOrg.role === 'manage' ||
-        //     userProfile.activeOrg.role === 'meals'
-        // ) {
+
         if (perms.includes('manage') || perms.includes('meals')) {
             navigation.setOptions({
                 title: meeter.appName,
@@ -155,22 +134,6 @@ const MeetingDetails = (props) => {
     }
     useFocusEffect(
         useCallback(() => {
-            async function defineAuthority() {
-                const applicableAffiliations =
-                    userProfile.affiliations.items.filter(
-                        (item) =>
-                            item.organization.id === userProfile.activeOrg.id
-                    );
-                let perms = [];
-                applicableAffiliations.forEach((perm) => {
-                    printObject('MDS:91-->perm', perm);
-                    if (perm.status === 'active' && perm.role !== 'guest') {
-                        perms.push(perm.role);
-                    }
-                });
-                setAuthority(perms);
-            }
-            defineAuthority();
             const subscription = AppState.addEventListener(
                 'change',
                 onAppStateChange
@@ -263,7 +226,7 @@ const MeetingDetails = (props) => {
     if (meeting) {
         historic = isDateDashBeforeToday(meeting.meetingDate);
     }
-    printObject('MDS:266-->authority:\n', authority);
+    printObject('MDS:266-->perms:\n', perms);
     return (
         <>
             <Surface style={styles.surface}>
@@ -410,8 +373,8 @@ const MeetingDetails = (props) => {
                         >
                             Open-Share Groups
                         </Text>
-                        {(authority.includes('manage') ||
-                            authority.includes('groups')) && (
+                        {(perms.includes('manage') ||
+                            perms.includes('groups')) && (
                             <View
                                 style={{
                                     justifyContent: 'center',
@@ -458,7 +421,7 @@ const MeetingDetails = (props) => {
                         </Text>
                     </View>
                 )}
-                {authority.includes('manage') &&
+                {perms.includes('manage') &&
                     groups.length > 0 &&
                     showDefaultsButton && (
                         <View

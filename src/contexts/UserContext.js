@@ -12,11 +12,29 @@ const UserContext = createContext({});
 
 const UserContextProvider = ({ children }) => {
     const [userProfile, setUserProfile] = useState(null);
-
+    const [perms, setPerms] = useState([]);
     const clearUser = async () => {
         setUserProfile(null);
+        setPerms([]);
     };
     const saveUserProfile = async (profile) => {
+        let p = [];
+        async function defineAuthority() {
+            const applicableAffiliations = profile?.affiliations?.items.filter(
+                (item) => item?.organization?.id === profile?.activeOrg?.id
+            );
+
+            applicableAffiliations.forEach((perm) => {
+                // printObject('UC:29-->perm', perm);
+                if (perm.status === 'active' && perm.role !== 'guest') {
+                    p.push(perm.role);
+                }
+            });
+        }
+        defineAuthority();
+        printObject('UC:29-->perms:\n', p);
+        setPerms(p);
+
         setUserProfile(profile);
     };
     const updateHeroMessage = async (theMessage) => {
@@ -79,6 +97,7 @@ const UserContextProvider = ({ children }) => {
         <UserContext.Provider
             value={{
                 userProfile,
+                perms,
                 setUserProfile,
                 saveUserProfile,
                 updateUserProfile,

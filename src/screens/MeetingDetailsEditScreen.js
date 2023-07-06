@@ -205,105 +205,118 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
     }
     return (
         <>
-            <Modal visible={modalDeleteConfirmVisible} animationStyle='slide'>
-                <Surface
-                    style={[
-                        mtrTheme.meetingEditDeleteModalSurface,
-                        { height: height * 0.8 },
-                    ]}
+            <View style={{ flex: 1 }}>
+                <Modal
+                    visible={modalDeleteConfirmVisible}
+                    animationStyle='slide'
                 >
-                    <View>
-                        <Text style={mtrTheme.meetingEditDeleteModalTitle}>
-                            Confirm Your Delete Request
-                        </Text>
-                    </View>
-                    <View
-                        style={mtrTheme.meetingEditDeleteModalMeetingContainer}
+                    <Surface
+                        style={[
+                            mtrTheme.meetingEditDeleteModalSurface,
+                            { height: height * 0.8 },
+                        ]}
                     >
                         <View>
-                            <Text
-                                style={
-                                    mtrTheme.meetingEditDeleteModalMeetingText
-                                }
-                            >
-                                {meeting?.meetingDate}
+                            <Text style={mtrTheme.meetingEditDeleteModalTitle}>
+                                Confirm Your Delete Request
                             </Text>
                         </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text
-                                style={
-                                    mtrTheme.meetingEditDeleteModalMeetingText
-                                }
-                            >
-                                {meeting?.meetingType}
-                            </Text>
+                        <View
+                            style={
+                                mtrTheme.meetingEditDeleteModalMeetingContainer
+                            }
+                        >
+                            <View>
+                                <Text
+                                    style={
+                                        mtrTheme.meetingEditDeleteModalMeetingText
+                                    }
+                                >
+                                    {meeting?.meetingDate}
+                                </Text>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text
+                                    style={
+                                        mtrTheme.meetingEditDeleteModalMeetingText
+                                    }
+                                >
+                                    {meeting?.meetingType}
+                                </Text>
 
-                            <Text
-                                style={
-                                    mtrTheme.meetingEditDeleteModalMeetingText
-                                }
-                            >
-                                {meeting?.title}
+                                <Text
+                                    style={
+                                        mtrTheme.meetingEditDeleteModalMeetingText
+                                    }
+                                >
+                                    {meeting?.title}
+                                </Text>
+                            </View>
+                        </View>
+                        {groups.length > 0 && (
+                            <Text style={{ color: 'white' }}>
+                                You will also delete the associate groups.
                             </Text>
-                        </View>
-                    </View>
-                    {groups.length > 0 && (
-                        <Text style={{ color: 'white' }}>
-                            You will also delete the associate groups.
-                        </Text>
-                    )}
-                    {groups.length > 0
-                        ? groups.map((g) => {
-                              return (
-                                  <View key={g.groupId}>
-                                      <Text
-                                          style={
-                                              mtrTheme.meetingEditDeleteModalMeetingText
-                                          }
-                                      >
-                                          {gender[g.gender]} {g.title}
-                                      </Text>
-                                  </View>
-                              );
-                          })
-                        : null}
+                        )}
+                        {groups.length > 0
+                            ? groups.map((g) => {
+                                  return (
+                                      <View key={g.groupId}>
+                                          <Text
+                                              style={
+                                                  mtrTheme.meetingEditDeleteModalMeetingText
+                                              }
+                                          >
+                                              {gender[g.gender]} {g.title}
+                                          </Text>
+                                      </View>
+                                  );
+                              })
+                            : null}
 
-                    <View
-                        style={mtrTheme.meetingEditDeleteModalButtonContainer}
-                    >
-                        <View style={{ width: width * 0.35, marginRight: 20 }}>
-                            <CustomButton
-                                text='No, cancel'
-                                onPress={() => flipModal(false)}
-                            />
+                        <View
+                            style={
+                                mtrTheme.meetingEditDeleteModalButtonContainer
+                            }
+                        >
+                            <View
+                                style={{ width: width * 0.35, marginRight: 20 }}
+                            >
+                                <CustomButton
+                                    text='No, cancel'
+                                    onPress={() => flipModal(false)}
+                                />
+                            </View>
+                            <View
+                                style={{ width: width * 0.35, marginLeft: 20 }}
+                            >
+                                <CustomButton
+                                    text='Yes, DELETE'
+                                    bgColor='red'
+                                    fgColor='black'
+                                    onPress={() => handleDeleteConfirmClick()}
+                                />
+                            </View>
                         </View>
-                        <View style={{ width: width * 0.35, marginLeft: 20 }}>
-                            <CustomButton
-                                text='Yes, DELETE'
-                                bgColor='red'
-                                fgColor='black'
-                                onPress={() => handleDeleteConfirmClick()}
+                    </Surface>
+                </Modal>
+                {meeting?.meetingId && (
+                    <ScrollView>
+                        <KeyboardAvoidingView
+                            behavior='padding'
+                            style={{ flex: 1 }}
+                        >
+                            <MeetingForm
+                                meeting={meeting}
+                                handleUpdate={handleUpdate}
+                                // handleDeleteRequest={() =>
+                                //     setModalDeleteConfirmVisible(true)
+                                // }
                             />
-                        </View>
-                    </View>
-                </Surface>
-            </Modal>
-            {meeting?.meetingId && (
-                <ScrollView>
-                    <KeyboardAvoidingView
-                        behavior='padding'
-                        style={{ flex: 1 }}
-                    >
-                        <MeetingForm
-                            meeting={meeting}
-                            handleUpdate={handleUpdate}
-                            // handleDeleteRequest={() =>
-                            //     setModalDeleteConfirmVisible(true)
-                            // }
-                        />
-                    </KeyboardAvoidingView>
-                </ScrollView>
-            )}
+                        </KeyboardAvoidingView>
+                    </ScrollView>
+                )}
+            </View>
         </>
     );
 };

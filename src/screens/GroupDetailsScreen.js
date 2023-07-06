@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, AppState } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -24,7 +24,9 @@ const GroupDetailsScreen = ({ route, navigation }) => {
     const meeting = route.params.meeting;
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
-
+    const [authority, setAuthority] = useState(
+        perms.includes('manage') || perms.includes('manage') || false
+    );
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
@@ -320,29 +322,34 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                 </View>
                             </View>
                         </View>
-                        <View
-                            style={{ marginVertical: 20, marginHorizontal: 50 }}
-                        >
-                            <>
-                                {meeter.userRole !== 'guest' && (
-                                    <CustomButton
-                                        text='DELETE'
-                                        bgColor='red'
-                                        fgColor='white'
-                                        type='PRIMARY'
-                                        onPress={() => {
-                                            navigation.navigate(
-                                                'DeleteGroupConfirm',
-                                                {
-                                                    group,
-                                                    meeting,
-                                                }
-                                            );
-                                        }}
-                                    />
-                                )}
-                            </>
-                        </View>
+                        {authority && (
+                            <View
+                                style={{
+                                    marginVertical: 20,
+                                    marginHorizontal: 50,
+                                }}
+                            >
+                                <>
+                                    {meeter.userRole !== 'guest' && (
+                                        <CustomButton
+                                            text='DELETE'
+                                            bgColor='red'
+                                            fgColor='white'
+                                            type='PRIMARY'
+                                            onPress={() => {
+                                                navigation.navigate(
+                                                    'DeleteGroupConfirm',
+                                                    {
+                                                        group,
+                                                        meeting,
+                                                    }
+                                                );
+                                            }}
+                                        />
+                                    )}
+                                </>
+                            </View>
+                        )}
                     </View>
                 </Surface>
             </View>

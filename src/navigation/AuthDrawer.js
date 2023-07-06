@@ -27,7 +27,7 @@ const Stack = createNativeStackNavigator();
 
 const AuthDrawer = (navigation) => {
     const mtrTheme = useTheme();
-    const { userProfile } = useUserContext();
+    const { userProfile, perms } = useUserContext();
     //printObject('AD:26-->userProfile', userProfile);
     // printObject('mtrTheme:', mtrTheme);
     const user = useSelector((state) => state.users.currentUser);
@@ -138,7 +138,7 @@ const AuthDrawer = (navigation) => {
                     })}
                 />
             )}
-            {userProfile?.activeOrg?.role === 'manage' && (
+            {perms.includes('manage') && (
                 <Drawer.Screen
                     name='Your Team'
                     component={TeamConfig}
@@ -165,7 +165,7 @@ const AuthDrawer = (navigation) => {
                     })}
                 />
             )}
-            {userProfile?.activeOrg?.role === 'manage' && (
+            {(perms.includes('manage') || perms.includes('groups')) && (
                 <Stack.Screen
                     name='Groups'
                     options={({ navigation }) => ({
@@ -186,7 +186,7 @@ const AuthDrawer = (navigation) => {
                     component={DefaultGroupsScreen}
                 />
             )}
-            {userProfile?.activeOrg?.role === 'manage' && (
+            {perms.includes('manage') && (
                 <Stack.Screen
                     name='Team'
                     options={({ navigation }) => ({
@@ -208,7 +208,7 @@ const AuthDrawer = (navigation) => {
                     component={TeamScreen}
                 />
             )}
-            {userProfile?.activeOrg?.role === 'manage' && (
+            {perms.includes('manage') && (
                 <Stack.Screen
                     name='Welcome'
                     options={({ navigation }) => ({

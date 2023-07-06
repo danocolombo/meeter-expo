@@ -43,12 +43,13 @@ import { useMutation } from '@tanstack/react-query';
 import TypeSelectors from './TypeSelectors';
 import { ScrollView } from 'react-native-gesture-handler';
 import TitleSection from './MeetingForm.titleContact';
+import NumbersSection from './MeetingForm.numbers';
 //   FUNCTION START
 //   ==============
 const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
     // const meeter = useSelector((state) => state.system);
     const { meeter } = useSysContext();
-    const { userProfile } = useUserContext();
+    const { userProfile, perms } = useUserContext();
     const { width } = useWindowDimensions();
 
     const mtrTheme = useTheme();
@@ -59,7 +60,9 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
     const groups = useSelector((state) => state.meetings.groups);
     const [modalMeetingDateVisible, setModalMeetingDateVisible] =
         useState(false);
-
+    const [authority, setAuthority] = useState(
+        perms.includes('manage') || false
+    );
     const [meetingDate, setMeetingDate] = useState();
     const [dateValue, setDateValue] = useState();
     const meetingTypeRef = useRef(meeting.meetingType);
@@ -362,131 +365,55 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                                     values={values}
                                     setValues={setValues}
                                 />
-                                <View
-                                    style={[styles.row, { marginVertical: 4 }]}
-                                >
+                                <NumbersSection
+                                    values={values}
+                                    setValues={setValues}
+                                />
+                                {authority && (
                                     <View
-                                        style={[
-                                            mtrTheme.meetingEditNumberLabelContainer2,
-                                            {
-                                                minWidth: '50%',
-                                            },
-                                        ]}
+                                        style={[styles.row, { marginTop: 10 }]}
                                     >
-                                        <Text
-                                            style={
-                                                mtrTheme.meetingEditMealNumberText
-                                            }
+                                        <View
+                                            style={[
+                                                mtrTheme.meetingEditNumberLabelContainer,
+                                                { minWidth: '50%' },
+                                            ]}
                                         >
-                                            Attendance:
-                                        </Text>
-                                    </View>
-                                    <View
-                                        style={[
-                                            mtrTheme.meetingEditMealNumberContainer,
-                                            {
-                                                minWidth: '50%',
-                                            },
-                                        ]}
-                                    >
-                                        <NumberInput
-                                            numberStyle={{
-                                                color: 'white',
-                                                borderColor: 'white',
-                                            }}
-                                            graphicStyle={{
-                                                color: 'white',
-                                                borderColor: 'white',
-                                            }}
-                                            value={values.attendanceCount}
-                                            onAction={inputChangedHandler.bind(
-                                                this,
-                                                'attendanceCount'
-                                            )}
-                                        />
-                                    </View>
-                                </View>
-                                <View
-                                    style={[styles.row, { marginVertical: 0 }]}
-                                >
-                                    <View
-                                        style={[
-                                            mtrTheme.meetingEditNumberLabelContainer,
-                                            { minWidth: '50%' },
-                                        ]}
-                                    >
-                                        <Text
-                                            style={
-                                                mtrTheme.meetingEditMealNumberText
-                                            }
-                                        >
-                                            Newcomers:
-                                        </Text>
-                                    </View>
-                                    <View
-                                        style={[
-                                            mtrTheme.meetingEditMealNumberContainer,
-                                            { minWidth: '50%' },
-                                        ]}
-                                    >
-                                        <NumberInput
-                                            numberStyle={{
-                                                color: 'white',
-                                                borderColor: 'white',
-                                            }}
-                                            graphicStyle={{
-                                                color: 'white',
-                                                borderColor: 'white',
-                                            }}
-                                            value={values.newcomersCount}
-                                            onAction={inputChangedHandler.bind(
-                                                this,
-                                                'newcomersCount'
-                                            )}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={[styles.row, { marginTop: 10 }]}>
-                                    <View
-                                        style={[
-                                            mtrTheme.meetingEditNumberLabelContainer,
-                                            { minWidth: '50%' },
-                                        ]}
-                                    >
-                                        <Text
+                                            <Text
+                                                style={{
+                                                    color: 'white',
+                                                    fontSize: 24,
+                                                    textAlign: 'right',
+                                                }}
+                                            >
+                                                Donations:
+                                            </Text>
+                                        </View>
+                                        <View
                                             style={{
-                                                color: 'white',
-                                                fontSize: 24,
-                                                textAlign: 'right',
+                                                paddingRight: 'auto',
+                                                paddingLeft: 10,
+                                                minWidth: '50%',
                                             }}
                                         >
-                                            Donations:
-                                        </Text>
+                                            <CurrencyInput
+                                                value={values.donations}
+                                                onChangeValue={inputChangedHandler.bind(
+                                                    this,
+                                                    'donations'
+                                                )}
+                                                prefix='$'
+                                                placeholder='Donations'
+                                                minValue={0}
+                                                delimiter=','
+                                                separator='.'
+                                                precision={2}
+                                                editable={true}
+                                                style={styles.costInput}
+                                            />
+                                        </View>
                                     </View>
-                                    <View
-                                        style={{
-                                            paddingRight: 'auto',
-                                            paddingLeft: 10,
-                                            minWidth: '50%',
-                                        }}
-                                    >
-                                        <CurrencyInput
-                                            value={values.donations}
-                                            onChangeValue={inputChangedHandler.bind(
-                                                this,
-                                                'donations'
-                                            )}
-                                            prefix='$'
-                                            placeholder='Donations'
-                                            minValue={0}
-                                            delimiter=','
-                                            separator='.'
-                                            precision={2}
-                                            editable={true}
-                                            style={styles.costInput}
-                                        />
-                                    </View>
-                                </View>
+                                )}
                                 <View style={styles.rowStyle}>
                                     <Input
                                         label='Notes'
@@ -499,6 +426,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                                             backgroundColor: 'lightgrey',
                                             paddingHorizontal: 10,
                                             fontSize: 20,
+                                            editable: authority,
                                             color: 'black',
                                             value: values.notes,
                                             capitalize: 'sentence',

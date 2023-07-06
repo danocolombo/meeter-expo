@@ -71,6 +71,9 @@ const MeetingDetails = (props) => {
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const [groups, setGroups] = useState([]);
+    const [authority, setAuthority] = useState(
+        perms.includes('manage') || perms.includes('groups') || false
+    );
     const meeter = useSelector((state) => state.system);
     const navigation = useNavigation();
     const uns = useNavigationState((state) => state);
@@ -421,24 +424,22 @@ const MeetingDetails = (props) => {
                         </Text>
                     </View>
                 )}
-                {perms.includes('manage') &&
-                    groups.length > 0 &&
-                    showDefaultsButton && (
-                        <View
-                            style={{
-                                marginHorizontal: 20,
-                                paddingBottom: 20,
-                            }}
-                        >
-                            <CustomButton
-                                text='Add Default Groups'
-                                bgColor='blue'
-                                fgColor={'white'}
-                                type='STANDARD'
-                                onPress={() => handleAddDefaults()}
-                            />
-                        </View>
-                    )}
+                {authority && groups.length > 0 && showDefaultsButton && (
+                    <View
+                        style={{
+                            marginHorizontal: 20,
+                            paddingBottom: 20,
+                        }}
+                    >
+                        <CustomButton
+                            text='Add Default Groups'
+                            bgColor='blue'
+                            fgColor={'white'}
+                            type='STANDARD'
+                            onPress={() => handleAddDefaults()}
+                        />
+                    </View>
+                )}
                 {/* <GroupList meetingId={meetingId} /> */}
                 {/* <View>
                     (GROUPS.data &&

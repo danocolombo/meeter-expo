@@ -2,11 +2,12 @@
 //* ======================================
 //      this file deals with custom work relating
 //      to affiliations (permissions/roles)
-import { printObject } from '../../utils/helpers';
+import { createAWSUniqueID, printObject } from '../../utils/helpers';
 import * as queries from '../queries';
 import * as mutations from '../mutations';
 import { API } from 'aws-amplify';
 import { MEETER_DEFAULTS } from '../../constants/meeter';
+import { printIntrospectionSchema } from 'graphql';
 export const checkUserProfile = async (user) => {
     printObject('U.P:10-->user', user);
     try {
@@ -48,6 +49,158 @@ export const checkUserProfile = async (user) => {
     } catch (error) {
         console.log('U.P:19-->error:', error);
     }
+};
+export const updateProfile = async (userProfile) => {
+    let newProfile = {};
+    printObject('UP:53-->userProfile:\n', userProfile);
+    //need to check if location is defined, or if it is
+    //needed to be created.
+    if (
+        userProfile?.location &&
+        Object.values(userProfile.location).some(
+            (value) => value !== null && value !== undefined
+        )
+    ) {
+        console.log('UP:63--> location data provided');
+        const newId = createAWSUniqueID();
+        //* address provided, need to check if new or update
+        // if (userProfile?.locationUsersId === null) {
+        //     console.log('UP:64-->update existing location');
+        //     const locationValues = {
+        //         id: userProfile.locationUsersId,
+        //         street: userProfile?.location?.street || null,
+        //         city: userProfile?.location?.city || null,
+        //         stateProv: userProfile?.location?.stateProv || null,
+        //         postalCode: userProfile?.location?.postalCode || null,
+        //     };
+        //     printObject('UP:73-->locationValues:\n', locationValues);
+        // } else {
+        //     console.log('UP:66-->need to create new location entry');
+
+        // }
+        const locationValues = {
+            id: userProfile?.locationUsersId
+                ? userProfile.locationUsersId
+                : newId,
+            street: userProfile?.location?.street || '',
+            city: userProfile?.location?.city || '',
+            stateProv: userProfile?.location?.stateProv || '',
+            postalCode: userProfile?.location?.postalCode || '',
+        };
+
+        if (userProfile?.locationUsersId === null) {
+            try {
+                printObject('UP:91-->locationValues:\n', locationValues);
+                const creationResponse = await API.graphql({
+                    query: mutations.createLocation,
+                    variables: { input: locationValues },
+                });
+                printObject('UP:97-->creationResponse:\n', creationResponse);
+                console.log(
+                    'UP:99-->locationUsersId:',
+                    creationResponse.data.createLocation.id
+                );
+                console.log(
+                    'UP:103-->locationUsersId length',
+                    creationResponse.data.createLocation.id.length
+                );
+                if (creationResponse?.data?.createLocation?.id?.length > 0) {
+                    console.log(
+                        'UP:108-->location create successful:',
+                        creationResponse?.data?.createLocation?.id
+                    );
+                    newProfile = {
+                        ...userProfile,
+                        locationUsersId: locationValues.id,
+                    };
+                }
+            } catch (error) {
+                printObject('UP:117-->error creating location\n', error);
+            }
+            // API.graphql({
+            //     query: mutations.createLocation,
+            //     variables: { input: locationValues },
+            // }).then((results) => {
+            //     printObject('UP:94-->createLocation results:\n', results);
+            //     userProfile.locationUsersId = locationValues.id;
+            // });
+        } else {
+            const results = await API.graphql({
+                query: mutations.updateLocation,
+                variables: { input: locationValues },
+            });
+            if (results) {
+                printObject('UP:131-->updateLocation results:\n', results);
+                //  userProfile.locationUsersId = locationValues.id;
+            }
+        }
+        // printObject('UP:90-->locationValues:\n', locationValues);
+        // printObject('UP:91-->userProfile', userProfile);
+    } else {
+        // console.log('UP:68--> no location data provided');
+        if (userProfile?.locationUsersId !== null) {
+            //need to blank out location values
+            const locationValues = {
+                id: userProfile?.locationUsersId,
+                street: null,
+                city: null,
+                stateProv: null,
+                postalCode: null,
+            };
+            API.graphql({
+                query: mutations.updateLocation,
+                variables: { input: locationValues },
+            }).then((results) => {
+                printObject('UP:152-->clear location results:\n', results);
+                userProfile.locationUsersId = locationValues.id;
+            });
+        } else {
+            API.graphql({
+                query: mutations.updateLocation,
+                variables: { input: locationValues },
+            }).then((results) => {
+                printObject('UP:160-->updateLocation results:\n', results);
+                //  userProfile.locationUsersId = locationValues.id;
+            });
+        }
+    }
+    printObject('UP:165-->newProfile BEFORE:\n', newProfile);
+    delete newProfile?.location;
+    delete newProfile?.affiliations;
+    delete newProfile?.defaultOrg;
+    delete newProfile?.manages;
+    delete newProfile?.activeOrg;
+    delete newProfile?.updatedAt;
+    delete newProfile?.createdAt;
+    printObject('UP:167-->newProfile AFTER:\n', newProfile);
+    try {
+        const userUpdateResults = await API.graphql({
+            query: mutations.updateUser,
+            variables: { input: newProfile },
+        });
+        printObject('UP:173-->updateUserResults:\n', userUpdateResults);
+    } catch (error) {
+        printObject('UP:176-->userUpdateResults failure...', error);
+    }
+    return newProfile;
+    try {
+        API.graphql({
+            query: mutations.updateAffiliation,
+            variables: {
+                input: userProfile,
+            },
+        })
+            .then((results) => {
+                console.log('UP:60-->userProfile updated');
+            })
+            .catch((error) => {
+                console.log(error);
+                console.error(error);
+            });
+    } catch (error) {
+        console.log('UP:67-->unexpected error:\n', error);
+    }
+    return userProfile;
 };
 
 export const registerUser = async (user) => {

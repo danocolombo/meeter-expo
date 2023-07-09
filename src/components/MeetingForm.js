@@ -510,12 +510,12 @@ const styles = StyleSheet.create({
         marginVertical: 5,
     },
 
-    dateWrapper: {
-        margin: 5,
-    },
-    calendarText: {
-        color: 'white',
-    },
+    // dateWrapper: {
+    //     margin: 5,
+    // },
+    // calendarText: {
+    //     color: 'white',
+    // },
     costLabel: {
         fontSize: 20,
         fontWeight: '600',

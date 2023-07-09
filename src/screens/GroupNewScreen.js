@@ -31,6 +31,7 @@ import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { PutGroup } from '../components/common/hooks/groupQueries';
+import { saveNewGroup } from '../features/groups/groupsThunks';
 import GenderSelectors from '../components/GenderSelectors';
 import NumberInput from '../components/ui/NumberInput';
 import { useUserContext } from '../contexts/UserContext';
@@ -139,6 +140,7 @@ const GroupNewScreen = ({ route, navigation }) => {
     const mutation = useMutation({
         mutationFn: (values) => {
             printObject('GNS:178-->values:\n', values);
+            dispatch(saveNewGroup(values));
             return (
                 PutGroup(values),
                 {

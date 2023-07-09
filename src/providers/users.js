@@ -6,6 +6,22 @@ const config = {
     },
 };
 export async function updateProfile(profile) {
+    try {
+        // const updatedUser = await API.graphql({
+        //     query: mutations.updateUserProfile,
+        //     variables: { input: userData },
+        // });
+        const updatedUser = await API.graphql({
+            query: mutations.updateUser,
+            variables: { input: userData },
+        });
+        combinedProfile = { ...userProfile, updatedUser };
+    } catch (error) {
+        printObject('UC:58-->ERROR updateUserProfile:\n', error);
+    }
+}
+
+export async function updateProfileDDB(profile) {
     let obj = {
         operation: 'updateUser',
         payload: {

@@ -66,6 +66,7 @@ import { getGroups } from '../features/groups/groupsThunks';
 //   ==============
 const MeetingDetails = (props) => {
     const meetingId = props.route.params.meetingId;
+    const meetingGroups = useSelector((store) => store.groups.groups);
     const mtrTheme = useTheme();
     const { userProfile, perms } = useUserContext();
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
@@ -155,16 +156,16 @@ const MeetingDetails = (props) => {
                 onAppStateChange
             );
             MEETING.refetch();
-            GROUPS.refetch();
+            // GROUPS.refetch();
             getDefaultGroups();
             printObject('MDS:113-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])
     );
-    useEffect(() => {
-        console.log('GROUPS REFRESHED');
-    }, [GROUPS]);
+    // useEffect(() => {
+    //     console.log('GROUPS REFRESHED');
+    // }, [GROUPS]);
 
     const MEETING = useQuery(
         ['mtg', meetingId],
@@ -175,11 +176,11 @@ const MeetingDetails = (props) => {
             enabled: true,
         }
     );
-    const GROUPS = useQuery(['grps', meetingId], () => FetchGroups(meetingId), {
-        refetchInterval: 60000,
-        cacheTime: 2000,
-        enabled: true,
-    });
+    // const GROUPS = useQuery(['grps', meetingId], () => FetchGroups(meetingId), {
+    //     refetchInterval: 60000,
+    //     cacheTime: 2000,
+    //     enabled: true,
+    // });
     const handleAddDefaults = async () => {
         console.log('handleAddDefaults');
         // printObject('MDS:160-->meeting:\n', meeting);
@@ -207,7 +208,7 @@ const MeetingDetails = (props) => {
             // printObject('MDS:173-->values:', values);
         });
         //      only let them add one time.
-        GROUPS.refetch();
+        // GROUPS.refetch();
         setShowDefaultButton(false);
     };
     //if (data) {
@@ -216,7 +217,7 @@ const MeetingDetails = (props) => {
         meeting = MEETING.data.body;
     }
 
-    if (MEETING.isLoading || GROUPS.isLoading) {
+    if (MEETING.isLoading) {
         return (
             <View
                 style={{
@@ -243,6 +244,7 @@ const MeetingDetails = (props) => {
         historic = isDateDashBeforeToday(meeting.meetingDate);
     }
     // printObject('MDS:234-->GROUPS.data:\n', GROUPS?.data);
+    printObject('MDST:247-->meetingGroups:\n', meetingGroups);
     return (
         <>
             <Surface style={styles.surface}>
@@ -418,10 +420,10 @@ const MeetingDetails = (props) => {
                         )}
                     </View>
                 </View>
-                {GROUPS.data ? (
+                {meetingGroups ? (
                     <>
                         <FlatList
-                            data={GROUPS.data.body}
+                            data={meetingGroups}
                             keyExtractor={(item) => item.groupId}
                             persistentScrollbar={true}
                             renderItem={({ item }) => (

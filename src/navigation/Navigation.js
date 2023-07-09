@@ -28,6 +28,7 @@ import ConfirmEmailScreen from '../screens/Auth/ConfirmEmail';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
 import NewPasswordScreen from '../screens/Auth/NewPassword';
 import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
+// import MeetingDetailsScreen from '../screens/MeetingDetailsScreenTwo';
 import TeamMemberScreen from '../screens/TeamMemberScreen'; // import MeetingDelete from '../screens/MeetingDelete';
 import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
 import MeetingNewScreen from '../screens/MeetingNewScreen';

@@ -51,13 +51,13 @@ export const checkUserProfile = async (user) => {
     }
 };
 export const updateProfile = async (userProfile) => {
-    let newProfile = {};
-    printObject('UP:53-->userProfile:\n', userProfile);
+    let newProfile = { ...userProfile };
+    printObject('UP:55-->newProfile:\n', newProfile);
     //need to check if location is defined, or if it is
     //needed to be created.
     if (
-        userProfile?.location &&
-        Object.values(userProfile.location).some(
+        newProfile?.location &&
+        Object.values(newProfile.location).some(
             (value) => value !== null && value !== undefined
         )
     ) {
@@ -79,16 +79,16 @@ export const updateProfile = async (userProfile) => {
 
         // }
         const locationValues = {
-            id: userProfile?.locationUsersId
-                ? userProfile.locationUsersId
+            id: newProfile?.locationUsersId
+                ? newProfile.locationUsersId
                 : newId,
-            street: userProfile?.location?.street || '',
-            city: userProfile?.location?.city || '',
-            stateProv: userProfile?.location?.stateProv || '',
-            postalCode: userProfile?.location?.postalCode || '',
+            street: newProfile?.location?.street || '',
+            city: newProfile?.location?.city || '',
+            stateProv: newProfile?.location?.stateProv || '',
+            postalCode: newProfile?.location?.postalCode || '',
         };
 
-        if (userProfile?.locationUsersId === null) {
+        if (newProfile?.locationUsersId === null) {
             try {
                 printObject('UP:91-->locationValues:\n', locationValues);
                 const creationResponse = await API.graphql({
@@ -110,7 +110,7 @@ export const updateProfile = async (userProfile) => {
                         creationResponse?.data?.createLocation?.id
                     );
                     newProfile = {
-                        ...userProfile,
+                        ...newProfile,
                         locationUsersId: locationValues.id,
                     };
                 }
@@ -138,10 +138,10 @@ export const updateProfile = async (userProfile) => {
         // printObject('UP:91-->userProfile', userProfile);
     } else {
         // console.log('UP:68--> no location data provided');
-        if (userProfile?.locationUsersId !== null) {
+        if (newProfile?.locationUsersId !== null) {
             //need to blank out location values
             const locationValues = {
-                id: userProfile?.locationUsersId,
+                id: newProfile?.locationUsersId,
                 street: null,
                 city: null,
                 stateProv: null,
@@ -182,25 +182,8 @@ export const updateProfile = async (userProfile) => {
     } catch (error) {
         printObject('UP:176-->userUpdateResults failure...', error);
     }
+    console.warn('Profile Updated');
     return newProfile;
-    try {
-        API.graphql({
-            query: mutations.updateAffiliation,
-            variables: {
-                input: userProfile,
-            },
-        })
-            .then((results) => {
-                console.log('UP:60-->userProfile updated');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.error(error);
-            });
-    } catch (error) {
-        console.log('UP:67-->unexpected error:\n', error);
-    }
-    return userProfile;
 };
 
 export const registerUser = async (user) => {

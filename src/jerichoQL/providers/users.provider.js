@@ -52,7 +52,7 @@ export const checkUserProfile = async (user) => {
 };
 export const updateProfile = async (userProfile) => {
     let newProfile = { ...userProfile };
-    printObject('UP:55-->newProfile:\n', newProfile);
+    // printObject('UP:55-->newProfile:\n', newProfile);
     //need to check if location is defined, or if it is
     //needed to be created.
     if (
@@ -61,23 +61,10 @@ export const updateProfile = async (userProfile) => {
             (value) => value !== null && value !== undefined
         )
     ) {
-        console.log('UP:63--> location data provided');
+        // console.log('UP:63--> location data provided');
         const newId = createAWSUniqueID();
         //* address provided, need to check if new or update
-        // if (userProfile?.locationUsersId === null) {
-        //     console.log('UP:64-->update existing location');
-        //     const locationValues = {
-        //         id: userProfile.locationUsersId,
-        //         street: userProfile?.location?.street || null,
-        //         city: userProfile?.location?.city || null,
-        //         stateProv: userProfile?.location?.stateProv || null,
-        //         postalCode: userProfile?.location?.postalCode || null,
-        //     };
-        //     printObject('UP:73-->locationValues:\n', locationValues);
-        // } else {
-        //     console.log('UP:66-->need to create new location entry');
 
-        // }
         const locationValues = {
             id: newProfile?.locationUsersId
                 ? newProfile.locationUsersId
@@ -90,20 +77,10 @@ export const updateProfile = async (userProfile) => {
 
         if (newProfile?.locationUsersId === null) {
             try {
-                printObject('UP:91-->locationValues:\n', locationValues);
                 const creationResponse = await API.graphql({
                     query: mutations.createLocation,
                     variables: { input: locationValues },
                 });
-                printObject('UP:97-->creationResponse:\n', creationResponse);
-                console.log(
-                    'UP:99-->locationUsersId:',
-                    creationResponse.data.createLocation.id
-                );
-                console.log(
-                    'UP:103-->locationUsersId length',
-                    creationResponse.data.createLocation.id.length
-                );
                 if (creationResponse?.data?.createLocation?.id?.length > 0) {
                     console.log(
                         'UP:108-->location create successful:',
@@ -117,13 +94,6 @@ export const updateProfile = async (userProfile) => {
             } catch (error) {
                 printObject('UP:117-->error creating location\n', error);
             }
-            // API.graphql({
-            //     query: mutations.createLocation,
-            //     variables: { input: locationValues },
-            // }).then((results) => {
-            //     printObject('UP:94-->createLocation results:\n', results);
-            //     userProfile.locationUsersId = locationValues.id;
-            // });
         } else {
             const results = await API.graphql({
                 query: mutations.updateLocation,
@@ -134,10 +104,7 @@ export const updateProfile = async (userProfile) => {
                 //  userProfile.locationUsersId = locationValues.id;
             }
         }
-        // printObject('UP:90-->locationValues:\n', locationValues);
-        // printObject('UP:91-->userProfile', userProfile);
     } else {
-        // console.log('UP:68--> no location data provided');
         if (newProfile?.locationUsersId !== null) {
             //need to blank out location values
             const locationValues = {
@@ -164,7 +131,6 @@ export const updateProfile = async (userProfile) => {
             });
         }
     }
-    printObject('UP:165-->newProfile BEFORE:\n', newProfile);
     delete newProfile?.location;
     delete newProfile?.affiliations;
     delete newProfile?.defaultOrg;
@@ -172,13 +138,11 @@ export const updateProfile = async (userProfile) => {
     delete newProfile?.activeOrg;
     delete newProfile?.updatedAt;
     delete newProfile?.createdAt;
-    printObject('UP:167-->newProfile AFTER:\n', newProfile);
     try {
         const userUpdateResults = await API.graphql({
             query: mutations.updateUser,
             variables: { input: newProfile },
         });
-        printObject('UP:173-->updateUserResults:\n', userUpdateResults);
     } catch (error) {
         printObject('UP:176-->userUpdateResults failure...', error);
     }

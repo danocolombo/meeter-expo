@@ -49,45 +49,12 @@ const UserContextProvider = ({ children }) => {
         setUserProfile(updateValues);
     };
     const updateUserProfile = async (resultantProfile) => {
+        // printObject('UC:55-->resultantProfile:\n', resultantProfile);
         if (!resultantProfile) {
             return;
         }
-        const userLocation = {
-            id: userProfile?.location?.id,
-            street: resultantProfile.location.street,
-            city: resultantProfile.location.city,
-            stateProv: resultantProfile.location.stateProv,
-            postalCode: resultantProfile?.location?.postalCode,
-        };
-        const updatedUserLocation = await API.graphql({
-            query: mutations.updateLocation,
-            variables: {
-                input: userLocation,
-            },
-        });
-        const userData = {
-            id: userProfile.id,
-            phone: resultantProfile?.phone,
-            birthday: resultantProfile?.birthday.slice(0, 10),
-            shirt: resultantProfile?.shirt,
-            picture: resultantProfile?.picture,
-        };
-        let combinedProfile = {};
-        try {
-            // const updatedUser = await API.graphql({
-            //     query: mutations.updateUserProfile,
-            //     variables: { input: userData },
-            // });
-            const updatedUser = await API.graphql({
-                query: mutations.updateUser,
-                variables: { input: userData },
-            });
-            combinedProfile = { ...userProfile, updatedUser };
-        } catch (error) {
-            printObject('UC:58-->ERROR updateUserProfile:\n', error);
-        }
-        printObject('UC:34-->combinedProfile:\n', combinedProfile);
-        console.info('UC:58-->Profile Updated');
+
+        setUserProfile(resultantProfile);
     };
     const passValue = async (sub) => {
         console.log('UC:62-->passValue(sub):', sub);

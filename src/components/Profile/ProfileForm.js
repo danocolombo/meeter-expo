@@ -74,6 +74,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const profilePicture = useRef(null);
     //      the picture file
     const [profilePic, setProfilePic] = useState(null);
+    const { updateUserProfile } = useUserContext();
     const [profilePicDetails, setProfilePicDetails] = useState(null);
     const { meeter } = useSysContext();
     const [stateProv, setStateProv] = useState(
@@ -164,7 +165,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     }, []);
 
     //* Camera Permissions and settings
-    async function getPermssions() {
+    async function getPermissions() {
         const cameraPermission = await Camera.requestCameraPermissionsAsync();
         const mediaLibraryPermission =
             await MediaLibrary.requestPermissionsAsync();
@@ -472,18 +473,17 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
         } else {
             phoneToPass = '';
         }
-        printObject('PF:475-->profile:\n', profile);
-        console.log('street:', values?.street);
-        console.log('city:', values?.city);
-        console.log('stateProv:', values?.stateProv);
-        console.log('postalCode:', values?.postalCode);
+        // printObject('PF:475-->profile:\n', profile);
+        // console.log('street:', values?.street);
+        // console.log('city:', values?.city);
+        // console.log('stateProv:', values?.stateProv);
+        // console.log('postalCode:', values?.postalCode);
         if (
             values?.street ||
             values?.city ||
             values?.stateProv ||
             values?.postalCode
         ) {
-            console.log('TRUE');
             profile.location = {
                 street: values?.street || null,
                 city: values?.city || null,
@@ -501,9 +501,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             }
             profile.location = null;
         }
-        console.log('CHECK BIRTHDAY...');
-        console.log('birthDay:', birthDay);
-        console.log('values.birthday', values.birthday);
+
         const resultantProfile = {
             ...profile,
             phone: phoneToPass,
@@ -512,15 +510,20 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             picture: pictureToSave || null,
         };
 
-        console.log('PF:491-->old name', oldProfilePictureName);
-        console.log('PF:492-->new name:', pictureToSave);
+        // console.log('PF:491-->old name', oldProfilePictureName);
+        // console.log('PF:492-->new name:', pictureToSave);
         printObject('PF:493-->resultantProfile:\n', resultantProfile);
         //      ========================
         //      save the form to graphql
         //      ========================
         updateProfile(resultantProfile)
-            .then((result) => {
-                console.log('PF:494-->updateProfile:\n', result);
+            .then((results) => {
+                //then update context
+                let newValues = {
+                    ...resultantProfile,
+                    ...results,
+                };
+                updateUserProfile(newValues);
             })
             .catch((err) => {
                 printObject(

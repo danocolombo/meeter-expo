@@ -131,6 +131,7 @@ export const updateProfile = async (userProfile) => {
             });
         }
     }
+    let contextProfile = newProfile;
     delete newProfile?.location;
     delete newProfile?.affiliations;
     delete newProfile?.defaultOrg;
@@ -147,7 +148,7 @@ export const updateProfile = async (userProfile) => {
         printObject('UP:176-->userUpdateResults failure...', error);
     }
     console.warn('Profile Updated');
-    return newProfile;
+    return contextProfile;
 };
 
 export const registerUser = async (user) => {

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, FlatList, AppState } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import * as queries from '../jerichoQL/queries';
+import { useSelector, useDispatch } from 'react-redux';
 import { API } from 'aws-amplify';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Surface, useTheme, ActivityIndicator, FAB } from 'react-native-paper';
@@ -11,13 +12,18 @@ import CustomButton from '../components/ui/CustomButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as mutations from '../jerichoQL/mutations';
 import { printObject } from '../utils/helpers';
+import {
+    loadDefaultGroups,
+    deleteDefaultGroup,
+} from '../features/groups/groupsThunks';
 
 const DefaultGroupsScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
-    const { meeter, defaultGroups } = useSysContext();
+    const dispatch = useDispatch();
     const { userProfile } = useUserContext();
-    const [groups, setGroups] = useState([]);
+    const defaultGroups = useSelector((state) => state.groups.defaultGroups);
+    const [displayGroups, setDisplayGroups] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
@@ -30,45 +36,49 @@ const DefaultGroupsScreen = () => {
                 'change',
                 onAppStateChange
             );
-            getDefaultGroups();
+            setIsLoading(true);
+            dispatch(loadDefaultGroups({ id: userProfile.activeOrg.id }));
+            setIsLoading(false);
             return () => subscription.remove();
         }, [])
     );
     useEffect(() => {
-        getDefaultGroups().then(() => {
-            console.log('DONE');
-        });
-    }, []);
-    async function getDefaultGroups() {
-        setIsLoading(true);
-        try {
-            const systemInfo = await API.graphql({
-                query: queries.getOrganizationDefaultGroups,
-                variables: { id: userProfile.activeOrg.id },
-            });
-            const defaultGroups =
-                systemInfo.data.getOrganization.defaultGroups.items;
-            setGroups(defaultGroups);
-            setIsLoading(false);
-        } catch (error) {
-            printObject('DGS:52-->systemInfo TryCatch failure:\n', error);
-            setIsLoading(false);
-            return;
+        async function compareGroups(a, b) {
+            // Compare by gender
+            if (b.gender !== a.gender) {
+                return b.gender.localeCompare(a.gender);
+            }
+
+            // Compare by title
+            if (a.title !== b.title) {
+                return a.title.localeCompare(b.title);
+            }
+
+            // Compare by location
+            if (a.location !== b.location) {
+                return a.location.localeCompare(b.location);
+            }
+
+            // Compare by facilitator
+            return a.facilitator.localeCompare(b.facilitator);
         }
-    }
-    async function deleteDefaultGroup(value) {
-        try {
-            const results = await API.graphql({
-                query: mutations.deleteDefaultGroup,
-                variables: { input: { id: value } },
-            });
-        } catch (error) {
-            printObject('failed to delete default group:', error);
+
+        const groups = [...defaultGroups];
+        groups.sort(compareGroups);
+
+        async function updateDisplayGroups() {
+            // Wait for the next tick of the event loop
+            await new Promise((resolve) => setTimeout(resolve, 0));
+
+            setDisplayGroups(groups);
         }
-        getDefaultGroups();
-    }
+
+        updateDisplayGroups();
+        printObject('DGS:47-->groups:\n', displayGroups);
+    }, [defaultGroups]);
+
     const handleDeleteRequest = (value) => {
-        deleteDefaultGroup(value);
+        dispatch(deleteDefaultGroup({ groupId: value }));
     };
     const handleNewRequest = () => {
         navigation.navigate('DGModal');
@@ -90,18 +100,6 @@ const DefaultGroupsScreen = () => {
         );
     }
     return (
-        // <SafeAreaView
-        //     style={[
-        //         mtrTheme.defaultGroupScreenSafeArea,
-        //         {
-        //             flexDirection: 'column',
-        //             backgroundColor: mtrTheme.colors.background,
-        //             justifyContent: 'flex-start',
-        //             borderWidth: 1,
-        //             borderColor: 'yellow',
-        //         },
-        //     ]}
-        // >
         <View
             style={{
                 backgroundColor: mtrTheme.colors.background,
@@ -125,11 +123,11 @@ const DefaultGroupsScreen = () => {
                     Default groups can be dynamically added to meetings.
                 </Text>
             </View>
-            {groups && (
+            {displayGroups && (
                 <>
-                    {groups && (
+                    {displayGroups && (
                         <FlatList
-                            data={groups}
+                            data={displayGroups}
                             keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
                                 <DefaultGroupCard

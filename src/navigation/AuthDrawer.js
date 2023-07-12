@@ -37,7 +37,7 @@ const AuthDrawer = (navigation) => {
     let manager = false;
     let patron = false;
     if (userProfile) {
-        printObject('AD:40-->userProfile:\n', userProfile);
+        // printObject('AD:40-->userProfile:\n', userProfile);
         if (
             userProfile.activeOrg?.role === 'manage' ||
             userProfile.activeOrg?.role === 'director' ||

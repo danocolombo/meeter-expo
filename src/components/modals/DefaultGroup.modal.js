@@ -7,13 +7,21 @@ import DefaultGroupForm from '../groups/DefaultGroupForm';
 import { useNavigation } from '@react-navigation/native';
 import { API } from 'aws-amplify';
 import * as mutations from '../../jerichoQL/mutations';
-import { v4 as uuid } from 'uuid';
-import { printObject } from '../../utils/helpers';
+import {
+    createDefaultGroup,
+    updateDefaultGroup,
+} from '../../features/groups/groupsThunks';
+import {
+    createAWSUniqueID,
+    getUniqueId,
+    printObject,
+} from '../../utils/helpers';
 import { useUserContext } from '../../contexts/UserContext';
+import { useDispatch } from 'react-redux';
 export default function DGModalScreen(props) {
     const group = props.route.params;
     const { userProfile } = useUserContext();
-    printObject('group:', group);
+    const dispatch = useDispatch();
     const mtrTheme = useTheme();
     const navigation = useNavigation();
 
@@ -27,7 +35,6 @@ export default function DGModalScreen(props) {
                 query: mutations.updateDefaultGroup,
                 variables: { input: values },
             });
-            printObject('DGm:27-->results:\n', results);
         } catch (error) {
             printObject('DGm:29-->update catch:\n', error);
         }
@@ -35,26 +42,26 @@ export default function DGModalScreen(props) {
     async function addNew(values) {
         try {
             const groupDef = {
-                id: uuid(),
+                id: null,
                 organizationDefaultGroupsId: userProfile.activeOrg.id,
             };
             const newGroup = { ...values, ...groupDef };
-            printObject('DGm:46-->newGroup:\n', newGroup);
-
-            const results = await API.graphql({
-                query: mutations.createDefaultGroup,
-                variables: { input: newGroup },
-            });
+            dispatch(createDefaultGroup({ newGroup: newGroup }));
+            navigation.goBack();
         } catch (error) {
             printObject('DGm:54-->update catch:\n', error);
         }
     }
     const handleUpdate = (values) => {
+        const groupDef = {
+            organizationDefaultGroupsId: userProfile.activeOrg.id,
+        };
+        const inputGroup = { ...values, ...groupDef };
         if (values.id === null) {
-            addNew(values);
+            dispatch(createDefaultGroup({ group: inputGroup }));
             navigation.goBack();
         } else {
-            updateExisting(values);
+            dispatch(updateDefaultGroup({ group: inputGroup }));
             navigation.goBack();
         }
     };

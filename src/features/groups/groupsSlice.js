@@ -1,9 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getGroups, saveNewGroup } from './groupsThunks';
+import {
+    getGroups,
+    saveNewGroup,
+    loadDefaultGroups,
+    createDefaultGroup,
+    updateDefaultGroup,
+    deleteDefaultGroup,
+} from './groupsThunks';
 import { printObject } from '../../utils/helpers';
 
 const initialState = {
     groups: [],
+    defaultGroups: [],
     isLoading: false,
 };
 
@@ -24,11 +32,76 @@ const groupsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(getGroups.fulfilled, (state, action) => {
-                // printObject('TS:43-->action.payload:\n', action.payload);
+                // printObject('GS:43-->action.payload:\n', action.payload);
                 state.isLoading = false;
                 state.groups = action.payload;
             })
             .addCase(getGroups.rejected, (state, action) => {
+                console.log(action);
+                state.isLoading = false;
+            })
+            .addCase(deleteDefaultGroup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(deleteDefaultGroup.fulfilled, (state, action) => {
+                // printObject('GS:43-->action.payload:\n', action.payload);
+                try {
+                    const updatedDefaultGroups = state.defaultGroups.filter(
+                        (group) => {
+                            if (group.id !== action.payload) {
+                                return group;
+                            }
+                        }
+                    );
+                    state.defaultGroups = [...updatedDefaultGroups];
+                } catch (error) {
+                    printObject(
+                        'GS:58-->error defining reduced array of default groups.\n',
+                        error
+                    );
+                }
+                state.isLoading = false;
+            })
+            .addCase(deleteDefaultGroup.rejected, (state, action) => {
+                console.log(action);
+                state.isLoading = false;
+            })
+            .addCase(updateDefaultGroup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateDefaultGroup.fulfilled, (state, action) => {
+                printObject('GS:46-->action.payload:\n', action.payload);
+                state.isLoading = false;
+                // state.groups = action.payload;
+            })
+            .addCase(updateDefaultGroup.rejected, (state, action) => {
+                console.log(action);
+                state.isLoading = false;
+            })
+            .addCase(loadDefaultGroups.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(loadDefaultGroups.fulfilled, (state, action) => {
+                state.defaultGroups = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(loadDefaultGroups.rejected, (state, action) => {
+                console.log(action);
+                state.isLoading = false;
+            })
+            .addCase(createDefaultGroup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(createDefaultGroup.fulfilled, (state, action) => {
+                // printObject('TS:43-->action.payload:\n', action.payload);
+                const updatedDefaultGroups = state.defaultGroups.push(
+                    action.payload
+                );
+                state.defaultGroups = updatedDefaultGroups;
+                state.isLoading = false;
+                // state.defaultGroups = action.payload;
+            })
+            .addCase(createDefaultGroup.rejected, (state, action) => {
                 console.log(action);
                 state.isLoading = false;
             })

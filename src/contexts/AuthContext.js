@@ -28,12 +28,12 @@ const AuthContextProvider = ({ children }) => {
                 query: queries.usersBySub,
                 variables: { sub: sub },
             });
-            printObject('AC:31-->gqlProfileData:\n', gqlProfileData);
+            // printObject('AC:31-->gqlProfileData:\n', gqlProfileData);
             //*****************************************
             //* check if user has profile
             //*****************************************
             if (gqlProfileData?.data?.usersBySub?.items[0]?.id) {
-                console.log('IF---- where we belong');
+                // console.log('IF---- where we belong');
                 const gqlProfile = gqlProfileData.data.usersBySub.items[0];
                 //      set activeOrg based on profile defaultOrg and affiliations
                 let clientData = {};
@@ -66,7 +66,7 @@ const AuthContextProvider = ({ children }) => {
                         status: 'active',
                     };
                 }
-                printObject('AC:68-->activeOrg:\n', activeOrg);
+                // printObject('AC:68-->activeOrg:\n', activeOrg);
                 const updatedProfile = { ...gqlProfile, activeOrg };
                 return updatedProfile;
             } else {

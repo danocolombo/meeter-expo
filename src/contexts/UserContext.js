@@ -32,7 +32,7 @@ const UserContextProvider = ({ children }) => {
             });
         }
         defineAuthority();
-        printObject('UC:29-->perms:\n', p);
+        // printObject('UC:29-->perms:\n', p);
         setPerms(p);
 
         setUserProfile(profile);

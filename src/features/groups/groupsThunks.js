@@ -76,30 +76,26 @@ export const updateDefaultGroup = createAsyncThunk(
     'groups/updateDefaultGroup',
     async (inputs, thunkAPI) => {
         try {
-            printObject('GT:64-->updateDefaultGroup', inputs.group);
-            const newValues = { ...inputs.group };
-            API.graphql({
+            const results = await API.graphql({
                 query: mutations.updateDefaultGroup,
-                variables: { input: newValues },
-            })
-                .then((results) => {
-                    console.log('default group updated');
-                    printObject('GT:87-->results:\n', results);
-                    return newValues;
-                })
-                .catch((error) => {
-                    console.log('GT:91-catch failure');
-                    console.log(error);
-                    console.error(error);
-                    throw new Error('GT:93-->Failed to update group');
-                });
+                variables: { input: inputs.group },
+            });
+            if (results?.data?.updateDefaultGroup?.id === inputs.group.id) {
+                return inputs.group;
+            } else {
+                printObject(
+                    'GT:90-->updateDefaultGroup GQL call failed:\n',
+                    results
+                );
+                throw new Error('GT:91-->Failed updateDefaultGroup thunk');
+            }
         } catch (error) {
-            printObject('GT:96-->updateDefaultGroup input:\n', inputs.group);
-            console.log(error);
-            throw new Error('GT:98-->Failed to update default group');
+            printObject('GT:92-->updateDefaultGroup', updatedGroup);
+            throw new Error('GT:93-->Failed updateDefaultGroup thunk');
         }
     }
 );
+
 export const saveNewGroup = createAsyncThunk(
     'groups/saveNewGroup',
     async (inputs, thunkAPI) => {

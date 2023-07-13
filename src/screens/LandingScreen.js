@@ -69,8 +69,8 @@ const LandingScreen = () => {
         const cau = await Auth.currentAuthenticatedUser();
         const user = await defineUser(cau.attributes.sub);
         saveUserProfile(user);
-        printObject('LS:71--user:\n', user);
-        printObject('LS:72-->userProfile', userProfile);
+        //printObject('LS:71--user:\n', user);
+        //printObject('LS:72-->userProfile', userProfile);
     }
 
     useFocusEffect(
@@ -88,7 +88,7 @@ const LandingScreen = () => {
         }
         if (!userProfile?.activeOrg?.id) {
             setIsLoading(true);
-            console.log('LS:179-->before');
+            // console.log('LS:179-->before');
             getUserDefined();
             // .then(() => {
             //     console.log('LS:180-->then');
@@ -100,7 +100,7 @@ const LandingScreen = () => {
             setIsLoading(false);
         }
         if (userProfile?.activeOrg?.status !== 'active') {
-            console.log('LS:102-->NOT ACTIVE');
+            // console.log('LS:102-->NOT ACTIVE');
             setTeamApproved(false);
         } else {
             setTeamApproved(true);

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
     getGroups,
     saveNewGroup,
@@ -47,6 +47,30 @@ const groupsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(updateDefaultGroup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateDefaultGroup.fulfilled, (state, action) => {
+                try {
+                    const index = state.defaultGroups.findIndex(
+                        (group) => group.id === action.payload.id
+                    );
+                    if (index !== -1) {
+                        state.defaultGroups[index] = action.payload;
+                    }
+                } catch (error) {
+                    console.log(
+                        'hiccup while updating defaultGroups in groupSlice'
+                    );
+                    console.log(error);
+                }
+                state.defaultGroups = sortGroups(state.defaultGroups);
+                state.isLoading = false;
+            })
+            .addCase(updateDefaultGroup.rejected, (state, action) => {
+                console.log(action);
+                state.isLoading = false;
+            })
             .addCase(getGroups.pending, (state) => {
                 state.isLoading = true;
             })
@@ -83,26 +107,6 @@ const groupsSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(deleteDefaultGroup.rejected, (state, action) => {
-                console.log(action);
-                state.isLoading = false;
-            })
-            .addCase(updateDefaultGroup.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(updateDefaultGroup.fulfilled, (state, action) => {
-                printObject('GS:73-->action.payload:\n', action.payload);
-                const newGroupValues = state.defaultGroups.map((group) => {
-                    if (group.id === action.payload.id) {
-                        return action.payload;
-                    } else {
-                        return group;
-                    }
-                });
-                printObject('GS:81-->newGroupValues:\n', newGroupValues);
-                state.isLoading = false;
-                // state.groups = action.payload;
-            })
-            .addCase(updateDefaultGroup.rejected, (state, action) => {
                 console.log(action);
                 state.isLoading = false;
             })

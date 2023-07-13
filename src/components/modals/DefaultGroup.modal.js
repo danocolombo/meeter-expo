@@ -25,34 +25,35 @@ export default function DGModalScreen(props) {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
 
-    async function updateExisting(values) {
-        try {
-            const id = values.id;
-            // delete values.id;
-            // values.ID = id;
-            printObject('values:\n', values);
-            const results = await API.graphql({
-                query: mutations.updateDefaultGroup,
-                variables: { input: values },
-            });
-        } catch (error) {
-            printObject('DGm:29-->update catch:\n', error);
-        }
-    }
-    async function addNew(values) {
-        try {
-            const groupDef = {
-                id: null,
-                organizationDefaultGroupsId: userProfile.activeOrg.id,
-            };
-            const newGroup = { ...values, ...groupDef };
-            dispatch(createDefaultGroup({ newGroup: newGroup }));
-            navigation.goBack();
-        } catch (error) {
-            printObject('DGm:54-->update catch:\n', error);
-        }
-    }
+    // async function updateExisting(values) {
+    //     try {
+    //         const id = values.id;
+    //         // delete values.id;
+    //         // values.ID = id;
+    //         printObject('values:\n', values);
+    //         const results = await API.graphql({
+    //             query: mutations.updateDefaultGroup,
+    //             variables: { input: values },
+    //         });
+    //     } catch (error) {
+    //         printObject('DGm:29-->update catch:\n', error);
+    //     }
+    // }
+    // async function addNew(values) {
+    //     try {
+    //         const groupDef = {
+    //             id: null,
+    //             organizationDefaultGroupsId: userProfile.activeOrg.id,
+    //         };
+    //         const newGroup = { ...values, ...groupDef };
+    //         dispatch(createDefaultGroup({ newGroup: newGroup }));
+    //         navigation.goBack();
+    //     } catch (error) {
+    //         printObject('DGm:54-->update catch:\n', error);
+    //     }
+    // }
     const handleUpdate = (values) => {
+        // printObject('DGM:56-->values:\n', values);
         const groupDef = {
             organizationDefaultGroupsId: userProfile.activeOrg.id,
         };

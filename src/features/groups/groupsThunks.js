@@ -21,9 +21,9 @@ export const loadDefaultGroups = createAsyncThunk(
                 systemInfo.data.getOrganization.defaultGroups.items;
             return defaultGroups;
         } catch (error) {
-            printObject('GT:19-->loadDefaultGroups', { status: fail });
+            printObject('GT:24-->loadDefaultGroups', { status: fail });
+            throw new Error('GT:25-->Failed to load default groups');
         }
-        return [];
     }
 );
 export const deleteDefaultGroup = createAsyncThunk(
@@ -41,7 +41,7 @@ export const deleteDefaultGroup = createAsyncThunk(
         } catch (error) {
             printObject('GT:37-->deleteDefaultGroup inputs:\n', inputs);
             printObject('GT:38-->deleteDefaultGroup ERROR:\n', error);
-            return {};
+            throw new Error('GT:44-->Failed to delete default group');
         }
     }
 );
@@ -64,11 +64,11 @@ export const createDefaultGroup = createAsyncThunk(
                 .catch((error) => {
                     console.log(error);
                     console.error(error);
-                    return {};
+                    throw new Error('GT:67-->Failed to create default group');
                 });
         } catch (error) {
-            printObject('GT:55-->createDefaultGroup', inputs.group);
-            return {};
+            printObject('GT:70-->createDefaultGroup', inputs.group);
+            throw new Error('GT:71-->Failed to create default group');
         }
     }
 );
@@ -77,24 +77,27 @@ export const updateDefaultGroup = createAsyncThunk(
     async (inputs, thunkAPI) => {
         try {
             printObject('GT:64-->updateDefaultGroup', inputs.group);
-
-            // API.graphql({
-            //     query: mutations.createAffiliation,
-            //     variables: { input: insertInfo },
-            // })
-            //     .then((results) => {
-            //         console.log('affiliation inserted');
-            //         printObject('AS:135-->results:\n', results);
-            //     })
-            //     .catch((error) => {
-            //         console.log(error);
-            //         console.error(error);
-            //     });
+            const newValues = { ...inputs.group };
+            API.graphql({
+                query: mutations.updateDefaultGroup,
+                variables: { input: newValues },
+            })
+                .then((results) => {
+                    console.log('default group updated');
+                    printObject('GT:87-->results:\n', results);
+                    return newValues;
+                })
+                .catch((error) => {
+                    console.log('GT:91-catch failure');
+                    console.log(error);
+                    console.error(error);
+                    throw new Error('GT:93-->Failed to update group');
+                });
         } catch (error) {
-            printObject('GT:30-->createDefaultGroup', inputs.group);
+            printObject('GT:96-->updateDefaultGroup input:\n', inputs.group);
+            console.log(error);
+            throw new Error('GT:98-->Failed to update default group');
         }
-        printObject('GT:81-->inputs:\n', inputs);
-        return {};
     }
 );
 export const saveNewGroup = createAsyncThunk(

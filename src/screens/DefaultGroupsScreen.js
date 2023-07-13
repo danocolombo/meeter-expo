@@ -42,39 +42,9 @@ const DefaultGroupsScreen = () => {
             return () => subscription.remove();
         }, [])
     );
+
     useEffect(() => {
-        async function compareGroups(a, b) {
-            // Compare by gender
-            if (b.gender !== a.gender) {
-                return b.gender.localeCompare(a.gender);
-            }
-
-            // Compare by title
-            if (a.title !== b.title) {
-                return a.title.localeCompare(b.title);
-            }
-
-            // Compare by location
-            if (a.location !== b.location) {
-                return a.location.localeCompare(b.location);
-            }
-
-            // Compare by facilitator
-            return a.facilitator.localeCompare(b.facilitator);
-        }
-
-        const groups = [...defaultGroups];
-        groups.sort(compareGroups);
-
-        async function updateDisplayGroups() {
-            // Wait for the next tick of the event loop
-            await new Promise((resolve) => setTimeout(resolve, 0));
-
-            setDisplayGroups(groups);
-        }
-
-        updateDisplayGroups();
-        printObject('DGS:47-->groups:\n', displayGroups);
+        setDisplayGroups(defaultGroups);
     }, [defaultGroups]);
 
     const handleDeleteRequest = (value) => {

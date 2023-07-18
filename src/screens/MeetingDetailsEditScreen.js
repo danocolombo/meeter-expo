@@ -17,7 +17,7 @@ import {
     KeyboardAvoidingView,
     ScrollView,
 } from 'react-native';
-import MeetingForm from '../components/MeetingForm';
+import MeetingForm from '../components/MeetingFormRTK';
 import { useSelector, useDispatch } from 'react-redux';
 import { focusManager } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
@@ -77,8 +77,8 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                 'change',
                 onAppStateChange
             );
-            MEETING.refetch();
-            printObject('MDES:79-->REFETCH', null);
+            // MEETING.refetch();
+            // printObject('MDES:79-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])
@@ -307,7 +307,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                             style={{ flex: 1 }}
                         >
                             <MeetingForm
-                                meeting={meeting}
+                                meetingId={meeting.meetingId}
                                 handleUpdate={handleUpdate}
                                 // handleDeleteRequest={() =>
                                 //     setModalDeleteConfirmVisible(true)

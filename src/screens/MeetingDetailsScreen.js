@@ -116,14 +116,14 @@ const MeetingDetails = (props) => {
     }, [navigation, meeter]);
     async function getDefaultGroups() {
         try {
-            printObject('getDefaultGroups:', userProfile.activeOrg.id);
+            // printObject('getDefaultGroups:', userProfile.activeOrg.id);
             const systemInfo = await API.graphql({
                 query: queries.getOrganizationDefaultGroups,
                 variables: { id: userProfile.activeOrg.id },
             });
             const defaultGroups =
                 systemInfo.data.getOrganization.defaultGroups.items;
-            printObject('defaultGroups:\n', defaultGroups);
+            // printObject('defaultGroups:\n', defaultGroups);
             setGroups(defaultGroups);
             setShowDefaultButton(true);
         } catch (error) {
@@ -155,9 +155,9 @@ const MeetingDetails = (props) => {
                 onAppStateChange
             );
             MEETING.refetch();
-            GROUPS.refetch();
+            //GROUPS.refetch();
             getDefaultGroups();
-            printObject('MDS:113-->REFETCH', null);
+            //printObject('MDS:113-->REFETCH', null);
 
             return () => subscription.remove();
         }, [])
@@ -243,6 +243,22 @@ const MeetingDetails = (props) => {
         historic = isDateDashBeforeToday(meeting.meetingDate);
     }
     // printObject('MDS:234-->GROUPS.data:\n', GROUPS?.data);
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator
+                    color={mtrTheme.colors.activityIndicator}
+                    size={80}
+                />
+            </View>
+        );
+    }
     return (
         <>
             <Surface style={styles.surface}>

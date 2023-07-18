@@ -19,7 +19,7 @@ import {
     useFocusEffect,
     useNavigationState,
 } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { Surface, ActivityIndicator, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
@@ -31,13 +31,22 @@ import { focusManager } from '@tanstack/react-query';
 import { current } from '@reduxjs/toolkit';
 import { useSysContext } from '../contexts/SysContext';
 import { useUserContext } from '../contexts/UserContext';
+import {
+    getActiveMeetings,
+    getAllMeetings,
+} from '../features/meetings/meetingsThunks';
 //   FUNCTION START
 //   ===============
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
+    const dispatch = useDispatch();
     const { userProfile } = useUserContext();
     const { meeter } = useSysContext();
+    const activeMeetings = useSelector(
+        (state) => state.meetings.activeMeetings
+    );
+    const [isLoading, setIsLoading] = useState(false);
     const [displayMeetings, setDisplayMeetings] = useState([]);
 
     useLayoutEffect(() => {
@@ -49,33 +58,35 @@ const ActiveScreen = () => {
             title: meeter.appName,
         });
     }, [navigation, meeter]);
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
+
     useFocusEffect(
         useCallback(() => {
-            const subscription = AppState.addEventListener(
-                'change',
-                onAppStateChange
-            );
-            refetch();
-            // printObject('AS:64-->REFETCH', null);
-            return () => subscription.remove();
+            setIsLoading(true);
+            dispatch(getAllMeetings({ code: userProfile.activeOrg.code }))
+                .then(() => {
+                    return dispatch(getActiveMeetings());
+                })
+                .then((action) => {
+                    const results = action.payload;
+                    if (results.length > 0) {
+                        setDisplayMeetings(results);
+                    } else {
+                        setDisplayMeetings([]);
+                    }
+                    setIsLoading(false);
+                })
+                // .then(() => {
+                //     dispatch(listAllMeetings());
+                // })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    setIsLoading(false);
+                });
         }, [])
     );
 
     let meetings = [];
-    const { data, isError, isLoading, isFetching, refetch } = useQuery(
-        ['meetings', 'active'],
-        () => FetchActiveMeetings(userProfile?.activeOrg.code || 'mtr'),
-        {
-            refetchInterval: 60000,
-            cacheTime: 2000,
-            enabled: true,
-        }
-    );
+
     const handleNewRequest = () => {
         navigation.navigate('MeetingNew');
     };
@@ -96,14 +107,8 @@ const ActiveScreen = () => {
             </View>
         );
     }
-    if (isError) {
-        return (
-            <View>
-                <Text>Something went wrong</Text>
-            </View>
-        );
-    }
 
+    printObject('ASRTK:109-->activeMeetings:\n', activeMeetings);
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
@@ -123,11 +128,11 @@ const ActiveScreen = () => {
                         Click event for details!
                     </Text>
                 </View>
-                {meetings && (
+                {displayMeetings && (
                     <>
-                        {meetings && (
+                        {displayMeetings && (
                             <FlatList
-                                data={data.body.Items}
+                                data={displayMeetings}
                                 keyExtractor={(item) => item.meetingId}
                                 renderItem={({ item }) => (
                                     <MeetingListCard

@@ -61,18 +61,18 @@ import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
-import { getGroups } from '../features/groups/groupsThunks';
+import { getGroupsForMeeting } from '../features/groups/groupsThunks';
+import { getMeetingById } from '../features/meetings/meetingsThunks';
 //   FUNCTION START
 //   ==============
 const MeetingDetails = (props) => {
     const meetingId = props.route.params.meetingId;
-    const meetingGroups = useSelector((store) => store.groups.groups);
+
     const mtrTheme = useTheme();
     const { userProfile, perms } = useUserContext();
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
-    const [groups, setGroups] = useState([]);
     const [authority, setAuthority] = useState(
         perms.includes('manage') || perms.includes('groups') || false
     );
@@ -80,8 +80,9 @@ const MeetingDetails = (props) => {
     const navigation = useNavigation();
     const uns = useNavigationState((state) => state);
     let historic = false;
-
-    let meeting = {};
+    const [isLoading, setIsLoading] = useState(false);
+    const [meeting, setMeeting] = useState({});
+    const [meetingGroups, setMeetingGroups] = useState([]);
     const { width, height } = useWindowDimensions();
     // printObject('MDS:80-->userProfile:\n', userProfile);
     useLayoutEffect(() => {
@@ -117,14 +118,14 @@ const MeetingDetails = (props) => {
     }, [navigation, meeter]);
     async function getDefaultGroups() {
         try {
-            printObject('getDefaultGroups:', userProfile.activeOrg.id);
+            // printObject('getDefaultGroups:', userProfile.activeOrg.id);
             const systemInfo = await API.graphql({
                 query: queries.getOrganizationDefaultGroups,
                 variables: { id: userProfile.activeOrg.id },
             });
             const defaultGroups =
                 systemInfo.data.getOrganization.defaultGroups.items;
-            printObject('defaultGroups:\n', defaultGroups);
+            // printObject('defaultGroups:\n', defaultGroups);
             setGroups(defaultGroups);
             setShowDefaultButton(true);
         } catch (error) {
@@ -134,11 +135,11 @@ const MeetingDetails = (props) => {
     }
     async function newGetGroups() {
         try {
-            await dispatch(
-                getGroups({ meetingId: '912b91de1fd5436fee640ddde3c98888' })
-            ).then(() => {
-                console.log('DONE getGroups');
-            });
+            await dispatch(getGroupsForMeeting({ meetingId: meetingId })).then(
+                () => {
+                    // console.log('DONE getGroups');
+                }
+            );
         } catch (error) {
             printObject('DGS:142-->error getGroups');
         }
@@ -150,37 +151,46 @@ const MeetingDetails = (props) => {
     }
     useFocusEffect(
         useCallback(() => {
-            newGetGroups();
-            const subscription = AppState.addEventListener(
-                'change',
-                onAppStateChange
-            );
-            MEETING.refetch();
-            // GROUPS.refetch();
-            getDefaultGroups();
-            printObject('MDS:113-->REFETCH', null);
-
-            return () => subscription.remove();
+            console.log('MFRTK:134-->meetingId:', meetingId);
+            dispatch(getMeetingById(meetingId))
+                .then((mtg) => {
+                    if (mtg.meta.requestStatus === 'fulfilled') {
+                        setMeeting(mtg.payload);
+                        console.log('MFRTK:138:saved');
+                        dispatch(getGroupsForMeeting(meetingId))
+                            .then((response) => {
+                                if (
+                                    response.meta.requestStatus === 'fulfilled'
+                                ) {
+                                    setMeetingGroups(response.payload);
+                                } else {
+                                    console.log('MDST:165-->error');
+                                    setMeetingGroups([]);
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(
+                                    'MDST:167-->getGroupsForMeeting failure:',
+                                    err
+                                );
+                                setIsLoading(false);
+                            });
+                    } else {
+                        printObject(
+                            'MDST:174-->getMeetingById failure:\n',
+                            mtg
+                        );
+                    }
+                    setIsLoading(false);
+                })
+                .catch((err) => {
+                    console.log('MFRTK:135-->getMeetingById failure:', err);
+                    setIsLoading(false);
+                });
+            return;
         }, [])
     );
-    // useEffect(() => {
-    //     console.log('GROUPS REFRESHED');
-    // }, [GROUPS]);
 
-    const MEETING = useQuery(
-        ['mtg', meetingId],
-        () => FetchMeeting(meetingId),
-        {
-            refetchInterval: 60000,
-            cacheTime: 2000,
-            enabled: true,
-        }
-    );
-    // const GROUPS = useQuery(['grps', meetingId], () => FetchGroups(meetingId), {
-    //     refetchInterval: 60000,
-    //     cacheTime: 2000,
-    //     enabled: true,
-    // });
     const handleAddDefaults = async () => {
         console.log('handleAddDefaults');
         // printObject('MDS:160-->meeting:\n', meeting);
@@ -212,12 +222,8 @@ const MeetingDetails = (props) => {
         setShowDefaultButton(false);
     };
     //if (data) {
-    if (MEETING.data) {
-        // printObject('DATA to use:', MEETING.data);
-        meeting = MEETING.data.body;
-    }
 
-    if (MEETING.isLoading) {
+    if (isLoading) {
         return (
             <View
                 style={{
@@ -233,22 +239,16 @@ const MeetingDetails = (props) => {
             </View>
         );
     }
-    if (MEETING.isError) {
-        return (
-            <View>
-                <Text>Something went wrong</Text>
-            </View>
-        );
-    }
-    if (meeting) {
-        historic = isDateDashBeforeToday(meeting.meetingDate);
-    }
-    // printObject('MDS:234-->GROUPS.data:\n', GROUPS?.data);
-    printObject('MDST:247-->meetingGroups:\n', meetingGroups);
+
     return (
         <>
             <Surface style={styles.surface}>
                 {/* <SafeAreaView> */}
+                <View>
+                    <Text style={{ color: 'white' }}>
+                        MeetingDetailsScreenTwo
+                    </Text>
+                </View>
                 <View>
                     <Text style={mtrTheme.screenTitle}>
                         {meeting?.meetingType}
@@ -439,22 +439,24 @@ const MeetingDetails = (props) => {
                         </Text>
                     </View>
                 )}
-                {authority && groups.length > 0 && showDefaultsButton && (
-                    <View
-                        style={{
-                            marginHorizontal: 20,
-                            paddingBottom: 20,
-                        }}
-                    >
-                        <CustomButton
-                            text='Add Default Groups'
-                            bgColor='blue'
-                            fgColor={'white'}
-                            type='STANDARD'
-                            onPress={() => handleAddDefaults()}
-                        />
-                    </View>
-                )}
+                {authority &&
+                    meetingGroups.length > 0 &&
+                    showDefaultsButton && (
+                        <View
+                            style={{
+                                marginHorizontal: 20,
+                                paddingBottom: 20,
+                            }}
+                        >
+                            <CustomButton
+                                text='Add Default Groups'
+                                bgColor='blue'
+                                fgColor={'white'}
+                                type='STANDARD'
+                                onPress={() => handleAddDefaults()}
+                            />
+                        </View>
+                    )}
                 {/* <GroupList meetingId={meetingId} /> */}
                 {/* <View>
                     (GROUPS.data &&

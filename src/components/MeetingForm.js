@@ -46,7 +46,7 @@ import TitleSection from './MeetingForm.titleContact';
 import NumbersSection from './MeetingForm.numbers';
 //   FUNCTION START
 //   ==============
-const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
+const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     // const meeter = useSelector((state) => state.system);
     const { meeter } = useSysContext();
     const { userProfile, perms } = useUserContext();
@@ -155,7 +155,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
             headerBackTitle: 'Cancel',
             headerRight: () => (
                 <>
-                    {meeting.meetingId !== '0' &&
+                    {meetingId !== null &&
                         userProfile.activeOrg.role === 'manage' && (
                             <TouchableOpacity
                                 onPress={() =>
@@ -245,21 +245,12 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
             attendanceCount: parseInt(values.attendanceCount),
             newcomersCount: parseInt(values.newcomersCount),
         };
-
-        // console.log('---------------------------');
-        // printObject('newValues', newValues);
-        // console.log('---------------------------');
-        // return;
-        // mutation.mutate(values);
         handleUpdate(values);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
-    // printObject('MF:58-->meeting:', meeting);
     useEffect(() => {
-        //printObject('MF:218-->values', values);
         let dateObj = dateDashToDateObject(values.meetingDate);
         setDateValue(dateObj);
-        //printObject('MF:220-->dateObj', dateObj);
     }, []);
     const mutation = useMutation({
         mutationFn: (values) => {
@@ -273,7 +264,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
             );
         },
     });
-
+    printObject('MF:267-->meetingId:', meetingId);
     return (
         <>
             <ScrollView>
@@ -365,6 +356,7 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                                     values={values}
                                     setValues={setValues}
                                 />
+
                                 <NumbersSection
                                     values={values}
                                     setValues={setValues}
@@ -462,10 +454,10 @@ const MeetingForm = ({ meeting, handleUpdate, handleDeleteRequest }) => {
                                         mode='date'
                                         date={dateValue}
                                         display='inline'
-                                        style={{
-                                            backgroundColor:
-                                                mtrTheme.colors.background,
-                                        }}
+                                        // style={{
+                                        //     backgroundColor:
+                                        //         mtrTheme.colors.background,
+                                        // }}
                                         dayTextStyle={styles.calendarText}
                                         dateTextStyle={styles.calendarText}
                                         textColor={styles.calendarText}

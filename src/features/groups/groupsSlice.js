@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
-    getGroups,
+    getGroupsForMeeting,
     saveNewGroup,
     loadDefaultGroups,
     createDefaultGroup,
@@ -71,15 +71,15 @@ const groupsSlice = createSlice({
                 console.log(action);
                 state.isLoading = false;
             })
-            .addCase(getGroups.pending, (state) => {
+            .addCase(getGroupsForMeeting.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(getGroups.fulfilled, (state, action) => {
+            .addCase(getGroupsForMeeting.fulfilled, (state, action) => {
                 // printObject('GS:43-->action.payload:\n', action.payload);
                 state.isLoading = false;
                 state.groups = action.payload;
             })
-            .addCase(getGroups.rejected, (state, action) => {
+            .addCase(getGroupsForMeeting.rejected, (state, action) => {
                 console.log(action);
                 state.isLoading = false;
             })

@@ -7,7 +7,10 @@ import { useTheme } from 'react-native-paper';
 const TitleSection = ({ values, setValues }) => {
     const { width } = useWindowDimensions();
     const mtrTheme = useTheme();
-    const { perms } = useUserContext();
+    const { perms, userProfile } = useUserContext();
+    const [isTitleValid, setIsTitleValid] = useState(
+        values?.title?.length > 2 ? true : false
+    );
     const [ViewOnly, setViewOnly] = useState(!perms.includes('manage'));
     function inputChangedHandler(inputIdentifier, enteredValue) {
         // console.log('INPUT CHANGE HANDLER CLICKED');

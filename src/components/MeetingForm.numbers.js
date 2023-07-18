@@ -28,7 +28,7 @@ const NumbersSection = ({ values, setValues }) => {
             };
         });
     }
-    console.log('MFN:31-->perms:\n', perms);
+    // console.log('MFN:31-->perms:\n', perms);
     if (ViewOnly) {
         return (
             <>

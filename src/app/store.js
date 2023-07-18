@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import meetingsReducer from '../features/meetingsSlice';
+import meetingsReducer from '../features/meetings/meetingsSlice';
 import usersReducer from '../features/usersSlice';
 import teamReducer from '../features/team/teamSlice';
 import profilesReducer from '../features/profilesSlice';

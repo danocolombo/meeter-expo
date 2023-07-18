@@ -95,7 +95,6 @@ export const updateDefaultGroup = createAsyncThunk(
         }
     }
 );
-
 export const saveNewGroup = createAsyncThunk(
     'groups/saveNewGroup',
     async (inputs, thunkAPI) => {
@@ -113,8 +112,8 @@ export const saveNewGroup = createAsyncThunk(
         }
     }
 );
-export const getGroups = createAsyncThunk(
-    'groups/getGroups',
+export const getGroupsForMeeting = createAsyncThunk(
+    'groups/getGroupsForMeeting',
     async (inputs, thunkAPI) => {
         try {
             const { meetingId } = inputs;
@@ -133,21 +132,21 @@ export const getGroups = createAsyncThunk(
 
             let body = JSON.stringify(obj);
             let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-            console.log('@@@@@@@@@@@@@@@++++BEFORE++++++@@@@@@@@@@@@@@@@');
-            printObject('GT:30-->api2use:', api2use);
-            printObject('GT:31-->body:\n', body);
-            printObject('GT:32-->config:\n', config);
+            // console.log('@@@@@@@@@@@@@@@++++BEFORE++++++@@@@@@@@@@@@@@@@');
+            // printObject('GT:30-->api2use:', api2use);
+            // printObject('GT:31-->body:\n', body);
+            // printObject('GT:32-->config:\n', config);
             let res = await axios.post(api2use, body, config);
 
             if (res?.data?.status === '200') {
                 const results = res.data.body;
 
-                printObject('GT:39-->results:\n', results);
-                console.log('@@@@@@@@@@@@@@@++++AFTER++++++@@@@@@@@@@@@@@@@');
+                // printObject('GT:39-->results:\n', results);
+                // console.log('@@@@@@@@@@@@@@@++++AFTER++++++@@@@@@@@@@@@@@@@');
                 return results;
             } else {
-                printObject('NOTHING');
-                console.log('@@@@@@@@@@@@@@@++++AFTER++++++@@@@@@@@@@@@@@@@');
+                // printObject('NOTHING');
+                // console.log('@@@@@@@@@@@@@@@++++AFTER++++++@@@@@@@@@@@@@@@@');
                 return [];
             }
         } catch (error) {

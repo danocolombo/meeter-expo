@@ -1,6 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { useTheme } from 'react-native-paper';
+//* -----------------------------------
+//* IOS date display
+//* -----------------------------------
 const DateBall = ({ date }) => {
     const mtrTheme = useTheme();
     if (!date) {

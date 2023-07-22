@@ -46,6 +46,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import TitleSection from './MeetingForm.titleContact';
 import NumbersSection from './MeetingForm.numbers';
 import { getMeetingById } from '../features/meetings/meetingsThunks';
+import { parse } from 'expo-linking';
 //   FUNCTION START
 //   ==============
 const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
@@ -142,10 +143,11 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
                 .then((mtg) => {
                     if (mtg.meta.requestStatus === 'fulfilled') {
                         setMeeting(mtg.payload);
+                        FormatEventDate(mtg.payload.meetingDate);
                         console.log('MFRTK:138:saved');
                     } else {
                         printObject(
-                            'MFRTK:136-->getMeetingById failure\nmtg resposne:\n',
+                            'MFRTK:136-->getMeetingById failure\nmtg response:\n',
                             mtg
                         );
                     }
@@ -279,40 +281,50 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     }, [meeting]);
 
     const FormatEventDate = (data) => {
-        printObject('MF:163-->data', data);
-        let dateString =
-            data.getMonth() +
-            1 +
-            '-' +
-            data.getDate() +
-            '-' +
-            data.getFullYear() +
-            ' ';
-        const yr = parseInt(data.getFullYear());
-        const mo = parseInt(data.getMonth());
-        const da = parseInt(data.getDate());
-        const tmp = new Date(yr, mo, da, 0, 0, 0);
-        printObject('MF:176-->tmp', tmp);
-        // save the date value for control
-        setMeetingDate(tmp);
-        //make string to save in values.
-        let mtgDateString =
-            data.getFullYear() +
-            '-' +
-            ('0' + (data.getMonth() + 1)).slice(-2) +
-            '-' +
-            ('0' + data.getDate()).slice(-2);
-        printObject('MF:186-->mtgDateString', mtgDateString);
-        const newValues = {
-            ...meeting,
-            meetingDate: mtgDateString,
-        };
-        //====================================
-        // set the dateValue object as well.
-        setDateValue(tmp);
-        printObject('MF:194--newValues', newValues);
-        setMeeting(newValues);
-        return;
+        printObject('MFRTK:283-->data', data);
+        try {
+            // let dateString =
+            //     data.getMonth() +
+            //     1 +
+            //     '-' +
+            //     data.getDate() +
+            //     '-' +
+            //     data.getFullYear() +
+            //     ' ';
+            let dateParts = data.split('-');
+
+            // const yr = parseInt(data.getFullYear());
+            // const mo = parseInt(data.getMonth());
+            // const da = parseInt(data.getDate());
+            const yr = parseInt(dateParts[0]);
+            const mo = parseInt(dateParts[1]);
+            const da = parseInt(dateParts[2]);
+            const tmp = new Date(yr, mo, da, 0, 0, 0);
+            printObject('MFRTK:297-->tmp', tmp);
+            // save the date value for control
+            setMeetingDate(tmp);
+            //make string to save in values.
+            let mtgDateString =
+                data.getFullYear() +
+                '-' +
+                ('0' + (data.getMonth() + 1)).slice(-2) +
+                '-' +
+                ('0' + data.getDate()).slice(-2);
+            printObject('MFRTK:307-->mtgDateString', mtgDateString);
+            const newValues = {
+                ...meeting,
+                meetingDate: mtgDateString,
+            };
+            //====================================
+            // set the dateValue object as well.
+            setDateValue(tmp);
+            printObject('MFRTK:315--newValues', newValues);
+            setMeeting(newValues);
+            return;
+        } catch (error) {
+            printObject('MFRTK:319-->error parsing date:\n', error);
+            return;
+        }
     };
     const onMeetingDateConfirm = (data) => {
         FormatEventDate(data);
@@ -388,19 +400,6 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
         <>
             <ScrollView>
                 <>
-                    {/* {mutation.isError ? (
-                            <View>
-                                <Text>
-                                    An error occurred: {mutation.error.message}
-                                </Text>
-                            </View>
-                        ) : null}
-
-                        {mutation.isSuccess ? (
-                            <View>
-                                <Text>Meeting added!</Text>
-                            </View>
-                        ) : null} */}
                     <KeyboardAvoidingView
                         behavior='padding'
                         style={[

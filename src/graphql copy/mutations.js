@@ -1,11 +1,12 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const onCreateDefaultGroup = /* GraphQL */ `
-  subscription OnCreateDefaultGroup(
-    $filter: ModelSubscriptionDefaultGroupFilterInput
+export const createDefaultGroup = /* GraphQL */ `
+  mutation CreateDefaultGroup(
+    $input: CreateDefaultGroupInput!
+    $condition: ModelDefaultGroupConditionInput
   ) {
-    onCreateDefaultGroup(filter: $filter) {
+    createDefaultGroup(input: $input, condition: $condition) {
       id
       title
       gender
@@ -53,11 +54,12 @@ export const onCreateDefaultGroup = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateDefaultGroup = /* GraphQL */ `
-  subscription OnUpdateDefaultGroup(
-    $filter: ModelSubscriptionDefaultGroupFilterInput
+export const updateDefaultGroup = /* GraphQL */ `
+  mutation UpdateDefaultGroup(
+    $input: UpdateDefaultGroupInput!
+    $condition: ModelDefaultGroupConditionInput
   ) {
-    onUpdateDefaultGroup(filter: $filter) {
+    updateDefaultGroup(input: $input, condition: $condition) {
       id
       title
       gender
@@ -105,11 +107,12 @@ export const onUpdateDefaultGroup = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteDefaultGroup = /* GraphQL */ `
-  subscription OnDeleteDefaultGroup(
-    $filter: ModelSubscriptionDefaultGroupFilterInput
+export const deleteDefaultGroup = /* GraphQL */ `
+  mutation DeleteDefaultGroup(
+    $input: DeleteDefaultGroupInput!
+    $condition: ModelDefaultGroupConditionInput
   ) {
-    onDeleteDefaultGroup(filter: $filter) {
+    deleteDefaultGroup(input: $input, condition: $condition) {
       id
       title
       gender
@@ -157,9 +160,12 @@ export const onDeleteDefaultGroup = /* GraphQL */ `
     }
   }
 `;
-export const onCreateUser = /* GraphQL */ `
-  subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
-    onCreateUser(filter: $filter) {
+export const createUser = /* GraphQL */ `
+  mutation CreateUser(
+    $input: CreateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    createUser(input: $input, condition: $condition) {
       id
       sub
       username
@@ -250,9 +256,12 @@ export const onCreateUser = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateUser = /* GraphQL */ `
-  subscription OnUpdateUser($filter: ModelSubscriptionUserFilterInput) {
-    onUpdateUser(filter: $filter) {
+export const updateUser = /* GraphQL */ `
+  mutation UpdateUser(
+    $input: UpdateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    updateUser(input: $input, condition: $condition) {
       id
       sub
       username
@@ -343,9 +352,12 @@ export const onUpdateUser = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteUser = /* GraphQL */ `
-  subscription OnDeleteUser($filter: ModelSubscriptionUserFilterInput) {
-    onDeleteUser(filter: $filter) {
+export const deleteUser = /* GraphQL */ `
+  mutation DeleteUser(
+    $input: DeleteUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    deleteUser(input: $input, condition: $condition) {
       id
       sub
       username
@@ -436,11 +448,12 @@ export const onDeleteUser = /* GraphQL */ `
     }
   }
 `;
-export const onCreateAffiliation = /* GraphQL */ `
-  subscription OnCreateAffiliation(
-    $filter: ModelSubscriptionAffiliationFilterInput
+export const createAffiliation = /* GraphQL */ `
+  mutation CreateAffiliation(
+    $input: CreateAffiliationInput!
+    $condition: ModelAffiliationConditionInput
   ) {
-    onCreateAffiliation(filter: $filter) {
+    createAffiliation(input: $input, condition: $condition) {
       id
       role
       status
@@ -527,11 +540,12 @@ export const onCreateAffiliation = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateAffiliation = /* GraphQL */ `
-  subscription OnUpdateAffiliation(
-    $filter: ModelSubscriptionAffiliationFilterInput
+export const updateAffiliation = /* GraphQL */ `
+  mutation UpdateAffiliation(
+    $input: UpdateAffiliationInput!
+    $condition: ModelAffiliationConditionInput
   ) {
-    onUpdateAffiliation(filter: $filter) {
+    updateAffiliation(input: $input, condition: $condition) {
       id
       role
       status
@@ -618,11 +632,12 @@ export const onUpdateAffiliation = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteAffiliation = /* GraphQL */ `
-  subscription OnDeleteAffiliation(
-    $filter: ModelSubscriptionAffiliationFilterInput
+export const deleteAffiliation = /* GraphQL */ `
+  mutation DeleteAffiliation(
+    $input: DeleteAffiliationInput!
+    $condition: ModelAffiliationConditionInput
   ) {
-    onDeleteAffiliation(filter: $filter) {
+    deleteAffiliation(input: $input, condition: $condition) {
       id
       role
       status
@@ -709,11 +724,12 @@ export const onDeleteAffiliation = /* GraphQL */ `
     }
   }
 `;
-export const onCreateOrganization = /* GraphQL */ `
-  subscription OnCreateOrganization(
-    $filter: ModelSubscriptionOrganizationFilterInput
+export const createOrganization = /* GraphQL */ `
+  mutation CreateOrganization(
+    $input: CreateOrganizationInput!
+    $condition: ModelOrganizationConditionInput
   ) {
-    onCreateOrganization(filter: $filter) {
+    createOrganization(input: $input, condition: $condition) {
       id
       name
       code
@@ -853,11 +869,12 @@ export const onCreateOrganization = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateOrganization = /* GraphQL */ `
-  subscription OnUpdateOrganization(
-    $filter: ModelSubscriptionOrganizationFilterInput
+export const updateOrganization = /* GraphQL */ `
+  mutation UpdateOrganization(
+    $input: UpdateOrganizationInput!
+    $condition: ModelOrganizationConditionInput
   ) {
-    onUpdateOrganization(filter: $filter) {
+    updateOrganization(input: $input, condition: $condition) {
       id
       name
       code
@@ -997,11 +1014,12 @@ export const onUpdateOrganization = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteOrganization = /* GraphQL */ `
-  subscription OnDeleteOrganization(
-    $filter: ModelSubscriptionOrganizationFilterInput
+export const deleteOrganization = /* GraphQL */ `
+  mutation DeleteOrganization(
+    $input: DeleteOrganizationInput!
+    $condition: ModelOrganizationConditionInput
   ) {
-    onDeleteOrganization(filter: $filter) {
+    deleteOrganization(input: $input, condition: $condition) {
       id
       name
       code
@@ -1141,9 +1159,12 @@ export const onDeleteOrganization = /* GraphQL */ `
     }
   }
 `;
-export const onCreateLocation = /* GraphQL */ `
-  subscription OnCreateLocation($filter: ModelSubscriptionLocationFilterInput) {
-    onCreateLocation(filter: $filter) {
+export const createLocation = /* GraphQL */ `
+  mutation CreateLocation(
+    $input: CreateLocationInput!
+    $condition: ModelLocationConditionInput
+  ) {
+    createLocation(input: $input, condition: $condition) {
       id
       street
       city
@@ -1185,9 +1206,12 @@ export const onCreateLocation = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateLocation = /* GraphQL */ `
-  subscription OnUpdateLocation($filter: ModelSubscriptionLocationFilterInput) {
-    onUpdateLocation(filter: $filter) {
+export const updateLocation = /* GraphQL */ `
+  mutation UpdateLocation(
+    $input: UpdateLocationInput!
+    $condition: ModelLocationConditionInput
+  ) {
+    updateLocation(input: $input, condition: $condition) {
       id
       street
       city
@@ -1229,9 +1253,12 @@ export const onUpdateLocation = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteLocation = /* GraphQL */ `
-  subscription OnDeleteLocation($filter: ModelSubscriptionLocationFilterInput) {
-    onDeleteLocation(filter: $filter) {
+export const deleteLocation = /* GraphQL */ `
+  mutation DeleteLocation(
+    $input: DeleteLocationInput!
+    $condition: ModelLocationConditionInput
+  ) {
+    deleteLocation(input: $input, condition: $condition) {
       id
       street
       city
@@ -1273,9 +1300,12 @@ export const onDeleteLocation = /* GraphQL */ `
     }
   }
 `;
-export const onCreateSystem = /* GraphQL */ `
-  subscription OnCreateSystem($filter: ModelSubscriptionSystemFilterInput) {
-    onCreateSystem(filter: $filter) {
+export const createSystem = /* GraphQL */ `
+  mutation CreateSystem(
+    $input: CreateSystemInput!
+    $condition: ModelSystemConditionInput
+  ) {
+    createSystem(input: $input, condition: $condition) {
       id
       appName
       android_version
@@ -1288,9 +1318,12 @@ export const onCreateSystem = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateSystem = /* GraphQL */ `
-  subscription OnUpdateSystem($filter: ModelSubscriptionSystemFilterInput) {
-    onUpdateSystem(filter: $filter) {
+export const updateSystem = /* GraphQL */ `
+  mutation UpdateSystem(
+    $input: UpdateSystemInput!
+    $condition: ModelSystemConditionInput
+  ) {
+    updateSystem(input: $input, condition: $condition) {
       id
       appName
       android_version
@@ -1303,9 +1336,12 @@ export const onUpdateSystem = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteSystem = /* GraphQL */ `
-  subscription OnDeleteSystem($filter: ModelSubscriptionSystemFilterInput) {
-    onDeleteSystem(filter: $filter) {
+export const deleteSystem = /* GraphQL */ `
+  mutation DeleteSystem(
+    $input: DeleteSystemInput!
+    $condition: ModelSystemConditionInput
+  ) {
+    deleteSystem(input: $input, condition: $condition) {
       id
       appName
       android_version
@@ -1318,9 +1354,12 @@ export const onDeleteSystem = /* GraphQL */ `
     }
   }
 `;
-export const onCreateMeeting = /* GraphQL */ `
-  subscription OnCreateMeeting($filter: ModelSubscriptionMeetingFilterInput) {
-    onCreateMeeting(filter: $filter) {
+export const createMeeting = /* GraphQL */ `
+  mutation CreateMeeting(
+    $input: CreateMeetingInput!
+    $condition: ModelMeetingConditionInput
+  ) {
+    createMeeting(input: $input, condition: $condition) {
       id
       meetingDate
       title
@@ -1415,9 +1454,12 @@ export const onCreateMeeting = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateMeeting = /* GraphQL */ `
-  subscription OnUpdateMeeting($filter: ModelSubscriptionMeetingFilterInput) {
-    onUpdateMeeting(filter: $filter) {
+export const updateMeeting = /* GraphQL */ `
+  mutation UpdateMeeting(
+    $input: UpdateMeetingInput!
+    $condition: ModelMeetingConditionInput
+  ) {
+    updateMeeting(input: $input, condition: $condition) {
       id
       meetingDate
       title
@@ -1512,9 +1554,12 @@ export const onUpdateMeeting = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteMeeting = /* GraphQL */ `
-  subscription OnDeleteMeeting($filter: ModelSubscriptionMeetingFilterInput) {
-    onDeleteMeeting(filter: $filter) {
+export const deleteMeeting = /* GraphQL */ `
+  mutation DeleteMeeting(
+    $input: DeleteMeetingInput!
+    $condition: ModelMeetingConditionInput
+  ) {
+    deleteMeeting(input: $input, condition: $condition) {
       id
       meetingDate
       title
@@ -1609,9 +1654,12 @@ export const onDeleteMeeting = /* GraphQL */ `
     }
   }
 `;
-export const onCreateGroup = /* GraphQL */ `
-  subscription OnCreateGroup($filter: ModelSubscriptionGroupFilterInput) {
-    onCreateGroup(filter: $filter) {
+export const createGroup = /* GraphQL */ `
+  mutation CreateGroup(
+    $input: CreateGroupInput!
+    $condition: ModelGroupConditionInput
+  ) {
+    createGroup(input: $input, condition: $condition) {
       id
       meeting {
         id
@@ -1715,9 +1763,12 @@ export const onCreateGroup = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateGroup = /* GraphQL */ `
-  subscription OnUpdateGroup($filter: ModelSubscriptionGroupFilterInput) {
-    onUpdateGroup(filter: $filter) {
+export const updateGroup = /* GraphQL */ `
+  mutation UpdateGroup(
+    $input: UpdateGroupInput!
+    $condition: ModelGroupConditionInput
+  ) {
+    updateGroup(input: $input, condition: $condition) {
       id
       meeting {
         id
@@ -1821,9 +1872,12 @@ export const onUpdateGroup = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteGroup = /* GraphQL */ `
-  subscription OnDeleteGroup($filter: ModelSubscriptionGroupFilterInput) {
-    onDeleteGroup(filter: $filter) {
+export const deleteGroup = /* GraphQL */ `
+  mutation DeleteGroup(
+    $input: DeleteGroupInput!
+    $condition: ModelGroupConditionInput
+  ) {
+    deleteGroup(input: $input, condition: $condition) {
       id
       meeting {
         id
@@ -1927,11 +1981,12 @@ export const onDeleteGroup = /* GraphQL */ `
     }
   }
 `;
-export const onCreateMeetingTwo = /* GraphQL */ `
-  subscription OnCreateMeetingTwo(
-    $filter: ModelSubscriptionMeetingTwoFilterInput
+export const createMeetingTwo = /* GraphQL */ `
+  mutation CreateMeetingTwo(
+    $input: CreateMeetingTwoInput!
+    $condition: ModelMeetingTwoConditionInput
   ) {
-    onCreateMeetingTwo(filter: $filter) {
+    createMeetingTwo(input: $input, condition: $condition) {
       id
       meetingDate
       title
@@ -1942,11 +1997,12 @@ export const onCreateMeetingTwo = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateMeetingTwo = /* GraphQL */ `
-  subscription OnUpdateMeetingTwo(
-    $filter: ModelSubscriptionMeetingTwoFilterInput
+export const updateMeetingTwo = /* GraphQL */ `
+  mutation UpdateMeetingTwo(
+    $input: UpdateMeetingTwoInput!
+    $condition: ModelMeetingTwoConditionInput
   ) {
-    onUpdateMeetingTwo(filter: $filter) {
+    updateMeetingTwo(input: $input, condition: $condition) {
       id
       meetingDate
       title
@@ -1957,11 +2013,12 @@ export const onUpdateMeetingTwo = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteMeetingTwo = /* GraphQL */ `
-  subscription OnDeleteMeetingTwo(
-    $filter: ModelSubscriptionMeetingTwoFilterInput
+export const deleteMeetingTwo = /* GraphQL */ `
+  mutation DeleteMeetingTwo(
+    $input: DeleteMeetingTwoInput!
+    $condition: ModelMeetingTwoConditionInput
   ) {
-    onDeleteMeetingTwo(filter: $filter) {
+    deleteMeetingTwo(input: $input, condition: $condition) {
       id
       meetingDate
       title
@@ -1972,50 +2029,57 @@ export const onDeleteMeetingTwo = /* GraphQL */ `
     }
   }
 `;
-export const onCreateTodo = /* GraphQL */ `
-  subscription OnCreateTodo($filter: ModelSubscriptionTodoFilterInput) {
-    onCreateTodo(filter: $filter) {
-      id
-      title
-      actionDate
-      status
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateTodo = /* GraphQL */ `
-  subscription OnUpdateTodo($filter: ModelSubscriptionTodoFilterInput) {
-    onUpdateTodo(filter: $filter) {
-      id
-      title
-      actionDate
-      status
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteTodo = /* GraphQL */ `
-  subscription OnDeleteTodo($filter: ModelSubscriptionTodoFilterInput) {
-    onDeleteTodo(filter: $filter) {
-      id
-      title
-      actionDate
-      status
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateManageOrganization = /* GraphQL */ `
-  subscription OnCreateManageOrganization(
-    $filter: ModelSubscriptionManageOrganizationFilterInput
+export const createTodo = /* GraphQL */ `
+  mutation CreateTodo(
+    $input: CreateTodoInput!
+    $condition: ModelTodoConditionInput
   ) {
-    onCreateManageOrganization(filter: $filter) {
+    createTodo(input: $input, condition: $condition) {
+      id
+      title
+      actionDate
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateTodo = /* GraphQL */ `
+  mutation UpdateTodo(
+    $input: UpdateTodoInput!
+    $condition: ModelTodoConditionInput
+  ) {
+    updateTodo(input: $input, condition: $condition) {
+      id
+      title
+      actionDate
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteTodo = /* GraphQL */ `
+  mutation DeleteTodo(
+    $input: DeleteTodoInput!
+    $condition: ModelTodoConditionInput
+  ) {
+    deleteTodo(input: $input, condition: $condition) {
+      id
+      title
+      actionDate
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createManageOrganization = /* GraphQL */ `
+  mutation CreateManageOrganization(
+    $input: CreateManageOrganizationInput!
+    $condition: ModelManageOrganizationConditionInput
+  ) {
+    createManageOrganization(input: $input, condition: $condition) {
       id
       userId
       organizationId
@@ -2100,11 +2164,12 @@ export const onCreateManageOrganization = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateManageOrganization = /* GraphQL */ `
-  subscription OnUpdateManageOrganization(
-    $filter: ModelSubscriptionManageOrganizationFilterInput
+export const updateManageOrganization = /* GraphQL */ `
+  mutation UpdateManageOrganization(
+    $input: UpdateManageOrganizationInput!
+    $condition: ModelManageOrganizationConditionInput
   ) {
-    onUpdateManageOrganization(filter: $filter) {
+    updateManageOrganization(input: $input, condition: $condition) {
       id
       userId
       organizationId
@@ -2189,11 +2254,12 @@ export const onUpdateManageOrganization = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteManageOrganization = /* GraphQL */ `
-  subscription OnDeleteManageOrganization(
-    $filter: ModelSubscriptionManageOrganizationFilterInput
+export const deleteManageOrganization = /* GraphQL */ `
+  mutation DeleteManageOrganization(
+    $input: DeleteManageOrganizationInput!
+    $condition: ModelManageOrganizationConditionInput
   ) {
-    onDeleteManageOrganization(filter: $filter) {
+    deleteManageOrganization(input: $input, condition: $condition) {
       id
       userId
       organizationId

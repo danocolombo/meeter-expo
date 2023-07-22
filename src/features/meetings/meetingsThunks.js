@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { API } from 'aws-amplify';
 import * as queries from '../../jerichoQL/queries';
+import * as gQueries from '../../graphql/queries';
 import * as mutations from '../../jerichoQL/mutations';
 import { createAWSUniqueID, printObject } from '../../utils/helpers';
 const config = {
@@ -13,6 +14,37 @@ export const getSpecificMeeting = createAsyncThunk(
     'meetings/getSpecificMeeting',
     async (meetingId, thunkAPI) => {
         return meetingId;
+    }
+);
+export const getAllMeetingsG = createAsyncThunk(
+    'meetings/getAllMeetings',
+    async (inputs, thunkAPI) => {
+        console.log('MT:22-->inputs:', inputs);
+        try {
+            const oId = inputs.orgId;
+            const meetingList = await API.graphql({
+                query: queries.listMeetings,
+                variables: {
+                    filter: {
+                        organizationMeetingsId: {
+                            eq: 'c9d00915-fc0c-4f0e-ac23-d75acd1b80e2',
+                        },
+                    },
+                },
+            });
+            // printObject('meetingList:\n', meetingList);
+            // console.log('found:', meetingList.data.listMeetings.items.length);
+            const returnValue = {
+                status: '200',
+                meetings: meetingList?.data?.listMeetings?.items || [],
+            };
+            // printObject(meetingList.data.listMeetings.items[0]);
+            return returnValue;
+        } catch (error) {
+            printObject('MT:29-->getAllMeetingsG', { status: fail });
+            throw new Error('MT:30-->Failed to getAllMeetingsG');
+        }
+        return [];
     }
 );
 export const getAllMeetings = createAsyncThunk(
@@ -56,6 +88,7 @@ export const getAllMeetings = createAsyncThunk(
         return [];
     }
 );
+
 export const getActiveMeetings = createAsyncThunk(
     'meetings/getActiveMeetings',
     async (input, { getState, rejectWithValue }) => {

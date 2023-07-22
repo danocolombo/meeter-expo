@@ -34,6 +34,7 @@ import { useUserContext } from '../contexts/UserContext';
 import {
     getActiveMeetings,
     getAllMeetings,
+    getAllMeetingsG,
 } from '../features/meetings/meetingsThunks';
 //   FUNCTION START
 //   ===============
@@ -62,7 +63,8 @@ const ActiveScreen = () => {
     useFocusEffect(
         useCallback(() => {
             setIsLoading(true);
-            dispatch(getAllMeetings({ code: userProfile.activeOrg.code }))
+            // dispatch(getAllMeetings({ code: userProfile.activeOrg.code }))
+            dispatch(getAllMeetingsG({ orgId: userProfile.activeOrg.id }))
                 .then(() => {
                     return dispatch(getActiveMeetings());
                 })
@@ -108,7 +110,7 @@ const ActiveScreen = () => {
         );
     }
 
-    printObject('ASRTK:109-->activeMeetings:\n', activeMeetings);
+    // printObject('ASRTK:109-->activeMeetings:\n', activeMeetings);
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
@@ -133,7 +135,7 @@ const ActiveScreen = () => {
                         {displayMeetings && (
                             <FlatList
                                 data={displayMeetings}
-                                keyExtractor={(item) => item.meetingId}
+                                keyExtractor={(item) => item.id}
                                 renderItem={({ item }) => (
                                     <MeetingListCard
                                         meeting={item}

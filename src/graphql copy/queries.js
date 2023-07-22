@@ -1033,7 +1033,6 @@ export const getTodo = /* GraphQL */ `
       id
       title
       actionDate
-      status
       type
       createdAt
       updatedAt
@@ -1051,7 +1050,6 @@ export const listTodos = /* GraphQL */ `
         id
         title
         actionDate
-        status
         type
         createdAt
         updatedAt
@@ -1376,7 +1374,6 @@ export const todosByDate = /* GraphQL */ `
         id
         title
         actionDate
-        status
         type
         createdAt
         updatedAt

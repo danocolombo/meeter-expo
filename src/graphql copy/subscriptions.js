@@ -1978,7 +1978,6 @@ export const onCreateTodo = /* GraphQL */ `
       id
       title
       actionDate
-      status
       type
       createdAt
       updatedAt
@@ -1991,7 +1990,6 @@ export const onUpdateTodo = /* GraphQL */ `
       id
       title
       actionDate
-      status
       type
       createdAt
       updatedAt
@@ -2004,7 +2002,6 @@ export const onDeleteTodo = /* GraphQL */ `
       id
       title
       actionDate
-      status
       type
       createdAt
       updatedAt

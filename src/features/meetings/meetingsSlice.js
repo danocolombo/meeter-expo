@@ -223,16 +223,16 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(getAllMeetings.fulfilled, (state, action) => {
-                printObject(
-                    'MS:227-->getAllMeetings.FULFILLED:action.payload:\n',
-                    action.payload.Items
-                );
+                // printObject(
+                //     'MS:227-->getAllMeetings.FULFILLED:action.payload:\n',
+                //     action.payload
+                // );
                 try {
                     if (action.payload.status === '200') {
-                        state.meetings = [...action.payload.body.Items];
-                        action.payload.body.Items.map((m) => {
-                            console.log('date:', m.meetingDate);
-                        });
+                        state.meetings = [...action.payload.meetings];
+                        // action.payload.body.Items.map((m) => {
+                        //     console.log('date:', m.meetingDate);
+                        // });
                     } else {
                         state.meetings = [];
                     }

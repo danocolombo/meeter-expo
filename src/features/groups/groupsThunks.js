@@ -95,23 +95,54 @@ export const updateDefaultGroup = createAsyncThunk(
         }
     }
 );
-export const saveNewGroup = createAsyncThunk(
-    'groups/saveNewGroup',
-    async (inputs, thunkAPI) => {
-        try {
-            const { meetingId } = inputs;
-            //* * * * * * * * * * * * * * * * * * *
-            //* This function adds the group to the
-            //* slice....
-            //* * * * * * * * * * * * * * * * * * *
-            // printObject('GT:18-->inputs:\n', inputs);
-            return inputs;
-        } catch (error) {
-            console.log(error);
-            throw new Error('GT:20-->Failed to get groups');
-        }
-    }
-);
+// export const saveNewGroup = createAsyncThunk(
+//     'groups/saveNewGroup',
+//     async (inputs, thunkAPI) => {
+//         try {
+//             const newGroupId = createAWSUniqueID();
+//             let groupIn = { ...inputs.group };
+//             delete groupIn.id;
+//             const insertInfo = {
+//                 id: inputs.group.id !== '0' ? inputs.group.id : newGroupId,
+//                 meetingGroupsId: inputs.meetingId,
+//                 organizationGroupsId: inputs.orgId,
+//                 ...groupIn,
+//             };
+//             printObject('GT:111-->insertInfo:\n', insertInfo);
+//             //* * * * * * * * * * * * * * * * * *
+//             //* save the new group to graphql
+//             const results = await API.graphql({
+//                 query: mutations.createGroup,
+//                 variables: { input: insertInfo },
+//             });
+//             printObject('GT:118-->createGroup results:\n', results);
+//             let returnValue {};
+//             if(results.data.createGroup.id){
+//                 returnValue = {
+//                     status 200,
+//                     results: results.data.createGroup
+//                 }
+//             }
+//                     //* * * * * * * * * * * * * * * * * * *
+//                     //* This sends group to slice
+//                     //* * * * * * * * * * * * * * * * * * *
+//                     printObject('GT:122-->createGroup results:\n', results);
+//                     return insertInfo;
+//                 })
+//                 .catch((error) => {
+//                     console.log(error);
+//                     console.error(error);
+//                     throw new Error('GT:122-->Failed to create new group');
+//                 });
+
+//             // printObject('GT:18-->inputs:\n', inputs);
+//             // return inputs;
+//         } catch (error) {
+//             console.log(error);
+//             throw new Error('GT:20-->Failed to get groups');
+//         }
+//     }
+// );
 export const getGroupsForMeeting = createAsyncThunk(
     'groups/getGroupsForMeeting',
     async (inputs, thunkAPI) => {

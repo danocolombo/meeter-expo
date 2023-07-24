@@ -136,21 +136,21 @@ const groupsSlice = createSlice({
             .addCase(createDefaultGroup.rejected, (state, action) => {
                 console.log(action);
                 state.isLoading = false;
-            })
-            .addCase(saveNewGroup.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(saveNewGroup.fulfilled, (state, action) => {
-                // printObject('TS:43-->action.payload:\n', action.payload);
-                const updatedGroups = [...state.groups, action.payload];
-
-                state.isLoading = false;
-                state.groups = sortGroups(updatedGroups);
-            })
-            .addCase(saveNewGroup.rejected, (state, action) => {
-                console.log(action);
-                state.isLoading = false;
             });
+        // .addCase(saveNewGroup.pending, (state) => {
+        //     state.isLoading = true;
+        // })
+        // .addCase(saveNewGroup.fulfilled, (state, action) => {
+        //     // printObject('TS:43-->action.payload:\n', action.payload);
+        //     const updatedGroups = [...state.groups, action.payload];
+
+        //     state.isLoading = false;
+        //     state.groups = sortGroups(updatedGroups);
+        // })
+        // .addCase(saveNewGroup.rejected, (state, action) => {
+        //     console.log(action);
+        //     state.isLoading = false;
+        // });
     },
 });
 

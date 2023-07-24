@@ -417,7 +417,7 @@ const MeetingDetails = (props) => {
                                     key={0}
                                     onPress={() =>
                                         navigation.navigate('GroupNew', {
-                                            meeting,
+                                            meetingId: meetingId,
                                         })
                                     }
                                     style={({ pressed }) =>

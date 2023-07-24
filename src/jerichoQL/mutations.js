@@ -210,6 +210,115 @@ export const createUser = /* GraphQL */ `
         }
     }
 `;
+export const createGroup = /* GraphQL */ `
+    mutation CreateGroup(
+        $input: CreateGroupInput!
+        $condition: ModelGroupConditionInput
+    ) {
+        createGroup(input: $input, condition: $condition) {
+            id
+            meeting {
+                id
+                meetingDate
+                title
+                meetingType
+                mtgCompKey
+                organization {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                groups {
+                    nextToken
+                }
+                announcementsContact
+                attendanceCount
+                avContact
+                cafeContact
+                cafeCount
+                childrenContact
+                childrenCount
+                cleanupContact
+                closingContact
+                donations
+                facilitatorContact
+                greeterContact1
+                greeterContact2
+                meal
+                mealContact
+                mealCount
+                newcomersCount
+                notes
+                nurseryContact
+                nurseryCount
+                resourceContact
+                securityContact
+                setupContact
+                supportContact
+                transportationContact
+                transportationCount
+                worship
+                youthContact
+                youthCount
+                createdAt
+                updatedAt
+                organizationMeetingsId
+            }
+            organization {
+                id
+                name
+                code
+                location {
+                    id
+                    street
+                    city
+                    stateProv
+                    postalCode
+                    createdAt
+                    updatedAt
+                }
+                affiliations {
+                    nextToken
+                }
+                defaultUsers {
+                    nextToken
+                }
+                heroMessage
+                meetings {
+                    nextToken
+                }
+                groups {
+                    nextToken
+                }
+                defaultGroups {
+                    nextToken
+                }
+                managers {
+                    nextToken
+                }
+                createdAt
+                updatedAt
+                locationOrganizationsId
+            }
+            grpCompKey
+            title
+            location
+            gender
+            attendance
+            facilitator
+            cofacilitator
+            notes
+            createdAt
+            updatedAt
+            organizationGroupsId
+            meetingGroupsId
+        }
+    }
+`;
 export const updateUser = /* GraphQL */ `
     mutation UpdateUser(
         $input: UpdateUserInput!
@@ -1036,6 +1145,75 @@ export const deleteSystem = /* GraphQL */ `
             logoPicture
             createdAt
             updatedAt
+        }
+    }
+`;
+export const updateMeeting = /* GraphQL */ `
+    mutation UpdateMeeting(
+        $input: UpdateMeetingInput!
+        $condition: ModelMeetingConditionInput
+    ) {
+        updateMeeting(input: $input, condition: $condition) {
+            id
+            meetingDate
+            title
+            meetingType
+            mtgCompKey
+            organization {
+                id
+                name
+                code
+            }
+            groups {
+                items {
+                    id
+                    grpCompKey
+                    title
+                    location
+                    gender
+                    attendance
+                    facilitator
+                    cofacilitator
+                    notes
+                    createdAt
+                    updatedAt
+                    organizationGroupsId
+                    meetingGroupsId
+                }
+                nextToken
+            }
+            announcementsContact
+            attendanceCount
+            avContact
+            cafeContact
+            cafeCount
+            childrenContact
+            childrenCount
+            cleanupContact
+            closingContact
+            donations
+            facilitatorContact
+            greeterContact1
+            greeterContact2
+            meal
+            mealContact
+            mealCount
+            newcomersCount
+            notes
+            nurseryContact
+            nurseryCount
+            resourceContact
+            securityContact
+            setupContact
+            supportContact
+            transportationContact
+            transportationCount
+            worship
+            youthContact
+            youthCount
+            createdAt
+            updatedAt
+            organizationMeetingsId
         }
     }
 `;

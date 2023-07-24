@@ -10,8 +10,10 @@ import {
 import {
     getSpecificMeeting,
     getAllMeetings,
+    updateMeeting,
     getActiveMeetings,
     addMeeting,
+    addGroup,
 } from './meetingsThunks';
 import { deleteMeetingFromDDB } from '../../providers/meetings';
 import { useUserContext } from '../../contexts/UserContext';
@@ -51,47 +53,32 @@ export const meetingsSlice = createSlice({
             return state;
         },
 
-        updateMeeting: (state, action) => {
-            // this update could be in either the historic or the active.
-            // probability is that it is in historic, do that first
-            // let historic = false;
-            console.log('I-1');
-            const newValue = action.payload;
-            console.log('I-2');
-            //stort with historic
-            let newMeetingList = [];
-            newMeetingList = state.meetings.map((m) => {
-                console.log('I-3');
-                if (m.meetingId === newValue.meetingId) {
-                    return newValue;
-                } else {
-                    return m;
-                }
-            });
-            console.log('I-4');
-            function asc_sort(a, b) {
-                return a.meetingDate - b.meetingDate;
-            }
-            console.log('I-5');
-            let newBigger = newMeetingList.sort(asc_sort);
-            console.log('I-6');
-            state.meetings = newBigger;
-            console.log('I-7');
-            return state;
-        },
-        // addMeeting: (state, action) => {
+        // updateMeeting: (state, action) => {
+        //     // this update could be in either the historic or the active.
+        //     // probability is that it is in historic, do that first
+        //     // let historic = false;
+        //     console.log('I-1');
         //     const newValue = action.payload;
-        //     printObject('MS:118-->', newValue);
-        //     let meetings = state.meetings;
-        //     meetings.push(newValue);
+        //     console.log('I-2');
+        //     //stort with historic
+        //     let newMeetingList = [];
+        //     newMeetingList = state.meetings.map((m) => {
+        //         console.log('I-3');
+        //         if (m.meetingId === newValue.meetingId) {
+        //             return newValue;
+        //         } else {
+        //             return m;
+        //         }
+        //     });
+        //     console.log('I-4');
         //     function asc_sort(a, b) {
-        //         return (
-        //             new Date(a.meetingDate).getTime() -
-        //             new Date(b.meetingDate).getTime()
-        //         );
+        //         return a.meetingDate - b.meetingDate;
         //     }
-        //     let newBigger = meetings.sort(asc_sort);
+        //     console.log('I-5');
+        //     let newBigger = newMeetingList.sort(asc_sort);
+        //     console.log('I-6');
         //     state.meetings = newBigger;
+        //     console.log('I-7');
         //     return state;
         // },
 
@@ -206,7 +193,7 @@ export const meetingsSlice = createSlice({
                     action.payload
                 );
                 const mtg = state.meetings.filter(
-                    (m) => m.meetingId === action.payload
+                    (m) => m.id === action.payload
                 );
                 printObject('MS:203==>mtg:\n', mtg);
                 state.specificMeeting = { ...mtg };
@@ -248,12 +235,60 @@ export const meetingsSlice = createSlice({
                 );
                 state.isLoading = false;
             })
+            .addCase(addGroup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(addGroup.fulfilled, (state, action) => {
+                const grp = { ...action.payload };
+                const newGroup = {
+                    id: grp.id,
+                    grpCompKey: grp.grpCompKey,
+                    title: grp.title,
+                    location: grp.location,
+                    gender: grp.gender,
+                    attendance: grp.attendance,
+                    facilitator: grp.facilitator,
+                    cofacilitator: grp.cofacilitator,
+                    notes: grp.notes,
+                    organizationGroupsId: grp.organizationGroupsId,
+                    meetingGroupsId: grp.meetingGroupsId,
+                };
+                // Find the meeting in state.meetings that matches the provided meetingGroupsId
+                const mtg = state.meetings.find(
+                    (m) => m.id === grp.meetingGroupsId
+                );
+                if (mtg) {
+                    // If the meeting is found, create a new array of groups and add the newGroup to it
+                    const newGroups = [...mtg.groups.items, newGroup];
+                    const groupItems = { items: newGroups };
+                    // Create a new meeting object with updated groups array
+                    const updatedMtg = {
+                        ...mtg,
+                        groups: groupItems,
+                    };
+                    // Create a new array of meetings with the updated meeting object
+                    const newMeetingList = state.meetings.map((m) =>
+                        m.id === updatedMtg.id ? updatedMtg : m
+                    );
+
+                    // Update the state with the new meetings list
+                    state.meetings = newMeetingList;
+                }
+                state.isLoading = false;
+            })
+            .addCase(addGroup.rejected, (state, action) => {
+                printObject(
+                    '<MS:267></MS:267>-->REJECTED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
+            })
             .addCase(addMeeting.pending, (state) => {
                 state.isLoading = true;
             })
             .addCase(addMeeting.fulfilled, (state, action) => {
                 printObject(
-                    'MS:253-->addMeeting.FULFILLED:action.payload:\n',
+                    'MS:277-->addMeeting.FULFILLED:action.payload:\n',
                     action.payload
                 );
                 const updatedMeetings = [...state.meetings, action.payload];
@@ -263,7 +298,47 @@ export const meetingsSlice = createSlice({
             })
             .addCase(addMeeting.rejected, (state, action) => {
                 printObject(
-                    'MS:269-->REJECTED:action.payload:\n',
+                    'MS:287-->REJECTED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
+            })
+            .addCase(updateMeeting.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateMeeting.fulfilled, (state, action) => {
+                printObject(
+                    'MS:326-->updateMeeting.FULFILLED:action.payload:\n',
+                    action.payload
+                );
+                //* * * * * * * * * * * * * * * * * * * * *
+                //* this should get a meeting that
+                //* needs to be replaced in state.meetings
+                //* * * * * * * * * * * * * * * * * * * * *
+                if (action.payload) {
+                    try {
+                        const updatedMeeting = { ...action.payload };
+                        const newMeetingList = state.meetings.map((m) => {
+                            if (m.id === updatedMeeting.id) {
+                                return updatedMeeting;
+                            } else {
+                                return m;
+                            }
+                        });
+                        state.meetings = [...newMeetingList];
+                    } catch (error) {
+                        printObject(
+                            'MS:345-->error updating meeting:\n',
+                            error
+                        );
+                    }
+                }
+
+                state.isLoading = false;
+            })
+            .addCase(updateMeeting.rejected, (state, action) => {
+                printObject(
+                    'MS:336-->REJECTED:action.payload:\n',
                     action.payload
                 );
                 state.isLoading = false;
@@ -277,10 +352,6 @@ export const {
     loadHistoricMeetings,
     loadMeetings,
     getMeetings,
-    //getMeeting,
-    // addNewMeeting,
-    // addMeeting,
-    updateMeeting,
     deleteAMeeting,
     createTmp,
     updateTmp,

@@ -10,7 +10,7 @@ import { printObject, isDateDashBeforeToday } from '../utils/helpers';
 import GroupListCard from '../components/Group.List.Card';
 import { focusManager } from '@tanstack/react-query';
 import { FetchGroupsForMeeting } from './common/hooks/groupQueries';
-const GroupList = ({ meetingId }) => {
+const GroupList = ({ id }) => {
     const isFocused = useIsFocused();
     //const meetingId = groups[0]?.meetingId ? groups[0].meetingId : '';
     const mtrTheme = useTheme();

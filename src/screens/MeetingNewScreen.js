@@ -12,7 +12,11 @@ import { Surface, useTheme } from 'react-native-paper';
 import { useUserContext } from '../contexts/UserContext';
 import MeetingForm from '../components/MeetingFormRTK';
 import { addMeeting } from '../features/meetings/meetingsThunks';
-import { isDateDashBeforeToday, printObject } from '../utils/helpers';
+import {
+    createAWSUniqueID,
+    isDateDashBeforeToday,
+    printObject,
+} from '../utils/helpers';
 import { addMeetingDDB } from '../providers/meetings';
 //   FUNCTION START
 //   ================
@@ -24,27 +28,13 @@ const MeetingNewScreen = ({ route }) => {
     const meeter = useSelector((state) => state.system);
 
     const handleUpdate = (values) => {
-        dispatch(addMeeting(values));
+        const newId = createAWSUniqueID();
+        const submitValues = {
+            meeting: { id: newId, ...values },
+            orgId: userProfile.activeOrg.id,
+        };
+        dispatch(addMeeting(submitValues));
         navigate.goBack();
-        // addMeetingDDB(values)
-        //     .then((res) => {
-        //         printObject('MNS:77-->addMeetingDDB res:', res);
-        //         //dispatch(addMeeting(res));
-        //         // console.log('dispatch(updateMeeting) returned');
-
-        //         if (isDateDashBeforeToday(values.meetingDate)) {
-        //             navigation.navigate('HistoricMeetings');
-        //         } else {
-        //             navigation.navigate('ActiveMeetings');
-        //         }
-        //         return;
-        //     })
-        //     .catch((err) => {
-        //         printObject('addMeeting provider failed:', err);
-        //         console.warn('addMeeting provider failed');
-
-        //         return;
-        //     });
     };
 
     return (

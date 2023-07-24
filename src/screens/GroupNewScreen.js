@@ -31,7 +31,7 @@ import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { PutGroup } from '../components/common/hooks/groupQueries';
-import { saveNewGroup } from '../features/groups/groupsThunks';
+import { addGroup } from '../features/meetings/meetingsThunks';
 import GenderSelectors from '../components/GenderSelectors';
 import NumberInput from '../components/ui/NumberInput';
 import { useUserContext } from '../contexts/UserContext';
@@ -57,8 +57,8 @@ import GroupForm from '../components/GroupForm';
 //   ================
 const GroupNewScreen = ({ route }) => {
     const meeting = route.params.meeting;
-    // printObject('GNS:59-->meeting', meeting);
-    const meetingId = meeting.meetingId;
+    printObject('GNS:59-->meeting', meeting);
+    const meetingId = meeting.id;
     const navigation = useNavigation();
     const { userProfile } = useUserContext();
     let group = {};
@@ -75,14 +75,14 @@ const GroupNewScreen = ({ route }) => {
     const compKey =
         userProfile?.activeOrg.code.toLowerCase() +
         '#' +
-        meeting.meetingDate.slice(0, 4) +
+        meeting?.meetingDate?.slice(0, 4) +
         '#' +
-        meeting.meetingDate.slice(5, 7) +
+        meeting?.meetingDate?.slice(5, 7) +
         '#' +
-        meeting.meetingDate.slice(8, 10);
+        meeting?.meetingDate?.slice(8, 10);
     const [values, setValues] = useState({
         meetingId: meetingId,
-        groupId: '0',
+        id: '0',
         gender: 'x',
         title: '',
         attendance: 0,
@@ -156,8 +156,16 @@ const GroupNewScreen = ({ route }) => {
     //     },
     // });
     const handleFormSubmit = () => {
-        // printObject('GNS:173-->values', values);
-        dispatch(saveNewGroup(values));
+        console.log('GNS:159-->handleFormSubmit--->values\n', values);
+        printObject('GNS:160-->route.params.meeting:\n', route.params);
+        dispatch(
+            addGroup({
+                group: values,
+                meetingId: meeting.id,
+                orgId: userProfile.activeOrg.id,
+            })
+        );
+        // dispatch(saveNewGroup(values));
         // mutation.mutate(values);
         navigation.goBack();
     };
@@ -194,7 +202,7 @@ const GroupNewScreen = ({ route }) => {
     return (
         <>
             <View>
-                <Text>Group added!</Text>
+                <Text>GroupNewScreen</Text>
             </View>
             <Surface style={mtrTheme.groupEditSurface}>
                 <View>

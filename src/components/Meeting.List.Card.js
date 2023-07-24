@@ -8,13 +8,14 @@ import DateStack from './ui/DateStack';
 import { printObject } from '../utils/helpers';
 const MeetingListCard = ({ meeting, active }) => {
     const navigation = useNavigation();
+    printObject('MLC:11-->meeting:\n', meeting);
     const mtrTheme = useTheme();
     //printObject('mtrTheme:', mtrTheme);
     function meetingPressHandler() {
         // if the user is registered, take them to registerForm
 
         navigation.navigate('MeetingDetails', {
-            meetingId: meeting.meetingId,
+            id: meeting.id,
         });
     }
     return (

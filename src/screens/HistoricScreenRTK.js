@@ -95,7 +95,7 @@ const HistoricScreen = (props) => {
                         {displayMeetings && (
                             <FlatList
                                 data={displayMeetings}
-                                keyExtractor={(item) => item.meetingId}
+                                keyExtractor={(item) => item.id}
                                 renderItem={({ item }) => (
                                     <MeetingListCard
                                         meeting={item}

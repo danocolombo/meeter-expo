@@ -19,11 +19,12 @@ import { printObject } from '../utils/helpers';
 //   ===============
 const GroupDetailsScreen = ({ route, navigation }) => {
     let group = route.params.group;
-    let groupId = group?.groupId;
+    let groupId = group?.id;
     const { perms } = useUserContext();
     const meeting = route.params.meeting;
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
+    const [isLoading, setIsLoading] = useState(false);
     const [authority, setAuthority] = useState(
         perms.includes('manage') || perms.includes('manage') || false
     );
@@ -41,8 +42,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                         onPress={() =>
                             navigation.navigate('GroupEdit', {
                                 group: group,
-                                meeting,
-                                meeting,
+                                meeting: meeting,
                             })
                         }
                         // color='red'
@@ -53,37 +53,37 @@ const GroupDetailsScreen = ({ route, navigation }) => {
             });
         }
     }, [navigation, meeter]);
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
-    useFocusEffect(
-        useCallback(() => {
-            const subscription = AppState.addEventListener(
-                'change',
-                onAppStateChange
-            );
-            refetch();
-            printObject('GDS:64-->REFETCH', null);
+    // function onAppStateChange(status) {
+    //     if (Platform.OS !== 'web') {
+    //         focusManager.setFocused(status === 'active');
+    //     }
+    // }
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         const subscription = AppState.addEventListener(
+    //             'change',
+    //             onAppStateChange
+    //         );
+    //         refetch();
+    //         printObject('GDS:64-->REFETCH', null);
 
-            return () => subscription.remove();
-        }, [])
-    );
+    //         return () => subscription.remove();
+    //     }, [])
+    // );
 
-    const { data, isError, error, isLoading, isFetching, refetch } = useQuery(
-        ['group', groupId],
-        () => FetchGroup(groupId),
-        {
-            refetchInterval: 60000,
-            cacheTime: 2000,
-            enabled: true,
-        }
-    );
+    // const { data, isError, error, isLoading, isFetching, refetch } = useQuery(
+    //     ['group', groupId],
+    //     () => FetchGroup(groupId),
+    //     {
+    //         refetchInterval: 60000,
+    //         cacheTime: 2000,
+    //         enabled: true,
+    //     }
+    // );
 
-    if (data) {
-        group = data.body;
-    }
+    // if (data) {
+    //     group = data.body;
+    // }
     if (isLoading) {
         return (
             <View
@@ -100,9 +100,9 @@ const GroupDetailsScreen = ({ route, navigation }) => {
             </View>
         );
     }
-    if (isError) {
-        console.error('Error getting group', error);
-    }
+    // if (isError) {
+    //     console.error('Error getting group', error);
+    // }
     return (
         <>
             <View style={{ flex: 1 }}>

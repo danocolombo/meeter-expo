@@ -36,7 +36,7 @@ const GroupForm = ({ group, meeting, handleUpdate }) => {
             headerBackTitle: 'Cancel',
             headerRight: () => (
                 <>
-                    {meeting.meetingId !== '0' && (
+                    {meeting.id !== '0' && (
                         <TouchableOpacity
                             onPress={() =>
                                 navigation.navigate('DeleteGroupConfirm', {
@@ -91,7 +91,8 @@ const GroupForm = ({ group, meeting, handleUpdate }) => {
         //todo--- gather values
 
         //todo--- pass them up
-        handleUpdate(values);
+        console.log('GF:94--> handleFormSubmit\n', values);
+        // handleUpdate(values);
     };
     return (
         <>

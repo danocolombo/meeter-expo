@@ -66,8 +66,8 @@ import { getMeetingById } from '../features/meetings/meetingsThunks';
 //   FUNCTION START
 //   ==============
 const MeetingDetails = (props) => {
-    const meetingId = props.route.params.meetingId;
-
+    const id = props.route.params.id;
+    printObject('MDST:70-->props:\n', id);
     const mtrTheme = useTheme();
     const { userProfile, perms } = useUserContext();
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
@@ -77,6 +77,7 @@ const MeetingDetails = (props) => {
         perms.includes('manage') || perms.includes('groups') || false
     );
     const meeter = useSelector((state) => state.system);
+    const meetings = useSelector((state) => state.meetings.meetings);
     const navigation = useNavigation();
     const uns = useNavigationState((state) => state);
     let historic = false;
@@ -85,6 +86,35 @@ const MeetingDetails = (props) => {
     const [meetingGroups, setMeetingGroups] = useState([]);
     const { width, height } = useWindowDimensions();
     // printObject('MDS:80-->userProfile:\n', userProfile);
+    const fetchMeetingData = useCallback(() => {
+        dispatch(getMeetingById(id))
+            .then((mtg) => {
+                printObject('MDST:156______mtg:\n', mtg);
+
+                if (mtg.meta.requestStatus === 'fulfilled') {
+                    setMeeting(mtg.payload);
+                } else {
+                    printObject('MDST:97-->getMeetingById failure:\n', mtg);
+                }
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                console.log('MFRTK:102-->getMeetingById failure:', err);
+                setIsLoading(false);
+            });
+    }, [dispatch, id]);
+    useFocusEffect(fetchMeetingData); // Trigger on screen focus
+
+    useEffect(() => {
+        // Trigger on component mount (onLoad)
+        fetchMeetingData();
+    }, []); // Empty dependency array means this effect runs only on mount
+
+    useEffect(() => {
+        // Trigger when the "meetings" value refreshes
+        fetchMeetingData();
+    }, [meetings]); // Add "meetings" to the dependency array
+
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
@@ -100,7 +130,7 @@ const MeetingDetails = (props) => {
                     <Button
                         onPress={() =>
                             navigation.navigate('MeetingEdit', {
-                                meetingId: meetingId,
+                                id: id,
                             })
                         }
                         // color='red'
@@ -151,30 +181,12 @@ const MeetingDetails = (props) => {
     }
     useFocusEffect(
         useCallback(() => {
-            console.log('MFRTK:134-->meetingId:', meetingId);
-            dispatch(getMeetingById(meetingId))
+            dispatch(getMeetingById(id))
                 .then((mtg) => {
+                    printObject('MDST:156______mtg:\n', mtg);
+
                     if (mtg.meta.requestStatus === 'fulfilled') {
                         setMeeting(mtg.payload);
-                        console.log('MFRTK:138:saved');
-                        dispatch(getGroupsForMeeting(meetingId))
-                            .then((response) => {
-                                if (
-                                    response.meta.requestStatus === 'fulfilled'
-                                ) {
-                                    setMeetingGroups(response.payload);
-                                } else {
-                                    console.log('MDST:165-->error');
-                                    setMeetingGroups([]);
-                                }
-                            })
-                            .catch((err) => {
-                                console.log(
-                                    'MDST:167-->getGroupsForMeeting failure:',
-                                    err
-                                );
-                                setIsLoading(false);
-                            });
                     } else {
                         printObject(
                             'MDST:174-->getMeetingById failure:\n',
@@ -239,7 +251,7 @@ const MeetingDetails = (props) => {
             </View>
         );
     }
-
+    printObject('MDST:240-->meeting:\n', meeting);
     return (
         <>
             <Surface style={styles.surface}>
@@ -420,11 +432,11 @@ const MeetingDetails = (props) => {
                         )}
                     </View>
                 </View>
-                {meetingGroups ? (
+                {meeting?.groups?.items ? (
                     <>
                         <FlatList
-                            data={meetingGroups}
-                            keyExtractor={(item) => item.groupId}
+                            data={meeting.groups.items}
+                            keyExtractor={(item) => item.id}
                             persistentScrollbar={true}
                             renderItem={({ item }) => (
                                 <GroupListCard group={item} meeting={meeting} />
@@ -440,7 +452,7 @@ const MeetingDetails = (props) => {
                     </View>
                 )}
                 {authority &&
-                    meetingGroups.length > 0 &&
+                    meeting?.groups?.items?.length > 0 &&
                     showDefaultsButton && (
                         <View
                             style={{
@@ -457,21 +469,6 @@ const MeetingDetails = (props) => {
                             />
                         </View>
                     )}
-                {/* <GroupList meetingId={meetingId} /> */}
-                {/* <View>
-                    (GROUPS.data &&
-                    <FlatList
-                        data={GROUPS.data.body}
-                        keyExtractor={(item) => item.groupId}
-                        persistentScrollbar={true}
-                        renderItem={({ item }) => (
-                            <GroupListCard group={item} meeting={meeting} />
-                        )}
-                        ListFooterComponent={<></>}
-                    />
-                    }
-                </View> */}
-                {/* </SafeAreaView> */}
             </Surface>
         </>
     );

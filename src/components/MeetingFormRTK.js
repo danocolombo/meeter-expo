@@ -39,6 +39,7 @@ import {
     dateNumToDateDash,
     todayMinus60,
     dateDashToDateObject,
+    createAWSUniqueID,
 } from '../utils/helpers';
 import { useMutation } from '@tanstack/react-query';
 import TypeSelectors from './TypeSelectors';
@@ -51,6 +52,8 @@ import { parse } from 'expo-linking';
 //   ==============
 const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     // const meeter = useSelector((state) => state.system);
+    console.log('MFRTK:54-->meetingId:', meetingId);
+    const id = meetingId || createAWSUniqueID();
     const { meeter } = useSysContext();
     const { userProfile, perms } = useUserContext();
     const { width } = useWindowDimensions();
@@ -70,7 +73,7 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
         perms.includes('manage') || false
     );
     const [meetingDate, setMeetingDate] = useState();
-    const [dateValue, setDateValue] = useState();
+    const [dateValue, setDateValue] = useState(new Date());
     const meetingTypeRef = useRef(meeting?.meetingType);
     const [isTitleValid, setIsTitleValid] = useState(
         meeting?.title?.length > 2 ? true : false
@@ -144,7 +147,7 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
                     if (mtg.meta.requestStatus === 'fulfilled') {
                         setMeeting(mtg.payload);
                         FormatEventDate(mtg.payload.meetingDate);
-                        console.log('MFRTK:138:saved');
+                        console.log('MFRTK:147:saved');
                     } else {
                         printObject(
                             'MFRTK:136-->getMeetingById failure\nmtg response:\n',
@@ -302,24 +305,24 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
             const tmp = new Date(yr, mo, da, 0, 0, 0);
             printObject('MFRTK:297-->tmp', tmp);
             // save the date value for control
-            setMeetingDate(tmp);
+            setDateValue(tmp);
             //make string to save in values.
-            let mtgDateString =
-                data.getFullYear() +
-                '-' +
-                ('0' + (data.getMonth() + 1)).slice(-2) +
-                '-' +
-                ('0' + data.getDate()).slice(-2);
-            printObject('MFRTK:307-->mtgDateString', mtgDateString);
-            const newValues = {
-                ...meeting,
-                meetingDate: mtgDateString,
-            };
+            // let mtgDateString =
+            //     data.getFullYear() +
+            //     '-' +
+            //     ('0' + (data.getMonth() + 1)).slice(-2) +
+            //     '-' +
+            //     ('0' + data.getDate()).slice(-2);
+            // printObject('MFRTK:307-->mtgDateString', mtgDateString);
+            // const newValues = {
+            //     ...meeting,
+            //     meetingDate: mtgDateString,
+            // };
             //====================================
             // set the dateValue object as well.
-            setDateValue(tmp);
-            printObject('MFRTK:315--newValues', newValues);
-            setMeeting(newValues);
+            // setDateValue(tmp);
+            // printObject('MFRTK:315--newValues', newValues);
+            // setMeeting(newValues);
             return;
         } catch (error) {
             printObject('MFRTK:319-->error parsing date:\n', error);
@@ -362,6 +365,7 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     useEffect(() => {
+        console.log('MFRTK:368-->convert');
         let dateObj = dateDashToDateObject(meeting.meetingDate);
         setDateValue(dateObj);
     }, []);
@@ -377,9 +381,13 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     //         );
     //     },
     // });
-    printObject('MFRTK:298-->meeting:', meeting);
-    console.log('MFRTK:352-->isTitleValid:', isTitleValid);
-    console.log('MFRTK:353-->isSupportContactValid:', isSupportContactValid);
+    printObject('MFRTK:381-->meeting:', meeting);
+    console.log('MFRTK:382-->isTitleValid:', isTitleValid);
+    console.log('MFRTK:383-->isSupportContactValid:', isSupportContactValid);
+    console.log('MFRTK:384-->dateValue:', dateValue);
+    if (dateValue === null) {
+        setDateValue(new Date());
+    }
     if (isLoading) {
         return (
             <View

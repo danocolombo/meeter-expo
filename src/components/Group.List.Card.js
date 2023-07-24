@@ -10,7 +10,7 @@ const GroupListCard = ({ group, meeting }) => {
     const mtrTheme = useTheme();
     function groupPressHandler() {
         // if the user is registered, take them to registerForm
-
+        console.log('GLC:13-->groupPressHandler, back to GroupDetails');
         navigation.navigate('GroupDetails', {
             group: group,
             meeting: meeting,
@@ -23,15 +23,6 @@ const GroupListCard = ({ group, meeting }) => {
                 onPress={groupPressHandler}
                 style={({ pressed }) => pressed && styles.pressed}
             >
-                {/* <Surface
-                    style={{
-                        backgroundColor: 'white',
-                        width: '80%',
-                        marginVertical: 5,
-                        borderRadius: 5,
-                        paddingVertical: 10,
-                    }}
-                > */}
                 <View style={styles.rootContainer}>
                     <View style={{ marginHorizontal: 20 }}>
                         <View
@@ -125,7 +116,6 @@ const GroupListCard = ({ group, meeting }) => {
                         </View>
                     </View>
                 </View>
-                {/* </Surface> */}
             </Pressable>
         </>
     );

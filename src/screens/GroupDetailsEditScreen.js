@@ -75,28 +75,28 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
             headerBackTitle: 'Cancel',
         });
     }, [navigation, group]);
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
+    // function onAppStateChange(status) {
+    //     if (Platform.OS !== 'web') {
+    //         focusManager.setFocused(status === 'active');
+    //     }
+    // }
 
     const handleUpdate = (values) => {
-        // printObject('GDS:86:', values);
-        upsertGroupToDDB(values)
-            .then((response) => {
-                // printObject('GDES:87-->response:', response);
-                if (response.status === 200) {
-                    // GOOD TO GO, GO BACK TO MEETING DETAILS
-                    navigation.navigate('MeetingDetails', meeting);
-                } else {
-                    Alert.alert('Error handling your request');
-                    return;
-                }
-            })
-            .catch((e) => {
-                console.log('upsertGroupToDDB unexpected error:', e);
-            });
+        printObject('GDS:86:', values);
+        // upsertGroupToDDB(values)
+        //     .then((response) => {
+        //         // printObject('GDES:87-->response:', response);
+        //         if (response.status === 200) {
+        //             // GOOD TO GO, GO BACK TO MEETING DETAILS
+        //             navigation.navigate('MeetingDetails', meeting);
+        //         } else {
+        //             Alert.alert('Error handling your request');
+        //             return;
+        //         }
+        //     })
+        //     .catch((e) => {
+        //         console.log('upsertGroupToDDB unexpected error:', e);
+        //     });
     };
 
     const inputStyle = {
@@ -107,43 +107,24 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
         marginHorizontal: 10,
     };
     const handleDeleteConfirmClick = () => {
-        //setIsLoading(true);
-        setTimeout(function () {
-            setModalDeleteConfirmVisible(false);
-            dispatch(deleteIndividualGroup(values.groupId));
+        setIsLoading(true);
+        // setTimeout(function () {
+        //     setModalDeleteConfirmVisible(false);
+        //     dispatch(deleteIndividualGroup(values.groupId));
 
-            console.log('handleDeleteConfirmClick complete.');
-            navigation.navigate('MeetingDetails', {
-                meetingId: meeting.meetingId,
-            });
-            // navigation.goBack();
-            // navigation.dispatch(
-            //     StackActions.push('AuthenticatedDrawer', {
-            //         screen: 'Meetings',
-            //     })
-            // );
-        }, 10);
+        //     console.log('handleDeleteConfirmClick complete.');
+        //     navigation.navigate('MeetingDetails', {
+        //         meetingId: meeting.meetingId,
+        //     });
+        //     // navigation.goBack();
+        //     // navigation.dispatch(
+        //     //     StackActions.push('AuthenticatedDrawer', {
+        //     //         screen: 'Meetings',
+        //     //     })
+        //     // );
+        // }, 10);
     };
 
-    // if (isLoading) {
-    //     return (
-    //         <View
-    //             style={{
-    //                 flex: 1,
-    //                 alignItems: 'center',
-    //                 justifyContent: 'center',
-    //             }}
-    //         >
-    //             <ActivityIndicator
-    //                 color={mtrTheme.colors.activityIndicator}
-    //                 size={80}
-    //             />
-    //         </View>
-    //     );
-    // }
-    // if (isError) {
-    //     console.error('Error getting group', error);
-    // }
     return (
         <>
             <Modal visible={modalDeleteConfirmVisible} animationStyle='slide'>

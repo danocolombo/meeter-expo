@@ -83,7 +83,7 @@ const ActiveList = ({ clientId }) => {
                     {meetings && (
                         <FlatList
                             data={data.body.Items}
-                            keyExtractor={(item) => item.meetingId}
+                            keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
                                 <MeetingListCard meeting={item} active={true} />
                             )}

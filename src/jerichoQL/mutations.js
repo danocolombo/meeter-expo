@@ -473,6 +473,72 @@ export const deleteUser = /* GraphQL */ `
         }
     }
 `;
+export const createMeeting = /* GraphQL */ `
+    mutation CreateMeeting(
+        $input: CreateMeetingInput!
+        $condition: ModelMeetingConditionInput
+    ) {
+        createMeeting(input: $input, condition: $condition) {
+            id
+            meetingDate
+            title
+            meetingType
+            mtgCompKey
+            organization {
+                id
+                name
+                code
+            }
+            groups {
+                items {
+                    id
+                    grpCompKey
+                    title
+                    location
+                    gender
+                    attendance
+                    facilitator
+                    cofacilitator
+                    notes
+                    organizationGroupsId
+                    meetingGroupsId
+                }
+            }
+            announcementsContact
+            attendanceCount
+            avContact
+            cafeContact
+            cafeCount
+            childrenContact
+            childrenCount
+            cleanupContact
+            closingContact
+            donations
+            facilitatorContact
+            greeterContact1
+            greeterContact2
+            meal
+            mealContact
+            mealCount
+            newcomersCount
+            notes
+            nurseryContact
+            nurseryCount
+            resourceContact
+            securityContact
+            setupContact
+            supportContact
+            transportationContact
+            transportationCount
+            worship
+            youthContact
+            youthCount
+            createdAt
+            updatedAt
+            organizationMeetingsId
+        }
+    }
+`;
 export const createAffiliation = /* GraphQL */ `
     mutation CreateAffiliation(
         $input: CreateAffiliationInput!

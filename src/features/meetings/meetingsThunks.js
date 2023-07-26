@@ -15,7 +15,7 @@ export const getSpecificMeeting = createAsyncThunk(
 export const getAllMeetingsG = createAsyncThunk(
     'meetings/getAllMeetings',
     async (inputs, thunkAPI) => {
-        console.log('MT:22-->inputs:', inputs);
+        console.log('MT:18-->inputs:', inputs);
         try {
             const oId = inputs.orgId;
             const meetingList = await API.graphql({
@@ -28,7 +28,7 @@ export const getAllMeetingsG = createAsyncThunk(
                     },
                 },
             });
-            printObject('meetingList:\n', meetingList);
+            // printObject('meetingList:\n', meetingList);
             // console.log('found:', meetingList.data.listMeetings.items.length);
             const returnValue = {
                 status: '200',
@@ -173,20 +173,32 @@ export const getMeetingById = createAsyncThunk(
 export const addMeeting = createAsyncThunk(
     'meetings/addMeeting',
     async (inputs, thunkAPI) => {
-        let mtg = { ...inputs.meeting, organizationMeetingsId: inputs.orgId };
-        printObject('MT:176-->mtg:\n', mtg);
-        // Use await with the GraphQL call to get the results
-        const results = await API.graphql({
-            query: mutations.createMeeting,
-            variables: { input: inputInfo },
-        });
+        try {
+            // printObject('MT:176-->inputs:\n', inputs);
+            let mtg = {
+                ...inputs.meeting,
+                organizationMeetingsId: inputs.orgId,
+            };
+            // printObject('MT:178-->mtg:\n', mtg);
+            // delete mtg.meetingId;
+            // delete mtg.clientId;
 
-        // Check if the result contains the expected data and return it
-        if (results.data.createMeeting.id) {
-            return inputInfo;
-        } else {
-            // If data.createGroup.id is missing, handle the error
-            throw new Error('MT:189-->Failed to create meeting');
+            // Use await with the GraphQL call to get the results
+            const results = await API.graphql({
+                query: mutations.createMeeting,
+                variables: { input: mtg },
+            });
+            // printObject('MT:184-->results:\n', results);
+            // Check if the result contains the expected data and return it
+            if (results.data.createMeeting.id) {
+                return mtg;
+            } else {
+                // If data.createGroup.id is missing, handle the error
+                throw new Error('MT:189-->Failed to create meeting');
+            }
+        } catch (error) {
+            printObject('MT:198-->addMeeting thunk try failure.\n', error);
+            throw new Error('MT:199-->Failed to create meeting');
         }
     }
 );

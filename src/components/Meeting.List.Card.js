@@ -1,15 +1,21 @@
 import { StyleSheet, Text, View, Pressable, Platform } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme, withTheme, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 // import MeetingCardDate from './ui/Meeting.Card.Date';
+import * as Localization from 'expo-localization';
+import { TimeZone } from 'expo-localization';
 import DateBall from './ui/DateBall';
 import DateStack from './ui/DateStack';
 import { printObject } from '../utils/helpers';
 const MeetingListCard = ({ meeting, active }) => {
     const navigation = useNavigation();
-    printObject('MLC:11-->meeting:\n', meeting);
+    const userTimeZone = Localization.timezone;
+    // printObject('MLC:11-->meeting:\n', meeting);
     const mtrTheme = useTheme();
+    const [dateValue, setDateValue] = useState(
+        meeting.meetingDate ? new Date(meeting.meetingDate) : new Date()
+    );
     //printObject('mtrTheme:', mtrTheme);
     function meetingPressHandler() {
         // if the user is registered, take them to registerForm
@@ -18,6 +24,9 @@ const MeetingListCard = ({ meeting, active }) => {
             id: meeting.id,
         });
     }
+    const formattedDate = dateValue.toLocaleDateString('en-US', {
+        timeZone: userTimeZone,
+    });
     return (
         <>
             <View style={styles.rootContainer}>

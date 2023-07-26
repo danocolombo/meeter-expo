@@ -12,10 +12,14 @@ import {
     Modal,
 } from 'react-native';
 import Input from './ui/Input';
+import { newMeetingTemplate } from '../constants/meeter';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 // import * as Application from 'expo-application';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CurrencyInput from 'react-native-currency-input';
+import * as Localization from 'expo-localization';
+import { TimeZone } from 'expo-localization';
+
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -52,8 +56,10 @@ import { parse } from 'expo-linking';
 //   ==============
 const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     // const meeter = useSelector((state) => state.system);
-    console.log('MFRTK:54-->meetingId:', meetingId);
+    // console.log('MFRTK:54-->meetingId:', meetingId);
+    console.log('FORM RELOAD');
     const id = meetingId || createAWSUniqueID();
+    const navigation = useNavigation();
     const { meeter } = useSysContext();
     const { userProfile, perms } = useUserContext();
     const { width } = useWindowDimensions();
@@ -72,92 +78,43 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     const [authority, setAuthority] = useState(
         perms.includes('manage') || false
     );
+    const userTimeZone = Localization.timezone;
+
     const [meetingDate, setMeetingDate] = useState();
-    const [dateValue, setDateValue] = useState(new Date());
+    const [dateValue, setDateValue] = useState(
+        meeting.meetingDate ? new Date(meeting.meetingDate) : new Date()
+    );
+
+    const [dateString, setDateString] = useState();
     const meetingTypeRef = useRef(meeting?.meetingType);
+    const historic = isDateDashBeforeToday(meeting.meetingDate);
     const [isTitleValid, setIsTitleValid] = useState(
         meeting?.title?.length > 2 ? true : false
     );
     const [isSupportContactValid, setIsSupportContactValid] = useState(
         meeting?.supportContact?.length > 2 ? true : false
     );
-    // const [values, setValues] = useState({
-    //     childrenCount: meeting?.childrenCount ? meeting.childrenCount : 0,
-    //     transportationContact: meeting?.transportationContact
-    //         ? meeting.transportationContact
-    //         : '',
-    //     mealCount: meeting?.mealCount ? meeting.mealCount : 0,
-    //     meal: meeting?.meal ? meeting.meal : '',
-    //     greeterContact2: meeting?.greeterContact2
-    //         ? meeting.greeterContact2
-    //         : '',
-    //     nurseryCount: meeting?.nurseryCount ? meeting.nurseryCount : 0,
-    //     greeterContact1: meeting?.greeterContact1
-    //         ? meeting.greeterContact1
-    //         : '',
-    //     securityContact: meeting?.securityContact
-    //         ? meeting.securityContact
-    //         : '',
-    //     announcementsContact: meeting?.announcementsContact
-    //         ? meeting.announcementsContact
-    //         : '',
-    //     attendanceCount: meeting?.attendanceCount ? meeting.attendanceCount : 0,
-    //     meetingId: meeting?.meetingId ? meeting.meetingId : meetingId,
-    //     mealContact: meeting?.mealContact ? meeting.mealContact : '',
-    //     closingContact: meeting?.closingContact ? meeting.closingContact : '',
-    //     notes: meeting?.notes ? meeting.notes : '',
-    //     cafeCount: meeting?.cafeCount ? meeting.cafeCount : 0,
-    //     youthCount: meeting?.youthCount ? meeting.youthCount : 0,
-    //     cafeContact: meeting?.cafeContact ? meeting.cafeContact : '',
-    //     setupContact: meeting?.setupContact ? meeting.setupContact : '',
-    //     meetingDate: meeting?.meetingDate ? meeting.meetingDate : null,
-    //     clientId: meeting?.clientId
-    //         ? meeting.clientId
-    //         : userProfile?.activeOrg?.organization?.code,
-    //     donations: meeting?.donations ? meeting.donations : 0,
-    //     youthContact: meeting?.youthContact ? meeting.youthContact : '',
-    //     nurseryContact: meeting?.nurseryContact ? meeting.nurseryContact : '',
-    //     cleanupContact: meeting?.cleanupContact ? meeting.cleanupContact : '',
-    //     resourceContact: meeting?.resourceContact
-    //         ? meeting.resourceContact
-    //         : '',
-    //     childrenContact: meeting?.childrenContact
-    //         ? meeting.childrenContact
-    //         : '',
-    //     newcomersCount: meeting?.newcomersCount ? meeting.newcomersCount : 0,
-    //     mtgCompKey: meeting?.mtgCompKey ? meeting.mtgCompKey : '',
-    //     facilitatorContact: meeting?.facilitatorContact
-    //         ? meeting.facilitatorContact
-    //         : '',
-    //     transportationCount: meeting?.transportationCount
-    //         ? meeting.transportationContact
-    //         : 0,
-    //     worship: meeting?.worship ? meeting.worship : '',
-    //     avContact: meeting?.avContact ? meeting.avContact : '',
-    //     supportContact: meeting?.supportContact ? meeting.supportContact : '',
-    //     meetingType: meeting?.meetingType ? meeting.meetingType : '',
-    //     title: meeting?.title ? meeting.title : '',
-    // });
+
     useEffect(() => {
         if (meetingId) {
             setIsLoading(true);
-            console.log('MFRTK:134-->meetingId:', meetingId);
+            console.log('MFRTK:100-->meetingId:', meetingId);
             dispatch(getMeetingById(meetingId))
                 .then((mtg) => {
                     if (mtg.meta.requestStatus === 'fulfilled') {
                         setMeeting(mtg.payload);
-                        FormatEventDate(mtg.payload.meetingDate);
-                        console.log('MFRTK:147:saved');
+                        // FormatEventDate(mtg.payload.meetingDate);
+                        console.log('MFRTK:106:saved');
                     } else {
                         printObject(
-                            'MFRTK:136-->getMeetingById failure\nmtg response:\n',
+                            'MFRTK:109-->getMeetingById failure\nmtg response:\n',
                             mtg
                         );
                     }
                     setIsLoading(false);
                 })
                 .catch((err) => {
-                    console.log('MFRTK:135-->getMeetingById failure:', err);
+                    console.log('MFRTK:116-->getMeetingById failure:', err);
                     setIsLoading(false);
                 });
         } else {
@@ -170,51 +127,28 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
             const compKey = `${org.toLowerCase()}#${todayParts[0]}#${
                 todayParts[1]
             }#${todayParts[2]}`;
+            //      use newMeetingTemplate
             const newMtg = {
-                childrenCount: 0,
-                transportationContact: '',
-                mealCount: 0,
-                meal: '',
-                greeterContact2: '',
-                nurseryCount: 0,
-                greeterContact1: '',
-                securityContact: '',
-                announcementsContact: '',
-                attendanceCount: 0,
-                meetingId: '',
-                mealContact: '',
-                closingContact: '',
-                notes: '',
-                cafeCount: 0,
-                youthCount: 0,
-                cafeContact: '',
-                setupContact: '',
+                ...newMeetingTemplate,
                 meetingDate: today,
-                clientId: org,
-                donations: 0,
-                youthContact: '',
-                nurseryContact: '',
-                cleanupContact: '',
-                resourceContact: '',
-                childrenContact: '',
-                newcomersCount: 0,
                 mtgCompKey: compKey,
-                facilitatorContact: '',
-                transportationCount: 0,
-                worship: '',
-                avContact: '',
-                supportContact: '',
-                meetingType: 'Testimony',
-                title: 'TBD',
             };
             setMeeting(newMtg);
-            printObject('MFRTK:198-->newMtg:\n', newMtg);
+            printObject('MFRTK:165-->newMtg:\n', newMtg);
         }
-    }, []);
-
+    }, [meetingId]);
     useEffect(() => {
-        console.log('CHANGE');
-    }, [meeting]);
+        console.log('MFRTK:169-->meeting:\n', meeting);
+        if (meeting?.meetingDate) {
+            setDateString(meeting.date);
+            let dateObj = dateDashToDateObject(meeting.meetingDate);
+            setMeetingDate(meeting.meetingDate); // Update meetingDate whenever the meeting.meetingDate changes
+            setDateValue(dateObj);
+        } else {
+            setDateString(new Date().toISOString().substring(0, 10));
+            setDateValue(new Date());
+        }
+    }, [meeting]); // Add meeting dependency to this useEffect to handle changes in the meeting object
 
     function inputChangedHandler(inputIdentifier, enteredValue) {
         setMeeting((curInputValues) => {
@@ -240,12 +174,7 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
             };
         });
     }
-    const navigation = useNavigation();
-    const activeMeetings = useSelector(
-        (state) => state.meetings.activeMeetings
-    );
-    // determine if active or historic
-    const historic = isDateDashBeforeToday(meeting.meetingDate);
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
@@ -272,57 +201,13 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
             ),
         });
     }, [navigation, meeter]);
-    useEffect(() => {
-        if (meeting?.title?.length > 1) {
-            setIsTitleValid(true);
-        } else {
-            setIsTitleValid(false);
-        }
-        meeting?.supportContact?.length > 1
-            ? setIsSupportContactValid(true)
-            : setIsSupportContactValid(false);
-    }, [meeting]);
 
     const FormatEventDate = (data) => {
-        printObject('MFRTK:283-->data', data);
         try {
-            // let dateString =
-            //     data.getMonth() +
-            //     1 +
-            //     '-' +
-            //     data.getDate() +
-            //     '-' +
-            //     data.getFullYear() +
-            //     ' ';
-            let dateParts = data.split('-');
+            console.log(`MFRTK:232-->FormatEventDate(${data})`);
+            const dv = new Date(data);
+            setDateValue(dv);
 
-            // const yr = parseInt(data.getFullYear());
-            // const mo = parseInt(data.getMonth());
-            // const da = parseInt(data.getDate());
-            const yr = parseInt(dateParts[0]);
-            const mo = parseInt(dateParts[1]);
-            const da = parseInt(dateParts[2]);
-            const tmp = new Date(yr, mo, da, 0, 0, 0);
-            printObject('MFRTK:297-->tmp', tmp);
-            // save the date value for control
-            setDateValue(tmp);
-            //make string to save in values.
-            // let mtgDateString =
-            //     data.getFullYear() +
-            //     '-' +
-            //     ('0' + (data.getMonth() + 1)).slice(-2) +
-            //     '-' +
-            //     ('0' + data.getDate()).slice(-2);
-            // printObject('MFRTK:307-->mtgDateString', mtgDateString);
-            // const newValues = {
-            //     ...meeting,
-            //     meetingDate: mtgDateString,
-            // };
-            //====================================
-            // set the dateValue object as well.
-            // setDateValue(tmp);
-            // printObject('MFRTK:315--newValues', newValues);
-            // setMeeting(newValues);
             return;
         } catch (error) {
             printObject('MFRTK:319-->error parsing date:\n', error);
@@ -330,7 +215,10 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
         }
     };
     const onMeetingDateConfirm = (data) => {
-        FormatEventDate(data);
+        console.log(`MFRTK:248-->onMeetingDateConfirm(${data})`);
+        // FormatEventDate(data);
+        setDateValue(data);
+        setDateString(data.toISOString().slice(0, 10));
         setModalMeetingDateVisible(false);
     };
     const handleTypeChange = (value) => {
@@ -365,26 +253,21 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     useEffect(() => {
-        console.log('MFRTK:368-->convert');
-        let dateObj = dateDashToDateObject(meeting.meetingDate);
-        setDateValue(dateObj);
+        console.log('MFRTK:372-->meeting:\n', meeting);
+        if (meeting?.meetingDate) {
+            setDateString(meeting.date);
+            let dateObj = dateDashToDateObject(meeting.meetingDate);
+            setDateValue(dateObj);
+        } else {
+            setDateString(new Date().toISOString().substring(0, 10));
+            setDateValue(new Date());
+        }
     }, []);
-    // const mutation = useMutation({
-    //     mutationFn: (values) => {
-    //         return (
-    //             PutMeeting(values),
-    //             {
-    //                 onSuccess: (meeting) => {
-    //                     queryCache.invalidateQueries(['meetings', 'active']);
-    //                 },
-    //             }
-    //         );
-    //     },
-    // });
-    printObject('MFRTK:381-->meeting:', meeting);
-    console.log('MFRTK:382-->isTitleValid:', isTitleValid);
-    console.log('MFRTK:383-->isSupportContactValid:', isSupportContactValid);
-    console.log('MFRTK:384-->dateValue:', dateValue);
+
+    const formattedDate = dateValue.toLocaleDateString('en-US', {
+        timeZone: userTimeZone,
+    });
+
     if (dateValue === null) {
         setDateValue(new Date());
     }
@@ -445,7 +328,7 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
                                                 }
                                             >
                                                 <DateBall
-                                                    date={meeting.meetingDate}
+                                                    date={formattedDate}
                                                 />
                                             </View>
                                         )}
@@ -456,7 +339,7 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
                                                 }
                                             >
                                                 <DateStack
-                                                    date={meeting.meetingDate}
+                                                    date={formattedDate}
                                                 />
                                             </View>
                                         )}

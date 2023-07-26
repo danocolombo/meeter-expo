@@ -15,7 +15,6 @@ export const getSpecificMeeting = createAsyncThunk(
 export const getAllMeetingsG = createAsyncThunk(
     'meetings/getAllMeetings',
     async (inputs, thunkAPI) => {
-        console.log('MT:18-->inputs:', inputs);
         try {
             const oId = inputs.orgId;
             const meetingList = await API.graphql({
@@ -153,11 +152,10 @@ export const getMeetingById = createAsyncThunk(
     'meetings/getMeetingById',
     async (input, { getState, rejectWithValue }) => {
         try {
-            console.log('MT:100-->getMeetingById...input:', input);
+            // console.log('MT:100-->getMeetingById...input:', input);
             const state = getState();
 
             const mtg = state.meetings.meetings.filter((m) => m.id === input);
-            printObject('MT:105-->mtg:\n', mtg);
             // Return the filtered meetings
             if (mtg.length === 1) {
                 return mtg[0];

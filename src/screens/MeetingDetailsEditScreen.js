@@ -46,7 +46,7 @@ import { isDateDashBeforeToday } from '../utils/helpers';
 const MeetingDetailsEditScreen = ({ route, navigation }) => {
     // const showModal = useRef(false);
     const id = route.params.id;
-    printObject('MDES:52-->route.params:\n', route.params);
+    // printObject('MDES:52-->route.params:\n', route.params);
     // console.log('MDES:56-->meetingId:', meetingId);
     const mtrTheme = useTheme();
     //const navigation = useNavigation();
@@ -69,23 +69,6 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
             focusManager.setFocused(status === 'active');
         }
     }
-    useFocusEffect(
-        useCallback(() => {
-            console.log('FOCUS');
-        })
-    );
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         const subscription = AppState.addEventListener(
-    //             'change',
-    //             onAppStateChange
-    //         );
-    //         // MEETING.refetch();
-    //         // printObject('MDES:79-->REFETCH', null);
-
-    //         return () => subscription.remove();
-    //     }, [])
-    // );
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -127,24 +110,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         console.log('MDES:125-->AFTER GROUPS');
         if (noGroupsIssue) {
             console.log('MDES:153-->noGroupsIssue is true');
-            // deleteMeetingFromDDB(id)
-            //     .then((res) => {
-            //         setModalDeleteConfirmVisible(false);
-            //         printObject('deleteMeetingDDB success');
-            //         //dispatch(updateMeeting(res));
-            //         // console.log('dispatch(updateMeeting) returned');
-            //         navigation.navigate('MeetingDetails', {
-            //             meetingId: meetingId,
-            //         });
-            //         return;
-            //     })
-            //     .catch((err) => {
-            //         setModalDeleteConfirmVisible(false);
-            //         printObject('updateMeeting provider failed:', err);
-            //         console.warn('updateMeeting provider failed');
 
-            //         return;
-            //     });
             setModalDeleteConfirmVisible(false);
             if (isDateDashBeforeToday(meeting.meetingDate)) {
                 navigation.navigate('HistoricMeetings');
@@ -158,40 +124,9 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         }
         return;
     };
-    // const MEETING = useQuery(
-    //     ['meeting', id],
-    //     () => FetchMeeting(meetingId),
-    //     {
-    //         refetchInterval: 60000,
-    //         cacheTime: 2000,
-    //         enabled: true,
-    //     }
-    // );
 
     let meeting = {};
-    // if (MEETING.data) {
-    //     meeting = MEETING.data.body;
-    // }
-    // if (MEETING.isLoading) {
-    //     return (
-    //         <View
-    //             style={{
-    //                 flexDirection: 'row',
-    //                 flex: 1,
-    //                 justifyContent: 'center',
-    //                 alignItems: 'center',
-    //             }}
-    //         >
-    //             <ActivityIndicator
-    //                 size={75}
-    //                 color={mtrTheme.colors.activityIndicator}
-    //             />
-    //         </View>
-    //     );
-    // }
-    // if (MEETING.isError) {
-    //     console.error('MEETING ERROR:', MEETING.error);
-    // }
+
     return (
         <>
             <View style={{ flex: 1 }}>

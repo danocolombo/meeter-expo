@@ -21,6 +21,7 @@ import { API } from 'aws-amplify';
 import * as queries from '../jerichoQL/queries';
 import { useQuery } from '@tanstack/react-query';
 import { focusManager } from '@tanstack/react-query';
+import * as Localization from 'expo-localization';
 // import * as Application from 'expo-application';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -53,6 +54,7 @@ import {
 import {
     printObject,
     isDateDashBeforeToday,
+    dateDashToDateObject,
     dateNumToDateDash,
 } from '../utils/helpers';
 import { FetchMeeting } from '../components/common/hooks/meetingQueries';
@@ -67,7 +69,7 @@ import { getMeetingById } from '../features/meetings/meetingsThunks';
 //   ==============
 const MeetingDetails = (props) => {
     const id = props.route.params.id;
-    printObject('MDST:70-->props:\n', id);
+    // printObject('MDST:70-->props:\n', id);
     const mtrTheme = useTheme();
     const { userProfile, perms } = useUserContext();
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
@@ -81,39 +83,54 @@ const MeetingDetails = (props) => {
     const navigation = useNavigation();
     const uns = useNavigationState((state) => state);
     let historic = false;
+    const userTimeZone = Localization.timezone;
     const [isLoading, setIsLoading] = useState(false);
     const [meeting, setMeeting] = useState({});
+    const [dateValue, setDateValue] = useState(
+        meeting.meetingDate ? new Date(meeting.meetingDate) : new Date()
+    );
     const [meetingGroups, setMeetingGroups] = useState([]);
     const { width, height } = useWindowDimensions();
     // printObject('MDS:80-->userProfile:\n', userProfile);
     const fetchMeetingData = useCallback(() => {
         dispatch(getMeetingById(id))
             .then((mtg) => {
-                printObject('MDST:156______mtg:\n', mtg);
+                // printObject('MDST:156______mtg:\n', mtg);
 
                 if (mtg.meta.requestStatus === 'fulfilled') {
                     setMeeting(mtg.payload);
                 } else {
-                    printObject('MDST:97-->getMeetingById failure:\n', mtg);
+                    printObject('MDST:103-->getMeetingById failure:\n', mtg);
                 }
                 setIsLoading(false);
             })
             .catch((err) => {
-                console.log('MFRTK:102-->getMeetingById failure:', err);
+                printObject('MDST:108-->getMeetingById failure:', err);
                 setIsLoading(false);
             });
     }, [dispatch, id]);
     useFocusEffect(fetchMeetingData); // Trigger on screen focus
-
     useEffect(() => {
-        // Trigger on component mount (onLoad)
-        fetchMeetingData();
-    }, []); // Empty dependency array means this effect runs only on mount
+        if (meeting?.meetingDate) {
+            // setDateString(meeting.date);
+            let dateObj = dateDashToDateObject(meeting.meetingDate);
+            // setMeetingDate(meeting.meetingDate); // Update meetingDate whenever the meeting.meetingDate changes
+            setDateValue(dateObj);
+        } else {
+            // setDateString(new Date().toISOString().substring(0, 10));
+            setDateValue(new Date());
+        }
+    }, [meeting]); // Add meeting dependency to this useEffect to handle changes in the meeting object
 
-    useEffect(() => {
-        // Trigger when the "meetings" value refreshes
-        fetchMeetingData();
-    }, [meetings]); // Add "meetings" to the dependency array
+    // useEffect(() => {
+    //     // Trigger on component mount (onLoad)
+    //     fetchMeetingData();
+    // }, []); // Empty dependency array means this effect runs only on mount
+
+    // useEffect(() => {
+    //     // Trigger when the "meetings" value refreshes
+    //     fetchMeetingData();
+    // }, [meetings]); // Add "meetings" to the dependency array
 
     useLayoutEffect(() => {
         let headerLabelColor = '';
@@ -183,20 +200,18 @@ const MeetingDetails = (props) => {
         useCallback(() => {
             dispatch(getMeetingById(id))
                 .then((mtg) => {
-                    printObject('MDST:156______mtg:\n', mtg);
-
                     if (mtg.meta.requestStatus === 'fulfilled') {
                         setMeeting(mtg.payload);
                     } else {
                         printObject(
-                            'MDST:174-->getMeetingById failure:\n',
+                            'MDST:208-->getMeetingById failure:\n',
                             mtg
                         );
                     }
                     setIsLoading(false);
                 })
                 .catch((err) => {
-                    console.log('MFRTK:135-->getMeetingById failure:', err);
+                    console.log('MDST:215-->getMeetingById failure:', err);
                     setIsLoading(false);
                 });
             return;
@@ -234,7 +249,13 @@ const MeetingDetails = (props) => {
         setShowDefaultButton(false);
     };
     //if (data) {
+    const formattedDate = dateValue.toLocaleDateString('en-US', {
+        timeZone: userTimeZone,
+    });
 
+    if (dateValue === null) {
+        setDateValue(new Date());
+    }
     if (isLoading) {
         return (
             <View
@@ -251,7 +272,7 @@ const MeetingDetails = (props) => {
             </View>
         );
     }
-    printObject('MDST:240-->meeting:\n', meeting);
+    // printObject('MDST:240-->meeting:\n', meeting);
     return (
         <>
             <Surface style={styles.surface}>
@@ -270,12 +291,12 @@ const MeetingDetails = (props) => {
                     <View style={styles.dateWrapper}>
                         {Platform.OS === 'ios' && (
                             <View style={{ padding: 5 }}>
-                                <DateBall date={meeting?.meetingDate} />
+                                <DateBall date={formattedDate} />
                             </View>
                         )}
                         {Platform.OS === 'android' && (
                             <View style={{ padding: 1 }}>
-                                <DateStack date={meeting?.meetingDate} />
+                                <DateStack date={formattedDate} />
                             </View>
                         )}
                     </View>

@@ -18,20 +18,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CurrencyInput from 'react-native-currency-input';
 import * as Localization from 'expo-localization';
-import { TimeZone } from 'expo-localization';
 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { useSysContext } from '../contexts/SysContext';
 import { useUserContext } from '../contexts/UserContext';
-import {
-    getMeetingGroups,
-    clearGroups,
-    updateMeetingValues,
-} from '../features/meetingsSlice';
-import { PutMeeting } from './common/hooks/meetingQueries';
-import NumberInput from './ui/NumberInput';
 import DateBall from './ui/DateBall';
 import DateStack from './ui/DateStack';
 import MealSection from './MeetingForm.meal';
@@ -45,7 +37,6 @@ import {
     dateDashToDateObject,
     createAWSUniqueID,
 } from '../utils/helpers';
-import { useMutation } from '@tanstack/react-query';
 import TypeSelectors from './TypeSelectors';
 import { ScrollView } from 'react-native-gesture-handler';
 import TitleSection from './MeetingForm.titleContact';
@@ -57,7 +48,6 @@ import { parse } from 'expo-linking';
 const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     // const meeter = useSelector((state) => state.system);
     // console.log('MFRTK:54-->meetingId:', meetingId);
-    console.log('FORM RELOAD');
     const id = meetingId || createAWSUniqueID();
     const navigation = useNavigation();
     const { meeter } = useSysContext();
@@ -69,10 +59,7 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.users.currentUser);
-    const specificMeeting = useSelector(
-        (state) => state.meetings.specificMeeting
-    );
-    const groups = useSelector((state) => state.meetings.groups);
+
     const [modalMeetingDateVisible, setModalMeetingDateVisible] =
         useState(false);
     const [authority, setAuthority] = useState(
@@ -80,14 +67,10 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     );
     const userTimeZone = Localization.timezone;
 
-    const [meetingDate, setMeetingDate] = useState();
     const [dateValue, setDateValue] = useState(
         meeting.meetingDate ? new Date(meeting.meetingDate) : new Date()
     );
 
-    const [dateString, setDateString] = useState();
-    const meetingTypeRef = useRef(meeting?.meetingType);
-    const historic = isDateDashBeforeToday(meeting.meetingDate);
     const [isTitleValid, setIsTitleValid] = useState(
         meeting?.title?.length > 2 ? true : false
     );
@@ -98,13 +81,11 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     useEffect(() => {
         if (meetingId) {
             setIsLoading(true);
-            console.log('MFRTK:100-->meetingId:', meetingId);
             dispatch(getMeetingById(meetingId))
                 .then((mtg) => {
                     if (mtg.meta.requestStatus === 'fulfilled') {
                         setMeeting(mtg.payload);
                         // FormatEventDate(mtg.payload.meetingDate);
-                        console.log('MFRTK:106:saved');
                     } else {
                         printObject(
                             'MFRTK:109-->getMeetingById failure\nmtg response:\n',
@@ -138,14 +119,10 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
         }
     }, [meetingId]);
     useEffect(() => {
-        console.log('MFRTK:169-->meeting:\n', meeting);
         if (meeting?.meetingDate) {
-            setDateString(meeting.date);
             let dateObj = dateDashToDateObject(meeting.meetingDate);
-            setMeetingDate(meeting.meetingDate); // Update meetingDate whenever the meeting.meetingDate changes
             setDateValue(dateObj);
         } else {
-            setDateString(new Date().toISOString().substring(0, 10));
             setDateValue(new Date());
         }
     }, [meeting]); // Add meeting dependency to this useEffect to handle changes in the meeting object
@@ -218,7 +195,6 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
         console.log(`MFRTK:248-->onMeetingDateConfirm(${data})`);
         // FormatEventDate(data);
         setDateValue(data);
-        setDateString(data.toISOString().slice(0, 10));
         setModalMeetingDateVisible(false);
     };
     const handleTypeChange = (value) => {
@@ -253,13 +229,10 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     useEffect(() => {
-        console.log('MFRTK:372-->meeting:\n', meeting);
         if (meeting?.meetingDate) {
-            setDateString(meeting.date);
             let dateObj = dateDashToDateObject(meeting.meetingDate);
             setDateValue(dateObj);
         } else {
-            setDateString(new Date().toISOString().substring(0, 10));
             setDateValue(new Date());
         }
     }, []);

@@ -1,32 +1,40 @@
 import { StyleSheet, Text, View, Pressable, Platform } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme, withTheme, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-// import MeetingCardDate from './ui/Meeting.Card.Date';
 import * as Localization from 'expo-localization';
-import { TimeZone } from 'expo-localization';
 import DateBall from './ui/DateBall';
 import DateStack from './ui/DateStack';
-import { printObject } from '../utils/helpers';
+import { printObject, dateDashToDateObject } from '../utils/helpers';
 const MeetingListCard = ({ meeting, active }) => {
     const navigation = useNavigation();
     const userTimeZone = Localization.timezone;
-    // printObject('MLC:11-->meeting:\n', meeting);
     const mtrTheme = useTheme();
     const [dateValue, setDateValue] = useState(
         meeting.meetingDate ? new Date(meeting.meetingDate) : new Date()
     );
-    //printObject('mtrTheme:', mtrTheme);
     function meetingPressHandler() {
-        // if the user is registered, take them to registerForm
-
         navigation.navigate('MeetingDetails', {
             id: meeting.id,
         });
     }
+    useEffect(() => {
+        if (meeting?.meetingDate) {
+            // setDateString(meeting.date);
+            let dateObj = dateDashToDateObject(meeting.meetingDate);
+            setDateValue(dateObj);
+        } else {
+            // setDateString(new Date().toISOString().substring(0, 10));
+            setDateValue(new Date());
+        }
+    }, []);
     const formattedDate = dateValue.toLocaleDateString('en-US', {
         timeZone: userTimeZone,
     });
+
+    if (dateValue === null) {
+        setDateValue(new Date());
+    }
     return (
         <>
             <View style={styles.rootContainer}>
@@ -47,7 +55,7 @@ const MeetingListCard = ({ meeting, active }) => {
                             {Platform.OS === 'ios' && (
                                 <View>
                                     <DateBall
-                                        date={meeting.meetingDate}
+                                        date={formattedDate}
                                         style={
                                             mtrTheme.meetingCardActiveDateBall
                                         }
@@ -56,7 +64,7 @@ const MeetingListCard = ({ meeting, active }) => {
                             )}
                             {Platform.OS === 'android' && (
                                 <View style={{ padding: 1 }}>
-                                    <DateStack date={meeting?.meetingDate} />
+                                    <DateStack date={formattedDate} />
                                 </View>
                             )}
 

@@ -76,11 +76,13 @@ const MeetingDetails = (props) => {
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
+    const newPerms = useSelector((state) => state.user.perms);
     const [authority, setAuthority] = useState(
-        perms.includes('manage') || perms.includes('groups') || false
+        newPerms.includes('manage') || newPerms.includes('groups') || false
     );
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
+    const newUserProfile = useSelector((state) => state.user);
     const defaultGroups = useSelector(
         (state) => state.system.activeOrg.defaultGroups.items
     );
@@ -171,6 +173,9 @@ const MeetingDetails = (props) => {
         } catch (error) {
             printObject('DGS:142-->error getGroups');
         }
+    }
+    function handleDeleteRequest(values) {
+        printObject('MDST:178-->handleDeleteRequet\n', values);
     }
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
@@ -263,7 +268,12 @@ const MeetingDetails = (props) => {
         );
     }
     // printObject('MDST:240-->meeting:\n', meeting);
-    printObject('MDST:264-->defaultGroups\n', defaultGroups);
+    // printObject('MDST:264-->defaultGroups\n', defaultGroups);
+    // printObject('MDST:267-->userProfile:\n', userProfile);
+    // printObject('MDST:268-->perms\n', perms);
+    // printObject('MDST:270-->newUserProfile\n', newUserProfile);
+    // printObject('MDST:272-->newPerms:\n', newPerms);
+    // printObject('MDST:273-->authority:', authority);
     return (
         <>
             <Surface style={styles.surface}>
@@ -451,7 +461,12 @@ const MeetingDetails = (props) => {
                             keyExtractor={(item) => item.id}
                             persistentScrollbar={true}
                             renderItem={({ item }) => (
-                                <GroupListCard group={item} meeting={meeting} />
+                                <GroupListCard
+                                    group={item}
+                                    meeting={meeting}
+                                    authority={authority}
+                                    handleDeleteRequest={handleDeleteRequest}
+                                />
                             )}
                             ListFooterComponent={<></>}
                         />

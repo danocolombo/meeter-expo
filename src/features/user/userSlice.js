@@ -11,6 +11,7 @@ import { saveUserProfile } from './userThunks';
 
 const initialState = {
     profile: {},
+    perms: [],
     isLoading: false,
 };
 
@@ -20,6 +21,7 @@ export const userSlice = createSlice({
     reducers: {
         logout: (state) => {
             state.profile = {};
+            state.perms = [];
             return state;
         },
     },
@@ -30,7 +32,8 @@ export const userSlice = createSlice({
             })
             .addCase(saveUserProfile.fulfilled, (state, action) => {
                 // Set a default state update for testing
-                state.profile = action.payload;
+                state.profile = action.payload.userProfile;
+                state.perms = action.payload.perms;
                 state.isLoading = false;
 
                 // Log the payload data received

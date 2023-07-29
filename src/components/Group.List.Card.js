@@ -1,11 +1,19 @@
-import { StyleSheet, Text, View, Pressable, Platform } from 'react-native';
+import {
+    StyleSheet,
+    Text,
+    View,
+    Pressable,
+    Platform,
+    TouchableOpacity,
+} from 'react-native';
 import React from 'react';
 import { useTheme, withTheme, Surface, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { printObject } from '../utils/helpers';
 //   FUNCTION START
 //   ---------------
-const GroupListCard = ({ group, meeting }) => {
+const GroupListCard = ({ group, meeting, authority, handleDeleteRequest }) => {
     const navigation = useNavigation();
     const mtrTheme = useTheme();
     function groupPressHandler() {
@@ -35,10 +43,17 @@ const GroupListCard = ({ group, meeting }) => {
                                 style={{
                                     paddingHorizontal: 15,
                                     width: '100%',
-                                    paddingVertical: 10,
+                                    paddingTop: 5,
+                                    paddingBottom: 10,
                                 }}
                             >
-                                <View>
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                    }}
+                                >
                                     {group.gender === 'f' && (
                                         <Text
                                             style={mtrTheme.groupListCardTitle}
@@ -60,12 +75,33 @@ const GroupListCard = ({ group, meeting }) => {
                                             {group.title}
                                         </Text>
                                     )}
+                                    {}
+                                    <Text>
+                                        {authority ? (
+                                            <TouchableOpacity
+                                                onPress={() =>
+                                                    handleDeleteRequest(
+                                                        group.id
+                                                    )
+                                                }
+                                            >
+                                                <MaterialCommunityIcons
+                                                    name='trash-can-outline'
+                                                    size={25}
+                                                    color='red'
+                                                />
+                                            </TouchableOpacity>
+                                        ) : (
+                                            'FALSE'
+                                        )}
+                                    </Text>
                                 </View>
                                 <View
                                     style={{
                                         flexDirection: 'row',
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
+                                        paddingTop: 5,
                                     }}
                                 >
                                     {group.location && (

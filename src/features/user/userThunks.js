@@ -11,7 +11,17 @@ export const saveUserProfile = createAsyncThunk(
     async (inputs, thunkAPI) => {
         try {
             // printObject('UT:13-->inputs\n', inputs);
-            return inputs;
+            // rip perms out of affiliations
+            let perms = [];
+            inputs.affiliations.items.forEach((aff) => {
+                if (aff.organization.id === inputs.defaultOrg.id) {
+                    if (aff.status === 'active') {
+                        perms.push(aff.role);
+                    }
+                }
+            });
+            const inputValues = { userProfile: inputs, perms: perms };
+            return inputValues;
         } catch (error) {
             printObject('UT:15-->saveUserProfile', inputs);
             // Rethrow the error to let createAsyncThunk handle it

@@ -334,9 +334,16 @@ export const meetingsSlice = createSlice({
                     action.payload
                 );
                 //* * * * * * * * * * * * * * * * * * * * *
-                //* this should get a meeting that
-                //* needs to be replaced in state.meetings
+                //* this will receive the updated meeting
                 //* * * * * * * * * * * * * * * * * * * * *
+                const newMeetings = state.meetings.map((m) => {
+                    if (m.id === action.payload.id) {
+                        return action.payload;
+                    } else {
+                        return m;
+                    }
+                });
+                state.meetings = newMeetings;
 
                 state.isLoading = false;
             })

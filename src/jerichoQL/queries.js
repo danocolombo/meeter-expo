@@ -830,3 +830,29 @@ export const getOrganizationDefaultGroups = /* GraphQL */ `
         }
     }
 `;
+export const getActiveOrganization = /* GraphQL */ `
+    query GetActiveOrganization($orgId: ID!) {
+        getOrganization(id: $orgId) {
+            id
+            code
+            name
+            location {
+                id
+                street
+                city
+                stateProv
+                postalCode
+            }
+            heroMessage
+            defaultGroups {
+                items {
+                    id
+                    title
+                    gender
+                    location
+                    facilitator
+                }
+            }
+        }
+    }
+`;

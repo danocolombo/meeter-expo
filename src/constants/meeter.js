@@ -157,7 +157,7 @@ export const STATESBY2 = [
     { label: 'WI', value: 'WI' },
     { label: 'WY', value: 'WY' },
 ];
-export const newMtg = {
+export const newMeetingTemplate = {
     childrenCount: 0,
     transportationContact: '',
     mealCount: 0,
@@ -190,5 +190,5 @@ export const newMtg = {
     avContact: '',
     supportContact: '',
     meetingType: 'Testimony',
-    title: 'TBD',
+    title: '',
 };

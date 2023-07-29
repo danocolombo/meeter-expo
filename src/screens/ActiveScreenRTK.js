@@ -47,6 +47,9 @@ const ActiveScreen = () => {
     const activeMeetings = useSelector(
         (state) => state.meetings.activeMeetings
     );
+    const [meetings, setMeetings] = useState(
+        useSelector((state) => state.meetings.meetings)
+    );
     const [isLoading, setIsLoading] = useState(false);
     const [displayMeetings, setDisplayMeetings] = useState([]);
 
@@ -72,6 +75,7 @@ const ActiveScreen = () => {
                     const results = action.payload;
                     if (results.length > 0) {
                         setDisplayMeetings(results);
+                        setMeetings(results);
                     } else {
                         setDisplayMeetings([]);
                     }
@@ -87,12 +91,10 @@ const ActiveScreen = () => {
         }, [])
     );
 
-    let meetings = [];
-
     const handleNewRequest = () => {
         navigation.navigate('MeetingNew');
     };
-
+    // printObject('ASRTK:97-->meetings:\n', meetings);
     if (isLoading) {
         return (
             <View
@@ -134,7 +136,7 @@ const ActiveScreen = () => {
                     <>
                         {displayMeetings && (
                             <FlatList
-                                data={displayMeetings}
+                                data={meetings}
                                 keyExtractor={(item) => item.id}
                                 renderItem={({ item }) => (
                                     <MeetingListCard

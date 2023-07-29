@@ -18,7 +18,8 @@ export const checkUserProfile = async (user) => {
             },
         });
         //* get the response for the user
-        const theUser = userData?.data?.usersBySub?.items;
+        let theUser = userData?.data?.usersBySub?.items;
+        // printObject('UP:22-->theUser:\n', theUser);
         if (theUser.length < 1) {
             //* no user record for the sub, create
             const newUser = {
@@ -30,26 +31,26 @@ export const checkUserProfile = async (user) => {
                 organizationDefaultUsersId: MEETER_DEFAULTS.ORGANIZATION_ID,
             };
             try {
-                API.graphql({
+                const createdUser = await API.graphql({
                     query: mutations.createUser,
                     variables: { input: newUser },
-                })
-                    .then((results) => {
-                        console.log('jericho user created');
-                        printObject('U.P:36-->results:\n', results);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        console.error(error);
-                    });
+                });
+
+                // console.log('jericho user created');
+                // printObject('U.P:36-->results:\n', createdUser);
+
+                theUser = createdUser?.data?.createUser; // Assuming the field name is "createUser"
             } catch (error) {
-                console.log('a.p:91-->unexpected error:\n', error);
+                console.log(error);
+                console.error(error);
             }
         }
+        return theUser;
     } catch (error) {
         console.log('U.P:19-->error:', error);
     }
 };
+
 export const updateProfile = async (userProfile) => {
     let newProfile = { ...userProfile };
     // printObject('UP:55-->newProfile:\n', newProfile);

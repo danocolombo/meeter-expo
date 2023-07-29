@@ -30,8 +30,6 @@ import {
 
 import CustomButton from '../components/ui/CustomButton';
 
-import { upsertGroupToDDB } from '../providers/groups';
-
 import {
     Surface,
     withTheme,
@@ -49,6 +47,7 @@ import DateBall from '../components/ui/DateBall';
 import MeetingCardDate from '../components/ui/Meeting.Card.Date';
 import { Style } from 'domelementtype';
 import GroupForm from '../components/GroupForm';
+import { updateGroup } from '../features/meetings/meetingsThunks';
 //   FUNCTION START
 //   ================
 const GroupDetailsEditScreen = ({ route, navigation }) => {
@@ -83,6 +82,10 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
 
     const handleUpdate = (values) => {
         printObject('GDS:86:', values);
+        updateGroup(values).then((results) => {
+            console.log('GDES:88-->done updating Group:', results);
+            navigation.goBack();
+        });
         // upsertGroupToDDB(values)
         //     .then((response) => {
         //         // printObject('GDES:87-->response:', response);

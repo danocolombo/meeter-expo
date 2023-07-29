@@ -994,72 +994,6 @@ export const listGroups = /* GraphQL */ `
     }
   }
 `;
-export const getMeetingTwo = /* GraphQL */ `
-  query GetMeetingTwo($id: ID!) {
-    getMeetingTwo(id: $id) {
-      id
-      meetingDate
-      title
-      meetingType
-      mtgCompKey
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listMeetingTwos = /* GraphQL */ `
-  query ListMeetingTwos(
-    $filter: ModelMeetingTwoFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listMeetingTwos(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        meetingDate
-        title
-        meetingType
-        mtgCompKey
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getTodo = /* GraphQL */ `
-  query GetTodo($id: ID!) {
-    getTodo(id: $id) {
-      id
-      title
-      actionDate
-      status
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listTodos = /* GraphQL */ `
-  query ListTodos(
-    $filter: ModelTodoFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listTodos(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        title
-        actionDate
-        status
-        type
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
 export const getManageOrganization = /* GraphQL */ `
   query GetManageOrganization($id: ID!) {
     getManageOrganization(id: $id) {
@@ -1320,66 +1254,6 @@ export const meetingsByIdAndMeetingDate = /* GraphQL */ `
         createdAt
         updatedAt
         organizationMeetingsId
-      }
-      nextToken
-    }
-  }
-`;
-export const meetingTwosByMeetingDateAndMeetingTypeAndTitle = /* GraphQL */ `
-  query MeetingTwosByMeetingDateAndMeetingTypeAndTitle(
-    $meetingDate: String!
-    $meetingTypeTitle: ModelMeetingTwoByMeetingDateCompositeKeyConditionInput
-    $sortDirection: ModelSortDirection
-    $filter: ModelMeetingTwoFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    meetingTwosByMeetingDateAndMeetingTypeAndTitle(
-      meetingDate: $meetingDate
-      meetingTypeTitle: $meetingTypeTitle
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        meetingDate
-        title
-        meetingType
-        mtgCompKey
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const todosByDate = /* GraphQL */ `
-  query TodosByDate(
-    $type: String!
-    $actionDate: ModelStringKeyConditionInput
-    $sortDirection: ModelSortDirection
-    $filter: ModelTodoFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    todosByDate(
-      type: $type
-      actionDate: $actionDate
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        title
-        actionDate
-        status
-        type
-        createdAt
-        updatedAt
       }
       nextToken
     }

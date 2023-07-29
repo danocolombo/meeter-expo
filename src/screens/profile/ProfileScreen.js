@@ -14,7 +14,7 @@ import { focusManager } from '@tanstack/react-query';
 import CustomButton from '../../components/ui/CustomButton';
 import ProfileForm from '../../components/Profile/ProfileForm';
 import { useUserContext, up } from '../../contexts/UserContext';
-
+import { useSelector } from 'react-redux';
 import { printObject } from '../../utils/helpers';
 import { StatusBar } from 'expo-status-bar';
 
@@ -24,6 +24,9 @@ const ProfileScreen = (props) => {
     const { height, width } = useWindowDimensions();
     const navigation = useNavigation();
     const mtrTheme = useTheme();
+    // const [userProfile, setReduxProfile] = useState(
+    //     useSelector((state) => state.user.profile)
+    // );
     const { userProfile, updateUserProfile } = useUserContext();
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -92,6 +95,8 @@ const ProfileScreen = (props) => {
             </View>
         );
     }
+    // printObject('PS:98-->userProfile:\n', userProfile);
+    // printObject('PS:99-->pData:\n', pData);
     return (
         <>
             <StatusBar style='light' />

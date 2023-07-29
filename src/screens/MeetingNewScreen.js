@@ -14,10 +14,12 @@ import MeetingForm from '../components/MeetingFormRTK';
 import { addMeeting } from '../features/meetings/meetingsThunks';
 import {
     createAWSUniqueID,
+    createMtgCompKey,
     isDateDashBeforeToday,
     printObject,
 } from '../utils/helpers';
 import { addMeetingDDB } from '../providers/meetings';
+import { sub } from 'react-native-reanimated';
 //   FUNCTION START
 //   ================
 const MeetingNewScreen = ({ route }) => {
@@ -29,14 +31,25 @@ const MeetingNewScreen = ({ route }) => {
 
     const handleUpdate = (values) => {
         const newId = createAWSUniqueID();
+
+        const submitValues = {
+            meeting: { id: newId, mtgCompKey: mck, ...values },
+            orgId: userProfile.activeOrg.id,
+        };
+        printObject('MNS:42-->submitValues:\n', submitValues);
+        // dispatch(addMeeting(submitValues));
+        navigate.goBack();
+    };
+    const handleAddMeeting = (values) => {
+        const newId = createAWSUniqueID();
         const submitValues = {
             meeting: { id: newId, ...values },
             orgId: userProfile.activeOrg.id,
         };
+        printObject('MNS:48-->submitValues:\n', submitValues);
         dispatch(addMeeting(submitValues));
         navigate.goBack();
     };
-
     return (
         <>
             {/* <KeyboardAvoidingView style={{ flex: 1 }}> */}
@@ -46,9 +59,12 @@ const MeetingNewScreen = ({ route }) => {
                         behavior='padding'
                         style={{ flex: 1 }}
                     >
+                        <View>
+                            <Text>MeetingNewScreen</Text>
+                        </View>
                         <MeetingForm
                             meetingId={null}
-                            handleUpdate={handleUpdate}
+                            handleSubmit={handleAddMeeting}
                         />
                     </KeyboardAvoidingView>
                 </ScrollView>

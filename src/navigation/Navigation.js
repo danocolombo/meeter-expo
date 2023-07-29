@@ -40,7 +40,7 @@ import ProfileScreen from '../screens/profile/ProfileScreen';
 import { logout } from '../features/usersSlice';
 // import { logout as meetingsSignout } from '../features/meetingsSlice';
 // import { logout as profilesLogout } from '../features/profilesSlice';
-// import { logout as systemLogout } from '../features/systemSlice';
+// import { logout as systemLogout } from '../features/system/systemSlice';
 import { useDispatch } from 'react-redux';
 // import ProfilePicModal from '../screens/ProfilePicModal';
 import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';

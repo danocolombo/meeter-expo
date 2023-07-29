@@ -12,8 +12,10 @@ import {
     getAllMeetings,
     updateMeeting,
     getActiveMeetings,
+    addDefaultGroups,
     addMeeting,
     addGroup,
+    updateGroup,
 } from './meetingsThunks';
 import { deleteMeetingFromDDB } from '../../providers/meetings';
 import { useUserContext } from '../../contexts/UserContext';
@@ -152,22 +154,22 @@ export const meetingsSlice = createSlice({
             state.groups = smaller;
             return state;
         },
-        updateGroup: (state, action) => {
-            const newValue = action.payload;
+        // updateGroup: (state, action) => {
+        //     const newValue = action.payload;
 
-            // printObject('newValue:', newValue);
-            const newGroupList = state.groups.map((g) => {
-                // console.log('typeof ral:', typeof ral);
-                // console.log('typeof action.payload', typeof action.payload);
-                //printObject('g', g);
-                //console.log('g.groupId', g.groupId);
-                //console.log('newValue.groupId', newValue.groupId);
-                return g.groupId === newValue.groupId ? newValue : g;
-            });
-            printObject('newGroupList:', newGroupList);
-            state.groups = newGroupList;
-            return state;
-        },
+        //     // printObject('newValue:', newValue);
+        //     const newGroupList = state.groups.map((g) => {
+        //         // console.log('typeof ral:', typeof ral);
+        //         // console.log('typeof action.payload', typeof action.payload);
+        //         //printObject('g', g);
+        //         //console.log('g.groupId', g.groupId);
+        //         //console.log('newValue.groupId', newValue.groupId);
+        //         return g.groupId === newValue.groupId ? newValue : g;
+        //     });
+        //     printObject('newGroupList:', newGroupList);
+        //     state.groups = newGroupList;
+        //     return state;
+        // },
         clearGroups: (state) => {
             state.groups = [];
             return state;
@@ -303,6 +305,48 @@ export const meetingsSlice = createSlice({
                 );
                 state.isLoading = false;
             })
+            .addCase(updateGroup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateGroup.fulfilled, (state, action) => {
+                printObject(
+                    'MS:311-->updateGroup.FULFILLED:action.payload:\n',
+                    action.payload
+                );
+                // const tmpMeetings = [...state.meetings];
+                // state.meetings = [...updatedMeetings];
+
+                state.isLoading = false;
+            })
+            .addCase(updateGroup.rejected, (state, action) => {
+                printObject(
+                    'MS:321-->updateGroup__REJECTED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
+            })
+            .addCase(addDefaultGroups.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(addDefaultGroups.fulfilled, (state, action) => {
+                printObject(
+                    'MS:332-->addDefaultGroups.FULFILLED:action.payload:\n',
+                    action.payload
+                );
+                //* * * * * * * * * * * * * * * * * * * * *
+                //* this should get a meeting that
+                //* needs to be replaced in state.meetings
+                //* * * * * * * * * * * * * * * * * * * * *
+
+                state.isLoading = false;
+            })
+            .addCase(addDefaultGroups.rejected, (state, action) => {
+                printObject(
+                    'MS:336-->REJECTED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
+            })
             .addCase(updateMeeting.pending, (state) => {
                 state.isLoading = true;
             })
@@ -320,6 +364,7 @@ export const meetingsSlice = createSlice({
                         const updatedMeeting = { ...action.payload };
                         const newMeetingList = state.meetings.map((m) => {
                             if (m.id === updatedMeeting.id) {
+                                console.log('MS344-->hit_hit');
                                 return updatedMeeting;
                             } else {
                                 return m;
@@ -359,7 +404,7 @@ export const {
     deleteGroup,
     clearGroups,
     addNewGroup,
-    updateGroup,
+    // updateGroup,
     addActiveMeeting,
     //addHistoricMeeting,
     getGroup,
@@ -729,23 +774,23 @@ export const updateMeetingValues = (values) => (dispatch) => {
 //     };
 //     getData();
 // };
-export const updateGroupValues = (values) => (dispatch) => {
-    const saveGroupToDDB = async () => {
-        let obj = {
-            operation: 'updateGroup',
-            payload: {
-                Item: values,
-            },
-        };
-        let body = JSON.stringify(obj);
-        let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-        let res = await axios.post(api2use, body, config);
-        //const results = res.data.body.Items;
-        dispatch(updateGroup(values));
-        return;
-    };
-    saveGroupToDDB();
-};
+// export const updateGroupValues = (values) => (dispatch) => {
+//     const saveGroupToDDB = async () => {
+//         let obj = {
+//             operation: 'updateGroup',
+//             payload: {
+//                 Item: values,
+//             },
+//         };
+//         let body = JSON.stringify(obj);
+//         let api2use = process.env.AWS_API_ENDPOINT + '/groups';
+//         let res = await axios.post(api2use, body, config);
+//         //const results = res.data.body.Items;
+//         dispatch(updateGroup(values));
+//         return;
+//     };
+//     saveGroupToDDB();
+// };
 export const addGroupValues = (values) => (dispatch) => {
     //   this is NEW group
     const saveGroupToDDB = async () => {

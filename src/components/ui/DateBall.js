@@ -23,7 +23,7 @@ const DateBall = ({ date }) => {
 
     const formattedDate = formatDateString(date);
     const [month, day, year] = formattedDate.split(' ');
-
+    // console.log('DB:26-->date:', date);
     return (
         <View>
             <View style={mtrTheme.dateChipContainer}>

@@ -18,13 +18,14 @@ import { Auth } from 'aws-amplify';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { checkUserProfile } from '../../jerichoQL/providers/users.provider';
 import { printObject } from '../../utils/helpers';
-
+import { useDispatch } from 'react-redux';
+import { saveUserProfile } from '../../features/user/userThunks';
 //   FUNCTION START
 const SignInScreen = () => {
     const mtrTheme = useTheme();
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
-
+    const dispatch = useDispatch();
     const [loggedInUser, setLoggedInUser] = useState(null);
     const {
         control,
@@ -45,10 +46,11 @@ const SignInScreen = () => {
             const response = await Auth.signIn(data.username, data.password);
             checkUserProfile(response)
                 .then((response) => {
-                    printObject('SI:response:\n', response);
+                    printObject('SI:48-->response:\n', response);
+                    // dispatch(saveUserProfile(response[0]));
                 })
                 .catch((error) => {
-                    console.log('SI:62-->error', error);
+                    console.log('SI:51-->error', error);
                 });
         } catch (error) {
             switch (error.code) {

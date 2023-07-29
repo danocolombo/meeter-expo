@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useUserContext } from '../contexts/UserContext';
 import { useSelector } from 'react-redux';
 import { FontAwesome, AntDesign, Entypo } from '@expo/vector-icons';
-import systemSlice from '../features/systemSlice';
+import systemSlice from '../features/system/systemSlice';
 import NewMembers from '../screens/team/NewMembers.tab';
 import ActiveMembers from '../screens/team/ActiveMembers.tab';
 import InactiveMembers from '../screens/team/InactiveMembers.tab';

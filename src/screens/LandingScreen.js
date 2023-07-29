@@ -40,7 +40,8 @@ import { useSysContext } from '../contexts/SysContext';
 import { useAffiliationContext } from '../contexts/AffiliationContext';
 import profilesSlice from '../features/profilesSlice';
 import { StatusBar } from 'expo-status-bar';
-
+import { saveUserProfile as addReduxProfile } from '../features/user/userThunks';
+import { loadActiveOrg } from '../features/system/systemThunks';
 //      ====================================
 //      FUNCTION START
 const LandingScreen = () => {
@@ -55,6 +56,10 @@ const LandingScreen = () => {
     const [welcomeMessage, setWelcomeMessage] = useState(
         userProfile?.activeOrg?.heroMessage
     );
+    const [systemData, setSystemData] = useState(
+        useSelector((state) => state.system)
+    );
+    const sysRedux = useSelector((state) => state.system);
     const { meeter } = useSysContext();
     const { authUser, defineUser } = useAuthContext();
     const { userProfile, saveUserProfile, passValue } = useUserContext();
@@ -69,6 +74,8 @@ const LandingScreen = () => {
         const cau = await Auth.currentAuthenticatedUser();
         const user = await defineUser(cau.attributes.sub);
         saveUserProfile(user);
+        dispatch(addReduxProfile(user));
+        dispatch(loadActiveOrg(user?.activeOrg?.id));
         //printObject('LS:71--user:\n', user);
         //printObject('LS:72-->userProfile', userProfile);
     }
@@ -122,7 +129,7 @@ const LandingScreen = () => {
             </View>
         );
     }
-
+    // printObject('LS:131-->systemRedux:\n', sysRedux);
     return (
         <>
             <StatusBar style='light' />

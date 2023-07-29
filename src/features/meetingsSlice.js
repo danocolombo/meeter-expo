@@ -243,7 +243,7 @@ export const {
     getMeetings,
     //getMeeting,
     // addNewMeeting,
-    addMeeting,
+    // addMeeting,
     updateMeeting,
     deleteAMeeting,
     createTmp,
@@ -678,35 +678,35 @@ export const deleteIndividualGroup = (groupId) => (dispatch) => {
     };
     deleteGroupFromDDB();
 };
-export const addNewMeeting = (meeting) => (dispatch) => {
-    // determine if the meeting is historic or active
-    // meeting.meetingDate format is YYYY-MM-DD
-    //const historic = isDateDashBeforeToday(meeting.meetingDate);
-    const addMeetingToDB = async () => {
-        let obj = {
-            operation: 'putMeeting',
-            payload: {
-                Item: meeting,
-            },
-        };
-        let body = JSON.stringify(obj);
-        let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
-        let res = await axios.post(api2use, body, config);
-        // printObject('MS:594-->res', res);
-        // have to pass response, so we always get the right DB values
-        dispatch(addMeeting(res.data));
+// export const addNewMeeting = (meeting) => (dispatch) => {
+//     // determine if the meeting is historic or active
+//     // meeting.meetingDate format is YYYY-MM-DD
+//     //const historic = isDateDashBeforeToday(meeting.meetingDate);
+//     const addMeetingToDB = async () => {
+//         // let obj = {
+//         //     operation: 'putMeeting',
+//         //     payload: {
+//         //         Item: meeting,
+//         //     },
+//         // };
+//         // let body = JSON.stringify(obj);
+//         // let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
+//         // let res = await axios.post(api2use, body, config);
+//         // printObject('MS:594-->res', res);
+//         // have to pass response, so we always get the right DB values
+//         dispatch(addMeeting(res.data));
 
-        //const results = res.data.body.Items;
-        //if (historic) {
-        // dispatch(addHistoricMeeting(meeting));
-        // } else {
-        //     dispatch(addActiveMeeting(meeting));
-        // }
+//         //const results = res.data.body.Items;
+//         //if (historic) {
+//         // dispatch(addHistoricMeeting(meeting));
+//         // } else {
+//         //     dispatch(addActiveMeeting(meeting));
+//         // }
 
-        return;
-    };
-    addMeetingToDB();
-};
+//         return;
+//     };
+//     addMeetingToDB();
+// };
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

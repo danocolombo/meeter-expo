@@ -9,7 +9,7 @@ import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import HistoricScreen from '../screens/HistoricScreenRTK';
 import ActiveScreen from '../screens/ActiveScreenRTK';
 import AdminScreen from '../screens/AdminScreen';
-import systemSlice from '../features/systemSlice';
+import systemSlice from '../features/system/systemSlice';
 const BottomTab = createBottomTabNavigator();
 const MeetingsConfig = () => {
     const mtrTheme = useTheme();

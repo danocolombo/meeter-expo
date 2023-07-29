@@ -14,8 +14,8 @@ const GroupForm = ({ group, meeting, handleUpdate }) => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const [values, setValues] = useState({
-        meetingId: group?.meetingId ? group.meetingId : '0',
-        groupId: group?.groupId ? group.groupId : '0',
+        meetingId: meeting?.id ? meeting.id : '0',
+        groupId: group?.id ? group.id : '0',
         gender: group?.gender ? group.gender : 'x',
         title: group?.title ? group.title : '',
         attendance: group?.attendance ? parseInt(group.attendance) : 0,
@@ -92,7 +92,8 @@ const GroupForm = ({ group, meeting, handleUpdate }) => {
 
         //todo--- pass them up
         console.log('GF:94--> handleFormSubmit\n', values);
-        // handleUpdate(values);
+        handleUpdate(values);
+        navigation.goBack();
     };
     return (
         <>

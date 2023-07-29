@@ -54,12 +54,8 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
     const { height, width } = useWindowDimensions();
     const meeter = useSelector((state) => state.system);
     const groups = useSelector((state) => state.meetings.groups);
-    const meetings = useSelector((state) => state.meetings.meetings);
-    //const [meeting, setMeeting] = useState();
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
         useState(false);
-    // const historic = isDateDashBeforeToday(meeting.meetingDate);
-    const [isLoading, setIsLoading] = useState(false);
     const gender = {
         f: "Women's",
         m: "Men's",
@@ -78,6 +74,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
     }, [navigation, meeter]);
 
     const handleUpdate = (values) => {
+        printObject('MDES:81-->values:\n', values);
         dispatch(updateMeeting(values));
         navigation.goBack();
     };
@@ -235,7 +232,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                         >
                             <MeetingForm
                                 meetingId={id}
-                                handleUpdate={handleUpdate}
+                                handleSubmit={handleUpdate}
                                 // handleDeleteRequest={() =>
                                 //     setModalDeleteConfirmVisible(true)
                                 // }

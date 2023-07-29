@@ -85,7 +85,6 @@ export const getAllMeetings = createAsyncThunk(
         return [];
     }
 );
-
 export const getActiveMeetings = createAsyncThunk(
     'meetings/getActiveMeetings',
     async (input, { getState, rejectWithValue }) => {
@@ -165,6 +164,61 @@ export const getMeetingById = createAsyncThunk(
         } catch (error) {
             // Handle errors and optionally return a rejected promise with an error message
             return rejectWithValue('Failed to fetch active meetings');
+        }
+    }
+);
+export const addDefaultGroups = createAsyncThunk(
+    'meetings/addDefaultGroups',
+    async (inputs, thunkAPI) => {
+        try {
+            // printObject('MT:174-->inputs:\n', inputs);
+
+            //* add meetings in graphql
+
+            //* define existing meeting groups + defaults
+            let newGroupList = [inputs.meeting.groups.items];
+            inputs.defaultGroups.forEach((dg) => {
+                const newId = createAWSUniqueID();
+                let inputInfo = {
+                    ...dg,
+                    id: newId,
+                    attendance: 0,
+                    meetingGroupsId: inputs.meeting.id,
+                    organizationGroupsId: inputs.orgId,
+                };
+                const results = API.graphql({
+                    query: mutations.createGroup,
+                    variables: { input: inputInfo },
+                });
+                newGroupList.push(inputInfo);
+                printObject('MT:183-->newGroup:\n', inputInfo);
+            });
+            const newGroupsItems = { items: newGroupList };
+            //* put groups back in meeting object
+            let meetingUpdate = {
+                ...inputs.meeting,
+                groups: newGroupsItems,
+            };
+
+            return meetingUpdate;
+
+            //todo
+            // Use await with the GraphQL call to get the results
+            // const results = await API.graphql({
+            //     query: mutations.createMeeting,
+            //     variables: { input: mtg },
+            // });
+            // // printObject('MT:184-->results:\n', results);
+            // // Check if the result contains the expected data and return it
+            // if (results.data.createMeeting.id) {
+            //     return mtg;
+            // } else {
+            //     // If data.createGroup.id is missing, handle the error
+            //     throw new Error('MT:189-->Failed to create meeting');
+            // }
+        } catch (error) {
+            printObject('MT:198-->addMeeting thunk try failure.\n', error);
+            throw new Error('MT:199-->Failed to create meeting');
         }
     }
 );
@@ -264,6 +318,36 @@ export const addGroup = createAsyncThunk(
             printObject('MT:235-->addGroup', inputs.group);
             // Rethrow the error to let createAsyncThunk handle it
             throw new Error('MT:236-->Failed to add group');
+        }
+    }
+);
+export const updateGroup = createAsyncThunk(
+    'meetings/updateGroup',
+    async (inputs, thunkAPI) => {
+        try {
+            printObject('MT:274-->updateGroup__inputs:\n', inputs);
+            //* * * * * * * * * * * * * * * * * * * *
+            //* update the meeting in graphql
+            //* * * * * * * * * * * * * * * * * * * *
+            // strip non-meeting values
+            // let mtg = { ...inputs };
+            // delete mtg.organization;
+            // delete mtg.groups;
+            // printObject('MT:205-->mtg:\n', mtg);
+            // const results = await API.graphql({
+            //     query: mutations.updateMeeting,
+            //     variables: { input: mtg },
+            // });
+            // if (results.data.updateMeeting.id) {
+            //     return inputs;
+            // } else {
+            //     throw new Error('MT:208-->Failed to update meeting');
+            // }
+            return inputs;
+        } catch (error) {
+            printObject('MT:294-->updateGroup FAILURE', inputs);
+            // Rethrow the error to let createAsyncThunk handle it
+            throw new Error('MT:296-->Failed to update group');
         }
     }
 );

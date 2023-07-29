@@ -88,7 +88,7 @@ type Meeting @model {
     childrenCount: Int
     cleanupContact: String
     closingContact: String
-    donations: Int
+    donations: Float
     facilitatorContact: String
     greeterContact1: String
     greeterContact2: String
@@ -122,25 +122,4 @@ type Group @model {
     facilitator: String
     cofacilitator: String
     notes: String
-}
-type MeetingTwo @model {
-    id: ID!
-    meetingDate: String!
-        @index(name: "byMeetingDate", sortKeyFields: ["meetingType", "title"])
-    title: String
-    meetingType: String
-    mtgCompKey: String
-}
-type Todo @model {
-    id: ID!
-    title: String!
-    actionDate: String!
-    status: String
-    type: String!
-        @index(
-            name: "todosByDate"
-            queryField: "todosByDate"
-            sortKeyFields: ["actionDate"]
-        )
-    createdAt: String!
 }

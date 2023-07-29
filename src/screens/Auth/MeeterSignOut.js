@@ -6,7 +6,7 @@ import { useAuthContext } from '../../contexts/AuthContext';
 import { logout } from '../../features/usersSlice';
 import { logout as meetingsSignout } from '../../features/meetingsSlice';
 import { logout as profilesLogout } from '../../features/profilesSlice';
-import { logout as systemLogout } from '../../features/systemSlice';
+import { logout as systemLogout } from '../../features/system/systemSlice';
 import { printObject } from '../../utils/helpers';
 const MeeterSignOut = (props) => {
     const { setJwtToken, clearAuthUser } = useAuthContext();

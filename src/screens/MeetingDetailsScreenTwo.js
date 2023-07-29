@@ -26,7 +26,7 @@ import * as Localization from 'expo-localization';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
-import { PutGroup } from '../components/common/hooks/groupQueries';
+// import { PutGroup } from '../components/common/hooks/groupQueries';
 import {
     useNavigation,
     useIsFocused,
@@ -63,8 +63,9 @@ import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
-import { getGroupsForMeeting } from '../features/groups/groupsThunks';
-import { getMeetingById } from '../features/meetings/meetingsThunks';
+import { addDefaultGroups } from '../features/meetings/meetingsThunks';
+// import { getGroupsForMeeting } from '../features/groups/groupsThunks';
+// import { getMeetingById } from '../features/meetings/meetingsThunks';
 //   FUNCTION START
 //   ==============
 const MeetingDetails = (props) => {
@@ -80,36 +81,23 @@ const MeetingDetails = (props) => {
     );
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
+    const defaultGroups = useSelector(
+        (state) => state.system.activeOrg.defaultGroups.items
+    );
     const navigation = useNavigation();
     const uns = useNavigationState((state) => state);
     let historic = false;
     const userTimeZone = Localization.timezone;
     const [isLoading, setIsLoading] = useState(false);
-    const [meeting, setMeeting] = useState({});
+    const [meeting, setMeeting] = useState(
+        useSelector((state) => state.meetings.meetings.find((m) => m.id === id))
+    );
     const [dateValue, setDateValue] = useState(
         meeting.meetingDate ? new Date(meeting.meetingDate) : new Date()
     );
     const [meetingGroups, setMeetingGroups] = useState([]);
     const { width, height } = useWindowDimensions();
-    // printObject('MDS:80-->userProfile:\n', userProfile);
-    const fetchMeetingData = useCallback(() => {
-        dispatch(getMeetingById(id))
-            .then((mtg) => {
-                // printObject('MDST:156______mtg:\n', mtg);
 
-                if (mtg.meta.requestStatus === 'fulfilled') {
-                    setMeeting(mtg.payload);
-                } else {
-                    printObject('MDST:103-->getMeetingById failure:\n', mtg);
-                }
-                setIsLoading(false);
-            })
-            .catch((err) => {
-                printObject('MDST:108-->getMeetingById failure:', err);
-                setIsLoading(false);
-            });
-    }, [dispatch, id]);
-    useFocusEffect(fetchMeetingData); // Trigger on screen focus
     useEffect(() => {
         if (meeting?.meetingDate) {
             // setDateString(meeting.date);
@@ -121,16 +109,11 @@ const MeetingDetails = (props) => {
             setDateValue(new Date());
         }
     }, [meeting]); // Add meeting dependency to this useEffect to handle changes in the meeting object
-
-    // useEffect(() => {
-    //     // Trigger on component mount (onLoad)
-    //     fetchMeetingData();
-    // }, []); // Empty dependency array means this effect runs only on mount
-
-    // useEffect(() => {
-    //     // Trigger when the "meetings" value refreshes
-    //     fetchMeetingData();
-    // }, [meetings]); // Add "meetings" to the dependency array
+    useEffect(() => {
+        setIsLoading(true);
+        setMeeting(meetings.find((m) => m.id === id));
+        setIsLoading(false);
+    }, [meetings]);
 
     useLayoutEffect(() => {
         let headerLabelColor = '';
@@ -163,30 +146,28 @@ const MeetingDetails = (props) => {
             });
         }
     }, [navigation, meeter]);
-    async function getDefaultGroups() {
-        try {
-            // printObject('getDefaultGroups:', userProfile.activeOrg.id);
-            const systemInfo = await API.graphql({
-                query: queries.getOrganizationDefaultGroups,
-                variables: { id: userProfile.activeOrg.id },
-            });
-            const defaultGroups =
-                systemInfo.data.getOrganization.defaultGroups.items;
-            // printObject('defaultGroups:\n', defaultGroups);
-            setGroups(defaultGroups);
-            setShowDefaultButton(true);
-        } catch (error) {
-            printObject('DGS:116-->systemInfo TryCatch failure:\n', error);
-            return;
-        }
-    }
+    // async function getDefaultGroups() {
+    //     try {
+    //         // printObject('getDefaultGroups:', userProfile.activeOrg.id);
+    //         const systemInfo = await API.graphql({
+    //             query: queries.getOrganizationDefaultGroups,
+    //             variables: { id: userProfile.activeOrg.id },
+    //         });
+    //         const defaultGroups =
+    //             systemInfo.data.getOrganization.defaultGroups.items;
+    //         // printObject('defaultGroups:\n', defaultGroups);
+    //         setGroups(defaultGroups);
+    //         setShowDefaultButton(true);
+    //     } catch (error) {
+    //         printObject('DGS:116-->systemInfo TryCatch failure:\n', error);
+    //         return;
+    //     }
+    // }
     async function newGetGroups() {
         try {
-            await dispatch(getGroupsForMeeting({ meetingId: meetingId })).then(
-                () => {
-                    // console.log('DONE getGroups');
-                }
-            );
+            await dispatch(getGroupsForMeeting({ meetingId: id })).then(() => {
+                // console.log('DONE getGroups');
+            });
         } catch (error) {
             printObject('DGS:142-->error getGroups');
         }
@@ -196,57 +177,66 @@ const MeetingDetails = (props) => {
             focusManager.setFocused(status === 'active');
         }
     }
-    useFocusEffect(
-        useCallback(() => {
-            dispatch(getMeetingById(id))
-                .then((mtg) => {
-                    if (mtg.meta.requestStatus === 'fulfilled') {
-                        setMeeting(mtg.payload);
-                    } else {
-                        printObject(
-                            'MDST:208-->getMeetingById failure:\n',
-                            mtg
-                        );
-                    }
-                    setIsLoading(false);
-                })
-                .catch((err) => {
-                    console.log('MDST:215-->getMeetingById failure:', err);
-                    setIsLoading(false);
-                });
-            return;
-        }, [])
-    );
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         dispatch(getMeetingById(id))
+    //             .then((mtg) => {
+    //                 if (mtg.meta.requestStatus === 'fulfilled') {
+    //                     setMeeting(mtg.payload);
+    //                 } else {
+    //                     printObject(
+    //                         'MDST:208-->getMeetingById failure:\n',
+    //                         mtg
+    //                     );
+    //                 }
+    //                 setIsLoading(false);
+    //             })
+    //             .catch((err) => {
+    //                 console.log('MDST:215-->getMeetingById failure:', err);
+    //                 setIsLoading(false);
+    //             });
+    //         return;
+    //     }, [])
+    // );
 
     const handleAddDefaults = async () => {
         console.log('handleAddDefaults');
+        dispatch(
+            addDefaultGroups({
+                meeting: meeting,
+                orgId: userProfile.activeOrg.id,
+                defaultGroups: defaultGroups,
+            })
+        );
+        // printObject('MDST:203-->groups:\n', groups);
+        // dispatch(addDefaultGroups(groups));
         // printObject('MDS:160-->meeting:\n', meeting);
-        groups.map((group) => {
-            console.log('group.id:', group.id);
-            const values = {
-                meetingId: meetingId,
-                groupId: '0',
-                gender: group.gender,
-                title: group.title,
-                attendance: 0,
-                location: group?.location ? group?.location : '',
-                grpCompKey: meeting.mtgCompKey,
-                facilitator: group?.facilitator ? group.facilitator : '',
-                cofacilitator: '',
-                notes: '',
-            };
-            PutGroup(values)
-                .then((results) => {
-                    // printObject('MDS:177-->PutGroup results:\n', results);
-                })
-                .catch((error) => {
-                    printObject('MDS:182-->PutGroup error:', error);
-                });
-            // printObject('MDS:173-->values:', values);
-        });
+        // groups.map((group) => {
+        //     console.log('group.id:', group.id);
+        //     const values = {
+        //         meetingId: id,
+        //         groupId: '0',
+        //         gender: group.gender,
+        //         title: group.title,
+        //         attendance: 0,
+        //         location: group?.location ? group?.location : '',
+        //         grpCompKey: meeting.mtgCompKey,
+        //         facilitator: group?.facilitator ? group.facilitator : '',
+        //         cofacilitator: '',
+        //         notes: '',
+        //     };
+        //     PutGroup(values)
+        //         .then((results) => {
+        //             // printObject('MDS:177-->PutGroup results:\n', results);
+        //         })
+        //         .catch((error) => {
+        //             printObject('MDS:182-->PutGroup error:', error);
+        //         });
+        //     // printObject('MDS:173-->values:', values);
+        // });
         //      only let them add one time.
         // GROUPS.refetch();
-        setShowDefaultButton(false);
+        //setShowDefaultButton(false);
     };
     //if (data) {
     const formattedDate = dateValue.toLocaleDateString('en-US', {
@@ -273,6 +263,7 @@ const MeetingDetails = (props) => {
         );
     }
     // printObject('MDST:240-->meeting:\n', meeting);
+    printObject('MDST:264-->defaultGroups\n', defaultGroups);
     return (
         <>
             <Surface style={styles.surface}>
@@ -472,24 +463,22 @@ const MeetingDetails = (props) => {
                         </Text>
                     </View>
                 )}
-                {authority &&
-                    meeting?.groups?.items?.length > 0 &&
-                    showDefaultsButton && (
-                        <View
-                            style={{
-                                marginHorizontal: 20,
-                                paddingBottom: 20,
-                            }}
-                        >
-                            <CustomButton
-                                text='Add Default Groups'
-                                bgColor='blue'
-                                fgColor={'white'}
-                                type='STANDARD'
-                                onPress={() => handleAddDefaults()}
-                            />
-                        </View>
-                    )}
+                {authority && showDefaultsButton && (
+                    <View
+                        style={{
+                            marginHorizontal: 20,
+                            paddingBottom: 20,
+                        }}
+                    >
+                        <CustomButton
+                            text='Add Default Groups'
+                            bgColor='blue'
+                            fgColor={'white'}
+                            type='STANDARD'
+                            onPress={() => handleAddDefaults()}
+                        />
+                    </View>
+                )}
             </Surface>
         </>
     );

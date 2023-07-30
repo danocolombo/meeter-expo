@@ -63,7 +63,10 @@ import GroupListCard from '../components/Group.List.Card';
 import MeetingListCard from '../components/Meeting.List.Card';
 import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
-import { addDefaultGroups } from '../features/meetings/meetingsThunks';
+import {
+    addDefaultGroups,
+    deleteGroupFromMeeting,
+} from '../features/meetings/meetingsThunks';
 // import { getGroupsForMeeting } from '../features/groups/groupsThunks';
 // import { getMeetingById } from '../features/meetings/meetingsThunks';
 //   FUNCTION START
@@ -175,7 +178,11 @@ const MeetingDetails = (props) => {
         }
     }
     function handleDeleteRequest(values) {
-        printObject('MDST:178-->handleDeleteRequet\n', values);
+        const deleteRequest = {
+            meetingId: id,
+            groupId: values,
+        };
+        dispatch(deleteGroupFromMeeting(deleteRequest));
     }
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {

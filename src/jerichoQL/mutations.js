@@ -89,6 +89,38 @@ export const updateDefaultGroup = /* GraphQL */ `
         }
     }
 `;
+export const deleteGroup = /* GraphQL */ `
+    mutation DeleteGroup(
+        $input: DeleteGroupInput!
+        $condition: ModelGroupConditionInput
+    ) {
+        deleteGroup(input: $input, condition: $condition) {
+            id
+        }
+    }
+`;
+export const updateGroup = /* GraphQL */ `
+    mutation UpdateGroup(
+        $input: UpdateGroupInput!
+        $condition: ModelGroupConditionInput
+    ) {
+        updateGroup(input: $input, condition: $condition) {
+            id
+            grpCompKey
+            title
+            location
+            gender
+            attendance
+            facilitator
+            cofacilitator
+            notes
+            createdAt
+            updatedAt
+            organizationGroupsId
+            meetingGroupsId
+        }
+    }
+`;
 export const deleteDefaultGroup = /* GraphQL */ `
     mutation DeleteDefaultGroup(
         $input: DeleteDefaultGroupInput!

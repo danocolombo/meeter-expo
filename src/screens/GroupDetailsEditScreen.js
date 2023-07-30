@@ -59,7 +59,7 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
     const dispatch = useDispatch();
     const { height, width } = useWindowDimensions();
     const groups = useSelector((state) => state.meetings.groups);
-    const user = useSelector((state) => state.users.currentUser);
+    const user = useSelector((state) => state.user.profile);
     const meeter = useSelector((state) => state.system);
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
         useState(false);
@@ -81,11 +81,16 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
     // }
 
     const handleUpdate = (values) => {
-        printObject('GDS:86:', values);
-        updateGroup(values).then((results) => {
-            console.log('GDES:88-->done updating Group:', results);
-            navigation.goBack();
-        });
+        const valueRequest = {
+            group: values,
+            orgId: user.activeOrg.id,
+        };
+        dispatch(updateGroup(valueRequest));
+        // navigation.goBack();
+        // updateGroup(values).then((results) => {
+        //     console.log('GDES:88-->done updating Group:', results);
+        //     navigation.goBack();
+        // });
         // upsertGroupToDDB(values)
         //     .then((response) => {
         //         // printObject('GDES:87-->response:', response);

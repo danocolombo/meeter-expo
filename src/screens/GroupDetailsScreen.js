@@ -18,10 +18,13 @@ import { printObject } from '../utils/helpers';
 //   FUNCTION START
 //   ===============
 const GroupDetailsScreen = ({ route, navigation }) => {
-    let group = route.params.group;
-    let groupId = group?.id;
+    const meeting = useSelector((state) =>
+        state.meetings.meetings.find((m) => m.id === route.params.meeting.id)
+    );
+    const group = meeting.groups.items.find(
+        (g) => g.id === route.params.group.id
+    );
     const { perms } = useUserContext();
-    const meeting = route.params.meeting;
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
     const [isLoading, setIsLoading] = useState(false);

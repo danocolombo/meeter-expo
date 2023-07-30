@@ -176,7 +176,7 @@ export const addDefaultGroups = createAsyncThunk(
             //* add meetings in graphql
 
             //* define existing meeting groups + defaults
-            let newGroupList = [inputs.meeting.groups.items];
+            let newGroupList = [...inputs.meeting.groups.items];
             inputs.defaultGroups.forEach((dg) => {
                 const newId = createAWSUniqueID();
                 let inputInfo = {
@@ -191,14 +191,44 @@ export const addDefaultGroups = createAsyncThunk(
                     variables: { input: inputInfo },
                 });
                 newGroupList.push(inputInfo);
-                printObject('MT:183-->newGroup:\n', inputInfo);
             });
-            const newGroupsItems = { items: newGroupList };
+            const data = {
+                items: [...newGroupList],
+            };
+
+            data.items.sort((a, b) => {
+                // First, compare by gender
+                const genderCompare = a.gender.localeCompare(b.gender);
+
+                // If genders are different, return the gender comparison result
+                if (genderCompare !== 0) {
+                    return genderCompare;
+                }
+
+                // If genders are the same, compare by title
+                const titleCompare = a.title.localeCompare(b.title);
+
+                // If titles are different, return the title comparison result
+                if (titleCompare !== 0) {
+                    return titleCompare;
+                }
+
+                // If titles are the same, compare by location
+                return a.location.localeCompare(b.location);
+            });
+
+            // console.log(data.items);
+
+            const sortedGroupList = [...data.items];
+
+            printObject('MT:228-->sortedGroupList:\n', sortedGroupList);
+            const newGroupsItems = { items: sortedGroupList };
             //* put groups back in meeting object
             let meetingUpdate = {
                 ...inputs.meeting,
                 groups: newGroupsItems,
             };
+            printObject('MT:202-->meetingUpdate:\n', meetingUpdate);
 
             return meetingUpdate;
 
@@ -254,6 +284,37 @@ export const addMeeting = createAsyncThunk(
         }
     }
 );
+export const deleteGroupFromMeeting = createAsyncThunk(
+    'meetings/deleteGroupFromMeeting',
+    async (inputs, thunkAPI) => {
+        try {
+            //* -----------------------
+            //* delete group from gql
+            //* -----------------------
+            const inputRequest = {
+                id: inputs.groupId,
+            };
+            const deleteGroupResponse = await API.graphql({
+                query: mutations.deleteGroup,
+                variables: { input: inputRequest },
+            });
+            if (deleteGroupResponse?.data?.deleteGroup?.id) {
+                return inputs;
+            }
+            printObject(
+                'MT:275-->deleteGroupFromMeeting thunk graphql error\n',
+                deleteGroupResponse
+            );
+            throw new Error('MT:278-->Failed to deleteGroupFromMeeting');
+        } catch (error) {
+            printObject(
+                'MT:281-->deleteGroupFromMeeting thunk try failure.\n',
+                error
+            );
+            throw new Error('MT:284-->Failed to deleteGroupFromMeeting');
+        }
+    }
+);
 export const updateMeeting = createAsyncThunk(
     'meetings/updateMeeting',
     async (inputs, thunkAPI) => {
@@ -266,12 +327,16 @@ export const updateMeeting = createAsyncThunk(
             let mtg = { ...inputs };
             delete mtg.organization;
             delete mtg.groups;
-            printObject('MT:205-->mtg:\n', mtg);
+
             const results = await API.graphql({
                 query: mutations.updateMeeting,
                 variables: { input: mtg },
             });
             if (results.data.updateMeeting.id) {
+                printObject(
+                    'MT:336-->results.data.updateMeeting:\n',
+                    results.data.updateMeeting
+                );
                 return inputs;
             } else {
                 throw new Error('MT:208-->Failed to update meeting');
@@ -325,29 +390,38 @@ export const updateGroup = createAsyncThunk(
     'meetings/updateGroup',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:274-->updateGroup__inputs:\n', inputs);
+            printObject('MT:393-->updateGroup__inputs:\n', inputs);
+
             //* * * * * * * * * * * * * * * * * * * *
             //* update the meeting in graphql
             //* * * * * * * * * * * * * * * * * * * *
-            // strip non-meeting values
-            // let mtg = { ...inputs };
-            // delete mtg.organization;
-            // delete mtg.groups;
-            // printObject('MT:205-->mtg:\n', mtg);
-            // const results = await API.graphql({
-            //     query: mutations.updateMeeting,
-            //     variables: { input: mtg },
-            // });
-            // if (results.data.updateMeeting.id) {
-            //     return inputs;
-            // } else {
-            //     throw new Error('MT:208-->Failed to update meeting');
-            // }
-            return inputs;
+            let inputInfo = {
+                ...inputs.group,
+                id: inputs.group.groupId,
+                meetingGroupsId: inputs.group.meetingId,
+                organizationGroupsId: inputs.orgId,
+            };
+            //* remove unsupported values
+            delete inputInfo.meetingId;
+            delete inputInfo.groupId;
+            const results = await API.graphql({
+                query: mutations.updateGroup,
+                variables: { input: inputInfo },
+            });
+            printObject('MT:402-->results:\n', results);
+            if (results.data.updateGroup.id) {
+                const resultDef = {
+                    group: inputInfo,
+                    meetingId: inputs.group.meetingId,
+                };
+                return resultDef;
+            } else {
+                throw new Error('MT:208-->Failed to update meeting');
+            }
         } catch (error) {
-            printObject('MT:294-->updateGroup FAILURE', inputs);
+            printObject('MT:409-->updateGroup FAILURE', inputs);
             // Rethrow the error to let createAsyncThunk handle it
-            throw new Error('MT:296-->Failed to update group');
+            throw new Error('MT:411-->Failed to update group');
         }
     }
 );

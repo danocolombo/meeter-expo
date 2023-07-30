@@ -13,6 +13,7 @@ import {
     updateMeeting,
     getActiveMeetings,
     addDefaultGroups,
+    deleteGroupFromMeeting,
     addMeeting,
     addGroup,
     updateGroup,
@@ -310,9 +311,37 @@ export const meetingsSlice = createSlice({
             })
             .addCase(updateGroup.fulfilled, (state, action) => {
                 printObject(
-                    'MS:311-->updateGroup.FULFILLED:action.payload:\n',
+                    'MS:314-->updateGroup.FULFILLED:action.payload:\n',
                     action.payload
                 );
+                const existingMeetings = state.meetings;
+                const updatedMeetings = existingMeetings.map((mtg) => {
+                    if (mtg.id === action.payload.meetingId) {
+                        const existingGroups = mtg.groups.items;
+                        const newGroups = existingGroups.map((grp) => {
+                            if (grp.id === action.payload.group.id) {
+                                return action.payload.group;
+                            } else {
+                                return grp;
+                            }
+                        });
+                        const groupItems = {
+                            items: newGroups,
+                        };
+                        const updatedMeeting = {
+                            ...mtg,
+                            groups: groupItems,
+                        };
+                        printObject(
+                            'MS:335-->updatedMeeting:\n',
+                            updatedMeeting
+                        );
+                        return updatedMeeting;
+                    } else {
+                        return mtg;
+                    }
+                });
+                state.meetings = updatedMeetings;
                 // const tmpMeetings = [...state.meetings];
                 // state.meetings = [...updatedMeetings];
 
@@ -321,6 +350,50 @@ export const meetingsSlice = createSlice({
             .addCase(updateGroup.rejected, (state, action) => {
                 printObject(
                     'MS:321-->updateGroup__REJECTED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
+            })
+            .addCase(deleteGroupFromMeeting.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(deleteGroupFromMeeting.fulfilled, (state, action) => {
+                // printObject(
+                //     'MS:333-->deleteGroupFromMeeting.FULFILLED:action.payload:\n',
+                //     action.payload
+                // );
+                //* * * * * * * * * * * * * * * * * * * * *
+                //*  remove the group from the meeting
+                //* * * * * * * * * * * * * * * * * * * * *
+                const existingMeetings = state.meetings;
+                // printObject('MS:341-->existingMeetings:\n', existingMeetings);
+                const updatedMeetings = existingMeetings.map((mtg) => {
+                    if (mtg.id === action.payload.meetingId) {
+                        const existingGroups = mtg.groups.items;
+                        const newGroups = existingGroups.filter(
+                            (grp) => grp.id !== action.payload.groupId
+                        );
+
+                        const newGroupsItems = {
+                            items: [...newGroups],
+                        };
+                        const newMtg = {
+                            ...mtg,
+                            groups: newGroupsItems,
+                        };
+                        return newMtg;
+                    } else {
+                        return mtg;
+                    }
+                });
+                // printObject('MS:366-->updatedMeetings:\n', updatedMeetings);
+                state.meetings = updatedMeetings;
+
+                state.isLoading = false;
+            })
+            .addCase(deleteGroupFromMeeting.rejected, (state, action) => {
+                printObject(
+                    'MS:336-->REJECTED:action.payload:\n',
                     action.payload
                 );
                 state.isLoading = false;

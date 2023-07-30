@@ -227,7 +227,7 @@ export const meetingsSlice = createSlice({
                         state.meetings = [];
                     }
                 } catch (error) {
-                    printObject('MS:245-->error getting all meetings\n', error);
+                    printObject('MS:230-->error getting all meetings\n', error);
                 }
                 state.isLoading = false;
             })
@@ -242,27 +242,38 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(addGroup.fulfilled, (state, action) => {
+                // printObject('MS:245-->action.payload:\n', action.payload);
                 const grp = { ...action.payload };
-                const newGroup = {
-                    id: grp.id,
-                    grpCompKey: grp.grpCompKey,
-                    title: grp.title,
-                    location: grp.location,
-                    gender: grp.gender,
-                    attendance: grp.attendance,
-                    facilitator: grp.facilitator,
-                    cofacilitator: grp.cofacilitator,
-                    notes: grp.notes,
-                    organizationGroupsId: grp.organizationGroupsId,
-                    meetingGroupsId: grp.meetingGroupsId,
-                };
+
                 // Find the meeting in state.meetings that matches the provided meetingGroupsId
                 const mtg = state.meetings.find(
-                    (m) => m.id === grp.meetingGroupsId
+                    (m) => m.id === action.payload.meetingGroupsId
                 );
                 if (mtg) {
                     // If the meeting is found, create a new array of groups and add the newGroup to it
-                    const newGroups = [...mtg.groups.items, newGroup];
+                    const newGroups = [...mtg?.groups?.items, action.payload];
+                    //* sort groups by gender, title, location
+                    newGroups.sort((a, b) => {
+                        // First, compare by gender
+                        const genderCompare = a.gender.localeCompare(b.gender);
+
+                        // If genders are different, return the gender comparison result
+                        if (genderCompare !== 0) {
+                            return genderCompare;
+                        }
+
+                        // If genders are the same, compare by title
+                        const titleCompare = a.title.localeCompare(b.title);
+
+                        // If titles are different, return the title comparison result
+                        if (titleCompare !== 0) {
+                            return titleCompare;
+                        }
+
+                        // If titles are the same, compare by location
+                        return a.location.localeCompare(b.location);
+                    });
+
                     const groupItems = { items: newGroups };
                     // Create a new meeting object with updated groups array
                     const updatedMtg = {
@@ -402,10 +413,10 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(addDefaultGroups.fulfilled, (state, action) => {
-                printObject(
-                    'MS:332-->addDefaultGroups.FULFILLED:action.payload:\n',
-                    action.payload
-                );
+                // printObject(
+                //     'MS:332-->addDefaultGroups.FULFILLED:action.payload:\n',
+                //     action.payload
+                // );
                 //* * * * * * * * * * * * * * * * * * * * *
                 //* this will receive the updated meeting
                 //* * * * * * * * * * * * * * * * * * * * *
@@ -511,14 +522,13 @@ export const deleteGroupList = (groups) => (dispatch) => {
         try {
             let res = await axios.post(api2use, body, config);
             if (res.status === 200) {
-                console.log('MS:332-->deleteGroup:', groupId, ' SUCCESS');
                 return true;
             } else {
-                console.log('MS:335-->deleteGroup:', groupId, ' FAILURE');
+                console.log('MS:335-->deleteGroupList:', groupId, ' FAILURE');
                 return false;
             }
         } catch (error) {
-            printObject('MS:339 --> ERROR DELETING:', error);
+            printObject('MS:339 --> ERROR deleteGroupList:', error);
             return false;
         }
     };
@@ -531,7 +541,6 @@ export const deleteGroupList = (groups) => (dispatch) => {
             console.log('MS:348-->deleting: ', g.groupId);
             deleteThisGroup(g)
                 .then((success) => {
-                    printObject('MS:351-->success', success);
                     if (!success) {
                         groupDeleteSuccess = false;
                         console.log('MS:354-->failed to delete:', g.groupId);

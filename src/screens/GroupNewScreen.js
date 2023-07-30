@@ -57,7 +57,7 @@ import GroupForm from '../components/GroupForm';
 //   ================
 const GroupNewScreen = ({ route }) => {
     const meeting = route.params.meeting;
-    printObject('GNS:59-->meeting', meeting);
+    // printObject('GNS:59-->meeting', meeting);
     const meetingId = meeting.id;
     const navigation = useNavigation();
     const { userProfile } = useUserContext();
@@ -138,26 +138,10 @@ const GroupNewScreen = ({ route }) => {
             };
         });
     }
-    // const mutation = useMutation({
-    //     mutationFn: (values) => {
-    //         printObject('GNS:178-->values:\n', values);
-    //         dispatch(saveNewGroup(values));
-    //         return (
-    //             PutGroup(values),
-    //             {
-    //                 onSuccess: (group) => {
-    //                     queryCache.invalidateQueries([
-    //                         'group',
-    //                         meeting.meetingId,
-    //                     ]);
-    //                 },
-    //             }
-    //         );
-    //     },
-    // });
+
     const handleFormSubmit = () => {
-        console.log('GNS:159-->handleFormSubmit--->values\n', values);
-        printObject('GNS:160-->route.params.meeting:\n', route.params);
+        // console.log('GNS:159-->handleFormSubmit--->values\n', values);
+        // printObject('GNS:160-->route.params.meeting:\n', route.params);
         dispatch(
             addGroup({
                 group: values,

@@ -85,12 +85,10 @@ const MeetingDetails = (props) => {
     );
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
-    const newUserProfile = useSelector((state) => state.user);
     const defaultGroups = useSelector(
-        (state) => state.system.activeOrg.defaultGroups.items
+        (state) => state?.system?.activeOrg?.defaultGroups?.items
     );
     const navigation = useNavigation();
-    const uns = useNavigationState((state) => state);
     let historic = false;
     const userTimeZone = Localization.timezone;
     const [isLoading, setIsLoading] = useState(false);
@@ -102,7 +100,6 @@ const MeetingDetails = (props) => {
     );
     const [meetingGroups, setMeetingGroups] = useState([]);
     const { width, height } = useWindowDimensions();
-
     useEffect(() => {
         if (meeting?.meetingDate) {
             // setDateString(meeting.date);
@@ -212,7 +209,6 @@ const MeetingDetails = (props) => {
     // );
 
     const handleAddDefaults = async () => {
-        console.log('handleAddDefaults');
         dispatch(
             addDefaultGroups({
                 meeting: meeting,
@@ -220,35 +216,6 @@ const MeetingDetails = (props) => {
                 defaultGroups: defaultGroups,
             })
         );
-        // printObject('MDST:203-->groups:\n', groups);
-        // dispatch(addDefaultGroups(groups));
-        // printObject('MDS:160-->meeting:\n', meeting);
-        // groups.map((group) => {
-        //     console.log('group.id:', group.id);
-        //     const values = {
-        //         meetingId: id,
-        //         groupId: '0',
-        //         gender: group.gender,
-        //         title: group.title,
-        //         attendance: 0,
-        //         location: group?.location ? group?.location : '',
-        //         grpCompKey: meeting.mtgCompKey,
-        //         facilitator: group?.facilitator ? group.facilitator : '',
-        //         cofacilitator: '',
-        //         notes: '',
-        //     };
-        //     PutGroup(values)
-        //         .then((results) => {
-        //             // printObject('MDS:177-->PutGroup results:\n', results);
-        //         })
-        //         .catch((error) => {
-        //             printObject('MDS:182-->PutGroup error:', error);
-        //         });
-        //     // printObject('MDS:173-->values:', values);
-        // });
-        //      only let them add one time.
-        // GROUPS.refetch();
-        //setShowDefaultButton(false);
     };
     //if (data) {
     const formattedDate = dateValue.toLocaleDateString('en-US', {

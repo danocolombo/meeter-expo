@@ -176,7 +176,11 @@ export const addDefaultGroups = createAsyncThunk(
             //* add meetings in graphql
 
             //* define existing meeting groups + defaults
-            let newGroupList = [...inputs.meeting.groups.items];
+            let newGroupList = [];
+            if (inputs?.meeting?.groups?.items) {
+                newGroupList = [...inputs?.meeting?.groups?.items];
+            }
+
             inputs.defaultGroups.forEach((dg) => {
                 const newId = createAWSUniqueID();
                 let inputInfo = {
@@ -190,8 +194,10 @@ export const addDefaultGroups = createAsyncThunk(
                     query: mutations.createGroup,
                     variables: { input: inputInfo },
                 });
+
                 newGroupList.push(inputInfo);
             });
+            // printObject('MT:199-->newGroupList:\n', newGroupList);
             const data = {
                 items: [...newGroupList],
             };
@@ -221,34 +227,17 @@ export const addDefaultGroups = createAsyncThunk(
 
             const sortedGroupList = [...data.items];
 
-            printObject('MT:228-->sortedGroupList:\n', sortedGroupList);
             const newGroupsItems = { items: sortedGroupList };
             //* put groups back in meeting object
             let meetingUpdate = {
                 ...inputs.meeting,
                 groups: newGroupsItems,
             };
-            printObject('MT:202-->meetingUpdate:\n', meetingUpdate);
 
             return meetingUpdate;
-
-            //todo
-            // Use await with the GraphQL call to get the results
-            // const results = await API.graphql({
-            //     query: mutations.createMeeting,
-            //     variables: { input: mtg },
-            // });
-            // // printObject('MT:184-->results:\n', results);
-            // // Check if the result contains the expected data and return it
-            // if (results.data.createMeeting.id) {
-            //     return mtg;
-            // } else {
-            //     // If data.createGroup.id is missing, handle the error
-            //     throw new Error('MT:189-->Failed to create meeting');
-            // }
         } catch (error) {
-            printObject('MT:198-->addMeeting thunk try failure.\n', error);
-            throw new Error('MT:199-->Failed to create meeting');
+            printObject('MT:250-->addMeeting thunk try failure.\n', error);
+            throw new Error('MT:251-->Failed to create meeting');
         }
     }
 );
@@ -276,11 +265,11 @@ export const addMeeting = createAsyncThunk(
                 return mtg;
             } else {
                 // If data.createGroup.id is missing, handle the error
-                throw new Error('MT:189-->Failed to create meeting');
+                throw new Error('MT:264-->Failed to create meeting');
             }
         } catch (error) {
-            printObject('MT:198-->addMeeting thunk try failure.\n', error);
-            throw new Error('MT:199-->Failed to create meeting');
+            printObject('MT:267-->addMeeting thunk try failure.\n', error);
+            throw new Error('MT:268-->Failed to create meeting');
         }
     }
 );
@@ -319,7 +308,7 @@ export const updateMeeting = createAsyncThunk(
     'meetings/updateMeeting',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:196-->updateMeeting__inputs:\n', inputs);
+            // printObject('MT:196-->updateMeeting__inputs:\n', inputs);
             //* * * * * * * * * * * * * * * * * * * *
             //* update the meeting in graphql
             //* * * * * * * * * * * * * * * * * * * *
@@ -354,7 +343,7 @@ export const addGroup = createAsyncThunk(
     async (inputs, thunkAPI) => {
         try {
             const newId = createAWSUniqueID();
-            printObject('MT:196-->addGroup__inputs:\n', inputs);
+            // printObject('MT:196-->addGroup__inputs:\n', inputs);
             let inputInfo = {
                 ...inputs.group,
                 meetingGroupsId: inputs.meetingId,
@@ -364,7 +353,6 @@ export const addGroup = createAsyncThunk(
             if (inputInfo.id === '0') {
                 inputInfo.id = newId;
             }
-            printObject('MT:208-->inputInfo:\n', inputInfo);
 
             // Use await with the GraphQL call to get the results
             const results = await API.graphql({
@@ -374,7 +362,7 @@ export const addGroup = createAsyncThunk(
 
             // Check if the result contains the expected data and return it
             if (results.data.createGroup.id) {
-                return results.data.createGroup;
+                return inputInfo;
             } else {
                 // If data.createGroup.id is missing, handle the error
                 throw new Error('MT:216-->Failed to create group');

@@ -17,13 +17,8 @@ import {
     useFocusEffect,
     useNavigationState,
 } from '@react-navigation/native';
-import { useUserContext } from '../contexts/UserContext';
-import HistoryList from '../components/HistoryList';
-import { getSupportedMeetings } from '../providers/meetings';
 import { useSelector, useDispatch } from 'react-redux';
-import { useAuthContext } from '../contexts/AuthContext';
 import MeetingListCard from '../components/Meeting.List.Card';
-//import { getHistoricMeetings } from '../features/meetingsSlice';
 import {
     printObject,
     getDateMinusDays,
@@ -33,10 +28,7 @@ import { getHistoricMeetings } from '../features/meetings/meetingsThunks';
 const HistoricScreen = (props) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const { userProfile } = useUserContext();
     const mtrTheme = useTheme();
-    const meeter = useSelector((state) => state.system);
-    const uns = useNavigationState((state) => state);
     const [isLoading, setIsLoading] = useState(false);
     const [displayMeetings, setDisplayMeetings] = useState([]);
 

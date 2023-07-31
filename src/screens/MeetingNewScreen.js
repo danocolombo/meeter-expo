@@ -9,7 +9,6 @@ import React, { useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { Surface, useTheme } from 'react-native-paper';
-import { useUserContext } from '../contexts/UserContext';
 import MeetingForm from '../components/MeetingFormRTK';
 import { addMeeting } from '../features/meetings/meetingsThunks';
 import {
@@ -24,7 +23,7 @@ import { sub } from 'react-native-reanimated';
 //   ================
 const MeetingNewScreen = ({ route }) => {
     const mtrTheme = useTheme();
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const navigate = useNavigation();
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);

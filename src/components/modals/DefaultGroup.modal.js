@@ -16,11 +16,10 @@ import {
     getUniqueId,
     printObject,
 } from '../../utils/helpers';
-import { useUserContext } from '../../contexts/UserContext';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 export default function DGModalScreen(props) {
     const group = props.route.params;
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const dispatch = useDispatch();
     const mtrTheme = useTheme();
     const navigation = useNavigation();

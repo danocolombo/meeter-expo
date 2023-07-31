@@ -26,15 +26,12 @@ import {
     useNavigationState,
     useFocusEffect,
 } from '@react-navigation/native';
-import { useMutation, queryCache } from '@tanstack/react-query';
 import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { PutGroup } from '../components/common/hooks/groupQueries';
 import { addGroup } from '../features/meetings/meetingsThunks';
 import GenderSelectors from '../components/GenderSelectors';
 import NumberInput from '../components/ui/NumberInput';
-import { useUserContext } from '../contexts/UserContext';
 import Input from '../components/ui/Input';
 import {
     Surface,
@@ -42,17 +39,7 @@ import {
     useTheme,
     ActivityIndicator,
 } from 'react-native-paper';
-import { printObject, isDateDashBeforeToday } from '../utils/helpers';
-import MeetingListCard from '../components/Meeting.List.Card';
-import {
-    updateGroupValues,
-    addGroupValues,
-    deleteIndividualGroup,
-} from '../features/meetingsSlice';
-import DateBall from '../components/ui/DateBall';
-import MeetingCardDate from '../components/ui/Meeting.Card.Date';
-// import { Style } from 'domelementtype';
-import GroupForm from '../components/GroupForm';
+
 //   FUNCTION START
 //   ================
 const GroupNewScreen = ({ route }) => {
@@ -60,7 +47,7 @@ const GroupNewScreen = ({ route }) => {
     // printObject('GNS:59-->meeting', meeting);
     const meetingId = meeting.id;
     const navigation = useNavigation();
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     let group = {};
     const mtrTheme = useTheme();
     const isFocused = useIsFocused();

@@ -19,7 +19,7 @@ import {
     updateGroup,
 } from './meetingsThunks';
 import { deleteMeetingFromDDB } from '../../providers/meetings';
-import { useUserContext } from '../../contexts/UserContext';
+import { useSelector } from 'react-redux';
 //   this is url for all meetings
 const config = {
     headers: {
@@ -784,7 +784,7 @@ export const getMeetingGroups = (meetingId) => (dispatch) => {
     getData(meetingId);
 };
 export const updateMeetingValues = (values) => (dispatch) => {
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     // always make sure that the mtgCompKey is equal to the meetingDate
     console.log('A');
     let mDate = values.meetingDate;

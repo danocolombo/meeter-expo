@@ -14,12 +14,11 @@ import {
     updateActiveMember,
 } from '../../features/team/teamThunks';
 
-import { useUserContext } from '../../contexts/UserContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { printObject } from '../../utils/helpers';
 import MemberCard from '../../components/teams/MemberCard';
 const ActiveMembers = () => {
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const dispatch = useDispatch();
     const activeMembers = useSelector((state) => state.team.activeMembers);
     const isLoading = useSelector((state) => state.team.isLoading);

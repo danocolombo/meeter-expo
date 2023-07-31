@@ -1,14 +1,15 @@
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import React, { useState } from 'react';
 import NumberInput from './ui/NumberInput';
+import { useSelector } from 'react-redux';
 import { useUserContext } from '../contexts/UserContext';
 import Input from './ui/Input';
 import { useTheme } from 'react-native-paper';
 const NumbersSection = ({ values, setValues }) => {
     const { width } = useWindowDimensions();
     const mtrTheme = useTheme();
-    const { perms } = useUserContext();
-    const [ViewOnly, setViewOnly] = useState(!perms.includes('manage'));
+    const newPerms = useSelector((state) => state.user.perms);
+    const [ViewOnly, setViewOnly] = useState(!newPerms.includes('manage'));
     function inputChangedHandler(inputIdentifier, enteredValue) {
         // console.log('INPUT CHANGE HANDLER CLICKED');
         // console.log('inputIdentifier:', inputIdentifier);
@@ -28,7 +29,6 @@ const NumbersSection = ({ values, setValues }) => {
             };
         });
     }
-    // console.log('MFN:31-->perms:\n', perms);
     if (ViewOnly) {
         return (
             <>

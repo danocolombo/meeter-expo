@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useUserContext } from '../contexts/UserContext';
 import { useSelector } from 'react-redux';
 import { FontAwesome, AntDesign, Entypo } from '@expo/vector-icons';
 import systemSlice from '../features/system/systemSlice';
@@ -12,7 +11,7 @@ import InactiveMembers from '../screens/team/InactiveMembers.tab';
 const BottomTab = createBottomTabNavigator();
 const TeamConfig = () => {
     const mtrTheme = useTheme();
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const newMembers = useSelector((state) => state.team.newMembers);
     const { appName } = useSelector((state) => state.system);
     const [newCountLabel, setNewCountLabel] = useState(0);

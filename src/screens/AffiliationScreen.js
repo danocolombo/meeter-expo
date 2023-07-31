@@ -13,21 +13,20 @@ import Picker from '@react-native-picker/picker';
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
 import React, { useCallback, useState, useLayoutEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import Input from '../components/ui/Input';
 import { Dropdown } from 'react-native-element-dropdown';
 import { API, graphqlOperation } from 'aws-amplify';
 import * as mutations from '../jerichoQL/mutations';
 import * as queries from '../jerichoQL/queries';
-import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { MEETER_DEFAULTS } from '../constants/meeter';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
 
 const AffiliationScreen = (props) => {
     const navigation = useNavigation();
     const mtrTheme = useTheme();
-    const { userProfile, updateHeroMessage } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     // printObject('AFF:34-->userProfile:', userProfile);
     const [showChangeModal, setShowChangeModal] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);

@@ -12,11 +12,11 @@ import {
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
 import React, { useState } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { updateAffiliations } from '../jerichoQL/providers/affiliations.provider';
 
 import { useNavigation, NavigationActions } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 // import Navigation from '../navigation/Navigation';
 
 const TeamMemberScreen = (props) => {
@@ -28,7 +28,7 @@ const TeamMemberScreen = (props) => {
         teamMember.activeRoles ? false : true
     );
     const [showDeleteWarning, setShowDeleteWarning] = useState(false);
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const [isUpdating, setIsUpdating] = useState(false);
     const [pictureObject, setPictureObject] = useState(
         props.route.params.pictureUri

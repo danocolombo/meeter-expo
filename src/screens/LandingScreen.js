@@ -53,6 +53,7 @@ const LandingScreen = () => {
     const [activeMeeting, setActiveMeeting] = useState();
     const [nextMeeting, setNextMeeting] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const userProfile = useSelector((state) => state.user.profile);
     const [welcomeMessage, setWelcomeMessage] = useState(
         userProfile?.activeOrg?.heroMessage
     );
@@ -62,7 +63,7 @@ const LandingScreen = () => {
     const sysRedux = useSelector((state) => state.system);
     const { meeter } = useSysContext();
     const { authUser, defineUser } = useAuthContext();
-    const { userProfile, saveUserProfile, passValue } = useUserContext();
+    const { saveUserProfile } = useUserContext();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -71,6 +72,9 @@ const LandingScreen = () => {
     }, [navigation, meeter]);
 
     async function getUserDefined() {
+        //      =============================================
+        //      saves the user info to redux user
+        //      =============================================
         const cau = await Auth.currentAuthenticatedUser();
         const user = await defineUser(cau.attributes.sub);
         saveUserProfile(user);

@@ -7,27 +7,16 @@ import {
     NavigationHelpersContext,
     StackActions,
 } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
 import { useTheme } from 'react-native-paper';
-import { Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-    createDrawerNavigator,
-    DrawerContentScrollView,
-    DrawerItemList,
-    DrawerItem,
-} from '@react-navigation/drawer';
+
 import { useSysContext } from '../contexts/SysContext';
 import { useAuthContext } from '../contexts/AuthContext';
-import { useUserContext } from '../contexts/UserContext';
-import LandingScreen from '../screens/LandingScreen';
 import SignInScreen from '../screens/Auth/SignIn';
 import SignUpScreen from '../screens/Auth/SignUp';
 import ConfirmEmailScreen from '../screens/Auth/ConfirmEmail';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
 import NewPasswordScreen from '../screens/Auth/NewPassword';
-// import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
 import MeetingDetailsScreen from '../screens/MeetingDetailsScreenTwo';
 import TeamMemberScreen from '../screens/TeamMemberScreen'; // import MeetingDelete from '../screens/MeetingDelete';
 import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
@@ -37,18 +26,14 @@ import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
-import { logout } from '../features/usersSlice';
-// import { logout as meetingsSignout } from '../features/meetingsSlice';
-// import { logout as profilesLogout } from '../features/profilesSlice';
-// import { logout as systemLogout } from '../features/system/systemSlice';
 import { useDispatch } from 'react-redux';
-// import ProfilePicModal from '../screens/ProfilePicModal';
 import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
 import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
 import DGModalScreen from '../components/modals/DefaultGroup.modal';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub, Cache } from 'aws-amplify';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
+import { clearUser } from '../features/user/userSlice';
 import { printObject } from '../utils/helpers';
 const Stack = createNativeStackNavigator();
 function MeeterStack(props) {
@@ -56,7 +41,6 @@ function MeeterStack(props) {
     const dispatch = useDispatch();
     const { meeter, sysSignOut } = useSysContext();
     const { authSignOut } = useAuthContext();
-    const { useSignOut } = useUserContext();
     return (
         <Stack.Navigator>
             <Stack.Screen
@@ -221,7 +205,7 @@ function Navigation() {
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
     const { meeter, loadSystem } = useSysContext();
-    const { clearUser } = useUserContext();
+
     const [isUserAuthenticated, setIsUserAuthenticated] = useState(undefined);
     const checkUser = async () => {
         try {

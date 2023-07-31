@@ -10,64 +10,34 @@ import { useTheme, ActivityIndicator } from 'react-native-paper';
 import React, { useCallback, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Input from '../components/ui/Input';
-import { API } from 'aws-amplify';
-import * as queries from '../jerichoQL/queries';
-import * as mutations from '../jerichoQL/mutations';
 import CustomButton from '../components/ui/Auth/CustomButton';
-import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
-import { useFocusEffect } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { saveUserProfile } from '../features/user/userThunks';
 const HeroMessageScreen = (props) => {
     const mtrTheme = useTheme();
-    const { userProfile, updateHeroMessage } = useUserContext();
+    const dispatch = useDispatch();
+    const userProfile = useSelector((state) => state.user.profile);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [theMessage, setTheMessage] = useState();
-    useFocusEffect(
-        useCallback(() => {
-            try {
-                async function getTheMessage() {
-                    const orgResponse = await API.graphql({
-                        query: queries.getOrganization,
-                        variables: {
-                            id: userProfile?.activeOrg?.id,
-                        },
-                    });
-                    printObject('HM:43-->orgResponse', orgResponse);
-
-                    setTheMessage(
-                        orgResponse.data.getOrganization.heroMessage || ''
-                    );
-                }
-                getTheMessage();
-            } catch (error) {
-                console.log('HM:51-->unexpected error:\n', error);
-            }
-        }, [])
+    const [theMessage, setTheMessage] = useState(
+        userProfile?.activeOrg?.heroMessage
     );
     const handleSaveClick = () => {
         // need to update organization.heroMessage and
         // and userProfile.activeOrg.heroMessage
         setIsUpdating(true);
         try {
-            const updateInfo = {
-                id: userProfile.activeOrg.id,
+            //* update the hero message in profile and save it...
+            const updatedActiveOrg = {
+                ...userProfile.activeOrg,
                 heroMessage: theMessage,
             };
-            API.graphql({
-                query: mutations.updateOrgHeroMessage,
-                variables: { input: updateInfo },
-            })
-                .then((results) => {
-                    updateHeroMessage(
-                        results.data.updateOrganization.heroMessage
-                    );
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.error(error);
-                });
+            const updatedUserProfile = {
+                ...userProfile,
+                activeOrg: updatedActiveOrg,
+            };
+            dispatch(saveUserProfile(updatedUserProfile));
         } catch (error) {
             console.log('HM:58-->unexpected error:\n', error);
         }
@@ -90,6 +60,7 @@ const HeroMessageScreen = (props) => {
             </View>
         );
     }
+    printObject('HM:93-->userProfile:\n', userProfile);
     return (
         <>
             <SafeAreaView

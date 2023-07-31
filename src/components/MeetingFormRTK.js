@@ -53,7 +53,8 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDeleteRequest }) => {
     const id = meetingId || createAWSUniqueID();
     const navigation = useNavigation();
     const { meeter } = useSysContext();
-    const { userProfile, perms } = useUserContext();
+    const { userProfile } = useUserContext();
+    const newPerms = useSelector((state) => state.user.perms);
     const { width } = useWindowDimensions();
     const [formattedDate, setFormattedDate] = useState();
     const hit = useSelector((state) =>
@@ -69,7 +70,7 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDeleteRequest }) => {
     const [modalMeetingDateVisible, setModalMeetingDateVisible] =
         useState(false);
     const [authority, setAuthority] = useState(
-        perms.includes('manage') || false
+        newPerms.includes('manage') || false
     );
     const userTimeZone = Localization.timezone;
     const localTimezoneOffsetInMinutes = new Date().getTimezoneOffset();

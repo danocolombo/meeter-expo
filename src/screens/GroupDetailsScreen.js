@@ -2,7 +2,6 @@ import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, AppState } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
-import { focusManager } from '@tanstack/react-query';
 import CustomButton from '../components/ui/CustomButton';
 import { Badge } from 'react-native-paper';
 import {
@@ -11,9 +10,6 @@ import {
     useTheme,
     ActivityIndicator,
 } from 'react-native-paper';
-import { useUserContext } from '../contexts/UserContext';
-import { useQuery } from '@tanstack/react-query';
-import { FetchGroup } from '../components/common/hooks/groupQueries';
 import { printObject } from '../utils/helpers';
 //   FUNCTION START
 //   ===============
@@ -24,7 +20,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
     const group = meeting.groups.items.find(
         (g) => g.id === route.params.group.id
     );
-    const { perms } = useUserContext();
+    const perms = useSelector((state) => state.user.perms);
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
     const [isLoading, setIsLoading] = useState(false);

@@ -6,11 +6,8 @@ import { API } from 'aws-amplify';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Surface, useTheme, ActivityIndicator, FAB } from 'react-native-paper';
 import DefaultGroupCard from '../components/groups/Default.Group.Card';
-import { useSysContext } from '../contexts/SysContext';
-import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as mutations from '../jerichoQL/mutations';
 import { printObject } from '../utils/helpers';
 import {
     loadDefaultGroups,
@@ -21,7 +18,7 @@ const DefaultGroupsScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const defaultGroups = useSelector((state) => state.groups.defaultGroups);
     const [displayGroups, setDisplayGroups] = useState([]);
     const [isLoading, setIsLoading] = useState(false);

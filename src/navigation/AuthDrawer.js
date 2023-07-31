@@ -21,16 +21,15 @@ import ProfileScreen from '../screens/profile/ProfileScreen';
 import { useAuthContext } from '../contexts/AuthContext';
 //import { Colors } from '../constants/colors';
 import { printObject } from '../utils/helpers';
-import { useUserContext } from '../contexts/UserContext';
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 const AuthDrawer = (navigation) => {
     const mtrTheme = useTheme();
-    const { userProfile, perms } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
+    const perms = useSelector((state) => state.user.perms);
     //printObject('AD:26-->userProfile', userProfile);
     // printObject('mtrTheme:', mtrTheme);
-    const user = useSelector((state) => state.users.currentUser);
     const meeter = useSelector((state) => state.system);
 
     // console.log('AD: affiliations:', user)

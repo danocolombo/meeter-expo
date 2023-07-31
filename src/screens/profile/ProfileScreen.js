@@ -14,20 +14,22 @@ import { focusManager } from '@tanstack/react-query';
 import CustomButton from '../../components/ui/CustomButton';
 import ProfileForm from '../../components/Profile/ProfileForm';
 import { useUserContext, up } from '../../contexts/UserContext';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { printObject } from '../../utils/helpers';
 import { StatusBar } from 'expo-status-bar';
+import { saveUserProfile } from '../../features/user/userThunks';
 
 //   FUNCTION START
 //   ==============
 const ProfileScreen = (props) => {
+    const dispatch = useDispatch();
     const { height, width } = useWindowDimensions();
     const navigation = useNavigation();
     const mtrTheme = useTheme();
     // const [userProfile, setReduxProfile] = useState(
     //     useSelector((state) => state.user.profile)
     // );
-    const { userProfile, updateUserProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -53,15 +55,16 @@ const ProfileScreen = (props) => {
     }, [navigation]);
 
     const handleUpdate = (values) => {
-        const updateProfileData = async (values) => {
-            updateUserProfile(values)
-                .then(() => {
-                    console.log('profile updated');
-                })
-                .catch((e) => {
-                    printObject('error saving profile:', e);
-                });
-        };
+        // const updateProfileData = async (values) => {
+        //     updateUserProfile(values)
+        //         .then(() => {
+        //             console.log('profile updated');
+        //         })
+        //         .catch((e) => {
+        //             printObject('error saving profile:', e);
+        //         });
+        // };
+        dispatch(saveUserProfile(values));
         printObject('PS:45-->form submit values:\n', values);
         setIsSaving(true);
         updateProfileData(values)

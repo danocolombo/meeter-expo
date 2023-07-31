@@ -20,17 +20,9 @@ import {
     useNavigationState,
 } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { useQuery } from '@tanstack/react-query';
 import { Surface, ActivityIndicator, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
-import { FontDisplay } from 'expo-font';
-import { FetchActiveMeetings } from '../components/common/hooks/meetingQueries';
-import { dateNumToDateDash, printObject } from '../utils/helpers';
-import { useAuthContext } from '../contexts/AuthContext';
-import { focusManager } from '@tanstack/react-query';
-import { current } from '@reduxjs/toolkit';
 import { useSysContext } from '../contexts/SysContext';
-import { useUserContext } from '../contexts/UserContext';
 import {
     getActiveMeetings,
     getAllMeetings,
@@ -42,7 +34,7 @@ const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const { meeter } = useSysContext();
     const activeMeetings = useSelector(
         (state) => state.meetings.activeMeetings

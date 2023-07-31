@@ -3,7 +3,6 @@ import { View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useTheme } from 'react-native-paper';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useUserContext } from '../contexts/UserContext';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 //import HistoricScreen from '../screens/HistoricScreen';
 import HistoricScreen from '../screens/HistoricScreenRTK';
@@ -13,7 +12,7 @@ import systemSlice from '../features/system/systemSlice';
 const BottomTab = createBottomTabNavigator();
 const MeetingsConfig = () => {
     const mtrTheme = useTheme();
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const { appName } = useSelector((state) => state.system);
     let director = false;
     if (userProfile?.ActiveOrg?.affiliations.active.role === 'director') {

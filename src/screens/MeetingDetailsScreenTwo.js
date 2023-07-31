@@ -75,7 +75,7 @@ const MeetingDetails = (props) => {
     const id = props.route.params.id;
     // printObject('MDST:70-->props:\n', id);
     const mtrTheme = useTheme();
-    const { userProfile, perms } = useUserContext();
+    const { userProfile } = useUserContext();
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
@@ -124,7 +124,7 @@ const MeetingDetails = (props) => {
         }
         // printObject('MDS:87-->userProfile:\n', userProfile);
 
-        if (perms.includes('manage') || perms.includes('meals')) {
+        if (newPerms.includes('manage') || newPerms.includes('meals')) {
             navigation.setOptions({
                 title: meeter.appName,
                 headerBackTitle: 'Back',
@@ -399,8 +399,8 @@ const MeetingDetails = (props) => {
                         >
                             Open-Share Groups
                         </Text>
-                        {(perms.includes('manage') ||
-                            perms.includes('groups')) && (
+                        {(newPerms.includes('manage') ||
+                            newPerms.includes('groups')) && (
                             <View
                                 style={{
                                     justifyContent: 'center',

@@ -37,7 +37,6 @@ import { dateNumToDateDash, printObject } from '../utils/helpers';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useUserContext } from '../contexts/UserContext';
 import { useSysContext } from '../contexts/SysContext';
-import { useAffiliationContext } from '../contexts/AffiliationContext';
 import profilesSlice from '../features/profilesSlice';
 import { StatusBar } from 'expo-status-bar';
 import { saveUserProfile as addReduxProfile } from '../features/user/userThunks';

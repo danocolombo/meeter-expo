@@ -38,7 +38,6 @@ import * as MediaLibrary from 'expo-media-library';
 import Button from '../ui/IButton';
 import { ScreenStackHeaderBackButtonImage } from 'react-native-screens';
 
-import { useUserContext } from '../../contexts/UserContext';
 import { useSysContext } from '../../contexts/SysContext';
 import CustomButton from '../ui/CustomButton';
 import { updateProfile } from '../../jerichoQL/providers/users.provider';
@@ -52,12 +51,14 @@ import {
     createPatePhone,
 } from '../../utils/helpers';
 import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
-
+import { useDispatch } from 'react-redux';
+import { saveUserProfile } from '../../features/user/userThunks';
 //   FUNCTION START
 //   ===============
 const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const today = new Date();
     const navigation = useNavigation();
+    const dispatch = useDispatch();
     const [savingProfile, setSavingProfile] = useState(false);
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isShirtFocus, setIsShirtFocus] = useState(false);
@@ -74,7 +75,6 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const profilePicture = useRef(null);
     //      the picture file
     const [profilePic, setProfilePic] = useState(null);
-    const { updateUserProfile } = useUserContext();
     const [profilePicDetails, setProfilePicDetails] = useState(null);
     const { meeter } = useSysContext();
     const [stateProv, setStateProv] = useState(
@@ -523,7 +523,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                     ...resultantProfile,
                     ...results,
                 };
-                updateUserProfile(newValues);
+                dispatch(saveUserProfile(newValues));
             })
             .catch((err) => {
                 printObject(

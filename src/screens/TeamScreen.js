@@ -1,7 +1,6 @@
 import { Text, View, FlatList, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import TeamGroupCard from '../components/teams/Team.Group.Card';
 // import { getTeam } from '../jerichoQL/providers/team.provider';
@@ -21,7 +20,7 @@ const TeamScreen = () => {
     const [newMembers, setNewMembers] = useState([]);
     const [activeMembers, setActiveMembers] = useState([]);
     const mtrTheme = useTheme();
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     useFocusEffect(
         useCallback(() => {
             printObject('TS:20-->allProfiles:\n', allProfiles);

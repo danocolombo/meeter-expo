@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import NewMemberCard from '../../components/teams/NewMemberCard';
 import { useSelector, useDispatch } from 'react-redux';
 import { acceptMember, declineMember } from '../../features/team/teamThunks';
-import { useTeamContext } from '../../contexts/TeamContext';
 import { printObject } from '../../utils/helpers';
 import { acc } from 'react-native-reanimated';
 const NewMembers = () => {

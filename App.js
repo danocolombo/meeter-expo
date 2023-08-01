@@ -12,7 +12,6 @@ import {
 import AuthContextProvider from './src/contexts/AuthContext';
 import UserContextProvider from './src/contexts/UserContext';
 import SysContextProvider from './src/contexts/SysContext';
-import TeamContextProvider from './src/contexts/TeamContext';
 // import NetInfo from '@react-native-community/netinfo';
 import Navigation from './src/navigation/Navigation';
 import { store } from './src/app/store';
@@ -83,21 +82,19 @@ function App() {
             <AuthContextProvider>
                 <UserContextProvider>
                     <SysContextProvider>
-                        <TeamContextProvider>
-                            <QueryClientProvider client={queryClient}>
-                                <PaperProvider theme={theme}>
-                                    <SafeAreaView
-                                        style={
-                                            Platform === 'ios'
-                                                ? styles.containerIOS
-                                                : styles.container
-                                        }
-                                    >
-                                        <Navigation theme={theme} />
-                                    </SafeAreaView>
-                                </PaperProvider>
-                            </QueryClientProvider>
-                        </TeamContextProvider>
+                        <QueryClientProvider client={queryClient}>
+                            <PaperProvider theme={theme}>
+                                <SafeAreaView
+                                    style={
+                                        Platform === 'ios'
+                                            ? styles.containerIOS
+                                            : styles.container
+                                    }
+                                >
+                                    <Navigation theme={theme} />
+                                </SafeAreaView>
+                            </PaperProvider>
+                        </QueryClientProvider>
                     </SysContextProvider>
                 </UserContextProvider>
             </AuthContextProvider>

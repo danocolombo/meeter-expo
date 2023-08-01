@@ -11,7 +11,6 @@ import {
 import AuthContextProvider from './src/contexts/AuthContext';
 import UserContextProvider from './src/contexts/UserContext';
 import SysContextProvider from './src/contexts/SysContext';
-import TeamContextProvider from './src/contexts/TeamContext';
 import useCachedResources from './src/hooks/useCachedResources';
 import useColorScheme from './src/hooks/useColorScheme';
 import Navigation from './src/navigation/Navigation';
@@ -82,16 +81,14 @@ function App() {
             <AuthContextProvider>
                 <UserContextProvider>
                     <SysContextProvider>
-                        <TeamContextProvider>
-                            <QueryClientProvider client={queryClient}>
-                                <PaperProvider theme={theme}>
-                                    <SafeAreaProvider>
-                                        <Navigation />
-                                        <StatusBar />
-                                    </SafeAreaProvider>
-                                </PaperProvider>
-                            </QueryClientProvider>
-                        </TeamContextProvider>
+                        <QueryClientProvider client={queryClient}>
+                            <PaperProvider theme={theme}>
+                                <SafeAreaProvider>
+                                    <Navigation />
+                                    <StatusBar />
+                                </SafeAreaProvider>
+                            </PaperProvider>
+                        </QueryClientProvider>
                     </SysContextProvider>
                 </UserContextProvider>
             </AuthContextProvider>

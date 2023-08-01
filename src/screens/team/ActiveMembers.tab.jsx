@@ -85,6 +85,9 @@ const ActiveMembers = () => {
             <View style={styles.pageTitleContainer}>
                 <Text style={styles.pageTitle}>Active Members</Text>
             </View>
+            <View>
+                <Text>ActiveMembers.tab</Text>
+            </View>
             <View style={{ marginLeft: 'auto' }}>
                 <Pressable
                     onPress={() => setEditFlag(!editFlag)}

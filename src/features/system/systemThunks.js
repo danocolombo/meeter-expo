@@ -10,7 +10,7 @@ export const loadActiveOrg = createAsyncThunk(
     'system/loadActiveOrg',
     async (inputs, thunkAPI) => {
         try {
-            // printObject('ST:13-->inputs\n', inputs);
+            printObject('ST:13-->inputs\n', inputs);
             const systemInfo = await API.graphql({
                 query: queries.getActiveOrganization,
                 variables: { orgId: inputs },

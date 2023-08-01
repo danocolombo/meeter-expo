@@ -23,7 +23,6 @@ import * as Localization from 'expo-localization';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { useSysContext } from '../contexts/SysContext';
 import { useUserContext } from '../contexts/UserContext';
 import DateBall from './ui/DateBall';
 import DateStack from './ui/DateStack';
@@ -52,7 +51,7 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDeleteRequest }) => {
     // console.log('MFRTK:54-->meetingId:', meetingId);
     const id = meetingId || createAWSUniqueID();
     const navigation = useNavigation();
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const { userProfile } = useUserContext();
     const newPerms = useSelector((state) => state.user.perms);
     const { width } = useWindowDimensions();

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { updateAffiliateActiveAndReference } from '../features/usersSlice';
 import { printObject, getDateMinusDays } from '../utils/helpers';
 import { getAffiliate } from './system';
 const config = {

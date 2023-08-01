@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Permissions from './Permissions';
-import {
-    updateAffiliationStatus,
-    addNewAffiliationForUser,
-    removeAffiliation,
-} from '../../jerichoQL/providers/affiliations.provider';
+
 import { updateTeamMemberPermissions } from '../../jerichoQL/providers/team.provider';
 import { printObject, transformPatePhone } from '../../utils/helpers';
 

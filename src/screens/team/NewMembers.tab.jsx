@@ -34,6 +34,9 @@ const NewMembers = () => {
                 <View style={styles.pageTitleContainer}>
                     <Text style={styles.pageTitle}>Inactive Members</Text>
                 </View>
+                <View>
+                    <Text>screens/team/NewMembers.tab</Text>
+                </View>
                 <View style={{ paddingVertical: 20, paddingHorizontal: 10 }}>
                     <Text>There are no new membership requests.</Text>
                 </View>
@@ -44,6 +47,9 @@ const NewMembers = () => {
         <View style={{ flex: 1, flexDirection: 'column' }}>
             <View style={styles.pageTitleContainer}>
                 <Text style={styles.pageTitle}>New Membership Requests</Text>
+            </View>
+            <View>
+                <Text>screens/team/NewMembers.tab</Text>
             </View>
             <View>
                 <Text

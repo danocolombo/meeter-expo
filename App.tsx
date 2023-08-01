@@ -10,7 +10,6 @@ import {
 } from '@tanstack/react-query';
 import AuthContextProvider from './src/contexts/AuthContext';
 import UserContextProvider from './src/contexts/UserContext';
-import SysContextProvider from './src/contexts/SysContext';
 import useCachedResources from './src/hooks/useCachedResources';
 import useColorScheme from './src/hooks/useColorScheme';
 import Navigation from './src/navigation/Navigation';
@@ -80,16 +79,14 @@ function App() {
         <Provider store={store}>
             <AuthContextProvider>
                 <UserContextProvider>
-                    <SysContextProvider>
-                        <QueryClientProvider client={queryClient}>
-                            <PaperProvider theme={theme}>
-                                <SafeAreaProvider>
-                                    <Navigation />
-                                    <StatusBar />
-                                </SafeAreaProvider>
-                            </PaperProvider>
-                        </QueryClientProvider>
-                    </SysContextProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <PaperProvider theme={theme}>
+                            <SafeAreaProvider>
+                                <Navigation />
+                                <StatusBar />
+                            </SafeAreaProvider>
+                        </PaperProvider>
+                    </QueryClientProvider>
                 </UserContextProvider>
             </AuthContextProvider>
         </Provider>

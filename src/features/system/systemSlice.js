@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { printObject } from '../../utils/helpers';
-import { loadActiveOrg } from './systemThunks';
+import { loadActiveOrg, initializeSystem } from './systemThunks';
 const makeToday1 = () => {
     var d = new Date();
     const dminusone = d.toLocaleString(); //  M/DD/YYYY, H:MM:SS PM
@@ -41,16 +41,19 @@ let AFF = {
 };
 
 const initialState = {
-    appName: 'Meeter',
-    region: 'us#east#dflt',
-    eventRegion: 'test',
-    stateProv: 'GA',
-    affiliateTitle: 'MEETER',
-    today: today,
-    affiliation: 'DFLT',
+    meeter: {
+        appName: 'Meeter',
+        region: 'us#east#dflt',
+        eventRegion: 'test',
+        stateProv: 'GA',
+        affiliateTitle: 'MEETER',
+        today: today,
+        affiliation: 'DFLT',
+        affiliate: AFF,
+        userRole: '',
+        isLoading: true,
+    },
     isLoading: true,
-    affiliate: AFF,
-    userRole: '',
     activeOrg: {},
 };
 
@@ -58,69 +61,51 @@ export const systemSlice = createSlice({
     name: 'system',
     initialState,
     reducers: {
-        updateAppName: (state, action) => {
-            state.appName = action.payload;
-        },
-        setRegion: (state, action) => {
-            state.region = action.payload;
-        },
-        updateRegion: (state, action) => {
-            state.region = action.payload;
-        },
-        setEventRegion: (state, action) => {
-            state.eventRegion = action.payload;
-        },
-        updateEventRegion: (state, action) => {
-            state.eventRegion = action.payload;
-        },
-        updateStateProv: (state, action) => {
-            state.stateProv = action.payload;
-        },
-        updateAffiliate: (state, action) => {
-            state.affiliate = action.payload;
-        },
-        updateAffiliationString: (state, action) => {
-            state.affiliation = action.payload;
-        },
         updateAffiliation: (state, action) => {
-            state.appName = action.payload.appName;
-            state.region = action.payload.regions[0];
-            state.eventRegion = action.payload.eventRegions[0];
-            state.affiliateTitle = action.payload.title;
-            state.affiliation = action.payload.value;
-            state.userRole = action.payload.userRole;
-            delete action.payload.userRole;
-            state.affiliate = action.payload;
+            state.meeter.appName = action.payload.appName;
+            state.meeter.region = action.payload.regions[0];
+            state.meeter.eventRegion = action.payload.eventRegions[0];
+            state.meeter.affiliateTitle = action.payload.title;
+            state.meeter.affiliation = action.payload.value;
+            state.meeter.userRole = action.payload.userRole;
+            state.meeter.affiliate = action.payload;
             return state;
         },
 
-        updateAffiliateTitle: (state, action) => {
-            state.affiliateTitle = action.payload;
-        },
-        updateUserRole: (state, action) => {
-            state.userRole = action.payload;
-        },
-        clearToday: (state) => {
-            state.today = '';
-        },
-        setSystemDate: (state, action) => {
-            state.today = action.payload;
-        },
         logout: (state) => {
-            state.appName = '';
-            state.region = '';
-            state.eventRegion = '';
-            state.stateProv = '';
-            state.affiliateTitle = '';
-            state.affiliationEntity = '';
-            state.userRole = '';
-            state.affiliation = '';
-            state.affiliate = {};
+            state.meeter.appName = '';
+            state.meeter.region = '';
+            state.meeter.eventRegion = '';
+            state.meeter.stateProv = '';
+            state.meeter.affiliateTitle = '';
+            state.meeter.affiliationEntity = '';
+            state.meeter.userRole = '';
+            state.meeter.affiliation = '';
+            state.meeter.affiliate = {};
             return state;
         },
     },
     extraReducers: (builder) => {
         builder
+            .addCase(initializeSystem.pending, (state) => {
+                state.isLoading = true;
+                state.meeter.isLoading = true;
+            })
+            .addCase(initializeSystem.fulfilled, (state, action) => {
+                // Set a default state update for testing
+                state.meeter.appName = action.payload.appName;
+                state.meeter.region = action?.payload?.region || '';
+                state.meeter.eventRegion = action?.payload?.eventRegion || '';
+                state.meeter.affiliateTitle = action?.payload?.title || '';
+                state.meeter.affiliation = action?.payload?.value || '';
+                state.meeter.userRole = action?.payload?.userRole || '';
+                state.meeter.isLoading = false;
+                state.isLoading = false;
+            })
+            .addCase(initializeSystem.rejected, (state, action) => {
+                state.isLoading = false;
+                state.meeter.isLoading = false;
+            })
             .addCase(loadActiveOrg.pending, (state) => {
                 state.isLoading = true;
             })
@@ -136,21 +121,6 @@ export const systemSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {
-    updateAppName,
-    setRegion,
-    setEventRegion,
-    updateEventRegion,
-    updateRegion,
-    logout,
-    updateStateProv,
-    setSystemDate,
-    updateAffiliate,
-    updateUserRole,
-    updateAffiliationString,
-    updateAffiliateTitle,
-    updateAffiliation,
-    clearToday,
-} = systemSlice.actions;
+export const { logout, updateAffiliation } = systemSlice.actions;
 
 export default systemSlice.reducer;

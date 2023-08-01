@@ -6,6 +6,19 @@ import * as gQueries from '../../graphql/queries';
 import * as mutations from '../../jerichoQL/mutations';
 import { createAWSUniqueID, printObject } from '../../utils/helpers';
 
+export const initializeSystem = createAsyncThunk(
+    'system/initializeSystem',
+    async (inputs, thunkAPI) => {
+        try {
+            return inputs;
+        } catch (error) {
+            printObject('ST:32-->initializeSystem', inputs);
+            printObject('ST:33-->error:\n', error);
+            // Rethrow the error to let createAsyncThunk handle it
+            throw new Error('ST:35-->Failed to initializeSystem thunk');
+        }
+    }
+);
 export const loadActiveOrg = createAsyncThunk(
     'system/loadActiveOrg',
     async (inputs, thunkAPI) => {

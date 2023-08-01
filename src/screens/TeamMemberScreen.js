@@ -14,12 +14,13 @@ import React, { useState } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import { printObject } from '../utils/helpers';
 import { updateAffiliations } from '../jerichoQL/providers/affiliations.provider';
-
+import { useDispatch } from 'react-redux';
 import { useNavigation, NavigationActions } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 // import Navigation from '../navigation/Navigation';
 
 const TeamMemberScreen = (props) => {
+    const dispatch = useDispatch();
     const teamMember = props.route.params.teamMember;
     const navigation = useNavigation();
     printObject('teamMember***** ', teamMember);
@@ -95,7 +96,8 @@ const TeamMemberScreen = (props) => {
             add: adds,
             remove: removes,
         };
-
+        printObject('TMS:99-->changeRequest:\n', changeRequest);
+        dispatch(changeRequest);
         updateAffiliations(changeRequest)
             .then(() => {
                 console.log('updateAffiliations passed');

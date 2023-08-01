@@ -18,7 +18,6 @@ import CurrencyInput from 'react-native-currency-input';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { useSysContext } from '../contexts/SysContext';
 import { useUserContext } from '../contexts/UserContext';
 import {
     getMeetingGroups,
@@ -47,8 +46,7 @@ import NumbersSection from './MeetingForm.numbers';
 //   FUNCTION START
 //   ==============
 const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
-    // const meeter = useSelector((state) => state.system);
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const { userProfile, perms } = useUserContext();
     const { width } = useWindowDimensions();
 

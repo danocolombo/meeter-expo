@@ -11,13 +11,13 @@ import { Foundation } from '@expo/vector-icons';
 import { useTheme, withTheme, Badge } from 'react-native-paper';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Storage } from 'aws-amplify';
-import { useSysContext } from '../../contexts/SysContext';
 import { printObject } from '../../utils/helpers';
+import { useSelector } from 'react-redux';
 const TeamGroupListCard = (props) => {
     const navigation = useNavigation();
     const { team, listType, active, handleDelete } = props;
     const mtrTheme = useTheme();
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const [pictureObject, setPictureObject] = useState(null);
     const [cardStyle, setCardStyle] = useState({
         backgroundColor: 'yellow',

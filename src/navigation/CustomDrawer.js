@@ -15,16 +15,14 @@ import {
 } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
-import { useSysContext, sysSignOut } from '../contexts/SysContext';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { printObject } from '../utils/helpers';
 
 const CustomDrawer = (props) => {
     const mtrTheme = useTheme();
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const userProfile = useSelector((state) => state.user.profile);
-    const { systemDef, sysSignOut } = useSysContext();
     const [profilePicture, setProfilePicture] = useState(null);
     const [pictureName, setPictureName] = useState(null);
     const [pictureObject, setPictureObject] = useState(null);

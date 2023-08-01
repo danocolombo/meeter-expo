@@ -22,7 +22,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { Surface, ActivityIndicator, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
-import { useSysContext } from '../contexts/SysContext';
 import {
     getActiveMeetings,
     getAllMeetings,
@@ -35,7 +34,7 @@ const ActiveScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.profile);
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const activeMeetings = useSelector(
         (state) => state.meetings.activeMeetings
     );

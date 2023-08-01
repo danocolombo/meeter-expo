@@ -86,7 +86,7 @@ const ActiveMembers = () => {
                 <Text style={styles.pageTitle}>Active Members</Text>
             </View>
             <View>
-                <Text>ActiveMembers.tab</Text>
+                <Text>screens/team/ActiveMembers.tab</Text>
             </View>
             <View style={{ marginLeft: 'auto' }}>
                 <Pressable

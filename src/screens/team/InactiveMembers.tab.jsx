@@ -37,6 +37,9 @@ const InactiveMembers = () => {
                 <Text style={styles.pageTitle}>Inactive Members</Text>
             </View>
             <View>
+                <Text>screens/team/InactiveMembers.tab</Text>
+            </View>
+            <View>
                 <Text
                     style={{ fontSize: 18, padding: 10, marginHorizontal: 10 }}
                 >

@@ -13,7 +13,6 @@ import CustomDrawer from './CustomDrawer';
 import LandingScreen from '../screens/LandingScreen';
 import DefaultGroupsScreen from '../screens/DefaultGroupsScreen';
 import TeamScreen from '../screens/TeamScreen';
-// import TeamScreen from '../screens/TeamMemberScreen';
 import HeroMessageScreen from '../screens/HeroMessage';
 import ActiveScreen from '../screens/ActiveScreen';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';

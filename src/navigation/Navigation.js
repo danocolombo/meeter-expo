@@ -10,7 +10,7 @@ import {
 import { useTheme } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { useSysContext } from '../contexts/SysContext';
+// import { useSysContext } from '../contexts/SysContext';
 import { useAuthContext } from '../contexts/AuthContext';
 import SignInScreen from '../screens/Auth/SignIn';
 import SignUpScreen from '../screens/Auth/SignUp';
@@ -26,7 +26,7 @@ import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
 import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
 import DGModalScreen from '../components/modals/DefaultGroup.modal';
@@ -39,7 +39,7 @@ const Stack = createNativeStackNavigator();
 function MeeterStack(props) {
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
-    const { meeter, sysSignOut } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const { authSignOut } = useAuthContext();
     return (
         <Stack.Navigator>
@@ -54,7 +54,7 @@ function MeeterStack(props) {
                 name='MeetingDetails'
                 component={MeetingDetailsScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -66,7 +66,7 @@ function MeeterStack(props) {
                     name='DGModal'
                     component={DGModalScreen}
                     options={({ navigation }) => ({
-                        title: meeter?.appName,
+                        title: meeter?.appName || 'YIKES',
                         headerStyle: {
                             backgroundColor: mtrTheme.colors.background,
                         },
@@ -78,7 +78,7 @@ function MeeterStack(props) {
                 name='MeetingEdit'
                 component={MeetingDetailsEditScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -89,7 +89,7 @@ function MeeterStack(props) {
                 name='MeetingNew'
                 component={MeetingNewScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -100,7 +100,7 @@ function MeeterStack(props) {
                 name='GroupNew'
                 component={GroupNewScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -112,7 +112,7 @@ function MeeterStack(props) {
                 name='GroupDetails'
                 component={GroupDetailsScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -124,7 +124,7 @@ function MeeterStack(props) {
                 name='GroupEdit'
                 component={GroupDetailsEditScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -135,7 +135,7 @@ function MeeterStack(props) {
                 name='TeamMember'
                 component={TeamMemberScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -146,7 +146,7 @@ function MeeterStack(props) {
                 name='DeleteConfirm'
                 component={DeleteConfirmScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -157,7 +157,7 @@ function MeeterStack(props) {
                 name='DeleteGroupConfirm'
                 component={DeleteGroupConfirmScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -168,7 +168,7 @@ function MeeterStack(props) {
                 name='Profile'
                 component={ProfileScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -179,7 +179,7 @@ function MeeterStack(props) {
                 name='Affiliation'
                 component={AffiliationScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -190,7 +190,7 @@ function MeeterStack(props) {
                 name='Logout'
                 component={MeeterSignOut}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -204,7 +204,7 @@ function MeeterStack(props) {
 function Navigation() {
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
-    const { meeter, loadSystem } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
 
     const [isUserAuthenticated, setIsUserAuthenticated] = useState(undefined);
     const checkUser = async () => {
@@ -221,18 +221,18 @@ function Navigation() {
             setIsUserAuthenticated(null);
         }
     };
-    const getSystemVariables = async () => {
-        try {
-            loadSystem().then((res) => {
-                // printObject('NAV:203-->system:\n', res);
-            });
-        } catch (error) {
-            printObject('NAV:206-->error loading system', error);
-        }
-    };
+    // const getSystemVariables = async () => {
+    //     try {
+    //         loadSystem().then((res) => {
+    //             // printObject('NAV:203-->system:\n', res);
+    //         });
+    //     } catch (error) {
+    //         printObject('NAV:206-->error loading system', error);
+    //     }
+    // };
 
     useEffect(() => {
-        getSystemVariables();
+        // getSystemVariables();
         checkUser();
     }, []);
     useEffect(() => {

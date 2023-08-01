@@ -29,7 +29,6 @@ import { dateNumToDateDash, printObject } from '../utils/helpers';
 import { useAuthContext } from '../contexts/AuthContext';
 import { focusManager } from '@tanstack/react-query';
 import { current } from '@reduxjs/toolkit';
-import { useSysContext } from '../contexts/SysContext';
 import { useUserContext } from '../contexts/UserContext';
 //   FUNCTION START
 //   ===============
@@ -37,7 +36,7 @@ const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const { userProfile } = useUserContext();
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const [displayMeetings, setDisplayMeetings] = useState([]);
 
     useLayoutEffect(() => {

@@ -36,7 +36,6 @@ import { dateNumToDateDash, printObject } from '../utils/helpers';
 //import MeetingListCard from '../components/Meeting.List.Card';
 import { useAuthContext } from '../contexts/AuthContext';
 import { useUserContext } from '../contexts/UserContext';
-import { useSysContext } from '../contexts/SysContext';
 import profilesSlice from '../features/profilesSlice';
 import { StatusBar } from 'expo-status-bar';
 import { saveUserProfile as addReduxProfile } from '../features/user/userThunks';
@@ -60,7 +59,7 @@ const LandingScreen = () => {
         useSelector((state) => state.system)
     );
     const sysRedux = useSelector((state) => state.system);
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const { authUser, defineUser } = useAuthContext();
     const { saveUserProfile } = useUserContext();
 

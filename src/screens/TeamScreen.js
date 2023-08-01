@@ -81,6 +81,9 @@ const TeamScreen = () => {
                 }}
             >
                 <View>
+                    <Text>screens/TeamScreen</Text>
+                </View>
+                <View>
                     <Text style={mtrTheme.screenTitle}>TEAM MEMBERS</Text>
                 </View>
 

@@ -38,7 +38,6 @@ import * as MediaLibrary from 'expo-media-library';
 import Button from '../ui/IButton';
 import { ScreenStackHeaderBackButtonImage } from 'react-native-screens';
 
-import { useSysContext } from '../../contexts/SysContext';
 import CustomButton from '../ui/CustomButton';
 import { updateProfile } from '../../jerichoQL/providers/users.provider';
 import Input from '../ui/Input';
@@ -51,7 +50,7 @@ import {
     createPatePhone,
 } from '../../utils/helpers';
 import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { saveUserProfile } from '../../features/user/userThunks';
 //   FUNCTION START
 //   ===============
@@ -76,7 +75,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     //      the picture file
     const [profilePic, setProfilePic] = useState(null);
     const [profilePicDetails, setProfilePicDetails] = useState(null);
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const [stateProv, setStateProv] = useState(
         profile?.location?.stateProv || ''
     );

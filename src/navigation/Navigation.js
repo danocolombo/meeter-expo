@@ -10,7 +10,6 @@ import {
 import { useTheme } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-// import { useSysContext } from '../contexts/SysContext';
 import { useAuthContext } from '../contexts/AuthContext';
 import SignInScreen from '../screens/Auth/SignIn';
 import SignUpScreen from '../screens/Auth/SignUp';
@@ -78,7 +77,7 @@ function MeeterStack(props) {
                 name='MeetingEdit'
                 component={MeetingDetailsEditScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -146,7 +145,7 @@ function MeeterStack(props) {
                 name='DeleteConfirm'
                 component={DeleteConfirmScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName,
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },

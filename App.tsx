@@ -8,6 +8,7 @@ import {
     onlineManager,
     useOnlineManager,
 } from '@tanstack/react-query';
+
 import AuthContextProvider from './src/contexts/AuthContext';
 import UserContextProvider from './src/contexts/UserContext';
 import useCachedResources from './src/hooks/useCachedResources';

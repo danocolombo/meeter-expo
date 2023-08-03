@@ -1315,3 +1315,14 @@ export const updateMeeting = /* GraphQL */ `
         }
     }
 `;
+
+export const deleteMeeting = /* GraphQL */ `
+    mutation DeleteMeeting(
+        $input: DeleteMeetingInput!
+        $condition: ModelMeetingConditionInput
+    ) {
+        deleteMeeting(input: $input, condition: $condition) {
+            id
+        }
+    }
+`;

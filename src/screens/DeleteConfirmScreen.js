@@ -19,10 +19,16 @@ import {
     dateDashMadePretty,
     dateIsBeforeToday,
 } from '../utils/helpers';
-
+import { deleteMeeting } from '../features/meetings/meetingsThunks';
 const DeleteConfirmScreen = ({ route, navigation }) => {
+    printObject('DCS:24-->params:\n', route.params);
+    const meeting = useSelector((state) =>
+        state.meetings.meetings.find((m) => m.id === route?.params?.id)
+    );
     const mtrTheme = useTheme();
-    const meeting = route.params.meeting;
+    const dispatch = useDispatch();
+    const id = route?.params?.id;
+    printObject('DCS:28-->params:\n', route.params);
     const { width } = useWindowDimensions();
     const meeter = useSelector((state) => state.system);
     useLayoutEffect(() => {
@@ -32,43 +38,20 @@ const DeleteConfirmScreen = ({ route, navigation }) => {
         });
     }, [navigation, meeter]);
     const handleDeleteRequest = () => {
-        deleteMeetingGroups(meeting.meetingId)
-            .then((result) => {
-                //printObject('DCS:35-->RESULT', result);
-                if (result.data.status !== '200') {
-                    // printObject('DCS:37-->result', result);
-                    Alert.alert(
-                        'Error deleting groups, please contact support.'
-                    );
-                    return;
-                }
-                // console.log('DCS:45-->>YES-YES-YES-YES');
-                deleteMeetingFromDDB(meeting.meetingId)
-                    .then((res) => {
-                        // printObject('DCS:48-->res', res);
-                        if (res.data.status !== '200') {
-                            // printObject('DCS:42-->res', res);
-                            Alert.alert(
-                                'Error deleting meeting, please contact support.'
-                            );
-                            return;
-                        }
-                        if (dateIsBeforeToday(meeting.meetingDate)) {
-                            navigation.navigate('HistoricMeetings');
-                        } else {
-                            navigation.navigate('ActiveMeetings');
-                        }
-                        return;
-                    })
-                    .catch((error) => {
-                        printObject('DCS:64-->error', error);
-                    });
+        if (!meeting) {
+            // Handle the case where the meeting object is not found
+            console.error('Meeting not found.');
+            return;
+        }
+        dispatch(deleteMeeting(meeting))
+            .then(() => {
+                navigation.navigate('Meetings');
             })
             .catch((error) => {
-                printObject('DCS:68-->error', error);
+                console.error('Error deleting meeting:', error);
             });
-        return;
     };
+
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
@@ -104,7 +87,7 @@ const DeleteConfirmScreen = ({ route, navigation }) => {
                                         textAlign: 'center',
                                     }}
                                 >
-                                    {dateDashMadePretty(meeting.meetingDate)}
+                                    {dateDashMadePretty(meeting?.meetingDate)}
                                 </Text>
                                 <Text
                                     style={{

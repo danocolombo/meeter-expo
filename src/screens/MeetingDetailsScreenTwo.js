@@ -17,29 +17,16 @@ import {
     Platform,
     AppState,
 } from 'react-native';
-import { API } from 'aws-amplify';
-import * as queries from '../jerichoQL/queries';
-import { useQuery } from '@tanstack/react-query';
-import { focusManager } from '@tanstack/react-query';
+// import { focusManager } from '@tanstack/react-query';
 import * as Localization from 'expo-localization';
-// import * as Application from 'expo-application';
-import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
-// import { PutGroup } from '../components/common/hooks/groupQueries';
 import {
     useNavigation,
     useIsFocused,
     useNavigationState,
     useFocusEffect,
 } from '@react-navigation/native';
-import {
-    getMeetingGroups,
-    fetchSpecificMeeting,
-    clearGroups,
-    createTmp,
-} from '../features/meetingsSlice';
-import GroupList from '../components/GroupList';
 
 import DateBall from '../components/ui/DateBall';
 import DateStack from '../components/ui/DateStack';
@@ -57,11 +44,8 @@ import {
     dateDashToDateObject,
     dateNumToDateDash,
 } from '../utils/helpers';
-import { FetchMeeting } from '../components/common/hooks/meetingQueries';
-import { FetchGroups } from '../components/common/hooks/groupQueries';
 import GroupListCard from '../components/Group.List.Card';
-import MeetingListCard from '../components/Meeting.List.Card';
-import { useUserContext } from '../contexts/UserContext';
+// import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
 import {
     addDefaultGroups,
@@ -73,9 +57,10 @@ import {
 //   ==============
 const MeetingDetails = (props) => {
     const id = props.route.params.id;
-    // printObject('MDST:70-->props:\n', id);
+    printObject('MDST:60-->props.route.params :\n', props.route.params);
     const mtrTheme = useTheme();
-    const { userProfile } = useUserContext();
+    // const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
@@ -92,11 +77,17 @@ const MeetingDetails = (props) => {
     let historic = false;
     const userTimeZone = Localization.timezone;
     const [isLoading, setIsLoading] = useState(false);
-    const [meeting, setMeeting] = useState(
-        useSelector((state) => state.meetings.meetings.find((m) => m.id === id))
+    const meeting = useSelector((state) =>
+        state.meetings.meetings.find((m) => m.id === id)
     );
+    // Check if the meeting does not exist
+    if (!meeting) {
+        // If meeting is not found, navigate back
+        navigation.goBack();
+        return null; // Return null to avoid rendering the rest of the component
+    }
     const [dateValue, setDateValue] = useState(
-        meeting.meetingDate ? new Date(meeting.meetingDate) : new Date()
+        meeting?.meetingDate ? new Date(meeting?.meetingDate) : new Date()
     );
     const [meetingGroups, setMeetingGroups] = useState([]);
     const { width, height } = useWindowDimensions();
@@ -111,11 +102,6 @@ const MeetingDetails = (props) => {
             setDateValue(new Date());
         }
     }, [meeting]); // Add meeting dependency to this useEffect to handle changes in the meeting object
-    useEffect(() => {
-        setIsLoading(true);
-        setMeeting(meetings.find((m) => m.id === id));
-        setIsLoading(false);
-    }, [meetings]);
 
     useLayoutEffect(() => {
         let headerLabelColor = '';
@@ -148,23 +134,7 @@ const MeetingDetails = (props) => {
             });
         }
     }, [navigation, meeter]);
-    // async function getDefaultGroups() {
-    //     try {
-    //         // printObject('getDefaultGroups:', userProfile.activeOrg.id);
-    //         const systemInfo = await API.graphql({
-    //             query: queries.getOrganizationDefaultGroups,
-    //             variables: { id: userProfile.activeOrg.id },
-    //         });
-    //         const defaultGroups =
-    //             systemInfo.data.getOrganization.defaultGroups.items;
-    //         // printObject('defaultGroups:\n', defaultGroups);
-    //         setGroups(defaultGroups);
-    //         setShowDefaultButton(true);
-    //     } catch (error) {
-    //         printObject('DGS:116-->systemInfo TryCatch failure:\n', error);
-    //         return;
-    //     }
-    // }
+
     async function newGetGroups() {
         try {
             await dispatch(getGroupsForMeeting({ meetingId: id })).then(() => {
@@ -181,32 +151,6 @@ const MeetingDetails = (props) => {
         };
         dispatch(deleteGroupFromMeeting(deleteRequest));
     }
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         dispatch(getMeetingById(id))
-    //             .then((mtg) => {
-    //                 if (mtg.meta.requestStatus === 'fulfilled') {
-    //                     setMeeting(mtg.payload);
-    //                 } else {
-    //                     printObject(
-    //                         'MDST:208-->getMeetingById failure:\n',
-    //                         mtg
-    //                     );
-    //                 }
-    //                 setIsLoading(false);
-    //             })
-    //             .catch((err) => {
-    //                 console.log('MDST:215-->getMeetingById failure:', err);
-    //                 setIsLoading(false);
-    //             });
-    //         return;
-    //     }, [])
-    // );
 
     const handleAddDefaults = async () => {
         dispatch(
@@ -277,7 +221,7 @@ const MeetingDetails = (props) => {
                     </View>
                     <View>
                         <View style={{ flexDirection: 'column' }}>
-                            {meeting.meetingType === 'Lesson' && (
+                            {meeting?.meetingType === 'Lesson' && (
                                 <View style={{ marginLeft: 10 }}>
                                     <Text style={mtrTheme.subTitle}>
                                         {meeting.title}
@@ -286,7 +230,7 @@ const MeetingDetails = (props) => {
                             )}
                             <View style={{ alignContent: 'flex-start' }}>
                                 <Text style={mtrTheme.detailsTitle}>
-                                    {meeting.meetingType === 'Lesson'
+                                    {meeting?.meetingType === 'Lesson'
                                         ? meeting.supportContact
                                         : meeting.title}
                                 </Text>

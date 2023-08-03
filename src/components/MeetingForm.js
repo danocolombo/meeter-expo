@@ -15,7 +15,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 // import * as Application from 'expo-application';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CurrencyInput from 'react-native-currency-input';
-import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { useUserContext } from '../contexts/UserContext';

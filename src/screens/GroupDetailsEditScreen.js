@@ -37,15 +37,7 @@ import {
     ActivityIndicator,
 } from 'react-native-paper';
 import { printObject, isDateDashBeforeToday } from '../utils/helpers';
-import MeetingListCard from '../components/Meeting.List.Card';
-import {
-    updateGroupValues,
-    addGroupValues,
-    deleteIndividualGroup,
-} from '../features/meetingsSlice';
-import DateBall from '../components/ui/DateBall';
-import MeetingCardDate from '../components/ui/Meeting.Card.Date';
-import { Style } from 'domelementtype';
+
 import GroupForm from '../components/GroupForm';
 import { updateGroup } from '../features/meetings/meetingsThunks';
 //   FUNCTION START

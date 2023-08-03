@@ -4,6 +4,7 @@ import { API } from 'aws-amplify';
 import * as queries from '../../jerichoQL/queries';
 import * as gQueries from '../../graphql/queries';
 import * as mutations from '../../jerichoQL/mutations';
+import * as gMutations from '../../graphql/mutations';
 import { createAWSUniqueID, printObject } from '../../utils/helpers';
 
 export const getSpecificMeeting = createAsyncThunk(
@@ -410,6 +411,80 @@ export const updateGroup = createAsyncThunk(
             printObject('MT:409-->updateGroup FAILURE', inputs);
             // Rethrow the error to let createAsyncThunk handle it
             throw new Error('MT:411-->Failed to update group');
+        }
+    }
+);
+export const deleteMeeting = createAsyncThunk(
+    'meetings/deleteMeeting',
+    async (inputs, thunkAPI) => {
+        try {
+            //* -----------------------
+            //* this will get the meeting
+            //* object and we need to remove
+            //* the groups from gql as well
+            //* as the meeting.
+            //* -----------------------
+            printObject('MT:426-->inputs:\n', inputs);
+            if (inputs?.groups?.items?.length > 0) {
+                console.log(
+                    `MT:428-->DELETING ${inputs.groups.items.length} groups`
+                );
+                for (const g of inputs.groups.items) {
+                    try {
+                        console.log(`id: ${g.id}`);
+                        const inputRequest = {
+                            id: g.id,
+                        };
+
+                        const deleteGroupResponse = await API.graphql({
+                            query: mutations.deleteGroup,
+                            variables: { input: inputRequest },
+                        });
+                        if (!deleteGroupResponse?.data?.deleteGroup?.id) {
+                            console.log(
+                                `MT:442-->Failed to delete group with id: ${g.id}`
+                            );
+                            // If a group deletion fails, you can choose to handle it here (e.g., show an error message) or throw an error to stop the process.
+                            throw new Error(
+                                'MT:445-->Failed to delete a group'
+                            );
+                        }
+                    } catch (error) {
+                        console.error(
+                            'MT:446-->Error while deleting a group:',
+                            error
+                        );
+                        // If a group deletion fails, you can choose to handle it here (e.g., show an error message) or throw an error to stop the process.
+                        throw error;
+                    }
+                }
+            } else {
+                console.log(
+                    'MT:454-->no groups to delete, while deleting meeting'
+                );
+            }
+
+            console.log(`MT:457-->DELETING MEETING: ${inputs.id}`);
+            const inputDeleteRequest = {
+                id: inputs.id,
+            };
+            const deleteMeetingResponse = await API.graphql({
+                query: mutations.deleteMeeting,
+                variables: { input: inputDeleteRequest },
+            });
+            if (!deleteMeetingResponse?.data?.deleteMeeting?.id) {
+                console.log(
+                    `MT:468 --> Failed to delete meeting with id: ${inputs.id}`
+                );
+                // If meeting deletion fails, you can choose to handle it here (e.g., show an error message) or throw an error.
+                throw new Error('MT:472-->Failed to delete the meeting');
+            }
+
+            // Return the inputs object after successful deletion.
+            return inputs;
+        } catch (error) {
+            printObject('MT:477-->deleteMeeting thunk try failure.\n', error);
+            throw new Error('MT:478-->Failed to deleteMeeting');
         }
     }
 );

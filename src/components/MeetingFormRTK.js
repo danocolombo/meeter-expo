@@ -605,7 +605,7 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDeleteRequest }) => {
                     />
                 </View>
 
-                <View style={styles.buttonContainer}>
+                <View style={styles(mtrTheme).buttonContainer}>
                     <CustomButton
                         text='SAVE'
                         bgColor={mtrTheme.colors.success}
@@ -613,18 +613,20 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDeleteRequest }) => {
                         type='PRIMARY'
                         enabled={isSavable}
                         onPress={handleFormSubmit}
+                        style={{ width: '100%' }} // Set the width of the button to 100% so it takes the full width of the buttonContainer
                     />
                 </View>
                 {meeting?.id && (
-                    <View style={styles.buttonContainer}>
-                        <CustomButton
-                            text='DELETE'
-                            bgColor={mtrTheme.colors.critical}
-                            fgColor='white'
-                            type='PRIMARY'
-                            enabled={isSavable}
-                            onPress={handleFormSubmit}
-                        />
+                    <View style={styles(mtrTheme).deleteCanContainer}>
+                        <TouchableOpacity
+                            onPress={() => setShowDeleteConfirmModal(true)}
+                        >
+                            <MaterialCommunityIcons
+                                name='delete-forever'
+                                size={30}
+                                color={mtrTheme.colors.critical}
+                            />
+                        </TouchableOpacity>
                     </View>
                 )}
             </KeyboardAvoidingView>
@@ -661,7 +663,14 @@ const styles = (mtrTheme) =>
         },
         buttonContainer: {
             marginTop: 1,
-            marginHorizontal: 20,
+            alignItems: 'center', // Center the content horizontally
+            width: '50%', // Set the width to 50% of the parent container
+            marginLeft: 'auto', // Push the button to the right side of the container
+            marginRight: 'auto', // Push the button to the left side of the container
             marginBottom: 1,
+        },
+        deleteCanContainer: {
+            marginRight: 10,
+            marginLeft: 'auto',
         },
     });

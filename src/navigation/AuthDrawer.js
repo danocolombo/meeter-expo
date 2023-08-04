@@ -14,7 +14,6 @@ import LandingScreen from '../screens/LandingScreen';
 import DefaultGroupsScreen from '../screens/DefaultGroupsScreen';
 import TeamScreen from '../screens/TeamScreen';
 import HeroMessageScreen from '../screens/HeroMessage';
-import ActiveScreen from '../screens/ActiveScreen';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import { useAuthContext } from '../contexts/AuthContext';

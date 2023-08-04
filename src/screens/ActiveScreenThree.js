@@ -19,15 +19,12 @@ import {
     useFocusEffect,
     useNavigationState,
 } from '@react-navigation/native';
-
-import { LocalizationProvider, LocalizationContext } from 'expo-localization';
 import { useDispatch, useSelector } from 'react-redux';
 import { Surface, ActivityIndicator, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
 import {
     getActiveMeetings,
     getAllMeetings,
-    getAllMeetingsG,
 } from '../features/meetings/meetingsThunks';
 import { printObject } from '../utils/helpers';
 //   FUNCTION START
@@ -43,16 +40,12 @@ const ActiveScreen = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const getCurrentDateInUserTimezone = useCallback(() => {
-        const locales = Localization.getLocales();
-        if (locales && locales.length > 0) {
-            const userTimezone = locales[0].timezone;
-            const currentDate = new Date();
-            const userTimezoneDate = new Date(
-                currentDate.toLocaleString('en-US', { timeZone: userTimezone })
-            );
-            return userTimezoneDate.toISOString().split('T')[0]; // Returns date in 'YYYY-MM-DD' format
-        }
-        return null;
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const currentDate = new Date();
+        const userTimezoneDate = new Date(
+            currentDate.toLocaleString('en-US', { timeZone: userTimezone })
+        );
+        return userTimezoneDate.toISOString().split('T')[0];
     }, []);
 
     useLayoutEffect(() => {
@@ -69,7 +62,7 @@ const ActiveScreen = () => {
         useCallback(() => {
             setIsLoading(true);
             // dispatch(getAllMeetings({ code: userProfile.activeOrg.code }))
-            dispatch(getAllMeetingsG({ orgId: userProfile.activeOrg.id }))
+            dispatch(getAllMeetings({ orgId: userProfile.activeOrg.id }))
                 .then(() => {
                     return dispatch(getActiveMeetings());
                 })
@@ -96,12 +89,20 @@ const ActiveScreen = () => {
     useFocusEffect(
         useCallback(() => {
             setIsLoading(true);
-            const tday = '2023-08-01';
-            const aMeetings = meetings.filter((m) => m.meetingDate >= tday);
 
-            setActiveMeetings(aMeetings);
+            const currentDate = getCurrentDateInUserTimezone();
+
+            if (currentDate) {
+                const aMeetings = meetings.filter(
+                    (m) => m.meetingDate >= currentDate
+                );
+                setActiveMeetings(aMeetings);
+            } else {
+                setActiveMeetings([]);
+            }
+
             setIsLoading(false);
-        }, [meetings])
+        }, [meetings, getCurrentDateInUserTimezone])
     );
 
     const handleNewRequest = () => {
@@ -129,6 +130,9 @@ const ActiveScreen = () => {
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
+                <View>
+                    <Text style={{ color: 'white' }}>ActiveScreenThree</Text>
+                </View>
                 <View>
                     <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
                     {userProfile?.activeOrg?.role === 'manage' && (

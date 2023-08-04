@@ -19,6 +19,8 @@ import {
     useFocusEffect,
     useNavigationState,
 } from '@react-navigation/native';
+import moment from 'moment';
+import * as ExpoTimeZone from 'expo-timezone';
 import { useDispatch, useSelector } from 'react-redux';
 import { Surface, ActivityIndicator, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
@@ -57,24 +59,38 @@ const ActiveScreen = () => {
     useFocusEffect(
         useCallback(() => {
             setIsLoading(true);
-            // dispatch(getAllMeetings({ code: userProfile.activeOrg.code }))
             dispatch(getAllMeetingsG({ orgId: userProfile.activeOrg.id }))
-                .then(() => {
-                    return dispatch(getActiveMeetings());
-                })
                 .then((action) => {
                     const results = action.payload;
                     if (results.length > 0) {
-                        setDisplayMeetings(results);
-                        setMeetings(results);
+                        const userTimezone = ExpoTimeZone.timezone;
+                        const now = moment().tz(userTimezone).startOf('day');
+                        console.log('Now:', now.format('YYYY-MM-DD HH:mm:ss')); // Add this line
+                        const filteredMeetings = results.reduce(
+                            (acc, meeting) => {
+                                const meetingDate = moment.tz(
+                                    meeting.meetingDate,
+                                    'YYYY-MM-DD',
+                                    userTimezone
+                                );
+                                console.log(
+                                    'Meeting Date:',
+                                    meetingDate.format('YYYY-MM-DD HH:mm:ss')
+                                ); // Add this line
+                                if (meetingDate.isSameOrAfter(now, 'day')) {
+                                    acc.push(meeting);
+                                }
+                                return acc;
+                            },
+                            []
+                        );
+
+                        setDisplayMeetings(filteredMeetings);
                     } else {
                         setDisplayMeetings([]);
                     }
                     setIsLoading(false);
                 })
-                // .then(() => {
-                //     dispatch(listAllMeetings());
-                // })
                 .catch((error) => {
                     console.error('Error:', error);
                     setIsLoading(false);
@@ -127,7 +143,7 @@ const ActiveScreen = () => {
                     <>
                         {displayMeetings && (
                             <FlatList
-                                data={meetings}
+                                data={displayMeetings}
                                 keyExtractor={(item) => item.id}
                                 renderItem={({ item }) => (
                                     <MeetingListCard

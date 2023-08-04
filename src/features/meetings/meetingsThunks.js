@@ -13,10 +13,11 @@ export const getSpecificMeeting = createAsyncThunk(
         return id;
     }
 );
-export const getAllMeetingsG = createAsyncThunk(
+export const getAllMeetings = createAsyncThunk(
     'meetings/getAllMeetings',
     async (inputs, thunkAPI) => {
         try {
+            console.log('MT:20-->getAllMeetings called');
             const oId = inputs.orgId;
             const meetingList = await API.graphql({
                 query: queries.listMeetings,
@@ -28,22 +29,44 @@ export const getAllMeetingsG = createAsyncThunk(
                     },
                 },
             });
-            // printObject('meetingList:\n', meetingList);
-            // console.log('found:', meetingList.data.listMeetings.items.length);
+
+            // Sort meetings by multiple criteria
+            const sortedMeetings = meetingList?.data?.listMeetings?.items
+                ? meetingList.data.listMeetings.items.sort((a, b) => {
+                      // First, compare by meetingDate in descending order
+                      const dateComparison = b.meetingDate.localeCompare(
+                          a.meetingDate
+                      );
+                      if (dateComparison !== 0) {
+                          return dateComparison;
+                      }
+
+                      // Then, compare by meetingType in ascending order
+                      const typeComparison = a.meetingType.localeCompare(
+                          b.meetingType
+                      );
+                      if (typeComparison !== 0) {
+                          return typeComparison;
+                      }
+
+                      // Finally, compare by title in ascending order
+                      return a.title.localeCompare(b.title);
+                  })
+                : [];
+
             const returnValue = {
                 status: '200',
-                meetings: meetingList?.data?.listMeetings?.items || [],
+                meetings: sortedMeetings,
             };
-            // printObject(meetingList.data.listMeetings.items[0]);
+
             return returnValue;
         } catch (error) {
-            printObject('MT:29-->getAllMeetingsG', { status: fail });
+            printObject('MT:29-->getAllMeetingsG', { status: 'fail' });
             throw new Error('MT:30-->Failed to getAllMeetingsG');
         }
-        return [];
     }
 );
-export const getAllMeetings = createAsyncThunk(
+export const getAllMeetingsOLD = createAsyncThunk(
     'meetings/getAllMeetings',
     async (inputs, thunkAPI) => {
         // console.log('MT:22-->inputs:', inputs);

@@ -1,44 +1,30 @@
+import React, { useState, useCallback, useRef } from 'react';
 import {
     StyleSheet,
     Text,
     View,
     FlatList,
-    AppState,
-    ViewBase,
-    ImageBackground,
-    SafeAreaView,
+    ActivityIndicator,
 } from 'react-native';
-import React, {
-    useState,
-    useLayoutEffect,
-    useEffect,
-    useCallback,
-} from 'react';
-import {
-    useNavigation,
-    useFocusEffect,
-    useNavigationState,
-} from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { Surface, ActivityIndicator, useTheme, FAB } from 'react-native-paper';
+import { Surface, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
 import {
-    getActiveMeetings,
     getAllMeetings,
+    getActiveMeetings,
 } from '../features/meetings/meetingsThunks';
-import { printObject } from '../utils/helpers';
-//   FUNCTION START
-//   ===============
+
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.profile);
-    const meeter = useSelector((state) => state.system.meeter);
-    const [activeMeetings, setActiveMeetings] = useState(null);
     const meetings = useSelector((state) => state.meetings.meetings);
 
     const [isLoading, setIsLoading] = useState(false);
+    const isFormDisplayedRef = useRef(false); // Track form display
+
     const getCurrentDateInUserTimezone = useCallback(() => {
         const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const currentDate = new Date();
@@ -48,67 +34,32 @@ const ActiveScreen = () => {
         return userTimezoneDate.toISOString().split('T')[0];
     }, []);
 
-    useLayoutEffect(() => {
-        let headerLabelColor = '';
-        if (Platform.OS === 'ios') {
-            headerLabelColor = 'white';
-        }
-        navigation.setOptions({
-            title: meeter.appName,
-        });
-    }, [navigation, meeter]);
-
     useFocusEffect(
         useCallback(() => {
-            setIsLoading(true);
-            // dispatch(getAllMeetings({ code: userProfile.activeOrg.code }))
-            dispatch(getAllMeetings({ orgId: userProfile.activeOrg.id }))
-                .then(() => {
-                    return dispatch(getActiveMeetings());
-                })
-                .then((action) => {
-                    const results = action.payload;
-                    if (results.length > 0) {
-                        setActiveMeetings(results);
-                        // setMeetings(results);
-                    } else {
-                        setActiveMeetings([]);
+            if (!isFormDisplayedRef.current) {
+                async function fetchAndSetMeetings() {
+                    setIsLoading(true);
+                    try {
+                        await dispatch(
+                            getAllMeetings({ orgId: userProfile.activeOrg.id })
+                        );
+                        await dispatch(getActiveMeetings());
+                    } catch (error) {
+                        console.error('Error:', error);
                     }
                     setIsLoading(false);
-                })
-                // .then(() => {
-                //     dispatch(listAllMeetings());
-                // })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    setIsLoading(false);
-                });
-        }, [])
-    );
+                }
 
-    useFocusEffect(
-        useCallback(() => {
-            setIsLoading(true);
-
-            const currentDate = getCurrentDateInUserTimezone();
-
-            if (currentDate) {
-                const aMeetings = meetings.filter(
-                    (m) => m.meetingDate >= currentDate
-                );
-                setActiveMeetings(aMeetings);
-            } else {
-                setActiveMeetings([]);
+                fetchAndSetMeetings();
             }
-
-            setIsLoading(false);
-        }, [meetings, getCurrentDateInUserTimezone])
+        }, [dispatch, isFormDisplayedRef, userProfile.activeOrg.id])
     );
 
     const handleNewRequest = () => {
+        isFormDisplayedRef.current = true;
         navigation.navigate('MeetingNew');
     };
-    // printObject('ASRTK:97-->meetings:\n', meetings);
+
     if (isLoading) {
         return (
             <View
@@ -125,40 +76,68 @@ const ActiveScreen = () => {
             </View>
         );
     }
-    printObject('AST:84-->meetings:\n', meetings);
-    // printObject('ASRTK:109-->activeMeetings:\n', activeMeetings);
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const currentDate = getCurrentDateInUserTimezone();
+    const userTimezoneDate = new Date(
+        currentDate.toLocaleString('en-US', { timeZone: userTimezone })
+    );
+    const currentTimeInUserTimezone = userTimezoneDate.getTime(); // Get current time in user timezone
+    const activeMeetings = meetings
+        .filter((m) => {
+            // Convert meetingDate to user timezone and compare with current time
+            const meetingDateInUserTimezone = new Date(
+                `${m.meetingDate}T00:00:00${userTimezone === 'UTC' ? 'Z' : ''}`
+            ).getTime();
+            return meetingDateInUserTimezone >= currentTimeInUserTimezone;
+        })
+        .sort((a, b) => {
+            // Sort by meetingDate in ascending order
+            const dateComparison =
+                new Date(a.meetingDate) - new Date(b.meetingDate);
+            if (dateComparison !== 0) {
+                return dateComparison;
+            }
+
+            // If meetingDate is the same, sort by meetingType in ascending order
+            const typeComparison = a.meetingType.localeCompare(b.meetingType);
+            if (typeComparison !== 0) {
+                return typeComparison;
+            }
+
+            // If meetingType is the same, sort by title in ascending order
+            return a.title.localeCompare(b.title);
+        });
+
     return (
-        <>
-            <Surface style={mtrTheme.screenSurface}>
-                <View>
-                    <Text style={{ color: 'white' }}>ActiveScreenThree</Text>
-                </View>
-                <View>
-                    <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
-                    {userProfile?.activeOrg?.role === 'manage' && (
-                        <FAB
-                            icon='calendar-plus'
-                            style={styles.FAB}
-                            onPress={handleNewRequest}
-                        />
-                    )}
-                </View>
+        <Surface style={mtrTheme.screenSurface}>
+            <View>
+                <Text style={{ color: 'white' }}>ActiveScreenThree</Text>
+            </View>
+            <View>
+                <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
+                {userProfile?.activeOrg?.role === 'manage' && (
+                    <FAB
+                        icon='calendar-plus'
+                        style={styles.FAB}
+                        onPress={handleNewRequest}
+                    />
+                )}
+            </View>
 
-                <View style={{ padding: 10 }}>
-                    <Text style={mtrTheme.subTitleSmall}>
-                        Click event for details!
-                    </Text>
-                </View>
+            <View style={{ padding: 10 }}>
+                <Text style={mtrTheme.subTitleSmall}>
+                    Click event for details!
+                </Text>
+            </View>
 
-                <FlatList
-                    data={activeMeetings}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => (
-                        <MeetingListCard meeting={item} active={true} />
-                    )}
-                />
-            </Surface>
-        </>
+            <FlatList
+                data={activeMeetings}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                    <MeetingListCard meeting={item} active={true} />
+                )}
+            />
+        </Surface>
     );
 };
 

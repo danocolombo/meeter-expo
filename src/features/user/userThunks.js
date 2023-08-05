@@ -11,18 +11,78 @@ export const loginUser = createAsyncThunk(
     'user/loginUser',
     async (inputs, thunkAPI) => {
         let userProfile = { error: 'No Auth' };
+
         try {
-            const newProfile = {
-                userName: inputs?.username,
-            };
-            userProfile = newProfile;
-            printObject('UT:35-->inputs:\n', inputs);
-            // const gqlProfileData = await API.graphql({
-            //     query: queries.usersBySub,
-            //     variables: { sub: sub },
-            // });
-        } catch (error) {}
-        return userProfile;
+            //* get gql user profile
+            let updatedProfile = null;
+            const sub = inputs?.signInUserSession?.idToken?.payload?.sub;
+            const gqlProfileData = await API.graphql({
+                query: queries.usersBySub,
+                variables: { sub: sub },
+            });
+
+            if (gqlProfileData?.data?.usersBySub?.items[0]?.id) {
+                // console.log('IF---- where we belong');
+                const gqlProfile = gqlProfileData.data.usersBySub.items[0];
+                //      set activeOrg based on profile defaultOrg and affiliations
+                let clientData = {};
+                if (gqlProfile?.defaultOrg?.id) {
+                    clientData = gqlProfile.affiliations.items.filter(
+                        (a) => a.organization.id === gqlProfile.defaultOrg.id
+                    );
+                }
+                let perms = [];
+                clientData.forEach((cd) => {
+                    perms.push(cd.role);
+                });
+                let client = {};
+                let activeOrg = {};
+                if (clientData.length > 0) {
+                    //* affiliation found...
+                    client = clientData[0];
+                    activeOrg = {
+                        id: client.organization.id,
+                        code: client.organization.code,
+                        name: client.organization.name,
+                        heroMessage: client.organization.heroMessage,
+                        role: client.role,
+                        status: client.status,
+                    };
+                } else {
+                    //* this is default, no affiliations
+                    activeOrg = {
+                        id: MEETER_DEFAULTS.ORGANIZATION_ID,
+                        code: MEETER_DEFAULTS.CODE,
+                        name: MEETER_DEFAULTS.NAME,
+                        heroMessage: MEETER_DEFAULTS.HERO_MESSAGE,
+                        role: MEETER_DEFAULTS.ROLE,
+                        status: 'active',
+                    };
+                }
+                const newProfile = { ...gqlProfile, activeOrg: activeOrg };
+                const results = { profile: newProfile, perms: perms };
+
+                return results;
+            } else {
+                console.log('ELSE---HELP');
+                //todo: what does it look like when new user and no profile?
+                //todo------------------------------------------------------
+                const activeOrg = {
+                    id: MEETER_DEFAULTS.ORGANIZATION_ID,
+                    code: MEETER_DEFAULTS.CODE,
+                    name: MEETER_DEFAULTS.NAME,
+                    heroMessage: MEETER_DEFAULTS.HERO_MESSAGE,
+                    role: 'guest',
+                    status: 'active',
+                };
+                const updatedProfile = { activeOrg };
+                return updatedProfile;
+            }
+        } catch (error) {
+            printObject('UT:15-->saveUserProfile', inputs);
+            // Rethrow the error to let createAsyncThunk handle it
+            throw new Error('UT:17-->Failed to saveUserProfile thunk');
+        }
     }
 );
 

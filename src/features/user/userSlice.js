@@ -55,14 +55,14 @@ export const userSlice = createSlice({
             })
             .addCase(loginUser.fulfilled, (state, action) => {
                 // Set a default state update for testing
-                printObject(
-                    'US:58-->loginUser.fulfilled_action.payload:\n',
-                    action.payload
-                );
-                // state.profile = action.payload.userProfile;
-                // state.perms = action.payload.perms;
+                // printObject(
+                //     'US:58-->loginUser.fulfilled_action.payload:\n',
+                //     action.payload
+                // );
+                state.profile = action.payload.profile;
+                state.perms = action.payload.perms;
                 state.isLoading = false;
-
+                return state;
                 // Log the payload data received
                 // console.log('Payload Data:', action.payload);
             })

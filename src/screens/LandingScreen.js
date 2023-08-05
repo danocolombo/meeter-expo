@@ -62,7 +62,9 @@ const LandingScreen = () => {
     const meeter = useSelector((state) => state.system.meeter);
     const { authUser, defineUser } = useAuthContext();
     const { saveUserProfile } = useUserContext();
-
+    const systemInfo = useSelector((state) => state.system);
+    const teamInfo = useSelector((state) => state.team);
+    const userInfo = useSelector((state) => state.user);
     useLayoutEffect(() => {
         navigation.setOptions({
             title: '',
@@ -133,6 +135,9 @@ const LandingScreen = () => {
         );
     }
     // printObject('LS:131-->systemRedux:\n', sysRedux);
+    // printObject('LS:138-->systemInfo:\n', systemInfo);
+    // printObject('LS:139-->teamInfo:\n', teamInfo);
+    // printObject('LS:140-->userProfile:\n', userProfile);
     return (
         <>
             <StatusBar style='light' />

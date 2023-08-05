@@ -7,7 +7,7 @@ import {
     getDateMinusDays,
     isDateDashBeforeToday,
 } from '../../utils/helpers';
-import { saveUserProfile } from './userThunks';
+import { saveUserProfile, loginUser } from './userThunks';
 
 const initialState = {
     profile: {},
@@ -48,6 +48,25 @@ export const userSlice = createSlice({
                 // console.log('Payload Data:', action.payload);
             })
             .addCase(saveUserProfile.rejected, (state, action) => {
+                state.isLoading = false;
+            })
+            .addCase(loginUser.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(loginUser.fulfilled, (state, action) => {
+                // Set a default state update for testing
+                printObject(
+                    'US:58-->loginUser.fulfilled_action.payload:\n',
+                    action.payload
+                );
+                // state.profile = action.payload.userProfile;
+                // state.perms = action.payload.perms;
+                state.isLoading = false;
+
+                // Log the payload data received
+                // console.log('Payload Data:', action.payload);
+            })
+            .addCase(loginUser.rejected, (state, action) => {
                 state.isLoading = false;
             });
     },

@@ -73,11 +73,11 @@ const LandingScreen = () => {
         //      =============================================
         //      saves the user info to redux user
         //      =============================================
-        const cau = await Auth.currentAuthenticatedUser();
-        const user = await defineUser(cau.attributes.sub);
-        saveUserProfile(user);
-        dispatch(addReduxProfile(user));
-        dispatch(loadActiveOrg(user?.activeOrg?.id));
+        // const cau = await Auth.currentAuthenticatedUser();
+        // const user = await defineUser(cau.attributes.sub);
+        // saveUserProfile(user);
+        // dispatch(addReduxProfile(user));
+        // dispatch(loadActiveOrg(user?.activeOrg?.id));
         //printObject('LS:71--user:\n', user);
         //printObject('LS:72-->userProfile', userProfile);
     }
@@ -108,6 +108,7 @@ const LandingScreen = () => {
             // });
             setIsLoading(false);
         }
+        printObject('LS:111-->userProfile:\n', userProfile);
         if (userProfile?.activeOrg?.status !== 'active') {
             // console.log('LS:102-->NOT ACTIVE');
             setTeamApproved(false);

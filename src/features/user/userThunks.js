@@ -7,6 +7,25 @@ import * as mutations from '../../jerichoQL/mutations';
 import { MEETER_DEFAULTS } from '../../constants/meeter';
 import { createAWSUniqueID, printObject } from '../../utils/helpers';
 
+export const loginUser = createAsyncThunk(
+    'user/loginUser',
+    async (inputs, thunkAPI) => {
+        let userProfile = { error: 'No Auth' };
+        try {
+            const newProfile = {
+                userName: inputs?.username,
+            };
+            userProfile = newProfile;
+            printObject('UT:35-->inputs:\n', inputs);
+            // const gqlProfileData = await API.graphql({
+            //     query: queries.usersBySub,
+            //     variables: { sub: sub },
+            // });
+        } catch (error) {}
+        return userProfile;
+    }
+);
+
 export const saveUserProfile = createAsyncThunk(
     'user/saveUserProfile',
     async (inputs, thunkAPI) => {

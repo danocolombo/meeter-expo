@@ -19,7 +19,10 @@ import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { checkUserProfile } from '../../jerichoQL/providers/users.provider';
 import { printObject } from '../../utils/helpers';
 import { useDispatch } from 'react-redux';
-import { saveUserProfile } from '../../features/user/userThunks';
+import {
+    defineAndSaveUserProfile,
+    loginUser,
+} from '../../features/user/userThunks';
 //   FUNCTION START
 const SignInScreen = () => {
     const mtrTheme = useTheme();
@@ -44,14 +47,20 @@ const SignInScreen = () => {
         setLoading(true);
         try {
             const response = await Auth.signIn(data.username, data.password);
-            checkUserProfile(response)
-                .then((response) => {
-                    printObject('SI:48-->response:\n', response);
-                    // dispatch(saveUserProfile(response[0]));
-                })
-                .catch((error) => {
-                    console.log('SI:51-->error', error);
-                });
+            dispatch(loginUser(response));
+            // checkUserProfile(response)
+            //     .then((response) => {
+            //         //* this should be the GQL user object for the logged in user
+
+            //         // printObject('SI:48-->response:\n', response);
+            //         dispatch(loginUser(response[0]));
+            //     })
+            //     .catch((error) => {
+            //         console.log(
+            //             'SI:54-->could not define GQL user profile. error',
+            //             error
+            //         );
+            //     });
         } catch (error) {
             switch (error.code) {
                 case 'UserNotFoundException':
@@ -94,6 +103,7 @@ const SignInScreen = () => {
             </View>
         );
     }
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.root}>

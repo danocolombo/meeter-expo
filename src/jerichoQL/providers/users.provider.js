@@ -17,9 +17,9 @@ export const checkUserProfile = async (user) => {
                 sub: user?.attributes?.sub,
             },
         });
-        //* get the response for the user
+        //* get GQL user for user sub
         let theUser = userData?.data?.usersBySub?.items;
-        // printObject('UP:22-->theUser:\n', theUser);
+        //printObject('UP:22-->theUser:\n', theUser);
         if (theUser.length < 1) {
             //* no user record for the sub, create
             const newUser = {

@@ -76,7 +76,7 @@ export const meetingsSlice = createSlice({
             );
             // let sortedGroups = theGroups.sort(asc_sort);
             state.groups = doubleResults;
-            return;
+            return state;
         },
         getGroup: (state, action) => {
             const grp = state.groups.filter(
@@ -156,6 +156,7 @@ export const meetingsSlice = createSlice({
                     (mtg) => mtg.id !== meetingIdToDelete
                 );
                 state.isLoading = false;
+                return state;
             })
             .addCase(deleteMeeting.rejected, (state, action) => {
                 printObject(
@@ -178,6 +179,7 @@ export const meetingsSlice = createSlice({
                 printObject('MS:203==>mtg:\n', mtg);
                 state.specificMeeting = { ...mtg };
                 state.isLoading = false;
+                return state;
             })
             .addCase(getSpecificMeeting.rejected, (state, action) => {
                 printObject(
@@ -207,6 +209,7 @@ export const meetingsSlice = createSlice({
                     printObject('MS:230-->error getting all meetings\n', error);
                 }
                 state.isLoading = false;
+                return state;
             })
             .addCase(getAllMeetings.rejected, (state, action) => {
                 printObject(
@@ -266,6 +269,7 @@ export const meetingsSlice = createSlice({
                     state.meetings = newMeetingList;
                 }
                 state.isLoading = false;
+                return state;
             })
             .addCase(addGroup.rejected, (state, action) => {
                 printObject(
@@ -282,10 +286,12 @@ export const meetingsSlice = createSlice({
                     'MS:277-->addMeeting.FULFILLED:action.payload:\n',
                     action.payload
                 );
-                const updatedMeetings = [...state.meetings, action.payload];
-                state.meetings = [...updatedMeetings];
-                printObject('MS:287-->state.meetings:\n', state.meetings);
+                state.meetings.push(action.payload);
+                // const updatedMeetings = [...state.meetings, action.payload];
+                // state.meetings = [...updatedMeetings];
+                // printObject('MS:287-->state.meetings:\n', state.meetings);
                 state.isLoading = false;
+                return state;
             })
             .addCase(addMeeting.rejected, (state, action) => {
                 printObject(
@@ -334,6 +340,7 @@ export const meetingsSlice = createSlice({
                 // state.meetings = [...updatedMeetings];
 
                 state.isLoading = false;
+                return state;
             })
             .addCase(updateGroup.rejected, (state, action) => {
                 printObject(
@@ -378,6 +385,7 @@ export const meetingsSlice = createSlice({
                 state.meetings = updatedMeetings;
 
                 state.isLoading = false;
+                return state;
             })
             .addCase(deleteGroupFromMeeting.rejected, (state, action) => {
                 printObject(
@@ -407,6 +415,7 @@ export const meetingsSlice = createSlice({
                 state.meetings = newMeetings;
 
                 state.isLoading = false;
+                return state;
             })
             .addCase(addDefaultGroups.rejected, (state, action) => {
                 printObject(
@@ -448,6 +457,7 @@ export const meetingsSlice = createSlice({
                 }
 
                 state.isLoading = false;
+                return state;
             })
             .addCase(updateMeeting.rejected, (state, action) => {
                 printObject(

@@ -80,11 +80,15 @@ const MeetingDetails = (props) => {
     const meeting = useSelector((state) =>
         state.meetings.meetings.find((m) => m.id === id)
     );
+    printObject('MDST:83-->meeting:\n', meeting);
     // Check if the meeting does not exist
     if (!meeting) {
-        // If meeting is not found, navigate back
-        navigation.goBack();
-        return null; // Return null to avoid rendering the rest of the component
+        // If meeting is not found, you can set a flag to indicate that
+        // the navigation should occur after rendering is complete.
+        const navigateBack = true;
+
+        // Return the loading indicator or null here
+        // (no navigation action should be taken within this block)
     }
     const [dateValue, setDateValue] = useState(
         meeting?.meetingDate ? new Date(meeting?.meetingDate) : new Date()
@@ -119,6 +123,7 @@ const MeetingDetails = (props) => {
                         onPress={() =>
                             navigation.navigate('MeetingEdit', {
                                 id: id,
+                                // handleDelete: handleDeleteRequest,
                             })
                         }
                         // color='red'
@@ -145,10 +150,12 @@ const MeetingDetails = (props) => {
         }
     }
     function handleDeleteRequest(values) {
+        printObject('MDST:152-->values', values);
         const deleteRequest = {
             meetingId: id,
             groupId: values,
         };
+        printObject('MDST:157-->deleteRequest:\n', deleteRequest);
         dispatch(deleteGroupFromMeeting(deleteRequest));
     }
 
@@ -192,6 +199,28 @@ const MeetingDetails = (props) => {
     // printObject('MDST:270-->newUserProfile\n', newUserProfile);
     // printObject('MDST:272-->newPerms:\n', newPerms);
     // printObject('MDST:273-->authority:', authority);
+    if (!meeting) {
+        if (isLoading) {
+            return (
+                <View
+                    style={{
+                        flex: 1,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <ActivityIndicator
+                        color={mtrTheme.colors.activityIndicator}
+                        size={80}
+                    />
+                </View>
+            );
+        }
+
+        // If meeting is not found and isLoading is false, navigate back
+        navigation.goBack();
+        return null; // Return null to avoid rendering the rest of the component
+    }
     return (
         <>
             <Surface style={styles.surface}>

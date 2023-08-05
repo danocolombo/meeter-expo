@@ -442,19 +442,17 @@ export const deleteMeeting = createAsyncThunk(
     async (inputs, thunkAPI) => {
         try {
             //* -----------------------
-            //* this will get the meeting
-            //* object and we need to remove
-            //* the groups from gql as well
-            //* as the meeting.
+            //* this will get an object
+            //* with id (meeting) and an
+            //* array with groupIds if
+            //* there are groups
             //* -----------------------
             printObject('MT:426-->inputs:\n', inputs);
-            if (inputs?.groups?.items?.length > 0) {
-                console.log(
-                    `MT:428-->DELETING ${inputs.groups.items.length} groups`
-                );
-                for (const g of inputs.groups.items) {
+            if (inputs.groups?.length > 0) {
+                console.log(`MT:428-->DELETING ${inputs.groups.length} groups`);
+                for (const g of inputs.groups) {
                     try {
-                        console.log(`id: ${g.id}`);
+                        console.log(`id: ${g}`);
                         const inputRequest = {
                             id: g.id,
                         };

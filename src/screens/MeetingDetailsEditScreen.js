@@ -15,9 +15,12 @@ import MeetingForm from '../components/MeetingFormRTK';
 import { useSelector, useDispatch } from 'react-redux';
 import { focusManager } from '@tanstack/react-query';
 // import { deleteGroupList, deleteMtg } from '../features/meetingsSlice';
-import { updateMeeting } from '../features/meetings/meetingsThunks';
+import {
+    updateMeeting,
+    deleteMeeting,
+} from '../features/meetings/meetingsThunks';
 import CustomButton from '../components/ui/CustomButton';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
     Surface,
     withTheme,
@@ -32,12 +35,13 @@ import { isDateDashBeforeToday } from '../utils/helpers';
 //    ===============
 const MeetingDetailsEditScreen = ({ route, navigation }) => {
     // const showModal = useRef(false);
-    const id = route.params.id;
+    const { id, handleDelete } = route.params;
     // printObject('MDES:52-->route.params:\n', route.params);
     // console.log('MDES:56-->meetingId:', meetingId);
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system);
     const mtrTheme = useTheme();
+    const navigate = useNavigation();
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
@@ -48,7 +52,20 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
     const handleUpdate = (values) => {
         printObject('MDES:81-->values:\n', values);
         dispatch(updateMeeting(values));
-        navigation.goBack();
+        navigate.goBack();
+    };
+    const handleDeleteRequest = (values) => {
+        printObject('MDES:54-->handleDelete(values):\n', values);
+        dispatch(deleteMeeting(values));
+        // navigate('Meetings');
+        // dispatch(deleteMeeting(meeting))
+        //     .then(() => {
+        //         navigation.navigate('Meetings');
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error deleting meeting:', error);
+        //     });
+        // navigation.goBack();
     };
 
     let meeting = {};
@@ -68,6 +85,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
                         <MeetingForm
                             meetingId={id}
                             handleSubmit={handleUpdate}
+                            handleDelete={handleDeleteRequest}
                         />
                     </ScrollView>
                 )}

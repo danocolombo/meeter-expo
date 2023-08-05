@@ -51,7 +51,7 @@ import {
 import { parse } from 'expo-linking';
 //   FUNCTION START
 //   ==============
-const MeetingForm = ({ meetingId, handleSubmit, handleDeleteRequest }) => {
+const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
     const navigation = useNavigation();
 
     const meeter = useSelector((state) => state.system.meeter);
@@ -328,14 +328,26 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDeleteRequest }) => {
         handleSubmit(newValues);
     };
     const handleDeleteConfirm = () => {
-        //setShowDeleteConfirmModal(false);
-        dispatch(deleteMeeting(meeting))
-            .then(() => {
-                navigation.navigate('Meetings');
-            })
-            .catch((error) => {
-                console.error('Error deleting meeting:', error);
+        setShowDeleteConfirmModal(false);
+        let groups = [];
+        if (meeting?.groups?.items) {
+            meeting.groups.items.forEach((g) => {
+                groups.push(g.id);
             });
+        }
+        const deleteRequest = {
+            id: meeting.id,
+            groups: groups,
+        };
+        handleDelete(deleteRequest);
+        //setShowDeleteConfirmModal(false);
+        // dispatch(deleteMeeting(meeting))
+        //     .then(() => {
+        //         navigation.navigate('Meetings');
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error deleting meeting:', error);
+        //     });
     };
 
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);

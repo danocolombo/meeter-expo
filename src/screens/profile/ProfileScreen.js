@@ -13,7 +13,6 @@ import { focusManager } from '@tanstack/react-query';
 //import { S3Image } from 'aws-amplify-react-native';
 import CustomButton from '../../components/ui/CustomButton';
 import ProfileForm from '../../components/Profile/ProfileForm';
-import { useUserContext, up } from '../../contexts/UserContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { printObject } from '../../utils/helpers';
 import { StatusBar } from 'expo-status-bar';
@@ -26,9 +25,6 @@ const ProfileScreen = (props) => {
     const { height, width } = useWindowDimensions();
     const navigation = useNavigation();
     const mtrTheme = useTheme();
-    // const [userProfile, setReduxProfile] = useState(
-    //     useSelector((state) => state.user.profile)
-    // );
     const userProfile = useSelector((state) => state.user.profile);
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);

@@ -45,6 +45,7 @@ const MeetingNewScreen = ({ route, navigation }) => {
         dispatch(addMeeting(submitValues));
         navigate.goBack();
     };
+    printObject('MNS:48-->userProfile:\n', userProfile);
     return (
         <>
             <View

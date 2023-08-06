@@ -1,18 +1,8 @@
 import { useEffect, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import NetInfo from '@react-native-community/netinfo';
-import {
-    QueryClient,
-    QueryClientProvider,
-    onlineManager,
-    useOnlineManager,
-} from '@tanstack/react-query';
 
 import AuthContextProvider from './src/contexts/AuthContext';
-import UserContextProvider from './src/contexts/UserContext';
-import useCachedResources from './src/hooks/useCachedResources';
-import useColorScheme from './src/hooks/useColorScheme';
 import Navigation from './src/navigation/Navigation';
 import { store } from './src/app/store';
 import { Provider, useSelector } from 'react-redux';
@@ -28,14 +18,7 @@ Amplify.configure({
         disabled: true,
     },
 });
-// import { Auth, Hub } from 'aws-amplify';
 
-onlineManager.setEventListener((setOnline) => {
-    return NetInfo.addEventListener((state) => {
-        setOnline(!!state.isConnected);
-    });
-});
-const queryClient = new QueryClient();
 function App() {
     const [fontsLoaded] = useFonts({
         'Merriweather-Bold': require('./assets/fonts/Merriweather-Bold.ttf'),
@@ -70,25 +53,16 @@ function App() {
     if (!fontsLoaded) {
         return null;
     }
-    //const isLoadingComplete = useCachedResources();
-    // const colorScheme = useColorScheme();
 
-    // if (!isLoadingComplete) {
-    //     return null;
-    // } else {
     return (
         <Provider store={store}>
             <AuthContextProvider>
-                <UserContextProvider>
-                    <QueryClientProvider client={queryClient}>
-                        <PaperProvider theme={theme}>
-                            <SafeAreaProvider>
-                                <Navigation />
-                                <StatusBar />
-                            </SafeAreaProvider>
-                        </PaperProvider>
-                    </QueryClientProvider>
-                </UserContextProvider>
+                <PaperProvider theme={theme}>
+                    <SafeAreaProvider>
+                        <Navigation />
+                        <StatusBar />
+                    </SafeAreaProvider>
+                </PaperProvider>
             </AuthContextProvider>
         </Provider>
     );

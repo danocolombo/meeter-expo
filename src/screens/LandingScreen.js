@@ -97,20 +97,20 @@ const LandingScreen = () => {
         if (isLoading) {
             return;
         }
-        if (!userProfile?.activeOrg?.id) {
-            setIsLoading(true);
-            // console.log('LS:179-->before');
-            getUserDefined();
-            // .then(() => {
-            //     console.log('LS:180-->then');
-            //     console.log('LS:184-->userProfile:\n', userProfile);
-            // })
-            // .catch((e) => {
-            //     console.log('LS:187-->catch:', e);
-            // });
-            setIsLoading(false);
-        }
-        printObject('LS:111-->userProfile:\n', userProfile);
+        // if (!userProfile?.activeOrg?.id) {
+        //     setIsLoading(true);
+        //     // console.log('LS:179-->before');
+        //     getUserDefined();
+        //     // .then(() => {
+        //     //     console.log('LS:180-->then');
+        //     //     console.log('LS:184-->userProfile:\n', userProfile);
+        //     // })
+        //     // .catch((e) => {
+        //     //     console.log('LS:187-->catch:', e);
+        //     // });
+        //     setIsLoading(false);
+        // }
+        // printObject('LS:111-->userProfile:\n', userProfile);
         if (userProfile?.activeOrg?.status !== 'active') {
             // console.log('LS:102-->NOT ACTIVE');
             setTeamApproved(false);

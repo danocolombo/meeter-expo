@@ -8,7 +8,7 @@ import { useTheme } from 'react-native-paper';
 const TitleSection = ({ values, setValues }) => {
     const { width } = useWindowDimensions();
     const mtrTheme = useTheme();
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const newPerms = useSelector((state) => state.user.perms);
     const [isTitleValid, setIsTitleValid] = useState(
         values?.title?.length > 2 ? true : false

@@ -351,7 +351,7 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
     };
 
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
-
+    printObject('MFRTK:354-->userProfile:', userProfile);
     if (isLoading) {
         return (
             <View

@@ -58,8 +58,6 @@ import {
 import { FetchMeeting } from '../components/common/hooks/meetingQueries';
 import { FetchGroups } from '../components/common/hooks/groupQueries';
 import GroupListCard from '../components/Group.List.Card';
-import MeetingListCard from '../components/Meeting.List.Card';
-import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
 import { getGroups } from '../features/groups/groupsThunks';
 //   FUNCTION START
@@ -67,7 +65,8 @@ import { getGroups } from '../features/groups/groupsThunks';
 const MeetingDetails = (props) => {
     const meetingId = props.route.params.meetingId;
     const mtrTheme = useTheme();
-    const { userProfile, perms } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
+    const perms = useSelector((state) => state.user.perms);
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
     const isFocused = useIsFocused();
     const dispatch = useDispatch();

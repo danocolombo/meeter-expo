@@ -47,6 +47,8 @@ import NumbersSection from './MeetingForm.numbers';
 const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     const meeter = useSelector((state) => state.system.meeter);
     const { userProfile, perms } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
+    const perms = useSelector((state) => state.user.perms);
     const { width } = useWindowDimensions();
 
     const mtrTheme = useTheme();

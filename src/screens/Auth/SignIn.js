@@ -16,7 +16,6 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-import { checkUserProfile } from '../../jerichoQL/providers/users.provider';
 import { printObject } from '../../utils/helpers';
 import { useDispatch } from 'react-redux';
 import {
@@ -48,19 +47,6 @@ const SignInScreen = () => {
         try {
             const response = await Auth.signIn(data.username, data.password);
             dispatch(loginUser(response));
-            // checkUserProfile(response)
-            //     .then((response) => {
-            //         //* this should be the GQL user object for the logged in user
-
-            //         // printObject('SI:48-->response:\n', response);
-            //         dispatch(loginUser(response[0]));
-            //     })
-            //     .catch((error) => {
-            //         console.log(
-            //             'SI:54-->could not define GQL user profile. error',
-            //             error
-            //         );
-            //     });
         } catch (error) {
             switch (error.code) {
                 case 'UserNotFoundException':

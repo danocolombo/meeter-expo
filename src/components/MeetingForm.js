@@ -17,12 +17,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CurrencyInput from 'react-native-currency-input';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { useUserContext } from '../contexts/UserContext';
-import {
-    getMeetingGroups,
-    clearGroups,
-    updateMeetingValues,
-} from '../features/meetingsSlice';
+
 import { PutMeeting } from './common/hooks/meetingQueries';
 import NumberInput from './ui/NumberInput';
 import DateBall from './ui/DateBall';
@@ -46,7 +41,6 @@ import NumbersSection from './MeetingForm.numbers';
 //   ==============
 const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     const meeter = useSelector((state) => state.system.meeter);
-    const { userProfile, perms } = useUserContext();
     const userProfile = useSelector((state) => state.user.profile);
     const perms = useSelector((state) => state.user.perms);
     const { width } = useWindowDimensions();
@@ -212,9 +206,13 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
         return;
     };
     const onMeetingDateConfirm = (data) => {
-        FormatEventDate(data);
+        const selectedDate = data || new Date(); // Use current date if data is null
+        const utcDate = new Date(selectedDate);
+        setDateValue(utcDate);
+        FormatEventDate(utcDate);
         setModalMeetingDateVisible(false);
     };
+
     const handleTypeChange = (value) => {
         if (userProfile.activeOrg.role !== 'manage') {
             return;
@@ -248,9 +246,19 @@ const MeetingForm = ({ meetingId, handleUpdate, handleDeleteRequest }) => {
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
     useEffect(() => {
-        let dateObj = dateDashToDateObject(values.meetingDate);
-        setDateValue(dateObj);
+        if (!values.meetingDate) {
+            // If meetingDate is null, set the default date to the current date in the user's local timezone
+            const currentDate = new Date(); // Current date and time in the user's local timezone
+            setMeetingDate(currentDate); // Set the meetingDate state to the current date
+            setDateValue(currentDate); // Set the dateValue state to the current date
+        } else {
+            // If meetingDate is not null, convert it to a Date object and set both meetingDate and dateValue states
+            const parsedDate = new Date(values.meetingDate);
+            setMeetingDate(parsedDate);
+            setDateValue(parsedDate);
+        }
     }, []);
+    printObject('MF:261-->dateValue:', dateValue);
     const mutation = useMutation({
         mutationFn: (values) => {
             return (

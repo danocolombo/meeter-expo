@@ -79,7 +79,8 @@ export const loginUser = createAsyncThunk(
                 return updatedProfile;
             }
         } catch (error) {
-            printObject('UT:15-->saveUserProfile', inputs);
+            printObject('UT:82-->saveUserProfile ERROR', inputs);
+            printObject('UT:83-->error:\n', error);
             // Rethrow the error to let createAsyncThunk handle it
             throw new Error('UT:17-->Failed to saveUserProfile thunk');
         }

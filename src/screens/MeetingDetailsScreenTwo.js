@@ -70,9 +70,9 @@ const MeetingDetails = (props) => {
     );
     const meeter = useSelector((state) => state.system);
     const meetings = useSelector((state) => state.meetings.meetings);
-    const defaultGroups = useSelector(
-        (state) => state?.system?.activeOrg?.defaultGroups?.items
-    );
+
+    const defaultGroups = useSelector((state) => state.groups.defaultGroups);
+
     const navigation = useNavigation();
     let historic = false;
     const userTimeZone = Localization.timezone;
@@ -192,8 +192,8 @@ const MeetingDetails = (props) => {
             </View>
         );
     }
-    // printObject('MDST:240-->meeting:\n', meeting);
-    // printObject('MDST:264-->defaultGroups\n', defaultGroups);
+    printObject('MDST:240-->meeting:\n', meeting);
+    printObject('MDST:264-->defaultGroups\n', defaultGroups);
     // printObject('MDST:267-->userProfile:\n', userProfile);
     // printObject('MDST:268-->perms\n', perms);
     // printObject('MDST:270-->newUserProfile\n', newUserProfile);
@@ -250,7 +250,7 @@ const MeetingDetails = (props) => {
                     </View>
                     <View>
                         <View style={{ flexDirection: 'column' }}>
-                            {meeting?.meetingType === 'Lesson' && (
+                            {meeting?.meetingType !== 'Testimony' && (
                                 <View style={{ marginLeft: 10 }}>
                                     <Text style={mtrTheme.subTitle}>
                                         {meeting.title}
@@ -259,7 +259,7 @@ const MeetingDetails = (props) => {
                             )}
                             <View style={{ alignContent: 'flex-start' }}>
                                 <Text style={mtrTheme.detailsTitle}>
-                                    {meeting?.meetingType === 'Lesson'
+                                    {meeting?.meetingType !== 'Testimony'
                                         ? meeting.supportContact
                                         : meeting.title}
                                 </Text>
@@ -401,30 +401,30 @@ const MeetingDetails = (props) => {
                         )}
                     </View>
                 </View>
-                {meeting?.groups?.items ? (
-                    <>
-                        <FlatList
-                            data={meeting.groups.items}
-                            keyExtractor={(item) => item.id}
-                            persistentScrollbar={true}
-                            renderItem={({ item }) => (
-                                <GroupListCard
-                                    group={item}
-                                    meeting={meeting}
-                                    authority={authority}
-                                    handleDeleteRequest={handleDeleteRequest}
-                                />
-                            )}
-                            ListFooterComponent={<></>}
+                {/* {meeting?.groups?.items ? (
+                    <> */}
+                <FlatList
+                    data={meeting?.groups?.items}
+                    keyExtractor={(item) => item.id}
+                    persistentScrollbar={true}
+                    renderItem={({ item }) => (
+                        <GroupListCard
+                            group={item}
+                            meeting={meeting}
+                            authority={authority}
+                            handleDeleteRequest={handleDeleteRequest}
                         />
-                    </>
+                    )}
+                    ListFooterComponent={<></>}
+                />
+                {/* </>
                 ) : (
                     <View style={mtrTheme.meetingDetailsGroupLoadingText}>
                         <Text style={mtrTheme.meetingDetailsGroupLoadingText}>
                             Loading Groups...
                         </Text>
                     </View>
-                )}
+                )} */}
                 {authority && showDefaultsButton && (
                     <View
                         style={{

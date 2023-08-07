@@ -2,7 +2,6 @@ import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import React, { useState } from 'react';
 import NumberInput from './ui/NumberInput';
 import { useSelector } from 'react-redux';
-import { useUserContext } from '../contexts/UserContext';
 import Input from './ui/Input';
 import { useTheme } from 'react-native-paper';
 const TitleSection = ({ values, setValues }) => {

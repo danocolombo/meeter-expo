@@ -12,16 +12,13 @@ import {
     Modal,
 } from 'react-native';
 
-import moment from 'moment-timezone';
 import Input from './ui/Input';
 import { newMeetingTemplate } from '../constants/meeter';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 // import * as Application from 'expo-application';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CurrencyInput from 'react-native-currency-input';
 import * as Localization from 'expo-localization';
 
-import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import DateBall from './ui/DateBall';
@@ -85,9 +82,13 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
         printObject('MFRTK:81-->hit:\n', hit);
         if (!hit?.id) {
             console.log('MFRTK:83-->meeting defined from template');
-            const meetingDate = new Date();
-            const newMeetingDate = meetingDate.toISOString().slice(0, 10);
-            setDateValue(meetingDate);
+            const currentDate = new Date(); // Get the current date
+            const localCurrentDate = new Date(
+                currentDate.getTime() - localTimezoneOffsetInMinutes * 60 * 1000
+            ); // Convert to local timezone
+
+            const newMeetingDate = localCurrentDate.toISOString().slice(0, 10);
+            setDateValue(localCurrentDate); // Set the default date to local timezone
 
             console.log('[[ 1 ]]');
 
@@ -201,41 +202,41 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
         });
     }
 
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            title: meeter.appName,
-            headerBackTitle: 'Cancel',
-            headerRight: () => (
-                <>
-                    {meetingId !== null &&
-                        userProfile.activeOrg.role === 'manage' && (
-                            <TouchableOpacity
-                                onPress={() =>
-                                    navigation.navigate('DeleteConfirm', {
-                                        id: meetingId,
-                                    })
-                                }
-                            >
-                                <MaterialCommunityIcons
-                                    name='delete-forever'
-                                    size={30}
-                                    color={mtrTheme.colors.critical}
-                                />
-                            </TouchableOpacity>
-                        )}
-                </>
-            ),
-        });
-    }, [navigation, meeter]);
+    // useLayoutEffect(() => {
+    //     navigation.setOptions({
+    //         title: meeter.appName,
+    //         headerBackTitle: 'Cancel',
+    //         headerRight: () => (
+    //             <>
+    //                 {meetingId !== null &&
+    //                     userProfile.activeOrg.role === 'manage' && (
+    //                         <TouchableOpacity
+    //                             onPress={() =>
+    //                                 navigation.navigate('DeleteConfirm', {
+    //                                     id: meetingId,
+    //                                 })
+    //                             }
+    //                         >
+    //                             <MaterialCommunityIcons
+    //                                 name='delete-forever'
+    //                                 size={30}
+    //                                 color={mtrTheme.colors.critical}
+    //                             />
+    //                         </TouchableOpacity>
+    //                     )}
+    //             </>
+    //         ),
+    //     });
+    // }, [navigation, meeter]);
 
     const FormatEventDate = (data) => {
         try {
             console.log(`MFRTK:232-->FormatEventDate(${data})`);
-            const dv = new Date(data);
-            setDateValue(dv);
+            const utcDate = new Date(data);
+            setDateValue(utcDate);
             console.log('[[ 4 ]]');
             setFormattedDate(
-                dv.toLocaleDateString('en-US', {
+                utcDate.toLocaleDateString('en-US', {
                     timeZone: userTimeZone,
                 })
             );
@@ -266,8 +267,10 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
         setModalMeetingDateVisible(false);
     };
     const onMeetingDateConfirm = (data) => {
-        // Parse the input data into a Date object
-        setDateValue(data);
+        const selectedDate = data || new Date(); // Use current date if data is null
+        const utcDate = new Date(selectedDate);
+        setDateValue(utcDate);
+        FormatEventDate(utcDate);
         setModalMeetingDateVisible(false);
     };
 
@@ -526,7 +529,7 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
                 <MealSection values={meeting} setValues={setMeeting} />
                 <NumbersSection values={meeting} setValues={setMeeting} />
                 {authority && (
-                    <View style={[styles.row, { marginTop: 10 }]}>
+                    <View style={mtrTheme.meetingEditFirstRow}>
                         <View
                             style={[
                                 mtrTheme.meetingEditNumberLabelContainer,
@@ -536,20 +539,15 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
                             <Text
                                 style={{
                                     color: 'white',
-                                    fontSize: 24,
+                                    fontSize: 18,
                                     textAlign: 'right',
+                                    paddingRight: 4,
                                 }}
                             >
                                 Donations:
                             </Text>
                         </View>
-                        <View
-                            style={{
-                                paddingRight: 'auto',
-                                paddingLeft: 10,
-                                minWidth: '50%',
-                            }}
-                        >
+                        <View style={styles(mtrTheme).currencyInputContainer}>
                             <CurrencyInput
                                 value={meeting.donations}
                                 onChangeValue={inputChangedHandler.bind(
@@ -563,7 +561,7 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
                                 separator='.'
                                 precision={2}
                                 editable={true}
-                                style={styles.costInput}
+                                style={styles(mtrTheme).costInput}
                             />
                         </View>
                     </View>
@@ -628,19 +626,6 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
                         style={{ width: '100%' }} // Set the width of the button to 100% so it takes the full width of the buttonContainer
                     />
                 </View>
-                {meeting?.id && (
-                    <View style={styles(mtrTheme).deleteCanContainer}>
-                        <TouchableOpacity
-                            onPress={() => setShowDeleteConfirmModal(true)}
-                        >
-                            <MaterialCommunityIcons
-                                name='delete-forever'
-                                size={30}
-                                color={mtrTheme.colors.critical}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                )}
             </KeyboardAvoidingView>
         </View>
     );
@@ -662,6 +647,10 @@ const styles = (mtrTheme) =>
         notesStyle: {
             paddingBottom: 5,
         },
+        currencyInputContainer: {
+            paddingVertical: 0, // Adjust this value as needed
+            marginVertical: 2,
+        },
         costInput: {
             fontSize: 18,
             borderWidth: 1,
@@ -680,9 +669,5 @@ const styles = (mtrTheme) =>
             marginLeft: 'auto', // Push the button to the right side of the container
             marginRight: 'auto', // Push the button to the left side of the container
             marginBottom: 1,
-        },
-        deleteCanContainer: {
-            marginRight: 10,
-            marginLeft: 'auto',
         },
     });

@@ -40,13 +40,16 @@ const SignInScreen = () => {
     // need this to pass the username on to forgot password
     const user = watch('username');
     const onSignInPressed = async (data) => {
+        console.log('onSignInPressed');
         if (loading) {
             return;
         }
         setLoading(true);
+        console.log('loading true');
         try {
             const response = await Auth.signIn(data.username, data.password);
             dispatch(loginUser(response));
+            console.log('done with loginUser dispatch');
         } catch (error) {
             switch (error.code) {
                 case 'UserNotFoundException':

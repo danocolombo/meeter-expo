@@ -10,7 +10,6 @@ import {
     useOnlineManager,
 } from '@tanstack/react-query';
 import AuthContextProvider from './src/contexts/AuthContext';
-import UserContextProvider from './src/contexts/UserContext';
 import SysContextProvider from './src/contexts/SysContext';
 // import NetInfo from '@react-native-community/netinfo';
 import Navigation from './src/navigation/Navigation';
@@ -80,23 +79,21 @@ function App() {
     return (
         <Provider store={store}>
             <AuthContextProvider>
-                <UserContextProvider>
-                    <SysContextProvider>
-                        <QueryClientProvider client={queryClient}>
-                            <PaperProvider theme={theme}>
-                                <SafeAreaView
-                                    style={
-                                        Platform === 'ios'
-                                            ? styles.containerIOS
-                                            : styles.container
-                                    }
-                                >
-                                    <Navigation theme={theme} />
-                                </SafeAreaView>
-                            </PaperProvider>
-                        </QueryClientProvider>
-                    </SysContextProvider>
-                </UserContextProvider>
+                <SysContextProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <PaperProvider theme={theme}>
+                            <SafeAreaView
+                                style={
+                                    Platform === 'ios'
+                                        ? styles.containerIOS
+                                        : styles.container
+                                }
+                            >
+                                <Navigation theme={theme} />
+                            </SafeAreaView>
+                        </PaperProvider>
+                    </QueryClientProvider>
+                </SysContextProvider>
             </AuthContextProvider>
         </Provider>
     );

@@ -75,6 +75,9 @@ const DefaultGroupsScreen = () => {
             }}
         >
             <View>
+                <Text style={{ color: 'white' }}>DefaultGroupScreen</Text>
+            </View>
+            <View>
                 <Text style={mtrTheme.screenTitle}>DEFAULT GROUPS</Text>
             </View>
 

@@ -84,7 +84,7 @@ const NumbersSection = ({ values, setValues }) => {
     }
     return (
         <>
-            <View style={[styles.row, { marginVertical: 4 }]}>
+            <View style={[styles.row, { marginVertical: 5 }]}>
                 <View
                     style={[
                         mtrTheme.meetingEditNumberLabelContainer2,
@@ -122,7 +122,7 @@ const NumbersSection = ({ values, setValues }) => {
                     />
                 </View>
             </View>
-            <View style={[styles.row, { marginVertical: 0 }]}>
+            <View style={[styles.row, { marginTop: 0, marginBottom: 5 }]}>
                 <View
                     style={[
                         mtrTheme.meetingEditNumberLabelContainer,
@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignContent: 'center',
         alignItems: 'center',
+        marginHorizontal: 5,
     },
     numberText: {
         color: 'white',

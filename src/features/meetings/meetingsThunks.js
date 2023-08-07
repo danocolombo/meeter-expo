@@ -195,7 +195,7 @@ export const addDefaultGroups = createAsyncThunk(
     'meetings/addDefaultGroups',
     async (inputs, thunkAPI) => {
         try {
-            // printObject('MT:174-->inputs:\n', inputs);
+            printObject('MT:174-->inputs:\n', inputs);
 
             //* add meetings in graphql
 
@@ -205,7 +205,7 @@ export const addDefaultGroups = createAsyncThunk(
                 newGroupList = [...inputs?.meeting?.groups?.items];
             }
 
-            inputs.defaultGroups.forEach((dg) => {
+            inputs?.defaultGroups?.forEach((dg) => {
                 const newId = createAWSUniqueID();
                 let inputInfo = {
                     ...dg,
@@ -214,6 +214,7 @@ export const addDefaultGroups = createAsyncThunk(
                     meetingGroupsId: inputs.meeting.id,
                     organizationGroupsId: inputs.orgId,
                 };
+                // printObject('MT:217-->inputInfo:\n', inputInfo);
                 const results = API.graphql({
                     query: mutations.createGroup,
                     variables: { input: inputInfo },
@@ -221,7 +222,7 @@ export const addDefaultGroups = createAsyncThunk(
 
                 newGroupList.push(inputInfo);
             });
-            // printObject('MT:199-->newGroupList:\n', newGroupList);
+            printObject('MT:199-->newGroupList:\n', newGroupList);
             const data = {
                 items: [...newGroupList],
             };
@@ -260,8 +261,11 @@ export const addDefaultGroups = createAsyncThunk(
 
             return meetingUpdate;
         } catch (error) {
-            printObject('MT:250-->addMeeting thunk try failure.\n', error);
-            throw new Error('MT:251-->Failed to create meeting');
+            printObject(
+                'MT:250-->::addDefaultGroups thunk try failure.\n',
+                error
+            );
+            throw new Error('MT:251-->addDefaultGroups Failed');
         }
     }
 );
@@ -454,13 +458,17 @@ export const deleteMeeting = createAsyncThunk(
                     try {
                         console.log(`id: ${g}`);
                         const inputRequest = {
-                            id: g.id,
+                            id: g,
                         };
-
+                        printObject('MT:459-->inputRequest:\n', inputRequest);
                         const deleteGroupResponse = await API.graphql({
                             query: mutations.deleteGroup,
                             variables: { input: inputRequest },
                         });
+                        printObject(
+                            'MT:464-->deleteGroupResposne:\n',
+                            deleteGroupResponse
+                        );
                         if (!deleteGroupResponse?.data?.deleteGroup?.id) {
                             console.log(
                                 `MT:442-->Failed to delete group with id: ${g.id}`

@@ -65,7 +65,7 @@ const CustomDrawer = (props) => {
                     printObject('CD:68-->error getting storage ref:\n', error);
                 });
         } catch (error) {
-            console.log('CD:71-->error Storeage.get\n', error);
+            console.log('CD:71-->error Storage.get\n', error);
         }
     }
     // useFocusEffect(

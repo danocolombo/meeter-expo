@@ -29,15 +29,13 @@ import { dateNumToDateDash, printObject } from '../utils/helpers';
 import { useAuthContext } from '../contexts/AuthContext';
 import { focusManager } from '@tanstack/react-query';
 import { current } from '@reduxjs/toolkit';
-import { useUserContext } from '../contexts/UserContext';
 //   FUNCTION START
 //   ===============
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const meeter = useSelector((state) => state.system.meeter);
-    const [displayMeetings, setDisplayMeetings] = useState([]);
 
     useLayoutEffect(() => {
         let headerLabelColor = '';

@@ -13,19 +13,13 @@ import {
     Alert,
     FlatList,
 } from 'react-native';
-import Constants from 'expo-constants';
-import * as Application from 'expo-application';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     useNavigation,
     useIsFocused,
     useFocusEffect,
 } from '@react-navigation/native';
-import { Auth } from 'aws-amplify';
-import * as SplashScreen from 'expo-splash-screen';
 import Logo from '../../assets/M-square.png';
-import CustomButton from '../components/ui/CustomButton';
-// import { Colors } from '../constants/colors';
 import {
     Surface,
     withTheme,
@@ -33,13 +27,9 @@ import {
     ActivityIndicator,
 } from 'react-native-paper';
 import { dateNumToDateDash, printObject } from '../utils/helpers';
-//import MeetingListCard from '../components/Meeting.List.Card';
-import { useAuthContext } from '../contexts/AuthContext';
-import { useUserContext } from '../contexts/UserContext';
-import profilesSlice from '../features/profilesSlice';
 import { StatusBar } from 'expo-status-bar';
-import { saveUserProfile as addReduxProfile } from '../features/user/userThunks';
-import { loadActiveOrg } from '../features/system/systemThunks';
+import { Auth } from 'aws-amplify';
+import { loginUser } from '../features/user/userThunks';
 //      ====================================
 //      FUNCTION START
 const LandingScreen = () => {
@@ -60,8 +50,6 @@ const LandingScreen = () => {
     );
     const sysRedux = useSelector((state) => state.system);
     const meeter = useSelector((state) => state.system.meeter);
-    const { authUser, defineUser } = useAuthContext();
-    const { saveUserProfile } = useUserContext();
     const systemInfo = useSelector((state) => state.system);
     const teamInfo = useSelector((state) => state.team);
     const userInfo = useSelector((state) => state.user);
@@ -70,19 +58,6 @@ const LandingScreen = () => {
             title: '',
         });
     }, [navigation, meeter]);
-
-    async function getUserDefined() {
-        //      =============================================
-        //      saves the user info to redux user
-        //      =============================================
-        // const cau = await Auth.currentAuthenticatedUser();
-        // const user = await defineUser(cau.attributes.sub);
-        // saveUserProfile(user);
-        // dispatch(addReduxProfile(user));
-        // dispatch(loadActiveOrg(user?.activeOrg?.id));
-        //printObject('LS:71--user:\n', user);
-        //printObject('LS:72-->userProfile', userProfile);
-    }
 
     useFocusEffect(
         useCallback(() => {
@@ -94,23 +69,10 @@ const LandingScreen = () => {
         }, [])
     );
     useEffect(() => {
-        if (isLoading) {
-            return;
+        // check if authenticated and no profile
+        if (!userProfile?.id) {
+            handleInfoRequest().then(() => console.log('good'));
         }
-        // if (!userProfile?.activeOrg?.id) {
-        //     setIsLoading(true);
-        //     // console.log('LS:179-->before');
-        //     getUserDefined();
-        //     // .then(() => {
-        //     //     console.log('LS:180-->then');
-        //     //     console.log('LS:184-->userProfile:\n', userProfile);
-        //     // })
-        //     // .catch((e) => {
-        //     //     console.log('LS:187-->catch:', e);
-        //     // });
-        //     setIsLoading(false);
-        // }
-        // printObject('LS:111-->userProfile:\n', userProfile);
         if (userProfile?.activeOrg?.status !== 'active') {
             // console.log('LS:102-->NOT ACTIVE');
             setTeamApproved(false);
@@ -118,6 +80,20 @@ const LandingScreen = () => {
             setTeamApproved(true);
         }
     }, []);
+    const handleInfoRequest = async () => {
+        // printObject('<LS:109></LS:109>-->systemInfo:\n', systemInfo);
+        // printObject('LS:110-->teamInfo:\n', teamInfo);
+        // printObject('LS:111-->userProfile:\n', userProfile);
+        try {
+            const cau = await Auth.currentAuthenticatedUser();
+            // printObject('LS:114-->Auth.currentAuthenticatedUser\n', cau);
+            dispatch(loginUser(cau));
+        } catch (error) {
+            console.log('no authenticated user');
+            Auth.signOut();
+        }
+    };
+
     if (isLoading) {
         return (
             <View

@@ -30,6 +30,7 @@ import { dateNumToDateDash, printObject } from '../utils/helpers';
 import { StatusBar } from 'expo-status-bar';
 import { Auth } from 'aws-amplify';
 import { loginUser } from '../features/user/userThunks';
+import { loadDefaultGroups } from '../features/groups/groupsThunks';
 //      ====================================
 //      FUNCTION START
 const LandingScreen = () => {
@@ -65,6 +66,9 @@ const LandingScreen = () => {
                 setWelcomeMessage(userProfile?.activeOrg?.heroMessage);
             } else {
                 setWelcomeMessage('Welcome...');
+            }
+            if (userProfile?.activeOrg?.id) {
+                dispatch(loadDefaultGroups({ id: userProfile.activeOrg.id }));
             }
         }, [])
     );

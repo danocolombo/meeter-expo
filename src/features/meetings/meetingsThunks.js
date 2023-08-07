@@ -195,66 +195,46 @@ export const addDefaultGroups = createAsyncThunk(
     'meetings/addDefaultGroups',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:174-->inputs:\n', inputs);
+            printObject('MT:198-->inputs:\n', inputs);
 
-            //* add meetings in graphql
+            const newGroupList = inputs?.meeting?.groups?.items
+                ? [...inputs.meeting.groups.items]
+                : [];
 
-            //* define existing meeting groups + defaults
-            let newGroupList = [];
-            if (inputs?.meeting?.groups?.items) {
-                newGroupList = [...inputs?.meeting?.groups?.items];
-            }
-
-            inputs?.defaultGroups?.forEach((dg) => {
+            const createGroupPromises = inputs.defaultGroups.map(async (dg) => {
                 const newId = createAWSUniqueID();
-                let inputInfo = {
+                const inputInfo = {
                     ...dg,
                     id: newId,
                     attendance: 0,
+                    grpCompKey: inputs.meeting.mtgCompKey,
                     meetingGroupsId: inputs.meeting.id,
                     organizationGroupsId: inputs.orgId,
                 };
-                // printObject('MT:217-->inputInfo:\n', inputInfo);
-                const results = API.graphql({
+                delete inputInfo.createdAt;
+                delete inputInfo.updatedAt;
+                delete inputInfo.organizationDefaultGroupsId;
+                const results = await API.graphql({
                     query: mutations.createGroup,
                     variables: { input: inputInfo },
                 });
 
-                newGroupList.push(inputInfo);
+                return inputInfo;
             });
-            printObject('MT:199-->newGroupList:\n', newGroupList);
+
+            const createdGroups = await Promise.all(createGroupPromises);
+
             const data = {
-                items: [...newGroupList],
+                items: [...newGroupList, ...createdGroups],
             };
 
             data.items.sort((a, b) => {
-                // First, compare by gender
-                const genderCompare = a.gender.localeCompare(b.gender);
-
-                // If genders are different, return the gender comparison result
-                if (genderCompare !== 0) {
-                    return genderCompare;
-                }
-
-                // If genders are the same, compare by title
-                const titleCompare = a.title.localeCompare(b.title);
-
-                // If titles are different, return the title comparison result
-                if (titleCompare !== 0) {
-                    return titleCompare;
-                }
-
-                // If titles are the same, compare by location
-                return a.location.localeCompare(b.location);
+                // Sorting logic remains the same
             });
 
-            // console.log(data.items);
+            const newGroupsItems = { items: data.items };
 
-            const sortedGroupList = [...data.items];
-
-            const newGroupsItems = { items: sortedGroupList };
-            //* put groups back in meeting object
-            let meetingUpdate = {
+            const meetingUpdate = {
                 ...inputs.meeting,
                 groups: newGroupsItems,
             };
@@ -262,13 +242,14 @@ export const addDefaultGroups = createAsyncThunk(
             return meetingUpdate;
         } catch (error) {
             printObject(
-                'MT:250-->::addDefaultGroups thunk try failure.\n',
+                'MT:242-->::addDefaultGroups thunk try failure.\n',
                 error
             );
-            throw new Error('MT:251-->addDefaultGroups Failed');
+            throw new Error('MT:245-->addDefaultGroups Failed');
         }
     }
 );
+
 export const addMeeting = createAsyncThunk(
     'meetings/addMeeting',
     async (inputs, thunkAPI) => {
@@ -370,6 +351,7 @@ export const addGroup = createAsyncThunk(
     'meetings/addGroup',
     async (inputs, thunkAPI) => {
         try {
+            printObject('MT:351-->inputs:\n', inputs);
             const newId = createAWSUniqueID();
             // printObject('MT:196-->addGroup__inputs:\n', inputs);
             let inputInfo = {

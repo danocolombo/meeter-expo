@@ -4,6 +4,7 @@ import React, {
     useLayoutEffect,
     useCallback,
     useRef,
+    useMemo,
 } from 'react';
 import {
     View,
@@ -72,7 +73,6 @@ const MeetingDetails = (props) => {
     const meetings = useSelector((state) => state.meetings.meetings);
 
     const defaultGroups = useSelector((state) => state.groups.defaultGroups);
-
     const navigation = useNavigation();
     let historic = false;
     const userTimeZone = Localization.timezone;
@@ -80,7 +80,15 @@ const MeetingDetails = (props) => {
     const meeting = useSelector((state) =>
         state.meetings.meetings.find((m) => m.id === id)
     );
-    printObject('MDST:83-->meeting:\n', meeting);
+    const meetingGroups =
+        useSelector(
+            (state) =>
+                state.meetings.meetings.find((m) => m.id === id)?.groups?.items
+        ) || [];
+
+    const memoizedMeetingGroups = useMemo(() => meetingGroups, [meetingGroups]);
+    printObject('MDST:91-->defaultGroups:\n', defaultGroups);
+    printObject('MDST:92-->meeting:\n', meeting);
     // Check if the meeting does not exist
     if (!meeting) {
         // If meeting is not found, you can set a flag to indicate that
@@ -93,7 +101,7 @@ const MeetingDetails = (props) => {
     const [dateValue, setDateValue] = useState(
         meeting?.meetingDate ? new Date(meeting?.meetingDate) : new Date()
     );
-    const [meetingGroups, setMeetingGroups] = useState([]);
+    // const [meetingGroups, setMeetingGroups] = useState([]);
     const { width, height } = useWindowDimensions();
     useEffect(() => {
         if (meeting?.meetingDate) {
@@ -150,6 +158,10 @@ const MeetingDetails = (props) => {
         }
     }
     function handleDeleteRequest(values) {
+        if (isLoading) {
+            return;
+        }
+        setIsLoading(true);
         printObject('MDST:152-->values', values);
         const deleteRequest = {
             meetingId: id,
@@ -157,9 +169,11 @@ const MeetingDetails = (props) => {
         };
         printObject('MDST:157-->deleteRequest:\n', deleteRequest);
         dispatch(deleteGroupFromMeeting(deleteRequest));
+        setIsLoading(false);
     }
 
     const handleAddDefaults = async () => {
+        setIsLoading(true);
         dispatch(
             addDefaultGroups({
                 meeting: meeting,
@@ -167,6 +181,7 @@ const MeetingDetails = (props) => {
                 defaultGroups: defaultGroups,
             })
         );
+        setIsLoading(false);
     };
     //if (data) {
     const formattedDate = dateValue.toLocaleDateString('en-US', {
@@ -193,7 +208,7 @@ const MeetingDetails = (props) => {
         );
     }
     printObject('MDST:240-->meeting:\n', meeting);
-    printObject('MDST:264-->defaultGroups\n', defaultGroups);
+    // printObject('MDST:264-->defaultGroups\n', defaultGroups);
     // printObject('MDST:267-->userProfile:\n', userProfile);
     // printObject('MDST:268-->perms\n', perms);
     // printObject('MDST:270-->newUserProfile\n', newUserProfile);
@@ -220,6 +235,22 @@ const MeetingDetails = (props) => {
         // If meeting is not found and isLoading is false, navigate back
         navigation.goBack();
         return null; // Return null to avoid rendering the rest of the component
+    }
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <ActivityIndicator
+                    color={mtrTheme.colors.activityIndicator}
+                    size={80}
+                />
+            </View>
+        );
     }
     return (
         <>
@@ -404,7 +435,7 @@ const MeetingDetails = (props) => {
                 {/* {meeting?.groups?.items ? (
                     <> */}
                 <FlatList
-                    data={meeting?.groups?.items}
+                    data={memoizedMeetingGroups}
                     keyExtractor={(item) => item.id}
                     persistentScrollbar={true}
                     renderItem={({ item }) => (

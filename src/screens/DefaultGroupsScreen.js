@@ -27,18 +27,6 @@ const DefaultGroupsScreen = () => {
             focusManager.setFocused(status === 'active');
         }
     }
-    useFocusEffect(
-        useCallback(() => {
-            const subscription = AppState.addEventListener(
-                'change',
-                onAppStateChange
-            );
-            setIsLoading(true);
-            dispatch(loadDefaultGroups({ id: userProfile.activeOrg.id }));
-            setIsLoading(false);
-            return () => subscription.remove();
-        }, [])
-    );
 
     useEffect(() => {
         setDisplayGroups(defaultGroups);

@@ -20,7 +20,6 @@ import {
     Linking,
 } from 'react-native';
 import { Storage } from 'aws-amplify';
-import { focusManager } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
 import { v4 as uuid } from 'uuid';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -356,11 +355,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             headerBackTitle: 'Back',
         });
     }, [navigation]);
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
+
     const fetchImageFromUri = async (uri) => {
         const response = await fetch(uri);
         const blob = await response.blob();

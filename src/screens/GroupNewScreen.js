@@ -18,7 +18,6 @@ import {
 } from 'react-native';
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
-import { focusManager } from '@tanstack/react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     useNavigation,

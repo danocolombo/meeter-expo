@@ -13,8 +13,6 @@ import {
 } from 'react-native';
 import MeetingForm from '../components/MeetingFormRTK';
 import { useSelector, useDispatch } from 'react-redux';
-import { focusManager } from '@tanstack/react-query';
-// import { deleteGroupList, deleteMtg } from '../features/meetingsSlice';
 import {
     updateMeeting,
     deleteMeeting,

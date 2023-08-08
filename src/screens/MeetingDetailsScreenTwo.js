@@ -18,7 +18,6 @@ import {
     Platform,
     AppState,
 } from 'react-native';
-// import { focusManager } from '@tanstack/react-query';
 import * as Localization from 'expo-localization';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -46,7 +45,6 @@ import {
     dateNumToDateDash,
 } from '../utils/helpers';
 import GroupListCard from '../components/Group.List.Card';
-// import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
 import {
     addDefaultGroups,

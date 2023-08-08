@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
-import { focusManager } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { FetchHistoricMeetings } from './common/hooks/meetingQueries';
 import MeetingListCard from './Meeting.List.Card';
@@ -19,11 +18,7 @@ import { useSelector } from 'react-redux';
 const HistoryList = ({ clientId }) => {
     const mtrTheme = useTheme();
     printObject('HL:21-->clientId :', clientId);
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
+
     useFocusEffect(
         useCallback(() => {
             const subscription = AppState.addEventListener(

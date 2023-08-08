@@ -19,32 +19,22 @@ import {
     useFocusEffect,
     useNavigationState,
 } from '@react-navigation/native';
-import moment from 'moment';
-import * as ExpoTimeZone from 'expo-timezone';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
 import { Surface, ActivityIndicator, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
-import {
-    getActiveMeetings,
-    getAllMeetings,
-    getAllMeetingsG,
-} from '../features/meetings/meetingsThunks';
+import { FontDisplay } from 'expo-font';
+import { FetchActiveMeetings } from '../components/common/hooks/meetingQueries';
+import { dateNumToDateDash, printObject } from '../utils/helpers';
+import { focusManager } from '@tanstack/react-query';
+import { current } from '@reduxjs/toolkit';
 //   FUNCTION START
 //   ===============
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
-    const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.profile);
     const meeter = useSelector((state) => state.system.meeter);
-    const activeMeetings = useSelector(
-        (state) => state.meetings.activeMeetings
-    );
-    const [meetings, setMeetings] = useState(
-        useSelector((state) => state.meetings.meetings)
-    );
-    const [isLoading, setIsLoading] = useState(false);
-    const [displayMeetings, setDisplayMeetings] = useState([]);
 
     useLayoutEffect(() => {
         let headerLabelColor = '';
@@ -55,53 +45,37 @@ const ActiveScreen = () => {
             title: meeter.appName,
         });
     }, [navigation, meeter]);
-
+    function onAppStateChange(status) {
+        if (Platform.OS !== 'web') {
+            focusManager.setFocused(status === 'active');
+        }
+    }
     useFocusEffect(
         useCallback(() => {
-            setIsLoading(true);
-            dispatch(getAllMeetingsG({ orgId: userProfile.activeOrg.id }))
-                .then((action) => {
-                    const results = action.payload;
-                    if (results.length > 0) {
-                        const userTimezone = ExpoTimeZone.timezone;
-                        const now = moment().tz(userTimezone).startOf('day');
-                        console.log('Now:', now.format('YYYY-MM-DD HH:mm:ss')); // Add this line
-                        const filteredMeetings = results.reduce(
-                            (acc, meeting) => {
-                                const meetingDate = moment.tz(
-                                    meeting.meetingDate,
-                                    'YYYY-MM-DD',
-                                    userTimezone
-                                );
-                                console.log(
-                                    'Meeting Date:',
-                                    meetingDate.format('YYYY-MM-DD HH:mm:ss')
-                                ); // Add this line
-                                if (meetingDate.isSameOrAfter(now, 'day')) {
-                                    acc.push(meeting);
-                                }
-                                return acc;
-                            },
-                            []
-                        );
-
-                        setDisplayMeetings(filteredMeetings);
-                    } else {
-                        setDisplayMeetings([]);
-                    }
-                    setIsLoading(false);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    setIsLoading(false);
-                });
+            const subscription = AppState.addEventListener(
+                'change',
+                onAppStateChange
+            );
+            refetch();
+            // printObject('AS:64-->REFETCH', null);
+            return () => subscription.remove();
         }, [])
     );
 
+    let meetings = [];
+    const { data, isError, isLoading, isFetching, refetch } = useQuery(
+        ['meetings', 'active'],
+        () => FetchActiveMeetings(userProfile?.activeOrg.code || 'mtr'),
+        {
+            refetchInterval: 60000,
+            cacheTime: 2000,
+            enabled: true,
+        }
+    );
     const handleNewRequest = () => {
         navigation.navigate('MeetingNew');
     };
-    // printObject('ASRTK:97-->meetings:\n', meetings);
+
     if (isLoading) {
         return (
             <View
@@ -118,8 +92,14 @@ const ActiveScreen = () => {
             </View>
         );
     }
+    if (isError) {
+        return (
+            <View>
+                <Text>Something went wrong</Text>
+            </View>
+        );
+    }
 
-    // printObject('ASRTK:109-->activeMeetings:\n', activeMeetings);
     return (
         <>
             <Surface style={mtrTheme.screenSurface}>
@@ -139,12 +119,12 @@ const ActiveScreen = () => {
                         Click event for details!
                     </Text>
                 </View>
-                {displayMeetings && (
+                {meetings && (
                     <>
-                        {displayMeetings && (
+                        {meetings && (
                             <FlatList
-                                data={displayMeetings}
-                                keyExtractor={(item) => item.id}
+                                data={data.body.Items}
+                                keyExtractor={(item) => item.meetingId}
                                 renderItem={({ item }) => (
                                     <MeetingListCard
                                         meeting={item}

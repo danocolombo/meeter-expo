@@ -7,8 +7,8 @@ import {
     Platform,
     AppState,
 } from 'react-native';
-import { focusManager } from '@tanstack/react-query';
-import { useFocusEffect } from '@react-navigation/native';
+// import { focusManager } from '@tanstack/react-query';
+// import { useFocusEffect } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { FetchActiveMeetings } from './common/hooks/meetingQueries';
 import {
@@ -22,12 +22,12 @@ import { printObject } from '../utils/helpers';
 
 const ActiveList = ({ clientId }) => {
     const mtrTheme = useTheme();
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
-    useFocusEffect();
+    // function onAppStateChange(status) {
+    //     if (Platform.OS !== 'web') {
+    //         focusManager.setFocused(status === 'active');
+    //     }
+    // }
+    // useFocusEffect();
     // useCallback(() => {
     //     const subscription = AppState.addEventListener(
     //         'change',

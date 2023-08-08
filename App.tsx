@@ -2,7 +2,6 @@ import { useEffect, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import AuthContextProvider from './src/contexts/AuthContext';
 import Navigation from './src/navigation/Navigation';
 import { store } from './src/app/store';
 import { Provider, useSelector } from 'react-redux';
@@ -56,14 +55,12 @@ function App() {
 
     return (
         <Provider store={store}>
-            <AuthContextProvider>
-                <PaperProvider theme={theme}>
-                    <SafeAreaProvider>
-                        <Navigation />
-                        <StatusBar />
-                    </SafeAreaProvider>
-                </PaperProvider>
-            </AuthContextProvider>
+            <PaperProvider theme={theme}>
+                <SafeAreaProvider>
+                    <Navigation />
+                    <StatusBar />
+                </SafeAreaProvider>
+            </PaperProvider>
         </Provider>
     );
     // }

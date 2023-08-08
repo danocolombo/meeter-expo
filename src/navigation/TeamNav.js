@@ -29,6 +29,13 @@ const TeamConfig = () => {
             initialRouteName='ActiveMembers'
             screenOptions={{
                 headerShown: false,
+
+                tabBarStyle: [
+                    {
+                        display: 'flex',
+                    },
+                    null,
+                ],
             }}
         >
             <BottomTab.Screen

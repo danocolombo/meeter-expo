@@ -3,7 +3,6 @@ import { createContext, useEffect, useState, useContext } from 'react';
 import { API, graphqlOperation } from 'aws-amplify';
 import * as queries from '../graphql/queries';
 import * as mutations from '../jerichoQL/mutations';
-import { useAuthContext } from './AuthContext';
 import { MEETER_DEFAULTS } from '../constants/meeter';
 import { printObject } from '../utils/helpers';
 import { defaultFallbackFonts } from 'react-native-render-html';

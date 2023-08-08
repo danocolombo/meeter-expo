@@ -20,7 +20,6 @@ import {
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
 import { useSelector, useDispatch } from 'react-redux';
-import { focusManager } from '@tanstack/react-query';
 import {
     useNavigation,
     useIsFocused,
@@ -56,8 +55,6 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
         useState(false);
 
-    //const [group, setGroup] = useState();
-
     const uns = useNavigationState((state) => state);
 
     useLayoutEffect(() => {
@@ -66,11 +63,6 @@ const GroupDetailsEditScreen = ({ route, navigation }) => {
             headerBackTitle: 'Cancel',
         });
     }, [navigation, group]);
-    // function onAppStateChange(status) {
-    //     if (Platform.OS !== 'web') {
-    //         focusManager.setFocused(status === 'active');
-    //     }
-    // }
 
     const handleUpdate = (values) => {
         const valueRequest = {

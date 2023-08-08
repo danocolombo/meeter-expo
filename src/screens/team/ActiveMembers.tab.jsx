@@ -5,6 +5,8 @@ import {
     FlatList,
     Pressable,
     ActivityIndicator,
+    ScrollView,
+    Dimensions,
 } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -22,8 +24,10 @@ const ActiveMembers = () => {
     const dispatch = useDispatch();
     const activeMembers = useSelector((state) => state.team.activeMembers);
     const isLoading = useSelector((state) => state.team.isLoading);
+    const { height: screenHeight } = Dimensions.get('window');
+    const flatListHeight = screenHeight - 200; // Subtract the height of the bottom tab bar
 
-    const [editFlag, setEditFlag] = useState(false);
+    const [editFlag, setEditFlag] = useState(true);
     useFocusEffect(
         useCallback(() => {
             const fetchData = async () => {
@@ -101,12 +105,12 @@ const ActiveMembers = () => {
                     </Text>
                 </Pressable>
             </View>
-
             <View style={{ paddingHorizontal: 5 }}>
                 <View>
                     <Text>ACTIVE MEMBERS</Text>
                 </View>
                 <FlatList
+                    style={{ height: flatListHeight }} // Set the calculated height
                     data={activeMembers}
                     renderItem={({ item }) => (
                         <MemberCard

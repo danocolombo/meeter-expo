@@ -17,7 +17,7 @@ import {
     useFocusEffect,
     useNavigationState,
 } from '@react-navigation/native';
-import HistoryList from '../components/HistoryList';
+import HistoryList from '../components/DELETE_HistoryList';
 import { getSupportedMeetings } from '../providers/meetings';
 import { useSelector, useDispatch } from 'react-redux';
 import {

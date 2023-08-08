@@ -10,7 +10,6 @@ import {
 import { useTheme } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { useAuthContext } from '../contexts/AuthContext';
 import SignInScreen from '../screens/Auth/SignIn';
 import SignUpScreen from '../screens/Auth/SignUp';
 import ConfirmEmailScreen from '../screens/Auth/ConfirmEmail';
@@ -39,7 +38,6 @@ function MeeterStack(props) {
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
     const meeter = useSelector((state) => state.system.meeter);
-    const { authSignOut } = useAuthContext();
     return (
         <Stack.Navigator>
             <Stack.Screen
@@ -242,26 +240,8 @@ function Navigation() {
                 Cache.clear();
                 clearUser();
                 printObject('NAV:221-->signOut() received', '');
-                // try {
-                //     authSignOut()
-                //         .then(() => console.log('authSignOut complete'))
-                //         .catch((e) => console.log('authSignOut failure:', e));
-                //     sysSignOut()
-                //         .then(() => console.log('sysSignOut complete'))
-                //         .then((e) => {
-                //             printObject('CD:48-->sysSignOut failure:', e);
-                //         });
-                //     Auth.signOut();
-                // } catch (error) {
-                //     printObject('signUserOut error:', error);
-                // }
 
                 setIsUserAuthenticated(false);
-
-                // dispatch(logout());
-                // dispatch(meetingsSignout());
-                // dispatch(profilesLogout());
-                // dispatch(systemLogout());
             }
         };
         try {

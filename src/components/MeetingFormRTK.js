@@ -14,13 +14,12 @@ import {
 
 import Input from './ui/Input';
 import { newMeetingTemplate } from '../constants/meeter';
-// import * as Application from 'expo-application';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CurrencyInput from 'react-native-currency-input';
 import * as Localization from 'expo-localization';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import DateBall from './ui/DateBall';
 import DateStack from './ui/DateStack';
 import MealSection from './MeetingForm.meal';
@@ -41,42 +40,30 @@ import TypeSelectors from './TypeSelectors';
 import { ScrollView } from 'react-native-gesture-handler';
 import TitleSection from './MeetingForm.titleContact';
 import NumbersSection from './MeetingForm.numbers';
-import {
-    getMeetingById,
-    deleteMeeting,
-} from '../features/meetings/meetingsThunks';
-import { parse } from 'expo-linking';
+
 //   FUNCTION START
 //   ==============
 const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
     const navigation = useNavigation();
 
-    const meeter = useSelector((state) => state.system.meeter);
     const userProfile = useSelector((state) => state.user.profile);
     const newPerms = useSelector((state) => state.user.perms);
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
-    const [formattedDate, setFormattedDate] = useState();
     const mtrTheme = useTheme();
 
     const hit = useSelector((state) =>
         state.meetings.meetings.find((m) => m.id === meetingId)
     );
     const [meeting, setMeeting] = useState({});
-    const [isLoading, setIsLoading] = useState(false);
-    const dispatch = useDispatch();
 
     const [modalMeetingDateVisible, setModalMeetingDateVisible] =
         useState(false);
-    const [authority, setAuthority] = useState(
-        newPerms.includes('manage') || false
-    );
-    const userTimeZone = Localization.timezone;
-    const localTimezoneOffsetInMinutes = new Date().getTimezoneOffset();
 
+    const authority = newPerms.includes('manage') || false;
+
+    const localTimezoneOffsetInMinutes = new Date().getTimezoneOffset();
     const [dateValue, setDateValue] = useState();
 
-    const [isTitleValid, setIsTitleValid] = useState(false);
-    const [isSupportContactValid, setIsSupportContactValid] = useState(false);
     const [isSavable, setIsSavable] = useState(false);
     useEffect(() => {
         printObject('MFRTK:81-->hit:\n', hit);
@@ -90,18 +77,12 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
             const newMeetingDate = localCurrentDate.toISOString().slice(0, 10);
             setDateValue(localCurrentDate); // Set the default date to local timezone
 
-            console.log('[[ 1 ]]');
-
             const newMeeting = {
                 ...newMeetingTemplate,
                 meetingDate: newMeetingDate,
             };
-            printObject('MFRTK:95-->newMeeting:\n', newMeeting);
-
             setMeeting(newMeeting);
-            printObject('MFRTK:100-->newMeeting:\n', newMeeting);
         } else {
-            console.log('MFRTK:97-->meeting used from redux');
             if (hit?.meetingDate) {
                 console.log('[[ 2.1 ]]');
                 const meetingDate = new Date(hit.meetingDate);
@@ -111,14 +92,8 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
                 console.log('daDate use ', daDate);
                 console.log('iso:', daDate.toISOString().slice(0, 10));
                 setDateValue(daDate.toISOString().slice(0, 10)); // Passing the date in 'YYYY-MM-DD' format
-                // setDateValue(daDate);
                 console.log('[[ 2.2 ]]');
                 console.log(`daDate: ${daDate}`);
-                setFormattedDate(
-                    daDate.toLocaleDateString('en-US', {
-                        timeZone: userTimeZone,
-                    })
-                );
             }
 
             setMeeting(hit);
@@ -127,41 +102,34 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
     }, []);
 
     useEffect(() => {
-        console.log(`MFRTK:180-->beginning of meeting useState`);
-        printObject('meeting:\n', meeting);
+        console.log(`MFRTK:129-->beginning of meeting useState`);
         if (meeting?.meetingDate) {
-            printObject('MFRTK:181-->meeting:\n', meeting);
+            printObject('MFRTK:132-->meeting:\n', meeting);
+            //* **************************************
+            //* ENABLE OR DISABLE SAVE BUTTON
+            //* **************************************
             let titleVal = false;
             let contactVal = false;
-            if (meeting.title !== 'undefined' && meeting?.title?.length > 2) {
-                setIsTitleValid(true);
+            if (meeting?.title !== 'undefined' && meeting?.title?.length > 2) {
                 titleVal = true;
-            } else {
-                setIsTitleValid(false);
             }
             if (
-                meeting.suppContact !== 'undefined' &&
+                meeting?.supportContact !== 'undefined' &&
                 meeting?.supportContact?.length > 2
             ) {
-                setIsSupportContactValid(true);
                 contactVal = true;
-            } else {
-                setIsSupportContactValid(false);
             }
 
             switch (meeting.meetingType) {
                 case 'Testimony':
-                    console.log('Testimony');
                     setIsSavable(titleVal);
                     break;
                 case 'Special':
-                    console.log('Special');
                     if (titleVal && contactVal) {
                         setIsSavable(true);
                     }
                     break;
                 case 'Lesson':
-                    console.log('Lesson');
                     if (titleVal && contactVal) {
                         setIsSavable(true);
                     }
@@ -170,7 +138,7 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
                     break;
             }
         }
-        console.log('MFRTK:254-->done with meeting useState');
+        console.log('MFRTK:161-->done with meeting useState');
     }, [meeting]); // Add meeting dependency to this useEffect to handle changes in the meeting object
 
     function inputChangedHandler(inputIdentifier, enteredValue) {
@@ -202,70 +170,24 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
         });
     }
 
-    // useLayoutEffect(() => {
-    //     navigation.setOptions({
-    //         title: meeter.appName,
-    //         headerBackTitle: 'Cancel',
-    //         headerRight: () => (
-    //             <>
-    //                 {meetingId !== null &&
-    //                     userProfile.activeOrg.role === 'manage' && (
-    //                         <TouchableOpacity
-    //                             onPress={() =>
-    //                                 navigation.navigate('DeleteConfirm', {
-    //                                     id: meetingId,
-    //                                 })
-    //                             }
-    //                         >
-    //                             <MaterialCommunityIcons
-    //                                 name='delete-forever'
-    //                                 size={30}
-    //                                 color={mtrTheme.colors.critical}
-    //                             />
-    //                         </TouchableOpacity>
-    //                     )}
-    //             </>
-    //         ),
-    //     });
-    // }, [navigation, meeter]);
-
     const FormatEventDate = (data) => {
         try {
             console.log(`MFRTK:232-->FormatEventDate(${data})`);
             const utcDate = new Date(data);
             setDateValue(utcDate);
             console.log('[[ 4 ]]');
-            setFormattedDate(
-                utcDate.toLocaleDateString('en-US', {
-                    timeZone: userTimeZone,
-                })
-            );
+            // setFormattedDate(
+            //     utcDate.toLocaleDateString('en-US', {
+            //         timeZone: userTimeZone,
+            //     })
+            // );
             return;
         } catch (error) {
             printObject('MFRTK:319-->error parsing date:\n', error);
             return;
         }
     };
-    const onMeetingDateConfirmWAS = (data) => {
-        // Parse the input data into a Date object
-        console.log(data.toISOString());
-        const meetingDate = new Date(data);
 
-        // Extract the date components without adjusting the timezone or time
-        const year = meetingDate.getUTCFullYear();
-        const month = meetingDate.getUTCMonth() + 1; // Adding 1 because getUTCMonth() returns 0-indexed month
-        const day = meetingDate.getUTCDate();
-
-        // Create the resulting date string in the desired format (YYYY-MM-DD)
-        const resultDateString = `${year}-${month
-            .toString()
-            .padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-
-        // Log the result
-        console.log(`MFRTK:248-->onMeetingDateConfirm(${resultDateString})`);
-        setDateValue(resultDateString);
-        setModalMeetingDateVisible(false);
-    };
     const onMeetingDateConfirm = (data) => {
         const selectedDate = data || new Date(); // Use current date if data is null
         const utcDate = new Date(selectedDate);
@@ -308,7 +230,6 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
     };
     const handleFormSubmit = () => {
         // need to create updated mtgCompKey from date
-        const dateDash = dateObjectToDashDate(dateValue);
         const dateParts = dateValue.toISOString().slice(0, 10).split('-');
         const newKey =
             userProfile?.activeOrg?.code?.toLowerCase() +
@@ -326,8 +247,6 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
             attendanceCount: parseInt(meeting.attendanceCount),
             newcomersCount: parseInt(meeting.newcomersCount),
         };
-        // console.log(`MFRTK:305-->meeting.meetingId:${meeting.meetingId}`);
-        // printObject('newValues:', newValues);
         handleSubmit(newValues);
     };
     const handleDeleteConfirm = () => {
@@ -343,34 +262,11 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
             groups: groups,
         };
         handleDelete(deleteRequest);
-        //setShowDeleteConfirmModal(false);
-        // dispatch(deleteMeeting(meeting))
-        //     .then(() => {
-        //         navigation.navigate('Meetings');
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error deleting meeting:', error);
-        //     });
     };
 
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
-    printObject('MFRTK:354-->userProfile:', userProfile);
-    if (isLoading) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <ActivityIndicator
-                    color={mtrTheme.colors.activityIndicator}
-                    size={80}
-                />
-            </View>
-        );
-    }
+    printObject('MFRTK:285-->userProfile:', userProfile);
+
     return (
         <View style={styles.container}>
             <KeyboardAvoidingView

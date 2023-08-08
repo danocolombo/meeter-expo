@@ -87,11 +87,6 @@ const GroupNewScreen = ({ route }) => {
             headerBackTitle: 'Cancel',
         });
     }, [navigation, group]);
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
 
     function setGenderValue(enteredValue) {
         setValues((curInputValues) => {

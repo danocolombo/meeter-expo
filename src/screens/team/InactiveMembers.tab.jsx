@@ -10,6 +10,11 @@ const InactiveMembers = () => {
     // need orgId
     const inactiveMembers = useSelector((state) => state.team.inactiveMembers);
     function actionHandler({ action, userId, orgId, roleId }) {
+        printObject('IMT:13-->actionHandler:action:', action);
+        printObject('IMT:13-->actionHandler:userId:', userId);
+        printObject('IMT:13-->actionHandler:orgId:', orgId);
+        printObject('IMT:13-->actionHandler:roleId:', roleId);
+
         if (action === 'GRANT') {
             console.log(
                 'IMT:11-->GRANT ' + roleId + ' role: guest, status: active'

@@ -38,7 +38,6 @@ import {
     clearGroups,
     createTmp,
 } from '../features/meetingsSlice';
-import GroupList from '../components/GroupList';
 
 import DateBall from '../components/ui/DateBall';
 import DateStack from '../components/ui/DateStack';
@@ -468,20 +467,7 @@ const MeetingDetails = (props) => {
                         />
                     </View>
                 )}
-                {/* <GroupList meetingId={meetingId} /> */}
-                {/* <View>
-                    (GROUPS.data &&
-                    <FlatList
-                        data={GROUPS.data.body}
-                        keyExtractor={(item) => item.groupId}
-                        persistentScrollbar={true}
-                        renderItem={({ item }) => (
-                            <GroupListCard group={item} meeting={meeting} />
-                        )}
-                        ListFooterComponent={<></>}
-                    />
-                    }
-                </View> */}
+
                 {/* </SafeAreaView> */}
             </Surface>
         </>

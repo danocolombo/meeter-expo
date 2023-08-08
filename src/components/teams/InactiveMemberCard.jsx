@@ -14,7 +14,10 @@ function InactiveMemberCard({ member, action }) {
     }, []);
 
     const grantHandler = (value) => {
-        const inactiveRole = member.roles.find((r) => r.role === 'guest');
+        printObject('IMC:17-->member:\n', member);
+        const inactiveRole = member.roles.find(
+            (r) => r.role === 'guest' || r.role === 'new'
+        );
         action({
             action: 'GRANT',
             userId: member.id,
@@ -22,7 +25,7 @@ function InactiveMemberCard({ member, action }) {
             roleId: inactiveRole.id,
         });
     };
-    // printObject('MC:34-->member:\n', member);
+    printObject('MC:34-->member:\n', member);
     // printObject('MC:35-->permissions:\n', permissions);
     // printObject('IMC:18-->member:\n', member);
     return (

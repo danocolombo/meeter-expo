@@ -8,6 +8,7 @@ export const activateMember = createAsyncThunk(
     'team/activateMember',
     async (member, thunkAPI) => {
         try {
+            printObject('TT:11-->member:\n', member);
             //* * * * * * * * * * * * * * * * * * *
             //* This function gets member
             //* 1. update guest affiliation to active

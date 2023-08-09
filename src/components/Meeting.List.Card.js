@@ -14,15 +14,21 @@ import DateBall from './ui/DateBall';
 import DateStack from './ui/DateStack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { printObject, dateDashToDateObject } from '../utils/helpers';
+import Tooltip from './ui/ToolTip';
 import { useSelector } from 'react-redux';
 const MeetingListCard = ({ meeting, active, handleDelete }) => {
     const navigation = useNavigation();
     const perms = useSelector((state) => state.user.perms);
     const userTimeZone = Localization.timezone;
     const mtrTheme = useTheme();
+
     const [dateValue, setDateValue] = useState(
         meeting.meetingDate ? new Date(meeting.meetingDate) : new Date()
     );
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+    const toggleTooltip = () => {
+        setTooltipVisible(!tooltipVisible);
+    };
     function meetingPressHandler() {
         navigation.navigate('MeetingDetails', {
             id: meeting.id,
@@ -162,6 +168,28 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
                                     </View>
                                 </View>
                             </View>
+                            {meeting?.worship && (
+                                <View style={styles.iconContainer}>
+                                    <TouchableOpacity onPress={toggleTooltip}>
+                                        <MaterialCommunityIcons
+                                            name='music'
+                                            size={20}
+                                            color='red'
+                                        />
+                                    </TouchableOpacity>
+                                    {tooltipVisible && (
+                                        <Tooltip content='Tooltip Content'>
+                                            <View style={styles.tooltip}>
+                                                <Text
+                                                    style={styles.tooltipText}
+                                                >
+                                                    {meeting?.worship}
+                                                </Text>
+                                            </View>
+                                        </Tooltip>
+                                    )}
+                                </View>
+                            )}
                             <View
                                 style={{
                                     flexDirection: 'row',
@@ -171,8 +199,6 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
                                 <View
                                     style={{
                                         marginTop: 5,
-                                        // borderWidth: 1,
-                                        // borderColor: 'red',
                                         justifyContent: 'space-between',
                                     }}
                                 >
@@ -235,90 +261,26 @@ const styles = StyleSheet.create({
     firstRow: {
         flexDirection: 'row',
         flex: 1,
-        // borderWidth: 2,
-        // borderColor: 'green',
         marginHorizontal: 5,
     },
-    dateWrapper: {
-        margin: 5,
-    },
-    // dataWrapper: {
-    //     flexDirection: 'column',
-    // },
-    col1: {
-        paddingVertical: 8,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        paddingLeft: 10,
-        // borderWidth: 1,
-        // borderColor: 'yellow',
-    },
-    eventDateWrapper: {
-        // paddingTop: 5,
-        // borderWidth: 1,
-        // borderColor: 'yellow',
-    },
-
-    eventTimeWrapper: {
-        marginTop: 5,
-        marginBottom: 5,
-        // paddingHorizontal: 0,
-        // justifyContent: 'center',
-        alignItems: 'center',
-        paddingVertical: 2,
-        // borderWidth: 1,
-        // borderColor: 'white',
-    },
-    eventTime: {
-        // marginLeft: 5,
-        // marginRight: 30,
-        fontSize: 16,
-        color: 'white',
-        justifyContent: 'center',
-    },
-    registeredWrapper: {
-        borderWidth: 1,
-        padding: 4,
-        borderRadius: 10,
-        borderColor: 'green',
-        backgroundColor: 'green',
-        alignItems: 'center',
-    },
-    registeredText: { color: 'white', fontSize: 10 },
-    col2: {
-        flex: 1,
-        paddingVertical: 8,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        // borderWidth: 1,
-        // borderColor: 'yellow',
-    },
-    locationWrapper: {
-        justifyContent: 'center',
-        // borderWidth: 1,
-        // borderColor: 'white',
-    },
-    locationText: {
-        width: '100%',
-        marginLeft: 20,
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'lightgrey',
-    },
-    hostWrapper: {
-        paddingLeft: 25,
-        // borderWidth: 1,
-        // borderColor: 'white',
-    },
-    hostName: {
-        // marginLeft: 20,
-        fontSize: 20,
-        // fontWeight: 'bold',
-        color: 'lightgrey',
-    },
-    hostRow: {
+    iconContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-start',
+        marginTop: 10,
+        marginRight: 10,
+        justifyContent: 'flex-end',
+        flex: 1,
+    },
+    tooltip: {
+        position: 'absolute',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        padding: 8,
+        borderRadius: 4,
+        top: 20, // Adjust as needed
+        left: -110, // Adjust as needed
+        right: 10,
+    },
+    tooltipText: {
+        color: 'white',
+        textAlign: 'center',
     },
 });

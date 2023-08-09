@@ -27,15 +27,6 @@ const ProfileScreen = (props) => {
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
-    useFocusEffect(
-        useCallback(() => {
-            const subscription = AppState.addEventListener(
-                'change',
-                onAppStateChange
-            );
-            return () => subscription.remove();
-        }, [])
-    );
     useLayoutEffect(() => {
         navigation.setOptions({
             //title: meeter.appName,
@@ -44,15 +35,6 @@ const ProfileScreen = (props) => {
     }, [navigation]);
 
     const handleUpdate = (values) => {
-        // const updateProfileData = async (values) => {
-        //     updateUserProfile(values)
-        //         .then(() => {
-        //             console.log('profile updated');
-        //         })
-        //         .catch((e) => {
-        //             printObject('error saving profile:', e);
-        //         });
-        // };
         dispatch(saveUserProfile(values));
         printObject('PS:45-->form submit values:\n', values);
         setIsSaving(true);

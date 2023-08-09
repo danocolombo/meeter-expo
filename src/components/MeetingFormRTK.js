@@ -315,7 +315,7 @@ const MeetingForm = ({ meetingId, handleSubmit, handleDelete }) => {
                                     </Text>
                                     <Text
                                         style={{
-                                            fontSize: 18,
+                                            fontSize: 16,
                                             fontFamily: 'Roboto-Medium',
                                             textAlign: 'center',
                                         }}

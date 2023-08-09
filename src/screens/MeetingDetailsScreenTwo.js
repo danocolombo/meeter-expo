@@ -19,7 +19,7 @@ import {
     AppState,
 } from 'react-native';
 import * as Localization from 'expo-localization';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     useNavigation,
@@ -278,21 +278,33 @@ const MeetingDetails = (props) => {
                         )}
                     </View>
                     <View>
-                        <View style={{ flexDirection: 'column' }}>
+                        <View style={styles.row1col2}>
                             {meeting?.meetingType !== 'Testimony' && (
-                                <View style={{ marginLeft: 10 }}>
-                                    <Text style={mtrTheme.subTitle}>
+                                <View style={{ alignContent: 'flex-start' }}>
+                                    <Text style={styles.detailsTitle}>
                                         {meeting.title}
                                     </Text>
                                 </View>
                             )}
                             <View style={{ alignContent: 'flex-start' }}>
-                                <Text style={mtrTheme.detailsTitle}>
+                                <Text style={styles.subTitle}>
                                     {meeting?.meetingType !== 'Testimony'
                                         ? meeting.supportContact
                                         : meeting.title}
                                 </Text>
                             </View>
+                            {meeting?.worship && (
+                                <View style={styles.worshipContainer}>
+                                    <MaterialCommunityIcons
+                                        name='music'
+                                        size={20}
+                                        color='white'
+                                    />
+                                    <Text style={styles.worshipText}>
+                                        {meeting?.worship}
+                                    </Text>
+                                </View>
+                            )}
                         </View>
                     </View>
                 </View>
@@ -490,7 +502,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginHorizontal: 5,
     },
-
+    row1col2: {
+        flexDirection: 'column',
+        marginLeft: 5,
+    },
     dateWrapper: {
         margin: 5,
     },
@@ -499,5 +514,26 @@ const styles = StyleSheet.create({
         margin: 0,
         right: 20,
         backgroundColor: 'green',
+    },
+    detailsTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'yellow',
+    },
+    subTitle: {
+        fontSize: 20,
+        fontWeight: '300',
+        color: 'yellow',
+    },
+    worshipContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignContent: 'flex-start',
+        paddingVertical: 5,
+    },
+    worshipText: {
+        fontSize: 14,
+        marginLeft: 5,
+        color: 'white',
     },
 });

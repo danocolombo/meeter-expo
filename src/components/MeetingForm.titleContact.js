@@ -39,8 +39,8 @@ const TitleSection = ({ values, setValues }) => {
                     {values.meetingType === 'Lesson' && (
                         <>
                             <Input
-                                label='Lesson'
-                                labelStyle={mtrTheme.meetingEditInputLabel}
+                                label='LessonX'
+                                labelStyle={styles.meetingEditInputLabel}
                                 textInputConfig={{
                                     backgroundColor: 'white',
                                     value: values.title,
@@ -65,7 +65,7 @@ const TitleSection = ({ values, setValues }) => {
                             />
                             <Input
                                 label='Contact'
-                                labelStyle={mtrTheme.meetingEditInputLabel}
+                                labelStyle={styles.meetingEditInputLabel}
                                 textInputConfig={{
                                     backgroundColor: 'white',
                                     value: values.supportContact,
@@ -89,7 +89,7 @@ const TitleSection = ({ values, setValues }) => {
                         <>
                             <Input
                                 label='Guest'
-                                labelStyle={mtrTheme.meetingEditInputLabel}
+                                labelStyle={styles.meetingEditInputLabel}
                                 textInputConfig={{
                                     backgroundColor: 'white',
                                     value: values.title,
@@ -135,7 +135,7 @@ const TitleSection = ({ values, setValues }) => {
                     <>
                         <Input
                             label='Lesson'
-                            labelStyle={mtrTheme.meetingEditInputLabel}
+                            labelStyle={styles.meetingEditInputLabel}
                             textInputConfig={{
                                 backgroundColor: 'white',
                                 value: values.title,
@@ -160,7 +160,7 @@ const TitleSection = ({ values, setValues }) => {
                         />
                         <Input
                             label='Contact'
-                            labelStyle={mtrTheme.meetingEditInputLabel}
+                            labelStyle={styles.meetingEditInputLabel}
                             textInputConfig={{
                                 backgroundColor: 'white',
                                 value: values.supportContact,
@@ -184,7 +184,7 @@ const TitleSection = ({ values, setValues }) => {
                     <>
                         <Input
                             label='Guest'
-                            labelStyle={mtrTheme.meetingEditInputLabel}
+                            labelStyle={styles.meetingEditInputLabel}
                             textInputConfig={{
                                 backgroundColor: 'white',
                                 value: values.title,
@@ -214,7 +214,7 @@ const TitleSection = ({ values, setValues }) => {
                     <>
                         <Input
                             label='Event Title'
-                            labelStyle={mtrTheme.meetingEditInputLabel}
+                            labelStyle={styles.meetingEditInputLabel}
                             textInputConfig={{
                                 backgroundColor: 'white',
                                 value: values.title,
@@ -235,7 +235,7 @@ const TitleSection = ({ values, setValues }) => {
                         />
                         <Input
                             label='Contact'
-                            labelStyle={mtrTheme.meetingEditInputLabel}
+                            labelStyle={styles.meetingEditInputLabel}
                             textInputConfig={{
                                 backgroundColor: 'white',
                                 value: values.supportContact,
@@ -255,6 +255,24 @@ const TitleSection = ({ values, setValues }) => {
                         />
                     </>
                 )}
+                <Input
+                    label='Music/Worship'
+                    labelStyle={styles.meetingEditInputLabel}
+                    textInputConfig={{
+                        backgroundColor: 'white',
+                        value: values.worship,
+                        paddingHorizontal: 1,
+                        fontSize: 24,
+                        color: 'black',
+                        marginHorizontal: 10,
+                        placeholder: 'Music/Worship',
+                        // style: { color: 'white' },
+                        fontWeight: '300',
+                        minWidth: width * 0.6,
+                        letterSpacing: 0,
+                        onChangeText: inputChangedHandler.bind(this, 'worship'),
+                    }}
+                />
             </View>
         </>
     );
@@ -275,5 +293,10 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
         paddingVertical: 3,
+    },
+    meetingEditInputLabel: {
+        color: 'yellow',
+        paddingLeft: 10,
+        fontSize: 20,
     },
 });

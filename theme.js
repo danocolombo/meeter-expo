@@ -11,6 +11,7 @@ const darkColor = '#000';
 const lightColor = '#fff';
 const darkText = '#000';
 const lightText = '#fff';
+const mediumText = '#999';
 
 const theme = {
     ...DefaultTheme,
@@ -29,6 +30,7 @@ const theme = {
         // secondary color for your app which complements the primary color
         secondary: secondaryColor,
         accent: accentColor,
+        secondaryText: '#eee',
         //background color for pages, such as lists
         background: primaryBackground,
         // background color for elements containing content, such as cards
@@ -55,6 +57,11 @@ const theme = {
         darkText: darkText,
         black: '#000',
         lightText: lightText,
+        mediumText: mediumText,
+        darkText: darkText,
+        lightGraphic: lightText,
+        mediumGraphic: mediumText,
+        darkGraphic: darkText,
         editScreenHeader: '#293462',
         selected: '#293462',
         selectedText: '#000',
@@ -69,6 +76,12 @@ const theme = {
         navDrawerInactiveBackground: '#fff',
         navDrawerInactiveTint: '#999',
         lightBlue: '#578CFE',
+        buttonTextLight: '#fff',
+        buttonTextDark: primaryBackground,
+        buttonFillLight: '#8CABFF',
+        buttonFillMedium: '#4477CE',
+        buttonFillDark: '#512B81',
+        buttonFillDarker: '#35155D',
     },
     fonts: {
         regular: 16,

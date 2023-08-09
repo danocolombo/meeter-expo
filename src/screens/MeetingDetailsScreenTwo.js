@@ -1,11 +1,4 @@
-import React, {
-    useEffect,
-    useState,
-    useLayoutEffect,
-    useCallback,
-    useRef,
-    useMemo,
-} from 'react';
+import React, { useEffect, useState, useLayoutEffect, useMemo } from 'react';
 import {
     View,
     Text,
@@ -14,61 +7,43 @@ import {
     FlatList,
     TouchableOpacity,
     useWindowDimensions,
-    SafeAreaView,
     Platform,
-    AppState,
 } from 'react-native';
 import * as Localization from 'expo-localization';
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-    useNavigation,
-    useIsFocused,
-    useNavigationState,
-    useFocusEffect,
-} from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 
 import DateBall from '../components/ui/DateBall';
 import DateStack from '../components/ui/DateStack';
 import {
     Surface,
-    withTheme,
     useTheme,
     Badge,
     ActivityIndicator,
-    FAB,
 } from 'react-native-paper';
-import {
-    printObject,
-    isDateDashBeforeToday,
-    dateDashToDateObject,
-    dateNumToDateDash,
-} from '../utils/helpers';
+import { printObject, dateDashToDateObject } from '../utils/helpers';
 import GroupListCard from '../components/Group.List.Card';
 import CustomButton from '../components/ui/CustomButton';
 import {
     addDefaultGroups,
     deleteGroupFromMeeting,
 } from '../features/meetings/meetingsThunks';
-// import { getGroupsForMeeting } from '../features/groups/groupsThunks';
-// import { getMeetingById } from '../features/meetings/meetingsThunks';
+
 //   FUNCTION START
 //   ==============
 const MeetingDetails = (props) => {
     const id = props.route.params.id;
     printObject('MDST:60-->props.route.params :\n', props.route.params);
     const mtrTheme = useTheme();
-    // const { userProfile } = useUserContext();
     const userProfile = useSelector((state) => state.user.profile);
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
-    const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const newPerms = useSelector((state) => state.user.perms);
     const [authority, setAuthority] = useState(
         newPerms.includes('manage') || newPerms.includes('groups') || false
     );
     const meeter = useSelector((state) => state.system);
-    const meetings = useSelector((state) => state.meetings.meetings);
 
     const defaultGroups = useSelector((state) => state.groups.defaultGroups);
     const navigation = useNavigation();
@@ -99,7 +74,6 @@ const MeetingDetails = (props) => {
     const [dateValue, setDateValue] = useState(
         meeting?.meetingDate ? new Date(meeting?.meetingDate) : new Date()
     );
-    // const [meetingGroups, setMeetingGroups] = useState([]);
     const { width, height } = useWindowDimensions();
     useEffect(() => {
         if (meeting?.meetingDate) {
@@ -116,7 +90,7 @@ const MeetingDetails = (props) => {
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
-            headerLabelColor = 'white';
+            headerLabelColor = mtrTheme.colors.lightText;
         }
         // printObject('MDS:87-->userProfile:\n', userProfile);
 
@@ -133,7 +107,7 @@ const MeetingDetails = (props) => {
                             })
                         }
                         // color='red'
-                        color={headerLabelColor}
+                        color={mtrTheme.colors.lightText}
                         title='Edit'
                     />
                 ),
@@ -215,15 +189,9 @@ const MeetingDetails = (props) => {
     if (!meeting) {
         if (isLoading) {
             return (
-                <View
-                    style={{
-                        flex: 1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
+                <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
                     <ActivityIndicator
-                        color={mtrTheme.colors.activityIndicator}
+                        color={mtrStyles(mtrTheme).activityIndicator}
                         size={80}
                     />
                 </View>
@@ -236,15 +204,9 @@ const MeetingDetails = (props) => {
     }
     if (isLoading) {
         return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
+            <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
                 <ActivityIndicator
-                    color={mtrTheme.colors.activityIndicator}
+                    color={mtrStyles(mtrTheme).activityIndicator}
                     size={80}
                 />
             </View>
@@ -252,55 +214,63 @@ const MeetingDetails = (props) => {
     }
     return (
         <>
-            <Surface style={styles.surface}>
+            <Surface style={mtrStyles(mtrTheme).surface}>
                 {/* <SafeAreaView> */}
                 <View>
                     <Text style={{ color: 'white' }}>
                         MeetingDetailsScreenTwo
                     </Text>
                 </View>
-                <View>
-                    <Text style={mtrTheme.screenTitle}>
+                <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
                         {meeting?.meetingType}
                     </Text>
                 </View>
-                <View style={styles.firstRow}>
-                    <View style={styles.dateWrapper}>
+                <View style={mtrStyles(mtrTheme).firstRow}>
+                    <View style={mtrStyles(mtrTheme).dateWrapper}>
                         {Platform.OS === 'ios' && (
-                            <View style={{ padding: 5 }}>
+                            <View style={mtrStyles(mtrTheme).dateContainerIOS}>
                                 <DateBall date={formattedDate} />
                             </View>
                         )}
                         {Platform.OS === 'android' && (
-                            <View style={{ padding: 1 }}>
+                            <View
+                                style={mtrStyles(mtrTheme).dateContainerAndroid}
+                            >
                                 <DateStack date={formattedDate} />
                             </View>
                         )}
                     </View>
                     <View>
-                        <View style={styles.row1col2}>
+                        <View style={mtrStyles(mtrTheme).row1col2}>
                             {meeting?.meetingType !== 'Testimony' && (
-                                <View style={{ alignContent: 'flex-start' }}>
-                                    <Text style={styles.detailsTitle}>
+                                <View style={mtrStyles(mtrTheme).textColumn}>
+                                    <Text
+                                        style={mtrStyles(mtrTheme).detailsTitle}
+                                    >
                                         {meeting.title}
                                     </Text>
                                 </View>
                             )}
-                            <View style={{ alignContent: 'flex-start' }}>
-                                <Text style={styles.subTitle}>
+                            <View style={mtrStyles(mtrTheme).textColumn}>
+                                <Text style={mtrStyles(mtrTheme).subTitle}>
                                     {meeting?.meetingType !== 'Testimony'
                                         ? meeting.supportContact
                                         : meeting.title}
                                 </Text>
                             </View>
                             {meeting?.worship && (
-                                <View style={styles.worshipContainer}>
+                                <View
+                                    style={mtrStyles(mtrTheme).worshipContainer}
+                                >
                                     <MaterialCommunityIcons
                                         name='music'
                                         size={20}
                                         color='white'
                                     />
-                                    <Text style={styles.worshipText}>
+                                    <Text
+                                        style={mtrStyles(mtrTheme).worshipText}
+                                    >
                                         {meeting?.worship}
                                     </Text>
                                 </View>
@@ -308,33 +278,31 @@ const MeetingDetails = (props) => {
                         </View>
                     </View>
                 </View>
-                <View style={styles.row}>
-                    <View style={{ marginLeft: 20 }}>
+                <View style={mtrStyles(mtrTheme).row}>
+                    <View style={mtrStyles(mtrTheme).detailsContainer}>
                         <Text style={mtrTheme.detailsRowLabel}>
                             {historic ? 'Meal:' : 'Meal Plans:'}
                         </Text>
                     </View>
                     <View style={{ marginHorizontal: 2 }}>
-                        <Text
-                            style={[
-                                mtrTheme.groupDetailsMealText,
-                                { maxWidth: width * 0.6 },
-                            ]}
-                        >
+                        <Text style={mtrTheme.detailsRowValue}>
                             {meeting.meal === '' ? 'TBD' : meeting.meal}
                         </Text>
                     </View>
                     {historic && (
-                        <View style={{ marginLeft: 'auto', padding: 10 }}>
-                            <Badge size={30} style={mtrTheme.detailsBadge}>
+                        <View style={mtrStyles(mtrTheme).detailsBadgeContainer}>
+                            <Badge
+                                size={30}
+                                style={mtrStyles(mtrTheme).detailsBadge}
+                            >
                                 {meeting.mealCount}
                             </Badge>
                         </View>
                     )}
                 </View>
                 {!historic && (
-                    <View style={[styles.row, { marginBottom: 10 }]}>
-                        <View style={{ marginLeft: 20 }}>
+                    <View style={mtrStyles(mtrTheme).row}>
+                        <View style={mtrStyles(mtrTheme).detailsContainer}>
                             <Text style={mtrTheme.detailsRowLabel}>
                                 Meal Contact:
                             </Text>
@@ -349,77 +317,59 @@ const MeetingDetails = (props) => {
                     </View>
                 )}
                 {historic && (
-                    <View style={styles.row}>
-                        <View style={{ marginLeft: 20 }}>
+                    <View style={mtrStyles(mtrTheme).row}>
+                        <View style={mtrStyles(mtrTheme).detailsContainer}>
                             <Text style={mtrTheme.detailsRowLabel}>
                                 Attendance:
                             </Text>
                         </View>
 
-                        <View style={{ marginLeft: 'auto', padding: 10 }}>
-                            <Badge size={30} style={mtrTheme.detailsBadge}>
+                        <View style={mtrStyles(mtrTheme).detailsBadgeContainer}>
+                            <Badge
+                                size={30}
+                                style={mtrStyles(mtrTheme).detailsBadge}
+                            >
                                 {meeting.attendanceCount}
                             </Badge>
                         </View>
                     </View>
                 )}
                 {meeting.newcomersCount > 0 && (
-                    <View style={styles.row}>
-                        <View style={{ marginLeft: 20 }}>
+                    <View style={mtrStyles(mtrTheme).row}>
+                        <View style={mtrStyles(mtrTheme).detailsContainer}>
                             <Text style={mtrTheme.detailsRowLabel}>
                                 Newcomers:
                             </Text>
                         </View>
 
-                        <View style={{ marginLeft: 'auto', padding: 10 }}>
-                            <Badge size={30} style={mtrTheme.detailsBadge}>
+                        <View style={mtrStyles(mtrTheme).detailsBadgeContainer}>
+                            <Badge
+                                size={30}
+                                style={mtrStyles(mtrTheme).detailsBadge}
+                            >
                                 {meeting.newcomersCount}
                             </Badge>
                         </View>
                     </View>
                 )}
                 {meeting.notes && (
-                    <View style={mtrTheme.meetingDetailsNotesContainer}>
-                        <Text style={mtrTheme.meeingDetailsNotesText}>
+                    <View style={mtrStyles(mtrTheme).notesContainer}>
+                        <Text style={mtrStyles(mtrTheme).notesText}>
                             {meeting.notes}
                         </Text>
                     </View>
                 )}
-                <View
-                    style={{
-                        borderTopColor: 'yellow',
-                        borderBottomColor: 'yellow',
-                        marginHorizontal: 20,
-                        marginBottom: 20,
-                        borderBottomWidth: StyleSheet.hairlineWidth,
-                        borderTopWidth: StyleSheet.hairlineWidth,
-                    }}
-                >
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            textAlign: 'center',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <Text
-                            style={{
-                                color: 'white',
-                                fontSize: 20,
-                                fontWeight: '400',
-                                textAlign: 'center',
-                                paddingVertical: 5,
-                            }}
-                        >
+                <View style={mtrStyles(mtrTheme).openShareSection}>
+                    <View style={mtrStyles(mtrTheme).openShareContainer}>
+                        <Text style={mtrStyles(mtrTheme).openShareGroupsText}>
                             Open-Share Groups
                         </Text>
                         {(newPerms.includes('manage') ||
                             newPerms.includes('groups')) && (
                             <View
-                                style={{
-                                    justifyContent: 'center',
-                                    marginLeft: 10,
-                                }}
+                                style={
+                                    mtrStyles(mtrTheme).openShareButtonContainer
+                                }
                             >
                                 <TouchableOpacity
                                     key={0}
@@ -429,21 +379,19 @@ const MeetingDetails = (props) => {
                                         })
                                     }
                                     style={({ pressed }) =>
-                                        pressed && styles.pressed
+                                        pressed && mtrStyles(mtrTheme).pressed
                                     }
                                 >
                                     <FontAwesome5
                                         name='plus-circle'
                                         size={20}
-                                        color='white'
+                                        color={mtrTheme.colors.lightText}
                                     />
                                 </TouchableOpacity>
                             </View>
                         )}
                     </View>
                 </View>
-                {/* {meeting?.groups?.items ? (
-                    <> */}
                 <FlatList
                     data={memoizedMeetingGroups}
                     keyExtractor={(item) => item.id}
@@ -458,25 +406,14 @@ const MeetingDetails = (props) => {
                     )}
                     ListFooterComponent={<></>}
                 />
-                {/* </>
-                ) : (
-                    <View style={mtrTheme.meetingDetailsGroupLoadingText}>
-                        <Text style={mtrTheme.meetingDetailsGroupLoadingText}>
-                            Loading Groups...
-                        </Text>
-                    </View>
-                )} */}
                 {authority && showDefaultsButton && (
                     <View
-                        style={{
-                            marginHorizontal: 20,
-                            paddingBottom: 20,
-                        }}
+                        style={mtrStyles(mtrTheme).defaultGroupsButtonContainer}
                     >
                         <CustomButton
                             text='Add Default Groups'
-                            bgColor='blue'
-                            fgColor={'white'}
+                            bgColor={mtrTheme.colors.buttonFillMedium}
+                            fgColor={mtrTheme.colors.buttonTextLight}
                             type='STANDARD'
                             onPress={() => handleAddDefaults()}
                         />
@@ -486,54 +423,138 @@ const MeetingDetails = (props) => {
         </>
     );
 };
-export default withTheme(MeetingDetails);
-const styles = StyleSheet.create({
-    surface: {
-        flex: 1,
-    },
-    firstRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-        marginHorizontal: 10,
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginHorizontal: 5,
-    },
-    row1col2: {
-        flexDirection: 'column',
-        marginLeft: 5,
-    },
-    dateWrapper: {
-        margin: 5,
-    },
-    FAB: {
-        position: 'absolute',
-        margin: 0,
-        right: 20,
-        backgroundColor: 'green',
-    },
-    detailsTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'yellow',
-    },
-    subTitle: {
-        fontSize: 20,
-        fontWeight: '300',
-        color: 'yellow',
-    },
-    worshipContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        alignContent: 'flex-start',
-        paddingVertical: 5,
-    },
-    worshipText: {
-        fontSize: 14,
-        marginLeft: 5,
-        color: 'white',
-    },
-});
+
+// export default withTheme(MeetingDetails);
+export default MeetingDetails;
+
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        surface: {
+            flex: 1,
+        },
+        screenTitleContainer: {
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.accent,
+        },
+
+        activityIndicatorContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        activityIndicator: {
+            color: mtrTheme.colors.lightGraphic,
+        },
+        firstRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: 0,
+            marginHorizontal: 10,
+        },
+        row1col2: {
+            flexDirection: 'column',
+            marginLeft: 5,
+        },
+        textColumn: {
+            alignContent: 'flex-start',
+        },
+        dateWrapper: {
+            margin: 5,
+        },
+        dateContainerIOS: {
+            padding: 5,
+        },
+        dateContainerAndroid: {
+            padding: 1,
+        },
+        detailsContainer: { marginLeft: 20 },
+        detailsBadgeContainer: {
+            marginLeft: 'auto',
+            padding: 10,
+        },
+        detailsBadge: {
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            textColor: mtrTheme.colors.darkText,
+        },
+        detailsTitle: {
+            fontSize: 24,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.accent,
+        },
+        openShareGroupsText: {
+            color: mtrTheme.colors.lightText,
+            fontSize: 20,
+            fontWeight: '400',
+            fontFamily: 'Roboto-Regular',
+            textAlign: 'center',
+            paddingVertical: 5,
+        },
+        row: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginHorizontal: 5,
+        },
+        subTitle: {
+            fontSize: 20,
+            fontWeight: '300',
+            fontFamily: 'Roboto-Regular',
+            color: mtrTheme.colors.accent,
+        },
+        countLabel: {
+            fontFamily: 'Roboto-Regular',
+            color: mtrTheme.colors.lightText,
+            fontSize: 24,
+            fontWeight: '400',
+        },
+        worshipContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            alignContent: 'flex-start',
+            paddingVertical: 5,
+        },
+        worshipText: {
+            fontSize: 14,
+            marginLeft: 5,
+            fontFamily: 'Roboto-Regular',
+            color: mtrTheme.colors.accent,
+        },
+        notesContainer: {
+            marginHorizontal: 10,
+            marginBottom: 15,
+            borderRadius: 5,
+            paddingHorizontal: 15,
+            backgroundColor: mtrTheme.colors.lightGraphic,
+        },
+        notesText: {
+            color: mtrTheme.colors.darkText,
+            fontFamily: 'Roboto-Regular',
+            fontSize: 24,
+        },
+        openShareSection: {
+            borderTopColor: mtrTheme.colors.accent,
+            borderBottomColor: mtrTheme.colors.accent,
+            marginHorizontal: 20,
+            marginBottom: 20,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderTopWidth: StyleSheet.hairlineWidth,
+        },
+        openShareContainer: {
+            flexDirection: 'row',
+            textAlign: 'center',
+            justifyContent: 'center',
+        },
+        openShareButtonContainer: {
+            justifyContent: 'center',
+            marginLeft: 10,
+        },
+        defaultGroupsButtonContainer: {
+            marginHorizontal: 20,
+            paddingBottom: 20,
+        },
+    });
+const styles = StyleSheet.create({});

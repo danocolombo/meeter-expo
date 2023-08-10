@@ -3,11 +3,10 @@ import {
     Text,
     View,
     Pressable,
-    Platform,
     TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import { useTheme, withTheme, Surface, Badge } from 'react-native-paper';
+import { useTheme, Badge } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { printObject } from '../utils/helpers';
@@ -18,7 +17,7 @@ const GroupListCard = ({ group, meeting, authority, handleDeleteRequest }) => {
     const mtrTheme = useTheme();
     function groupPressHandler() {
         // if the user is registered, take them to registerForm
-        console.log('GLC:13-->groupPressHandler, back to GroupDetails');
+        // console.log('GLC:13-->groupPressHandler, back to GroupDetails');
         navigation.navigate('GroupDetails', {
             group: group,
             meeting: meeting,
@@ -29,48 +28,39 @@ const GroupListCard = ({ group, meeting, authority, handleDeleteRequest }) => {
         <>
             <Pressable
                 onPress={groupPressHandler}
-                style={({ pressed }) => pressed && styles.pressed}
+                style={({ pressed }) => pressed && mtrStyles(mtrTheme).pressed}
             >
-                <View style={styles.rootContainer}>
-                    <View style={{ marginHorizontal: 20 }}>
-                        <View
-                            style={[
-                                styles.groupItem,
-                                mtrTheme.groupCardPrimary,
-                            ]}
-                        >
-                            <View
-                                style={{
-                                    paddingHorizontal: 15,
-                                    width: '100%',
-                                    paddingTop: 5,
-                                    paddingBottom: 10,
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                    }}
-                                >
+                <View style={mtrStyles(mtrTheme).rootContainer}>
+                    <View style={mtrStyles(mtrTheme).cardAlign}>
+                        <View style={mtrStyles(mtrTheme).groupItem}>
+                            <View style={mtrStyles(mtrTheme).cardContainer}>
+                                <View style={mtrStyles(mtrTheme).row}>
                                     {group.gender === 'f' && (
                                         <Text
-                                            style={mtrTheme.groupListCardTitle}
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupListCardTitle
+                                            }
                                         >
                                             Women's {group.title}
                                         </Text>
                                     )}
                                     {group.gender === 'm' && (
                                         <Text
-                                            style={mtrTheme.groupListCardTitle}
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupListCardTitle
+                                            }
                                         >
                                             Men's {group.title}
                                         </Text>
                                     )}
                                     {group.gender === 'x' && (
                                         <Text
-                                            style={mtrTheme.groupListCardTitle}
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupListCardTitle
+                                            }
                                         >
                                             {group.title}
                                         </Text>
@@ -88,7 +78,9 @@ const GroupListCard = ({ group, meeting, authority, handleDeleteRequest }) => {
                                                 <MaterialCommunityIcons
                                                     name='trash-can-outline'
                                                     size={25}
-                                                    color='red'
+                                                    color={
+                                                        mtrTheme.colors.critical
+                                                    }
                                                 />
                                             </TouchableOpacity>
                                         ) : (
@@ -96,19 +88,13 @@ const GroupListCard = ({ group, meeting, authority, handleDeleteRequest }) => {
                                         )}
                                     </Text>
                                 </View>
-                                <View
-                                    style={{
-                                        flexDirection: 'row',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        paddingTop: 5,
-                                    }}
-                                >
+                                <View style={mtrStyles(mtrTheme).locationRow}>
                                     {group.location && (
                                         <View>
                                             <Text
                                                 style={
-                                                    mtrTheme.groupListCardText
+                                                    mtrStyles(mtrTheme)
+                                                        .groupListCardText
                                                 }
                                             >
                                                 {group.location}
@@ -119,7 +105,8 @@ const GroupListCard = ({ group, meeting, authority, handleDeleteRequest }) => {
                                         <View>
                                             <Text
                                                 style={
-                                                    mtrTheme.groupListCardText
+                                                    mtrStyles(mtrTheme)
+                                                        .groupListCardText
                                                 }
                                             >
                                                 {group.facilitator}
@@ -130,7 +117,8 @@ const GroupListCard = ({ group, meeting, authority, handleDeleteRequest }) => {
                                         <View>
                                             <Text
                                                 style={
-                                                    mtrTheme.groupListCardText
+                                                    mtrStyles(mtrTheme)
+                                                        .groupListCardText
                                                 }
                                             >
                                                 {group.cofacilitator}
@@ -141,7 +129,8 @@ const GroupListCard = ({ group, meeting, authority, handleDeleteRequest }) => {
                                         <Badge
                                             size={30}
                                             style={
-                                                mtrTheme.groupListCardAttendanceBadge
+                                                mtrStyles(mtrTheme)
+                                                    .attendanceBadge
                                             }
                                         >
                                             {group.attendance}
@@ -157,28 +146,64 @@ const GroupListCard = ({ group, meeting, authority, handleDeleteRequest }) => {
     );
 };
 
-export default withTheme(GroupListCard);
+export default GroupListCard;
+
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        pressed: {
+            opacity: 0.75,
+        },
+        rootContainer: {
+            marginHorizontal: 5,
+        },
+        groupItem: {
+            marginVertical: 5,
+            paddingBottom: 5,
+            backgroundColor: mtrTheme.colors.meetingActiveCard,
+            flexDirection: 'row',
+            borderRadius: 10,
+            elevation: 3,
+            shadowColor: 'yellow',
+            shadowRadius: 4,
+            shadowOffset: { width: 1, height: 1 },
+            shadowOpacity: 0.4,
+        },
+        cardContainer: {
+            paddingHorizontal: 15,
+            width: '100%',
+            paddingTop: 5,
+            paddingBottom: 10,
+        },
+        cardAlign: { marginHorizontal: 20 },
+        row: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+        },
+        groupListCardTitle: {
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.darkText,
+            fontWeight: '600',
+            fontSize: 24,
+        },
+        locationRow: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingTop: 5,
+        },
+        groupListCardText: {
+            fontFamily: 'Roboto-Regular',
+            color: mtrTheme.colors.darkText,
+            fontSize: 20,
+        },
+        attendanceBadge: {
+            backgroundColor: mtrTheme.colors.background,
+            color: mtrTheme.colors.lightText,
+        },
+    });
 
 const styles = StyleSheet.create({
-    pressed: {
-        opacity: 0.75,
-    },
-    rootContainer: {
-        marginHorizontal: 5,
-    },
-    groupItem: {
-        marginVertical: 5,
-        paddingBottom: 5,
-        backgroundColor: 'darkgrey',
-        flexDirection: 'row',
-        //justifyContent: 'space-between',
-        borderRadius: 10,
-        elevation: 3,
-        shadowColor: 'yellow',
-        shadowRadius: 4,
-        shadowOffset: { width: 1, height: 1 },
-        shadowOpacity: 0.4,
-    },
     firstRow: {
         flexDirection: 'row',
     },

@@ -33,8 +33,12 @@ const theme = {
         secondaryText: '#eee',
         //background color for pages, such as lists
         background: primaryBackground,
+        backgroundMedium: '#999',
+        backgroundLight: '#eee',
         // background color for elements containing content, such as cards
         surface: primaryBackground,
+        lightShadow: '#cccccc',
+        mediumShadow: '#8c8c8c',
         darkShadow: '#1a6985',
         text: '#eee',
         activityIndicator: activityIndicator,
@@ -74,7 +78,6 @@ const theme = {
         navBarActiveText: '#000',
         navDrawerActiveBackground: '#D61C4E',
         musicIcon: '#578CFE',
-        musicIcon2: '#D61C4E',
         navDrawerActiveTint: '#fff',
         navDrawerInactiveBackground: '#fff',
         navDrawerInactiveTint: '#999',
@@ -87,6 +90,8 @@ const theme = {
         buttonFillDarker: '#35155D',
         meetingActiveCard: '#CAEBF2',
         meetingHistoricCard: '#cccccc',
+        groupActiveCard: '#CAEBF2',
+        groupHistoricCard: '#cccccc',
     },
     fonts: {
         regular: 16,

@@ -81,7 +81,7 @@ const LandingScreen = () => {
     // printObject('LS:131-->systemRedux:\n', sysRedux);
     // printObject('LS:138-->systemInfo:\n', systemInfo);
     // printObject('LS:139-->teamInfo:\n', teamInfo);
-    // printObject('LS:140-->userProfile:\n', userProfile);
+    printObject('LS:140-->userProfile:\n', userProfile);
     return (
         <>
             <StatusBar style='light' />
@@ -94,7 +94,7 @@ const LandingScreen = () => {
                 </View>
                 <View style={mtrStyles(mtrTheme).orgContainer}>
                     <Text style={mtrStyles(mtrTheme).orgText}>
-                        {userProfile?.activeOrg?.organization?.name}
+                        {userProfile?.activeOrg?.name}
                     </Text>
                 </View>
                 {teamApproved && (
@@ -155,7 +155,7 @@ const mtrStyles = (mtrTheme) =>
             height: 124,
         },
         orgContainer: {
-            marginTop: 10,
+            marginTop: 25,
             alignItems: 'center',
         },
         orgText: {

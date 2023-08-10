@@ -35,6 +35,7 @@ const theme = {
         background: primaryBackground,
         // background color for elements containing content, such as cards
         surface: primaryBackground,
+        darkShadow: '#1a6985',
         text: '#eee',
         activityIndicator: activityIndicator,
         //color for the disabled elements
@@ -72,6 +73,8 @@ const theme = {
         navBarActiveBackground: '#CAEBF2',
         navBarActiveText: '#000',
         navDrawerActiveBackground: '#D61C4E',
+        musicIcon: '#578CFE',
+        musicIcon2: '#D61C4E',
         navDrawerActiveTint: '#fff',
         navDrawerInactiveBackground: '#fff',
         navDrawerInactiveTint: '#999',
@@ -82,6 +85,8 @@ const theme = {
         buttonFillMedium: '#4477CE',
         buttonFillDark: '#512B81',
         buttonFillDarker: '#35155D',
+        meetingActiveCard: '#CAEBF2',
+        meetingHistoricCard: '#cccccc',
     },
     fonts: {
         regular: 16,

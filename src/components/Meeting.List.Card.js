@@ -71,7 +71,7 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
                         ]}
                     >
                         <View style={mtrStyles(mtrTheme).firstRow}>
-                            <View style={mtrStyles(mtrTheme).row}>
+                            <View style={mtrStyles(mtrTheme).columnDate}>
                                 <View style={mtrStyles(mtrTheme).columnCenter}>
                                     {Platform.OS === 'ios' && (
                                         <View>
@@ -95,48 +95,30 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
                                         </View>
                                     )}
                                 </View>
-                                <View style={mtrStyles(mtrTheme).row}>
+                            </View>
+                            <View style={mtrStyles(mtrTheme).columnText}>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).columnMeetingText
+                                    }
+                                >
                                     <View
-                                        style={mtrStyles(mtrTheme).columnCenter}
+                                        style={{
+                                            flexDirection: 'column',
+                                            flexGrow: 1,
+                                        }}
                                     >
                                         <View
                                             style={
-                                                mtrStyles(mtrTheme)
-                                                    .meetingDefinitionContainer
+                                                mtrStyles(mtrTheme).columnCenter
                                             }
                                         >
                                             <View
                                                 style={
                                                     mtrStyles(mtrTheme)
-                                                        .meetingTextContainer
+                                                        .meetingDefinitionContainer
                                                 }
                                             >
-                                                <Text
-                                                    style={
-                                                        mtrStyles(mtrTheme)
-                                                            .meetingTypeText
-                                                    }
-                                                >
-                                                    {meeting.meetingType.trim()}
-                                                </Text>
-                                            </View>
-                                            <View
-                                                style={
-                                                    mtrStyles(mtrTheme)
-                                                        .meetingTextContainer
-                                                }
-                                            >
-                                                <Text
-                                                    style={
-                                                        mtrStyles(mtrTheme)
-                                                            .meetingTypeText
-                                                    }
-                                                >
-                                                    {meeting.title.trim()}
-                                                </Text>
-                                            </View>
-                                            {meeting.meetingType !==
-                                                'Testimony' && (
                                                 <View
                                                     style={
                                                         mtrStyles(mtrTheme)
@@ -149,43 +131,103 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
                                                                 .meetingTypeText
                                                         }
                                                     >
-                                                        {meeting.supportContact.trim()}
+                                                        {meeting.meetingType.trim()}
                                                     </Text>
                                                 </View>
-                                            )}
+                                                <View
+                                                    style={
+                                                        mtrStyles(mtrTheme)
+                                                            .meetingTextContainer
+                                                    }
+                                                >
+                                                    <Text
+                                                        style={
+                                                            mtrStyles(mtrTheme)
+                                                                .meetingTypeText
+                                                        }
+                                                    >
+                                                        {meeting.title.trim()}
+                                                    </Text>
+                                                </View>
+                                                {meeting.meetingType !==
+                                                    'Testimony' && (
+                                                    <View
+                                                        style={
+                                                            mtrStyles(mtrTheme)
+                                                                .meetingTextContainer
+                                                        }
+                                                    >
+                                                        <Text
+                                                            style={
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                )
+                                                                    .meetingTypeText
+                                                            }
+                                                        >
+                                                            {meeting.supportContact.trim()}
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                            </View>
                                         </View>
+                                    </View>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme).columnWorship
+                                        }
+                                    >
+                                        {meeting?.worship && (
+                                            <View
+                                                style={
+                                                    mtrStyles(mtrTheme)
+                                                        .iconContainer
+                                                }
+                                            >
+                                                <TouchableOpacity
+                                                    onPress={toggleTooltip}
+                                                >
+                                                    <MaterialCommunityIcons
+                                                        name='music'
+                                                        size={20}
+                                                        color={
+                                                            mtrTheme.colors
+                                                                .musicIcon
+                                                        }
+                                                    />
+                                                </TouchableOpacity>
+
+                                                {tooltipVisible && (
+                                                    <Tooltip content='Tooltip Content'>
+                                                        <View
+                                                            style={
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                ).tooltip
+                                                            }
+                                                        >
+                                                            <Text
+                                                                style={
+                                                                    mtrStyles(
+                                                                        mtrTheme
+                                                                    )
+                                                                        .tooltipText
+                                                                }
+                                                            >
+                                                                {
+                                                                    meeting?.worship
+                                                                }
+                                                            </Text>
+                                                        </View>
+                                                    </Tooltip>
+                                                )}
+                                            </View>
+                                        )}
                                     </View>
                                 </View>
                             </View>
-                            {meeting?.worship && (
-                                <View style={mtrStyles(mtrTheme).iconContainer}>
-                                    <TouchableOpacity onPress={toggleTooltip}>
-                                        <MaterialCommunityIcons
-                                            name='music'
-                                            size={20}
-                                            color={mtrTheme.colors.musicIcon}
-                                        />
-                                    </TouchableOpacity>
-                                    {tooltipVisible && (
-                                        <Tooltip content='Tooltip Content'>
-                                            <View
-                                                style={
-                                                    mtrStyles(mtrTheme).tooltip
-                                                }
-                                            >
-                                                <Text
-                                                    style={
-                                                        mtrStyles(mtrTheme)
-                                                            .tooltipText
-                                                    }
-                                                >
-                                                    {meeting?.worship}
-                                                </Text>
-                                            </View>
-                                        </Tooltip>
-                                    )}
-                                </View>
-                            )}
+                        </View>
+                        <View style={mtrStyles(mtrTheme).columnIcons}>
                             <View style={mtrStyles(mtrTheme).rowRight}>
                                 <View
                                     style={
@@ -252,6 +294,21 @@ const mtrStyles = (mtrTheme) =>
         meetingCardActivePrimary: {
             backgroundColor: mtrTheme.colors.meetingActiveCard,
         },
+        columnDate: {
+            flexDirection: 'column',
+
+            alignSelf: 'flex-start',
+            flexGrow: 0,
+        },
+        columnText: {
+            flex: 1,
+
+            paddingHorizontal: 8,
+        },
+        columnIcons: {
+            alignSelf: 'flex-start',
+            flexGrow: 0,
+        },
         meetingCardHistoricPrimary: {
             backgroundColor: mtrTheme.colors.meetingHistoricCard,
         },
@@ -274,6 +331,15 @@ const mtrStyles = (mtrTheme) =>
         columnSpaceBetween: {
             marginTop: 5,
             justifyContent: 'space-between',
+        },
+        columnMeetingText: {
+            flexDirection: 'row',
+            // flexDirection: 'column',
+        },
+        columnWorship: {
+            // flexDirection: 'row',
+            flexDirection: 'column',
+            marginRight: 5,
         },
         dateBallIOS: {
             fontFamily: 'Roboto-Regular',
@@ -298,6 +364,7 @@ const mtrStyles = (mtrTheme) =>
             flexDirection: 'row',
             marginTop: 10,
             marginRight: 10,
+
             justifyContent: 'flex-end',
             flex: 1,
         },

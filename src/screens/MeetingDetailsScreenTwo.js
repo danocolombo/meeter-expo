@@ -500,7 +500,7 @@ const mtrStyles = (mtrTheme) =>
             marginHorizontal: 5,
         },
         subTitle: {
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: '300',
             fontFamily: 'Roboto-Regular',
             color: mtrTheme.colors.accent,
@@ -518,7 +518,7 @@ const mtrStyles = (mtrTheme) =>
             paddingVertical: 5,
         },
         worshipText: {
-            fontSize: 14,
+            fontSize: 22,
             marginLeft: 5,
             fontFamily: 'Roboto-Regular',
             color: mtrTheme.colors.accent,

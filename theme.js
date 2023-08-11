@@ -1,8 +1,11 @@
 import { DefaultTheme } from 'react-native-paper';
-const primaryBackground = '#293462';
+// const primaryBackground = '#293462';
+// pallet: https://colorhunt.co/palette/1d5d9b75c2f6f4d160fbeeac
+const primaryBackground = '#1D5D9B';
 const secondaryColor = '#1CD6CE';
 const primaryColor = '#CAEBF2';
-const accentColor = '#FEDB39';
+// const accentColor = '#FEDB39';
+const accentColor = '#F4D160';
 const activityIndicator = '#293462';
 const alternateColor = '#D61C4E';
 const errorTextBox = '#ff9999';
@@ -12,6 +15,10 @@ const lightColor = '#fff';
 const darkText = '#000';
 const lightText = '#fff';
 const mediumText = '#999';
+const yellow = '#F0DE36';
+const red = '#D61C4E';
+const green = '#04CC09';
+const white = '#fff';
 
 const theme = {
     ...DefaultTheme,
@@ -30,34 +37,35 @@ const theme = {
         // secondary color for your app which complements the primary color
         secondary: secondaryColor,
         accent: accentColor,
-        secondaryText: '#eee',
+        secondaryText: white,
         //background color for pages, such as lists
         background: primaryBackground,
         backgroundMedium: '#999',
-        backgroundLight: '#eee',
+        backgroundLight: white,
+        backgroundAlternate1: '#75C2F6',
         // background color for elements containing content, such as cards
         surface: primaryBackground,
         lightShadow: '#cccccc',
         mediumShadow: '#8c8c8c',
         darkShadow: '#1a6985',
-        text: '#eee',
+        text: white,
         activityIndicator: activityIndicator,
         //color for the disabled elements
         disabled: '#cccccc',
         //color for placeholder text, such as input placeholder
         placeholder: 'lightgrey',
         // color for backdrops of various components such as modals
-        backdrop: '#eee',
+        backdrop: white,
         //background color for snackbars
-        onSurface: 'yellow',
+        onSurface: yellow,
         // background color for badges
-        landingAppName: '#FEDB39',
-        success: 'green',
-        warning: 'yellow',
-        critical: '#D61C4E',
+        landingAppName: accentColor,
+        success: green,
+        warning: yellow,
+        critical: red,
         errorTextBox: errorTextBox,
-        notification: 'red',
-        navActive: '#D61C4E',
+        notification: red,
+        navActive: red,
         navInactive: '#8c8c8c',
         darkText: darkText,
         black: '#000',
@@ -71,18 +79,18 @@ const theme = {
         selected: '#293462',
         selectedText: '#000',
         unSelected: '#8c8c8c',
-        unSelectedText: '#fff',
+        unSelectedText: white,
         navBarInactiveBackground: '#293462',
         navBarInactiveText: '#CAEBF2',
         navBarActiveBackground: '#CAEBF2',
         navBarActiveText: '#000',
         navDrawerActiveBackground: '#D61C4E',
         musicIcon: '#578CFE',
-        navDrawerActiveTint: '#fff',
-        navDrawerInactiveBackground: '#fff',
+        navDrawerActiveTint: white,
+        navDrawerInactiveBackground: white,
         navDrawerInactiveTint: '#999',
         lightBlue: '#578CFE',
-        buttonTextLight: '#fff',
+        buttonTextLight: white,
         buttonTextDark: primaryBackground,
         buttonFillLight: '#8CABFF',
         buttonFillMedium: '#4477CE',

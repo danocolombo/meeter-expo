@@ -1,25 +1,19 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import {
     StyleSheet,
     Text,
     View,
     KeyboardAvoidingView,
     SafeAreaView,
-    TouchableOpacity,
 } from 'react-native';
-import { Surface, useTheme } from 'react-native-paper';
-import { useSelector, useDispatch } from 'react-redux';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTheme } from 'react-native-paper';
 import GenderSelectors from '../GenderSelectors';
-import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../ui/CustomButton';
-import NumberInput from '../ui/NumberInput';
 import Input from '../ui/Input';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const GroupForm = ({ group, handleUpdate, handleCancel }) => {
     const mtrTheme = useTheme();
-    const navigation = useNavigation();
     const [values, setValues] = useState({
         id: group?.id ? group.id : null,
         gender: group?.gender ? group.gender : 'x',
@@ -83,149 +77,139 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
     return (
         <SafeAreaView>
             <ScrollView>
-                <>
-                    <KeyboardAvoidingView behavior='padding'>
-                        <View style={mtrTheme.groupEditRow}>
-                            <GenderSelectors
-                                setPick={setGenderValue}
-                                pick={values.gender}
-                            />
-                        </View>
+                <KeyboardAvoidingView behavior='padding'>
+                    <View style={mtrStyles(mtrTheme).genderSelectionContainer}>
+                        <GenderSelectors
+                            setPick={setGenderValue}
+                            pick={values.gender}
+                        />
+                    </View>
 
-                        <View style={mtrTheme.groupEditRowBasic}>
-                            <Input
-                                label='Group Title'
-                                labelStyle={mtrTheme.groupFormInputTitle}
-                                textInputConfig={{
-                                    backgroundColor: isTitleValid
-                                        ? 'lightgrey'
-                                        : mtrTheme.colors.errorTextBox,
-                                    value: values.title,
-                                    paddingHorizontal: 5,
-                                    fontSize: 24,
-                                    color: 'black',
-                                    marginHorizontal: 0,
-                                    placeholder: 'title of group...',
-                                    style: { color: 'black' },
-                                    fontWeight: '500',
+                    <View style={mtrStyles(mtrTheme).row}>
+                        <Input
+                            label='Group Title'
+                            labelStyle={mtrStyles(mtrTheme).labelText}
+                            textInputConfig={{
+                                backgroundColor: isTitleValid
+                                    ? mtrTheme.colors.lightGraphic
+                                    : mtrTheme.colors.warning,
+                                value: values.title,
+                                paddingHorizontal: 5,
+                                fontSize: 24,
+                                color: mtrTheme.colors.darkText,
+                                marginHorizontal: 0,
+                                placeholder: 'title of group...',
+                                style: { color: mtrTheme.colors.darkText },
+                                fontWeight: '500',
 
-                                    letterSpacing: 0,
-                                    onChangeText: inputChangedHandler.bind(
-                                        this,
-                                        'title'
-                                    ),
-                                }}
-                            />
-                        </View>
-                        {!isTitleValid && (
-                            <View style={mtrTheme.groupEditInputErrorContainer}>
-                                <Text style={mtrTheme.groupEditInputErrorText}>
-                                    REQUIRED: minimum length = 3
-                                </Text>
-                            </View>
-                        )}
-                        <View style={mtrTheme.groupEditRowBasic}>
-                            <Input
-                                label='Location'
-                                labelStyle={mtrTheme.groupFormInputTitle}
-                                textInputConfig={{
-                                    backgroundColor: isLocationValid
-                                        ? 'lightgrey'
-                                        : mtrTheme.colors.errorTextBox,
-                                    paddingHorizontal: 5,
-                                    value: values.location,
-                                    fontSize: 24,
-                                    color: 'black',
-                                    capitalize: 'words',
-                                    marginHorizontal: 0,
-                                    placeholder: 'planned location...',
-                                    style: { color: 'black' },
-
-                                    fontWeight: '500',
-                                    letterSpacing: 0,
-                                    onChangeText: inputChangedHandler.bind(
-                                        this,
-                                        'location'
-                                    ),
-                                }}
-                            />
-                        </View>
-                        {!isLocationValid && (
-                            <View style={mtrTheme.groupEditInputErrorContainer}>
-                                <Text style={mtrTheme.groupEditInputErrorText}>
-                                    REQUIRED: minimum length = 3
-                                </Text>
-                            </View>
-                        )}
-                        <View style={mtrTheme.groupEditRowBasic}>
-                            <Input
-                                label='Faciliatator'
-                                labelStyle={mtrTheme.groupFormInputTitle}
-                                textInputConfig={{
-                                    backgroundColor: isFacilitatorValid
-                                        ? 'lightgrey'
-                                        : mtrTheme.colors.errorTextBox,
-                                    paddingHorizontal: 5,
-                                    fontSize: 24,
-                                    value: values.facilitator,
-                                    color: 'black',
-                                    capitalize: 'words',
-                                    marginHorizontal: 0,
-                                    placeholder: 'expected facilitator...',
-                                    style: { color: 'black' },
-
-                                    fontWeight: '500',
-                                    letterSpacing: 0,
-                                    onChangeText: inputChangedHandler.bind(
-                                        this,
-                                        'facilitator'
-                                    ),
-                                }}
-                            />
-                        </View>
-                        {!isFacilitatorValid && (
-                            <View style={mtrTheme.groupEditInputErrorContainer}>
-                                <Text style={mtrTheme.groupEditInputErrorText}>
-                                    REQUIRED: minimum length = 2
-                                </Text>
-                            </View>
-                        )}
-                        <View
-                            style={{
-                                marginTop: 40,
-                                flexDirection: 'row',
-                                justifyContent: 'space-evenly',
+                                letterSpacing: 0,
+                                onChangeText: inputChangedHandler.bind(
+                                    this,
+                                    'title'
+                                ),
                             }}
-                        >
-                            {isTitleValid &&
-                                isLocationValid &&
-                                isFacilitatorValid && (
-                                    <View>
-                                        <CustomButton
-                                            text='SAVE'
-                                            bgColor={mtrTheme.colors.success}
-                                            fgColor='white'
-                                            type='STANDARD'
-                                            enabled={
-                                                isTitleValid && isLocationValid
-                                            }
-                                            onPress={handleFormSubmit}
-                                        />
-                                    </View>
-                                )}
-                            <View>
-                                <CustomButton
-                                    text='CANCEL'
-                                    bgColor={mtrTheme.colors.critical}
-                                    fgColor='white'
-                                    type='STANDARD'
-                                    //enabled={isTitleValid && isLocationValid}
-                                    onPress={handleFormCancel}
-                                />
-                            </View>
+                        />
+                    </View>
+                    {!isTitleValid && (
+                        <View style={mtrStyles(mtrTheme).errorMessageContainer}>
+                            <Text style={mtrStyles(mtrTheme).errorMessageText}>
+                                REQUIRED: minimum length = 3
+                            </Text>
                         </View>
-                    </KeyboardAvoidingView>
-                </>
+                    )}
+                    <View style={mtrStyles(mtrTheme).row}>
+                        <Input
+                            label='Location'
+                            labelStyle={mtrStyles(mtrTheme).labelText}
+                            textInputConfig={{
+                                backgroundColor: isLocationValid
+                                    ? mtrTheme.colors.lightGraphic
+                                    : mtrTheme.colors.warning,
+                                paddingHorizontal: 5,
+                                value: values.location,
+                                fontSize: 24,
+                                color: mtrTheme.colors.darkText,
+                                capitalize: 'words',
+                                marginHorizontal: 0,
+                                placeholder: 'planned location...',
+                                style: { color: mtrTheme.colors.darkText },
+
+                                fontWeight: '500',
+                                letterSpacing: 0,
+                                onChangeText: inputChangedHandler.bind(
+                                    this,
+                                    'location'
+                                ),
+                            }}
+                        />
+                    </View>
+                    {!isLocationValid && (
+                        <View style={mtrStyles(mtrTheme).errorMessageContainer}>
+                            <Text style={mtrStyles(mtrTheme).errorMessageText}>
+                                REQUIRED: minimum length = 3
+                            </Text>
+                        </View>
+                    )}
+                    <View style={mtrStyles(mtrTheme).row}>
+                        <Input
+                            label='Facilitator'
+                            labelStyle={mtrStyles(mtrTheme).labelText}
+                            textInputConfig={{
+                                backgroundColor: isFacilitatorValid
+                                    ? mtrTheme.colors.lightGraphic
+                                    : mtrTheme.colors.warning,
+                                paddingHorizontal: 5,
+                                fontSize: 24,
+                                value: values.facilitator,
+                                color: mtrTheme.colors.darkText,
+                                capitalize: 'words',
+                                marginHorizontal: 0,
+                                placeholder: 'expected facilitator...',
+                                style: { color: mtrTheme.colors.darkText },
+                                fontWeight: '500',
+                                letterSpacing: 0,
+                                onChangeText: inputChangedHandler.bind(
+                                    this,
+                                    'facilitator'
+                                ),
+                            }}
+                        />
+                    </View>
+                    {!isFacilitatorValid && (
+                        <View style={mtrStyles(mtrTheme).errorMessageContainer}>
+                            <Text style={mtrStyles(mtrTheme).errorMessageText}>
+                                REQUIRED: minimum length = 2
+                            </Text>
+                        </View>
+                    )}
+                    <View style={mtrStyles(mtrTheme).buttonContainer}>
+                        {isTitleValid &&
+                            isLocationValid &&
+                            isFacilitatorValid && (
+                                <View>
+                                    <CustomButton
+                                        text='SAVE'
+                                        bgColor={mtrTheme.colors.success}
+                                        fgColor={mtrTheme.colors.lightText}
+                                        type='STANDARD'
+                                        enabled={
+                                            isTitleValid && isLocationValid
+                                        }
+                                        onPress={handleFormSubmit}
+                                    />
+                                </View>
+                            )}
+                        <View>
+                            <CustomButton
+                                text='CANCEL'
+                                bgColor={mtrTheme.colors.critical}
+                                fgColor={mtrTheme.colors.lightText}
+                                type='STANDARD'
+                                onPress={handleFormCancel}
+                            />
+                        </View>
+                    </View>
+                </KeyboardAvoidingView>
             </ScrollView>
         </SafeAreaView>
     );
@@ -233,4 +217,32 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
 
 export default GroupForm;
 
-const styles = StyleSheet.create({});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        genderSelectionContainer: {
+            marginHorizontal: 20,
+            marginVertical: 10,
+        },
+        row: {
+            marginHorizontal: 20,
+            marginVertical: 5,
+        },
+        labelText: {
+            color: mtrTheme.colors.accent,
+            fontFamily: 'Roboto-Regular',
+            fontSize: 24,
+        },
+        errorMessageContainer: {
+            marginHorizontal: 30,
+        },
+        errorMessageText: {
+            color: mtrTheme.colors.warning,
+            fontFamily: 'Roboto-MediumItalic',
+            fontSize: 18,
+        },
+        buttonContainer: {
+            marginTop: 40,
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+        },
+    });

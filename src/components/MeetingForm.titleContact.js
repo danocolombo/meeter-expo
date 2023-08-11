@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import React, { useState } from 'react';
-import NumberInput from './ui/NumberInput';
 import { useSelector } from 'react-redux';
 import Input from './ui/Input';
 import { useTheme } from 'react-native-paper';
@@ -12,7 +11,7 @@ const TitleSection = ({ values, setValues }) => {
     const [isTitleValid, setIsTitleValid] = useState(
         values?.title?.length > 2 ? true : false
     );
-    const [ViewOnly, setViewOnly] = useState(!newPerms.includes('manage'));
+    const ViewOnly = !newPerms.includes('manage');
     function inputChangedHandler(inputIdentifier, enteredValue) {
         // console.log('INPUT CHANGE HANDLER CLICKED');
         // console.log('inputIdentifier:', inputIdentifier);
@@ -35,25 +34,27 @@ const TitleSection = ({ values, setValues }) => {
     if (ViewOnly) {
         return (
             <>
-                <View style={{ flexDirection: 'column' }}>
+                <View style={mtrStyles(mtrTheme).column}>
                     {values.meetingType === 'Lesson' && (
                         <>
                             <Input
                                 label='LessonX'
-                                labelStyle={styles.meetingEditInputLabel}
+                                labelStyle={
+                                    mtrStyles(mtrTheme).meetingEditInputLabel
+                                }
                                 textInputConfig={{
-                                    backgroundColor: 'white',
+                                    backgroundColor:
+                                        mtrTheme.colors.lightGraphic,
                                     value: values.title,
                                     paddingHorizontal: 1,
                                     fontSize: 24,
-                                    color: 'black',
+                                    color: mtrTheme.colors.darkText,
                                     editable:
                                         userProfile.activeOrg.role === 'manage'
                                             ? true
                                             : false,
                                     marginHorizontal: 10,
                                     placeholder: 'Lesson Title',
-                                    // style: { color: 'white' },
                                     fontWeight: '300',
                                     minWidth: '70%',
                                     letterSpacing: 0,
@@ -65,13 +66,16 @@ const TitleSection = ({ values, setValues }) => {
                             />
                             <Input
                                 label='Contact'
-                                labelStyle={styles.meetingEditInputLabel}
+                                labelStyle={
+                                    mtrStyles(mtrTheme).meetingEditInputLabel
+                                }
                                 textInputConfig={{
-                                    backgroundColor: 'white',
+                                    backgroundColor:
+                                        mtrTheme.colors.lightGraphic,
                                     value: values.supportContact,
                                     paddingHorizontal: 1,
                                     fontSize: 24,
-                                    color: 'black',
+                                    color: mtrTheme.colors.darkText,
                                     marginHorizontal: 10,
                                     placeholder: 'Contact',
                                     fontWeight: '300',
@@ -89,9 +93,12 @@ const TitleSection = ({ values, setValues }) => {
                         <>
                             <Input
                                 label='Guest'
-                                labelStyle={styles.meetingEditInputLabel}
+                                labelStyle={
+                                    mtrStyles(mtrTheme).meetingEditInputLabel
+                                }
                                 textInputConfig={{
-                                    backgroundColor: 'white',
+                                    backgroundColor:
+                                        mtrTheme.colors.lightGraphic,
                                     value: values.title,
                                     paddingHorizontal: 1,
                                     fontSize: 24,
@@ -99,11 +106,10 @@ const TitleSection = ({ values, setValues }) => {
                                         userProfile.activeOrg.role === 'manage'
                                             ? true
                                             : false,
-                                    color: 'black',
+                                    color: mtrTheme.colors.darkText,
                                     marginHorizontal: 10,
                                     autoCapitalize: 'words',
                                     placeholder: 'Guest',
-                                    // style: { color: 'white' },
                                     fontWeight: '300',
                                     minWidth: '70%',
                                     letterSpacing: 0,
@@ -116,10 +122,12 @@ const TitleSection = ({ values, setValues }) => {
                         </>
                     )}
                     {values.meetingType === 'Special' && (
-                        <View style={styles.container}>
-                            <Text style={styles.title}>{values.title}</Text>
+                        <View style={mtrStyles(mtrTheme).container}>
+                            <Text style={mtrStyles(mtrTheme).title}>
+                                {values.title}
+                            </Text>
 
-                            <Text style={styles.subTitle}>
+                            <Text style={mtrStyles(mtrTheme).subTitle}>
                                 {values.supportContact}
                             </Text>
                         </View>
@@ -130,25 +138,26 @@ const TitleSection = ({ values, setValues }) => {
     }
     return (
         <>
-            <View style={{ flexDirection: 'column' }}>
+            <View style={mtrStyles(mtrTheme).column}>
                 {values.meetingType === 'Lesson' && (
                     <>
                         <Input
                             label='Lesson'
-                            labelStyle={styles.meetingEditInputLabel}
+                            labelStyle={
+                                mtrStyles(mtrTheme).meetingEditInputLabel
+                            }
                             textInputConfig={{
-                                backgroundColor: 'white',
+                                backgroundColor: mtrTheme.colors.lightGraphic,
                                 value: values.title,
                                 paddingHorizontal: 1,
                                 fontSize: 24,
-                                color: 'black',
+                                color: mtrTheme.colors.darkText,
                                 editable:
                                     userProfile.activeOrg.role === 'manage'
                                         ? true
                                         : false,
                                 marginHorizontal: 10,
                                 placeholder: 'Lesson Title',
-                                // style: { color: 'white' },
                                 fontWeight: '300',
                                 minWidth: '70%',
                                 letterSpacing: 0,
@@ -160,13 +169,15 @@ const TitleSection = ({ values, setValues }) => {
                         />
                         <Input
                             label='Contact'
-                            labelStyle={styles.meetingEditInputLabel}
+                            labelStyle={
+                                mtrStyles(mtrTheme).meetingEditInputLabel
+                            }
                             textInputConfig={{
-                                backgroundColor: 'white',
+                                backgroundColor: mtrTheme.colors.lightGraphic,
                                 value: values.supportContact,
                                 paddingHorizontal: 1,
                                 fontSize: 24,
-                                color: 'black',
+                                color: mtrTheme.colors.darkText,
                                 marginHorizontal: 10,
                                 placeholder: 'Contact',
                                 fontWeight: '300',
@@ -184,9 +195,11 @@ const TitleSection = ({ values, setValues }) => {
                     <>
                         <Input
                             label='Guest'
-                            labelStyle={styles.meetingEditInputLabel}
+                            labelStyle={
+                                mtrStyles(mtrTheme).meetingEditInputLabel
+                            }
                             textInputConfig={{
-                                backgroundColor: 'white',
+                                backgroundColor: mtrTheme.colors.lightGraphic,
                                 value: values.title,
                                 paddingHorizontal: 1,
                                 fontSize: 24,
@@ -194,11 +207,10 @@ const TitleSection = ({ values, setValues }) => {
                                     userProfile.activeOrg.role === 'manage'
                                         ? true
                                         : false,
-                                color: 'black',
+                                color: mtrTheme.colors.darkText,
                                 marginHorizontal: 10,
                                 autoCapitalize: 'words',
                                 placeholder: 'Guest',
-                                // style: { color: 'white' },
                                 fontWeight: '300',
                                 minWidth: '70%',
                                 letterSpacing: 0,
@@ -214,16 +226,17 @@ const TitleSection = ({ values, setValues }) => {
                     <>
                         <Input
                             label='Event Title'
-                            labelStyle={styles.meetingEditInputLabel}
+                            labelStyle={
+                                mtrStyles(mtrTheme).meetingEditInputLabel
+                            }
                             textInputConfig={{
-                                backgroundColor: 'white',
+                                backgroundColor: mtrTheme.colors.lightGraphic,
                                 value: values.title,
                                 paddingHorizontal: 1,
                                 fontSize: 24,
-                                color: 'black',
+                                color: mtrTheme.colors.darkText,
                                 marginHorizontal: 10,
                                 placeholder: 'Event Title',
-                                // style: { color: 'white' },
                                 fontWeight: '300',
                                 minWidth: width * 0.6,
                                 letterSpacing: 0,
@@ -235,13 +248,15 @@ const TitleSection = ({ values, setValues }) => {
                         />
                         <Input
                             label='Contact'
-                            labelStyle={styles.meetingEditInputLabel}
+                            labelStyle={
+                                mtrStyles(mtrTheme).meetingEditInputLabel
+                            }
                             textInputConfig={{
-                                backgroundColor: 'white',
+                                backgroundColor: mtrTheme.colors.lightGraphic,
                                 value: values.supportContact,
                                 paddingHorizontal: 1,
                                 fontSize: 24,
-                                color: 'black',
+                                color: mtrTheme.colors.darkText,
                                 marginHorizontal: 10,
                                 placeholder: 'Contact',
                                 fontWeight: '300',
@@ -257,16 +272,15 @@ const TitleSection = ({ values, setValues }) => {
                 )}
                 <Input
                     label='Music/Worship'
-                    labelStyle={styles.meetingEditInputLabel}
+                    labelStyle={mtrStyles(mtrTheme).meetingEditInputLabel}
                     textInputConfig={{
-                        backgroundColor: 'white',
+                        backgroundColor: mtrTheme.colors.lightText,
                         value: values.worship,
                         paddingHorizontal: 1,
                         fontSize: 24,
-                        color: 'black',
+                        color: mtrTheme.colors.darkText,
                         marginHorizontal: 10,
                         placeholder: 'Music/Worship',
-                        // style: { color: 'white' },
                         fontWeight: '300',
                         minWidth: width * 0.6,
                         letterSpacing: 0,
@@ -279,24 +293,28 @@ const TitleSection = ({ values, setValues }) => {
 };
 
 export default TitleSection;
-
-const styles = StyleSheet.create({
-    container: {
-        paddingLeft: 5,
-    },
-    title: {
-        color: 'white',
-        fontSize: 24,
-        paddingVertical: 3,
-    },
-    subTitle: {
-        color: 'white',
-        fontSize: 20,
-        paddingVertical: 3,
-    },
-    meetingEditInputLabel: {
-        color: 'yellow',
-        paddingLeft: 10,
-        fontSize: 20,
-    },
-});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        meetingEditInputLabel: {
+            color: mtrTheme.colors.accent,
+            fontFamily: 'Roboto-Regular',
+            paddingLeft: 10,
+            fontSize: 20,
+        },
+        column: {
+            flexDirection: 'column',
+        },
+        container: {
+            paddingLeft: 5,
+        },
+        title: {
+            color: 'white',
+            fontSize: 24,
+            paddingVertical: 3,
+        },
+        subTitle: {
+            color: 'white',
+            fontSize: 20,
+            paddingVertical: 3,
+        },
+    });

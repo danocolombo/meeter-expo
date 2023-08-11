@@ -2,14 +2,12 @@ import {
     Text,
     View,
     StyleSheet,
-    Alert,
     TextInput,
     SafeAreaView,
     KeyboardAvoidingView,
     TouchableOpacity,
     Modal,
 } from 'react-native';
-import Picker from '@react-native-picker/picker';
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
 import React, { useCallback, useState, useLayoutEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -27,7 +25,7 @@ const AffiliationScreen = (props) => {
     const navigation = useNavigation();
     const mtrTheme = useTheme();
     const userProfile = useSelector((state) => state.user.profile);
-    // printObject('AFF:34-->userProfile:', userProfile);
+    const meeter = useSelector((state) => state.system);
     const [showChangeModal, setShowChangeModal] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [affCode, setAffCode] = useState('');
@@ -36,9 +34,10 @@ const AffiliationScreen = (props) => {
     const [isAffiliationFocus, setIsAffiliationFocus] = useState(false);
     const [theMessage, setTheMessage] = useState();
     const [affiliationSelected, setAffiliationSelected] = useState(null);
+
     useLayoutEffect(() => {
         navigation.setOptions({
-            //title: meeter.appName,
+            title: meeter.appName,
             headerBackTitle: 'Back',
         });
     }, [navigation]);
@@ -69,7 +68,6 @@ const AffiliationScreen = (props) => {
                                     index ===
                                     self.findIndex((t) => t.id === obj.id)
                             );
-                            printObject('uniqueAffs:\n', uniqueAffs);
                             setAvailableAffiliations(uniqueAffs);
                         }
                     }
@@ -200,30 +198,34 @@ const AffiliationScreen = (props) => {
     return (
         <>
             <SafeAreaView
-                style={{
-                    backgroundColor: mtrTheme.colors.background,
+                style={mtrStyles(mtrTheme).surface}
+                // style={{
+                //     backgroundColor: mtrTheme.colors.background,
 
-                    flex: 1,
-                    paddingVertical: 20,
-                }}
+                //     flex: 1,
+                //     paddingVertical: 20,
+                // }}
             >
-                <ScrollView>
+                <ScrollView tyle={mtrStyles(mtrTheme).surface}>
                     <KeyboardAvoidingView behavior='padding'>
                         <Modal visible={showChangeModal} animationStyle='slide'>
-                            <Surface style={styles(mtrTheme).modalContainer}>
+                            <Surface style={mtrStyles(mtrTheme).modalContainer}>
                                 <View>
-                                    <Text style={styles(mtrTheme).modalTitle}>
+                                    <Text
+                                        style={mtrStyles(mtrTheme).modalTitle}
+                                    >
                                         NOTIFICATION
                                     </Text>
                                 </View>
                                 <View
                                     style={
-                                        styles(mtrTheme).modalMessageContainer
+                                        mtrStyles(mtrTheme)
+                                            .modalMessageContainer
                                     }
                                 >
                                     <Text
                                         style={
-                                            styles(mtrTheme).modalMessageText
+                                            mtrStyles(mtrTheme).modalMessageText
                                         }
                                     >
                                         The affiliations change has been made.
@@ -234,18 +236,19 @@ const AffiliationScreen = (props) => {
                                 </View>
                                 <View
                                     style={
-                                        styles(mtrTheme).modalButtonContainer
+                                        mtrStyles(mtrTheme).modalButtonContainer
                                     }
                                 >
                                     <TouchableOpacity
-                                        style={styles(mtrTheme).modalButton}
+                                        style={mtrStyles(mtrTheme).modalButton}
                                         onPress={() =>
                                             setShowChangeModal(false)
                                         }
                                     >
                                         <Text
                                             style={
-                                                styles(mtrTheme).modalButtonText
+                                                mtrStyles(mtrTheme)
+                                                    .modalButtonText
                                             }
                                         >
                                             OK
@@ -256,218 +259,266 @@ const AffiliationScreen = (props) => {
                         </Modal>
                         <>
                             <View>
+                                <Text style={{ color: 'white' }}>
+                                    Affiliation Screen
+                                </Text>
+                            </View>
+                            <View>
                                 <View style={{ marginTop: 30 }}>
                                     <Text style={mtrTheme.screenTitle}>
                                         AFFILIATIONS
                                     </Text>
                                 </View>
-                                <View style={styles(mtrTheme).introContainer}>
-                                    <Text style={styles(mtrTheme).introText}>
-                                        Affiliations are how the system
-                                        associates your activity with a specific
-                                        organization.{' '}
-                                    </Text>
-                                </View>
-                                {userProfile.activeOrg.id ===
-                                MEETER_DEFAULTS.ORGANIZATION_ID ? (
+                                <View style={mtrStyles(mtrTheme).infoSurface}>
                                     <View
-                                        style={styles(mtrTheme).introContainer}
+                                        style={
+                                            mtrStyles(mtrTheme).introContainer
+                                        }
                                     >
                                         <Text
-                                            style={styles(mtrTheme).introText}
+                                            style={
+                                                mtrStyles(mtrTheme).introText
+                                            }
                                         >
-                                            You need to provide an affiliation
-                                            code to get started. You can use MTR
-                                            to view a sample.
+                                            Affiliations are how the system
+                                            associates your activity with a
+                                            specific organization.{' '}
                                         </Text>
                                     </View>
-                                ) : (
-                                    <>
+                                    {userProfile.activeOrg.id ===
+                                    MEETER_DEFAULTS.ORGANIZATION_ID ? (
                                         <View
                                             style={
-                                                styles(mtrTheme).introContainer
+                                                mtrStyles(mtrTheme)
+                                                    .introContainer
                                             }
                                         >
                                             <Text
                                                 style={
-                                                    styles(mtrTheme).introText
+                                                    mtrStyles(mtrTheme)
+                                                        .introText
                                                 }
                                             >
-                                                If you have access to other
-                                                affiliates, you can switch to
-                                                them by selecting them in the
-                                                dropdown list, and tap "CHANGE"
+                                                You need to provide an
+                                                affiliation code to get started.
+                                                You can use MTR to view a
+                                                sample.
                                             </Text>
                                         </View>
-                                        <View
-                                            style={{
-                                                flexDirection: 'column',
-                                                // borderWidth: 1,
-                                                // borderColor: 'yellow',
-                                                marginLeft: '20%',
-                                            }}
-                                        >
+                                    ) : (
+                                        <>
                                             <View
                                                 style={
-                                                    styles(mtrTheme)
+                                                    mtrStyles(mtrTheme)
+                                                        .introContainer
+                                                }
+                                            >
+                                                <Text
+                                                    style={
+                                                        mtrStyles(mtrTheme)
+                                                            .introText
+                                                    }
+                                                >
+                                                    If you have access to other
+                                                    affiliates, you can switch
+                                                    to them by selecting them in
+                                                    the dropdown list, and tap
+                                                    "CHANGE"
+                                                </Text>
+                                            </View>
+                                            <View
+                                                style={
+                                                    mtrStyles(mtrTheme)
                                                         .dropDownContainer
                                                 }
                                             >
-                                                <View>
-                                                    <Dropdown
-                                                        style={[
-                                                            styles(mtrTheme)
-                                                                .dropdown,
-                                                            isAffiliationFocus && {
-                                                                borderColor:
-                                                                    'blue',
-                                                            },
-                                                        ]}
-                                                        placeholderStyle={
-                                                            styles(mtrTheme)
-                                                                .placeholderStyle
-                                                        }
-                                                        selectedTextStyle={
-                                                            styles(mtrTheme)
-                                                                .selectedTextStyle
-                                                        }
-                                                        inputSearchStyle={
-                                                            styles(mtrTheme)
-                                                                .inputSearchStyle
-                                                        }
-                                                        containerStyle={
-                                                            styles(mtrTheme)
-                                                                .dropDownContainer
-                                                        }
-                                                        itemContainerStyle={{
-                                                            paddingVertical: 0,
-                                                            marginVertical: 0,
-                                                        }}
-                                                        iconStyle={
-                                                            styles(mtrTheme)
-                                                                .iconStyle
-                                                        }
-                                                        data={
-                                                            availableAffiliations
-                                                        }
-                                                        search={false}
-                                                        maxHeight={300}
-                                                        labelField='label'
-                                                        placeholder='available affiliations'
-                                                        valueField='value'
-                                                        // placeholder={!isShirtFocus ? 'Shirt' : '...'}
-                                                        //searchPlaceholder='Search...'
-                                                        value={
-                                                            affiliationSelected
-                                                        }
-                                                        onFocus={() =>
-                                                            setIsAffiliationFocus(
-                                                                true
-                                                            )
-                                                        }
-                                                        onBlur={() =>
-                                                            setIsAffiliationFocus(
-                                                                false
-                                                            )
-                                                        }
-                                                        onChange={(item) => {
-                                                            inputChangedHandler(
-                                                                'affiliate',
-                                                                item.value
-                                                            ),
-                                                                //setStateValue(item.value);
+                                                <View
+                                                    style={
+                                                        mtrStyles(mtrTheme)
+                                                            .dropDownWrapper
+                                                    }
+                                                >
+                                                    <View>
+                                                        <Dropdown
+                                                            style={[
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                ).dropdown,
+                                                                isAffiliationFocus && {
+                                                                    borderColor:
+                                                                        'blue',
+                                                                },
+                                                            ]}
+                                                            placeholderStyle={
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                )
+                                                                    .placeholderStyle
+                                                            }
+                                                            selectedTextStyle={
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                )
+                                                                    .selectedTextStyle
+                                                            }
+                                                            inputSearchStyle={
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                )
+                                                                    .inputSearchStyle
+                                                            }
+                                                            containerStyle={
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                )
+                                                                    .dropDownContainer
+                                                            }
+                                                            itemContainerStyle={{
+                                                                paddingVertical: 0,
+                                                                marginVertical: 0,
+                                                            }}
+                                                            iconStyle={
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                ).iconStyle
+                                                            }
+                                                            data={
+                                                                availableAffiliations
+                                                            }
+                                                            search={false}
+                                                            maxHeight={300}
+                                                            labelField='label'
+                                                            placeholder='available affiliations'
+                                                            valueField='value'
+                                                            // placeholder={!isShirtFocus ? 'Shirt' : '...'}
+                                                            //searchPlaceholder='Search...'
+                                                            value={
+                                                                affiliationSelected
+                                                            }
+                                                            onFocus={() =>
+                                                                setIsAffiliationFocus(
+                                                                    true
+                                                                )
+                                                            }
+                                                            onBlur={() =>
                                                                 setIsAffiliationFocus(
                                                                     false
-                                                                );
-                                                        }}
-                                                    />
+                                                                )
+                                                            }
+                                                            onChange={(
+                                                                item
+                                                            ) => {
+                                                                inputChangedHandler(
+                                                                    'affiliate',
+                                                                    item.value
+                                                                ),
+                                                                    //setStateValue(item.value);
+                                                                    setIsAffiliationFocus(
+                                                                        false
+                                                                    );
+                                                            }}
+                                                        />
+                                                    </View>
                                                 </View>
                                             </View>
-                                        </View>
-                                    </>
-                                )}
+                                        </>
+                                    )}
 
-                                {affiliationSelected && (
-                                    <View>
-                                        <View
+                                    {affiliationSelected && (
+                                        <View>
+                                            <View
+                                                style={
+                                                    mtrStyles(mtrTheme)
+                                                        .changeButtonContainer
+                                                }
+                                            >
+                                                <TouchableOpacity
+                                                    onPress={() =>
+                                                        handleSaveClick()
+                                                    }
+                                                    style={
+                                                        mtrStyles(mtrTheme)
+                                                            .changeButton
+                                                    }
+                                                >
+                                                    <Text
+                                                        style={
+                                                            mtrStyles(mtrTheme)
+                                                                .changeButtonText
+                                                        }
+                                                    >
+                                                        CHANGE
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    )}
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme).introContainer
+                                        }
+                                    >
+                                        <Text
                                             style={
-                                                styles(mtrTheme)
-                                                    .changeButtonContainer
+                                                mtrStyles(mtrTheme).introText
                                             }
                                         >
+                                            If you have been invited to join a
+                                            team, enter the code you were
+                                            provided below and get connected.
+                                        </Text>
+                                    </View>
+                                    <View style={mtrTheme.profileFormRowStyle}>
+                                        <View
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .buttonWrapper
+                                            }
+                                        >
+                                            <View
+                                                style={
+                                                    mtrStyles(mtrTheme)
+                                                        .affInputContainer
+                                                }
+                                            >
+                                                <TextInput
+                                                    minWidth={80}
+                                                    backgroundColor={
+                                                        mtrTheme.colors
+                                                            .mediumGraphic
+                                                    }
+                                                    value={affCode}
+                                                    style={
+                                                        mtrStyles(mtrTheme)
+                                                            .affCodeInputText
+                                                    }
+                                                    onChangeText={
+                                                        handleCodeChange
+                                                    }
+                                                    keyboardType='default'
+                                                    maxLength={3}
+                                                />
+                                            </View>
+
                                             <TouchableOpacity
                                                 onPress={() =>
-                                                    handleSaveClick()
+                                                    handleNewCodeClick()
                                                 }
                                                 style={
-                                                    styles(mtrTheme)
+                                                    mtrStyles(mtrTheme)
                                                         .changeButton
                                                 }
                                             >
                                                 <Text
                                                     style={
-                                                        styles(mtrTheme)
+                                                        mtrStyles(mtrTheme)
                                                             .changeButtonText
                                                     }
                                                 >
-                                                    CHANGE
+                                                    REQUEST
                                                 </Text>
                                             </TouchableOpacity>
                                         </View>
-                                    </View>
-                                )}
-                                <View style={styles(mtrTheme).introContainer}>
-                                    <Text style={styles(mtrTheme).introText}>
-                                        If you have been invited to join a team,
-                                        enter the code you were provided below
-                                        and get connected.
-                                    </Text>
-                                </View>
-                                <View style={mtrTheme.profileFormRowStyle}>
-                                    <View
-                                        style={{
-                                            minWidth: '90%',
-                                            flexDirection: 'row',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                borderColor: 'white',
-                                                borderWidth: 1,
-                                                justifyContent: 'center',
-                                                marginRight: 10,
-                                            }}
-                                        >
-                                            <TextInput
-                                                minWidth={80}
-                                                backgroundColor='lightgrey'
-                                                value={affCode}
-                                                style={{
-                                                    textAlign: 'center',
-                                                    padding: 5,
-                                                }}
-                                                onChangeText={handleCodeChange}
-                                                keyboardType='default'
-                                                maxLength={3}
-                                            />
-                                        </View>
-
-                                        <TouchableOpacity
-                                            onPress={() => handleNewCodeClick()}
-                                            style={
-                                                styles(mtrTheme).changeButton
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    styles(mtrTheme)
-                                                        .changeButtonText
-                                                }
-                                            >
-                                                REQUEST
-                                            </Text>
-                                        </TouchableOpacity>
                                     </View>
                                 </View>
                                 {/* Use a light status bar on iOS to account for the black space above the modal */}
@@ -485,8 +536,22 @@ const AffiliationScreen = (props) => {
     );
 };
 
-const styles = (mtrTheme) =>
+const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
+        surface: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.background,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        infoSurface: {
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            // width: '90%',
+            marginHorizontal: 20,
+            marginTop: 20,
+            paddingBottom: 20,
+            borderRadius: 10,
+        },
         container: {
             flex: 1,
             alignItems: 'center',
@@ -502,7 +567,7 @@ const styles = (mtrTheme) =>
         },
         modalTitle: {
             fontSize: 28,
-            color: 'white',
+            color: mtrTheme.colors.darkText,
             fontFamily: 'Roboto-Bold',
             textAlign: 'center',
         },
@@ -527,7 +592,7 @@ const styles = (mtrTheme) =>
         },
         modalButtonText: {
             fontSize: 16,
-            color: 'white',
+            color: mtrTheme.colors.mediumText,
             fontFamily: 'Roboto-Bold',
             textAlign: 'center',
             paddingHorizontal: 30,
@@ -545,11 +610,18 @@ const styles = (mtrTheme) =>
         introText: {
             fontFamily: 'Roboto-Regular',
             fontSize: 20,
-            color: 'white',
+            color: mtrTheme.colors.darkText,
             paddingVertical: 5,
             textAlign: 'center',
         },
+
         dropDownContainer: {
+            flexDirection: 'column',
+            // borderWidth: 1,
+            // borderColor: 'yellow',
+            marginLeft: '20%',
+        },
+        dropDownWrapper: {
             // flexDirection: 'row',
             // backgroundColor: 'lightgrey',
             fontFamily: 'Roboto-Regular',
@@ -582,40 +654,52 @@ const styles = (mtrTheme) =>
         },
         selectedTextStyle: {
             // backgroundColor: 'lightgrey',
-            fontFamily: 'Roboto-Bold',
-            fontSize: 22,
-            color: 'black',
+            fontFamily: 'Roboto-Regular',
+            fontSize: 18,
+            color: mtrTheme.colors.darkText,
             paddingLeft: 10,
             paddingVertical: 5,
         },
         inputSearchStyle: {},
+        affCodeInputText: {
+            color: mtrTheme.colors.lightText,
+            textAlign: 'center',
+            padding: 5,
+            textTransform: 'uppercase',
+        },
+        affInputContainer: {
+            paddingVertical: 5,
+        },
+        textInputContainer: {
+            borderColor: 'white',
+            backgroundColor: mtrTheme.colors.mediumGraphic,
+            borderWidth: 1,
+            justifyContent: 'center',
+            marginRight: 10,
+        },
         changeButtonContainer: {
             flexDirection: 'row',
             justifyContent: 'center',
             marginTop: 15,
         },
+        buttonWrapper: {
+            flexDirection: 'column',
+
+            alignItems: 'center',
+            justifyContent: 'space-around',
+        },
         changeButton: {
             backgroundColor: mtrTheme.colors.lightBlue,
             borderRadius: 5,
+            marginHorizontal: 3,
         },
         changeButtonText: {
-            fontSize: 16,
-            fontColor: 'white',
+            fontSize: 14,
+            color: mtrTheme.colors.lightText,
             fontFamily: 'Roboto-Regular',
             textAlign: 'center',
             paddingHorizontal: 20,
             paddingVertical: 5,
-        },
-        messageBox: {
-            height: 40,
-            margin: 12,
-            borderWidth: 1,
-            padding: 10,
-        },
-        separator: {
-            marginVertical: 30,
-            height: 1,
-            width: '80%',
         },
     });
 export default AffiliationScreen;

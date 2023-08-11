@@ -13,6 +13,7 @@ import {
     loadDefaultGroups,
     deleteDefaultGroup,
 } from '../features/groups/groupsThunks';
+import { NativeScreen } from 'react-native-screens';
 
 const DefaultGroupsScreen = () => {
     const mtrTheme = useTheme();
@@ -40,44 +41,24 @@ const DefaultGroupsScreen = () => {
     };
     if (isLoading) {
         return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
+            <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
                 <ActivityIndicator
-                    color={mtrTheme.colors.activityIndicator}
+                    color={mtrStyles(mtrTheme).activityIndicator}
                     size={80}
                 />
             </View>
         );
     }
     return (
-        <View
-            style={{
-                backgroundColor: mtrTheme.colors.background,
-
-                flex: 1,
-            }}
-        >
-            <View>
-                <Text style={{ color: 'white' }}>DefaultGroupScreen</Text>
-            </View>
-            <View>
-                <Text style={mtrTheme.screenTitle}>DEFAULT GROUPS</Text>
+        <View style={mtrStyles(mtrTheme).container}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    DEFAULT GROUPS
+                </Text>
             </View>
 
-            <View
-                style={{
-                    paddingVertical: 10,
-                    paddingHorizontal: 50,
-                    marginBottom: 10,
-                    marginHorizontal: 30,
-                }}
-            >
-                <Text style={mtrTheme.subTitleSmall}>
+            <View style={mtrStyles(mtrTheme).subtitleContainer}>
+                <Text style={mtrStyles(mtrTheme).subtitleText}>
                     Default groups can be dynamically added to meetings.
                 </Text>
             </View>
@@ -98,11 +79,11 @@ const DefaultGroupsScreen = () => {
                     )}
                 </>
             )}
-            <View style={{ marginHorizontal: 20, paddingBottom: 20 }}>
+            <View style={mtrStyles(mtrTheme).buttonContainer}>
                 <CustomButton
                     text='ADD DEFAULT GROUP'
                     bgColor={mtrTheme.colors.success}
-                    fgColor='white'
+                    fgColor={mtrTheme.colors.lightText}
                     type='PRIMARY'
                     enabled='true'
                     onPress={() => handleNewRequest()}
@@ -115,9 +96,44 @@ const DefaultGroupsScreen = () => {
 
 export default DefaultGroupsScreen;
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'flex-start',
-    },
-});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        container: {
+            backgroundColor: mtrTheme.colors.background,
+            flex: 1,
+        },
+        screenTitleContainer: {
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.lightText,
+        },
+        subtitleContainer: {
+            paddingVertical: 10,
+            paddingHorizontal: 50,
+            marginBottom: 10,
+            marginHorizontal: 30,
+        },
+        subtitleText: {
+            fontFamily: 'Roboto-Medium',
+            fontSize: 16,
+            fontWeight: '500',
+            color: mtrTheme.colors.accent,
+            textAlign: 'center',
+        },
+        activityIndicatorContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        activityIndicator: {
+            color: mtrTheme.colors.lightGraphic,
+        },
+        buttonContainer: {
+            marginHorizontal: 20,
+            paddingBottom: 20,
+        },
+    });

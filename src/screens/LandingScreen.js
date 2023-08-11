@@ -27,11 +27,12 @@ const LandingScreen = () => {
     const [teamApproved, setTeamApproved] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const userProfile = useSelector((state) => state.user.profile);
+    const meeting = useSelector((state) => state.system);
 
     const meeter = useSelector((state) => state.system.meeter);
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: '',
+            title: meeter.appName,
         });
     }, [navigation, meeter]);
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useLayoutEffect } from 'react';
 import {
     StyleSheet,
     Text,
@@ -37,7 +37,12 @@ const ActiveScreen = () => {
         );
         return userTimezoneDate.toISOString().split('T')[0];
     }, []);
-
+    const meeter = useSelector((state) => state.system.meeter);
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: meeter.appName,
+        });
+    }, [navigation, meeter]);
     useFocusEffect(
         useCallback(() => {
             if (!isFormDisplayedRef.current) {
@@ -91,15 +96,9 @@ const ActiveScreen = () => {
     };
     if (isLoading) {
         return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
+            <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
                 <ActivityIndicator
-                    color={mtrTheme.colors.activityIndicator}
+                    color={mtrStyles(mtrTheme).activityIndicator}
                     size={80}
                 />
             </View>
@@ -126,113 +125,82 @@ const ActiveScreen = () => {
             if (dateComparison !== 0) {
                 return dateComparison;
             }
-
             // If meetingDate is the same, sort by meetingType in ascending order
             const typeComparison = a.meetingType.localeCompare(b.meetingType);
             if (typeComparison !== 0) {
                 return typeComparison;
             }
-
             // If meetingType is the same, sort by title in ascending order
             return a.title.localeCompare(b.title);
         });
 
     return (
-        <Surface style={mtrTheme.screenSurface}>
+        <Surface style={mtrStyles(mtrTheme).surface}>
             <Modal visible={showDeleteConfirmModal} animationStyle='slide'>
-                <View>
-                    <Text style={mtrTheme.screenTitle}>PLEASE CONFIRM</Text>
-                </View>
-                <View style={{ alignItems: 'center', marginTop: 15 }}>
-                    <Surface
-                        style={{
-                            backgroundColor: 'white',
-                            width: '90%',
-                            height: 400,
-                            borderRadius: 10,
-                        }}
-                    >
-                        <View style={{ padding: 20 }}>
-                            <View>
-                                <Text
-                                    style={{
-                                        fontSize: 20,
-                                        textAlign: 'center',
-                                    }}
-                                >
+                <View style={mtrStyles(mtrTheme).modal}>
+                    <View style={mtrStyles(mtrTheme).modalHeaderContainer}>
+                        <Text style={mtrStyles(mtrTheme).modalHeaderText}>
+                            PLEASE CONFIRM
+                        </Text>
+                    </View>
+                    <View style={mtrStyles(mtrTheme).modalSurfaceContainer}>
+                        <Surface style={mtrStyles(mtrTheme).modalSurface}>
+                            <View style={mtrStyles(mtrTheme).warningContainer}>
+                                <Text style={mtrStyles(mtrTheme).warningText}>
                                     Your are about to delete the following
                                     meeting.
                                 </Text>
                             </View>
-                            <View style={{ marginTop: 20 }}>
-                                <Text
-                                    style={{
-                                        fontSize: 24,
-                                        fontFamily: 'Roboto-Bold',
-                                        textAlign: 'center',
-                                    }}
-                                >
+                            <View style={mtrStyles(mtrTheme).dateContainer}>
+                                <Text style={mtrStyles(mtrTheme).dateText}>
                                     {dateDashMadePretty(meeting?.meetingDate)}
                                 </Text>
+                            </View>
+                            <View>
                                 <Text
-                                    style={{
-                                        fontSize: 18,
-                                        fontFamily: 'Roboto-Medium',
-                                        textAlign: 'center',
-                                    }}
+                                    style={mtrStyles(mtrTheme).meetingInfoText}
                                 >
                                     {meeting?.meetingType}: {meeting?.title}
                                 </Text>
-                                <Text
-                                    style={{
-                                        paddingTop: 20,
-                                        fontSize: 16,
-                                        fontFamily: 'Roboto-Bold',
-
-                                        color: mtrTheme.colors.critical,
-                                        textAlign: 'center',
-                                    }}
-                                >
-                                    NOTE: ALL GROUPS FOR THE MEETING WILL BE
-                                    DELETED AS WELL.
+                            </View>
+                            <View style={mtrStyles(mtrTheme).noteContainer}>
+                                <Text style={mtrStyles(mtrTheme).noteText}>
+                                    NOTE: All groups for the meeting will be
+                                    deleted as well.
                                 </Text>
                             </View>
-                            <View
-                                style={{
-                                    marginVertical: 20,
-                                }}
-                            >
-                                <CustomButton
-                                    text='No, CANCEL'
-                                    bgColor='green'
-                                    fgColor='white'
-                                    onPress={() =>
-                                        setShowDeleteConfirmModal(false)
-                                    }
-                                />
+                            <View style={mtrStyles(mtrTheme).buttonContainer}>
+                                <View style={mtrStyles(mtrTheme).buttonWrapper}>
+                                    <CustomButton
+                                        text='No, CANCEL'
+                                        bgColor={mtrTheme.colors.success}
+                                        fgColor={mtrTheme.colors.lightText}
+                                        onPress={() =>
+                                            setShowDeleteConfirmModal(false)
+                                        }
+                                    />
+                                </View>
+
+                                <View style={mtrStyles(mtrTheme).buttonWrapper}>
+                                    <CustomButton
+                                        text='Yes, DELETE'
+                                        bgColor={mtrTheme.colors.critical}
+                                        fgColor={mtrTheme.colors.lightText}
+                                        onPress={() => handleDeleteConfirm()}
+                                    />
+                                </View>
                             </View>
-                            <View
-                                style={{
-                                    marginVertical: 20,
-                                }}
-                            >
-                                <CustomButton
-                                    text='Yes, DELETE'
-                                    bgColor='red'
-                                    fgColor='white'
-                                    onPress={() => handleDeleteConfirm()}
-                                />
-                            </View>
-                        </View>
-                    </Surface>
+                        </Surface>
+                    </View>
+                    <StatusBar style='auto' />
                 </View>
-                <StatusBar style='auto' />
             </Modal>
             <View>
-                <Text style={{ color: 'white' }}>ActiveScreenThree</Text>
-            </View>
-            <View>
-                <Text style={mtrTheme.screenTitle}>ACTIVE</Text>
+                <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                        ACTIVE
+                    </Text>
+                </View>
                 {userProfile?.activeOrg?.role === 'manage' && (
                     <FAB
                         icon='calendar-plus'
@@ -242,8 +210,8 @@ const ActiveScreen = () => {
                 )}
             </View>
 
-            <View style={{ padding: 10 }}>
-                <Text style={mtrTheme.subTitleSmall}>
+            <View style={mtrStyles(mtrTheme).subtitleContainer}>
+                <Text style={mtrStyles(mtrTheme).subtitleText}>
                     Click event for details!
                 </Text>
             </View>
@@ -264,7 +232,103 @@ const ActiveScreen = () => {
 };
 
 export default ActiveScreen;
-
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        surface: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.background,
+        },
+        activityIndicatorContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        activityIndicator: {
+            color: mtrTheme.colors.lightGraphic,
+        },
+        screenTitleContainer: {
+            paddingTop: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.lightText,
+        },
+        subtitleContainer: {},
+        subtitleText: {
+            fontFamily: 'Roboto-Medium',
+            fontSize: 16,
+            fontWeight: '500',
+            color: mtrTheme.colors.accent,
+            textAlign: 'center',
+            paddingBottom: 5,
+        },
+        modal: {
+            flex: 1,
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: mtrTheme.colors.background,
+        },
+        modalHeaderContainer: {
+            backgroundColor: mtrTheme.colors.background,
+        },
+        modalHeaderText: {
+            fontFamily: 'Roboto-Bold',
+            fontSize: 28,
+            fontWeight: '700',
+            color: mtrTheme.colors.lightText,
+            textAlign: 'center',
+            paddingTop: 10,
+        },
+        modalSurfaceContainer: {
+            alignItems: 'center',
+            marginTop: 15,
+        },
+        modalSurface: {
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            width: '90%',
+            borderRadius: 10,
+            padding: 20,
+        },
+        warningContainer: {
+            padding: 10,
+        },
+        warningText: {
+            fontSize: 20,
+            textAlign: 'center',
+            fontFamily: 'Roboto-Regular',
+        },
+        dateContainer: { marginTop: 20 },
+        dateText: {
+            fontSize: 24,
+            fontFamily: 'Roboto-Bold',
+            textAlign: 'center',
+        },
+        meetingInfoContainer: {},
+        meetingInfoText: {
+            fontSize: 18,
+            fontFamily: 'Roboto-Medium',
+            textAlign: 'center',
+        },
+        noteContainer: {
+            marginHorizontal: 20,
+        },
+        noteText: {
+            paddingTop: 20,
+            fontSize: 16,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.critical,
+            textTransform: 'uppercase',
+            textAlign: 'center',
+        },
+        buttonContainer: {
+            marginVertical: 10,
+        },
+        buttonWrapper: {},
+    });
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,

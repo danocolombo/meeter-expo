@@ -4,10 +4,9 @@ import { useSelector } from 'react-redux';
 import { useTheme } from 'react-native-paper';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
-//import HistoricScreen from '../screens/HistoricScreen';
 import HistoricScreen from '../screens/HistoricScreenRTK';
 import ActiveScreen from '../screens/ActiveScreenThree';
-import AdminScreen from '../screens/AdminScreen';
+// import AdminScreen from '../screens/AdminScreen';
 import systemSlice from '../features/system/systemSlice';
 const BottomTab = createBottomTabNavigator();
 const MeetingsConfig = () => {

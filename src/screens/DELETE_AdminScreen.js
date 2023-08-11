@@ -13,7 +13,7 @@ import { Surface, useTheme } from 'react-native-paper';
 const AdminScreen = () => {
     const navigation = useNavigation();
     const mtrTheme = useTheme();
-    const meeter = useSelector((state) => state.system.meeter);
+    const meeter = useSelector((state) => state.system);
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,

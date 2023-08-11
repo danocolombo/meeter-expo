@@ -23,13 +23,14 @@ const ProfileScreen = (props) => {
     const { height, width } = useWindowDimensions();
     const navigation = useNavigation();
     const mtrTheme = useTheme();
+    const meeter = useSelector((state) => state.system);
     const userProfile = useSelector((state) => state.user.profile);
     const [showMessage, setShowMessage] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            //title: meeter.appName,
+            title: meeter.appName,
             headerBackTitle: 'Back',
         });
     }, [navigation]);

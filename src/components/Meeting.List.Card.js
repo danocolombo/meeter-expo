@@ -322,6 +322,8 @@ const mtrStyles = (mtrTheme) =>
         },
         rowRight: {
             flexDirection: 'row',
+            flex: 1,
+            paddingRight: 5,
             marginLeft: 'auto',
         },
         columnCenter: {

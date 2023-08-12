@@ -1,25 +1,12 @@
 import React, { useLayoutEffect } from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-    KeyboardAvoidingView,
-    ScrollView,
-} from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { Surface, useTheme, withTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import MeetingForm from '../components/MeetingFormRTK';
 import { addMeeting } from '../features/meetings/meetingsThunks';
-import {
-    createAWSUniqueID,
-    createMtgCompKey,
-    isDateDashBeforeToday,
-    printObject,
-} from '../utils/helpers';
-import { addMeetingDDB } from '../providers/meetings';
-import { sub } from 'react-native-reanimated';
+import { createAWSUniqueID, printObject } from '../utils/helpers';
 //   FUNCTION START
 //   ================
 const MeetingNewScreen = ({ route, navigation }) => {
@@ -45,28 +32,35 @@ const MeetingNewScreen = ({ route, navigation }) => {
         dispatch(addMeeting(submitValues));
         navigate.goBack();
     };
-    printObject('MNS:48-->userProfile:\n', userProfile);
     return (
-        <>
-            <View
-                style={{ flex: 1, backgroundColor: mtrTheme.colors.background }}
-            >
-                <View>
-                    <Text style={{ backgroundColor: mtrTheme.colors.accent }}>
-                        MeetingNewScreen
-                    </Text>
-                </View>
-                <ScrollView>
-                    <MeetingForm
-                        meetingId={null}
-                        handleSubmit={handleAddMeeting}
-                    />
-                </ScrollView>
+        <ScrollView style={mtrStyles(mtrTheme).surface}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    New Meeting
+                </Text>
             </View>
-        </>
+            <MeetingForm meetingId={null} handleSubmit={handleAddMeeting} />
+        </ScrollView>
     );
 };
 
-export default withTheme(MeetingNewScreen);
+export default MeetingNewScreen;
 
 const styles = StyleSheet.create({});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        surface: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.background,
+        },
+        screenTitleContainer: {
+            paddingTop: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.accent,
+        },
+    });

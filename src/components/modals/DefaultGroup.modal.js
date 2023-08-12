@@ -42,23 +42,33 @@ export default function DGModalScreen(props) {
         navigation.goBack();
     };
     return (
-        <>
-            <Surface style={mtrTheme.screenSurface}>
-                <View style={{ marginVertical: 20 }}>
-                    <Text style={mtrTheme.screenTitle}>Default Group</Text>
-                </View>
-                <DefaultGroupForm
-                    group={group}
-                    handleUpdate={handleUpdate}
-                    handleCancel={handleCancel}
-                />
-            </Surface>
-        </>
+        <Surface style={mtrTheme.screenSurface}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    New Default Group
+                </Text>
+            </View>
+
+            <DefaultGroupForm
+                group={group}
+                handleUpdate={handleUpdate}
+                handleCancel={handleCancel}
+            />
+        </Surface>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        surface: {
+            flex: 1,
+        },
+        screenTitleContainer: {
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.accent,
+        },
+    });

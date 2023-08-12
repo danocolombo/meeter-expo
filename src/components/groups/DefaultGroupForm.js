@@ -78,7 +78,7 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
         <SafeAreaView>
             <ScrollView>
                 <KeyboardAvoidingView behavior='padding'>
-                    <View style={mtrStyles(mtrTheme).genderSelectionContainer}>
+                    <View style={mtrStyles(mtrTheme).selectorWrapper}>
                         <GenderSelectors
                             setPick={setGenderValue}
                             pick={values.gender}
@@ -92,7 +92,7 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                             textInputConfig={{
                                 backgroundColor: isTitleValid
                                     ? mtrTheme.colors.lightGraphic
-                                    : mtrTheme.colors.warning,
+                                    : mtrTheme.colors.lightGraphic,
                                 value: values.title,
                                 paddingHorizontal: 5,
                                 fontSize: 24,
@@ -124,7 +124,7 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                             textInputConfig={{
                                 backgroundColor: isLocationValid
                                     ? mtrTheme.colors.lightGraphic
-                                    : mtrTheme.colors.warning,
+                                    : mtrTheme.colors.lightGraphic,
                                 paddingHorizontal: 5,
                                 value: values.location,
                                 fontSize: 24,
@@ -157,7 +157,7 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                             textInputConfig={{
                                 backgroundColor: isFacilitatorValid
                                     ? mtrTheme.colors.lightGraphic
-                                    : mtrTheme.colors.warning,
+                                    : mtrTheme.colors.lightGraphic,
                                 paddingHorizontal: 5,
                                 fontSize: 24,
                                 value: values.facilitator,
@@ -219,16 +219,21 @@ export default GroupForm;
 
 const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
-        genderSelectionContainer: {
-            marginHorizontal: 20,
+        selectorWrapper: {
+            flexDirection: 'row',
+            borderWidth: 2,
+            borderColor: mtrTheme.colors.lightGraphic,
+            borderRadius: 5,
             marginVertical: 10,
+            marginHorizontal: 10,
+            paddingVertical: 5,
         },
         row: {
             marginHorizontal: 20,
             marginVertical: 5,
         },
         labelText: {
-            color: mtrTheme.colors.accent,
+            color: mtrTheme.colors.lightText,
             fontFamily: 'Roboto-Regular',
             fontSize: 24,
         },
@@ -236,7 +241,7 @@ const mtrStyles = (mtrTheme) =>
             marginHorizontal: 30,
         },
         errorMessageText: {
-            color: mtrTheme.colors.warning,
+            color: mtrTheme.colors.accent,
             fontFamily: 'Roboto-MediumItalic',
             fontSize: 18,
         },

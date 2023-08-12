@@ -296,7 +296,7 @@ export default TitleSection;
 const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
         meetingEditInputLabel: {
-            color: mtrTheme.colors.accent,
+            color: mtrTheme.colors.lightText,
             fontFamily: 'Roboto-Regular',
             paddingLeft: 10,
             fontSize: 20,

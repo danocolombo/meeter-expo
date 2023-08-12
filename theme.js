@@ -51,6 +51,9 @@ const theme = {
         lightGrey: '#D3D3D3',
         mediumGrey: '#A9A9A9',
         darkGrey: '#808080',
+        lightGreen: '#90EE90',
+        mediumGreen: '#3CB371',
+        darkGreen: '#006400',
         text: white,
         activityIndicator: activityIndicator,
         //color for the disabled elements

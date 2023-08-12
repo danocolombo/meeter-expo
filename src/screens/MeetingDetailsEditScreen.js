@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import {
     View,
     Text,
@@ -40,6 +40,7 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
     const meeter = useSelector((state) => state.system);
     const mtrTheme = useTheme();
     const navigate = useNavigation();
+    const [isLoading, setIsLoading] = useState(false);
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
@@ -48,42 +49,30 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
     }, [navigation, meeter]);
 
     const handleUpdate = (values) => {
-        printObject('MDES:81-->values:\n', values);
+        setIsLoading(true);
         dispatch(updateMeeting(values));
+        setIsLoading(false);
         navigate.goBack();
     };
-    const handleDeleteRequest = (values) => {
-        printObject('MDES:54-->handleDelete(values):\n', values);
-        dispatch(deleteMeeting(values));
-        // navigate('Meetings');
-        // dispatch(deleteMeeting(meeting))
-        //     .then(() => {
-        //         navigation.navigate('Meetings');
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error deleting meeting:', error);
-        //     });
-        // navigation.goBack();
-    };
 
-    let meeting = {};
-
+    if (isLoading) {
+        return (
+            <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
+                <ActivityIndicator
+                    color={mtrStyles(mtrTheme).activityIndicator}
+                    size={80}
+                />
+            </View>
+        );
+    }
     return (
         <>
-            <View
-                style={{ flex: 1, backgroundColor: mtrTheme.colors.background }}
-            >
-                <View>
-                    <Text style={{ backgroundColor: mtrTheme.colors.accent }}>
-                        MeetingDetailsEditScreen
-                    </Text>
-                </View>
+            <View style={mtrStyles(mtrTheme).container}>
                 {id && (
                     <ScrollView>
                         <MeetingForm
                             meetingId={id}
                             handleSubmit={handleUpdate}
-                            handleDelete={handleDeleteRequest}
                         />
                     </ScrollView>
                 )}
@@ -91,81 +80,20 @@ const MeetingDetailsEditScreen = ({ route, navigation }) => {
         </>
     );
 };
-export default withTheme(MeetingDetailsEditScreen);
+export default MeetingDetailsEditScreen;
 
-const styles = (mtrTheme) =>
+const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
-        surface: {
+        container: {
             flex: 1,
+            backgroundColor: mtrTheme.colors.background,
         },
-        firstRow: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: 10,
-            marginHorizontal: 10,
-        },
-        row: {
-            flexDirection: 'row',
-
-            marginHorizontal: 60,
-            justifyContent: 'center',
-            alignContent: 'center',
-            alignItems: 'center',
-        },
-        countRow: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginHorizontal: 60,
-            marginVertical: 5,
-        },
-
-        dateWrapper: {
-            margin: 5,
-        },
-        costLabel: {
-            fontSize: 20,
-            fontWeight: '600',
-        },
-        costInput: {
-            fontSize: 18,
-            borderWidth: 1,
-            borderRadius: 6,
-            width: 100,
-            backgroundColor: 'lightgrey',
-            marginHorizontal: 0,
-            borderColor: 'lightgrey',
-            paddingHorizontal: 12,
-            height: 45,
-        },
-        buttonContainer: { marginTop: 10, marginHorizontal: 20 },
-        button: {
-            backgroundColor: 'blue',
-            marginHorizontal: 20,
-            marginTop: 20,
-        },
-        modalContainer: {
-            marginTop: 50,
-            // alignSelf: 'flex-end',
-        },
-        modalSurface: {
-            marginTop: 100,
-            marginHorizontal: 10,
-            padding: 30,
+        activityIndicatorContainer: {
+            flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-            elevation: 5,
         },
-        modalTitle: {
-            fontSize: 24,
-            fontWeight: 'bold',
-            color: 'white',
-        },
-        modalButtonContainer: {
-            marginVertical: 20,
-            flexDirection: 'row',
-        },
-        modalButtonWrapper: {
-            marginHorizontal: 10,
+        activityIndicator: {
+            color: mtrTheme.colors.lightGraphic,
         },
     });

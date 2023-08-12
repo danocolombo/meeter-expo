@@ -1,3 +1,8 @@
+/* ------------------------------------------------
+ ** this is used to display user details to
+ ** manager when viewing "Your Team" and clicking
+ ** a user.
+ ** ----------------------------------------------*/
 import {
     StyleSheet,
     Text,
@@ -90,7 +95,7 @@ const TeamGroupListCard = (props) => {
     // printObject('team:\n', team);
     return (
         <>
-            <View style={styles.rootContainer}>
+            <View style={mtrStyles(mtrTheme).container}>
                 <Pressable
                     onPress={handleDetailsPress}
                     style={({ pressed }) => pressed && styles.pressed}
@@ -205,7 +210,14 @@ const TeamGroupListCard = (props) => {
     );
 };
 
-export default withTheme(TeamGroupListCard);
+export default TeamGroupListCard;
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.accent,
+        },
+    });
 
 const styles = StyleSheet.create({
     pressed: {

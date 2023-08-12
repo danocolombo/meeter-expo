@@ -3,19 +3,15 @@ import { useTheme } from 'react-native-paper';
 import React, { useState, useEffect, useCallback } from 'react';
 import { printObject } from '../utils/helpers';
 import TeamGroupCard from '../components/teams/Team.Group.Card';
-// import { getTeam } from '../jerichoQL/providers/team.provider';
 import { getProfiles } from '../features/profilesSlice';
-import { getAffiliationsForTeam } from '../jerichoQL/providers/affiliations.provider';
 import { getAffiliationsUsersByOrgId } from '../jerichoQL/providers/team.provider';
 import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 const TeamScreen = () => {
     const dispatch = useDispatch();
     const [storedProfiles, setStoredProfiles] = useState([]);
     const allProfiles = useSelector((store) => store.profiles.allProfiles);
     const [isLoading, setIsLoading] = useState(true);
-    const [teamMembers, setTeamMembers] = useState([]);
     const [inactiveMembers, setInactiveMembers] = useState([]);
     const [newMembers, setNewMembers] = useState([]);
     const [activeMembers, setActiveMembers] = useState([]);
@@ -23,12 +19,9 @@ const TeamScreen = () => {
     const userProfile = useSelector((state) => state.user.profile);
     useFocusEffect(
         useCallback(() => {
-            printObject('TS:20-->allProfiles:\n', allProfiles);
             dispatch(getProfiles);
             getAffiliationsUsersByOrgId(userProfile.activeOrg.id)
                 .then((theTeam) => {
-                    console.log('THEN - BACK');
-                    setTeamMembers(theTeam);
                     let nMembers = [];
                     let iMembers = [];
                     let aMembers = [];
@@ -63,160 +56,149 @@ const TeamScreen = () => {
     );
     useEffect(() => {
         setStoredProfiles(allProfiles);
-        printObject('storedProfiles:', storedProfiles);
     }, [allProfiles]);
     if (isLoading) {
         return (
-            <View>
-                <Text>Loading</Text>
+            <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
+                <ActivityIndicator
+                    color={mtrStyles(mtrTheme).activityIndicator}
+                    size={80}
+                />
             </View>
         );
     }
     return (
-        <>
-            <View
-                style={{
-                    backgroundColor: mtrTheme.colors.background,
-                    flex: 1,
-                }}
-            >
-                <View>
-                    <Text>screens/TeamScreen</Text>
-                </View>
-                <View>
-                    <Text style={mtrTheme.screenTitle}>TEAM MEMBERS</Text>
-                </View>
+        <View style={mtrStyles(mtrTheme).surface}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    TEAM MEMBERS
+                </Text>
+            </View>
 
-                <View
-                    style={{
-                        paddingVertical: 10,
-                        paddingHorizontal: 30,
-                        marginBottom: 10,
-                        marginHorizontal: 30,
-                    }}
-                >
-                    <Text style={mtrTheme.subTitleSmall}>
-                        These are the current users that have access to this
-                        affiliation. Click each one for more details.
-                    </Text>
-                    <Text
-                        style={[
-                            mtrTheme.subTitleSmall,
-                            {
-                                marginTop: 10,
-                            },
-                        ]}
-                    >
-                        New member requests will be highlighted and you can take
-                        appropriate action as you see fit.
-                    </Text>
-                    <View>
-                        <Text style={{ color: 'white' }}>
-                            NEW:{newMembers.length}
+            <View style={mtrStyles(mtrTheme).subtitleContainer}>
+                <Text style={mtrStyles(mtrTheme).subtitleText}>
+                    These are the current users that have access to this
+                    affiliation. Click each one for more details.
+                </Text>
+                <Text style={mtrStyles(mtrTheme).subtitleText}>
+                    New member requests will be highlighted and you can take
+                    appropriate action as you see fit.
+                </Text>
+            </View>
+
+            {newMembers && (
+                <>
+                    <View style={mtrStyles(mtrTheme).headerContainer}>
+                        <Text style={mtrStyles(mtrTheme).headerText}>
+                            NEW MEMBER REQUESTS ({newMembers.length})
                         </Text>
                     </View>
-                </View>
-
-                {newMembers && (
-                    <>
-                        <View style={styles.headerContainer}>
-                            <Text style={styles.headerText}>
-                                NEW MEMBER REQUESTS
-                            </Text>
-                        </View>
-                        <FlatList
-                            data={newMembers}
-                            keyExtractor={(item) => item.id}
-                            renderItem={({ item }) => (
-                                <TeamGroupCard
-                                    team={item}
-                                    listType='new'
-                                    active={true}
-                                    handleDelete={() => {}}
-                                />
-                            )}
-                        />
-                    </>
-                )}
-                {activeMembers && (
-                    <>
-                        <View style={styles.headerContainer}>
-                            <Text style={styles.headerText}>
-                                ACTIVE MEMBERS
-                            </Text>
-                        </View>
-                        <FlatList
-                            data={activeMembers}
-                            keyExtractor={(item) => item.id}
-                            renderItem={({ item }) => (
-                                <TeamGroupCard
-                                    team={item}
-                                    listType='active'
-                                    active={true}
-                                    handleDelete={() => {}}
-                                />
-                            )}
-                        />
-                    </>
-                )}
-                {inactiveMembers && (
-                    <>
-                        <View style={styles.headerContainer}>
-                            <Text style={styles.headerText}>
-                                INACTIVE MEMBERS
-                            </Text>
-                        </View>
-                        <FlatList
-                            data={inactiveMembers}
-                            keyExtractor={(item) => item.id}
-                            renderItem={({ item }) => (
-                                <TeamGroupCard
-                                    team={item}
-                                    listType='inactive'
-                                    active={true}
-                                    handleDelete={() => {}}
-                                />
-                            )}
-                        />
-                    </>
-                )}
-            </View>
-        </>
+                    <FlatList
+                        data={newMembers}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <TeamGroupCard
+                                team={item}
+                                listType='new'
+                                active={true}
+                                handleDelete={() => {}}
+                            />
+                        )}
+                    />
+                </>
+            )}
+            {activeMembers && (
+                <>
+                    <View style={mtrStyles(mtrTheme).headerContainer}>
+                        <Text style={mtrStyles(mtrTheme).headerText}>
+                            ACTIVE MEMBERS ({activeMembers.length})
+                        </Text>
+                    </View>
+                    <FlatList
+                        data={activeMembers}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <TeamGroupCard
+                                team={item}
+                                listType='active'
+                                active={true}
+                                handleDelete={() => {}}
+                            />
+                        )}
+                    />
+                </>
+            )}
+            {inactiveMembers && (
+                <>
+                    <View style={mtrStyles(mtrTheme).headerContainer}>
+                        <Text style={mtrStyles(mtrTheme).headerText}>
+                            INACTIVE MEMBERS ({newMembers.length})
+                        </Text>
+                    </View>
+                    <FlatList
+                        data={inactiveMembers}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <TeamGroupCard
+                                team={item}
+                                listType='inactive'
+                                active={true}
+                                handleDelete={() => {}}
+                            />
+                        )}
+                    />
+                </>
+            )}
+        </View>
     );
 };
 
 export default TeamScreen;
-const styles = StyleSheet.create({
-    // pressed: {
-    //     opacity: 0.75,
-    // },
-    // rootContainer: {
-    //     marginHorizontal: 10,
-    // },
-    // teamMemberItem: {
-    //     marginVertical: 5,
-    //     // paddingBottom: 5,
-    //     backgroundColor: 'darkgrey',
-    //     flexDirection: 'row',
-    //     //justifyContent: 'space-between',
-    //     borderRadius: 10,
-    //     elevation: 3,
-    //     shadowColor: 'yellow',
-    //     shadowRadius: 4,
-    //     shadowOffset: { width: 1, height: 1 },
-    //     shadowOpacity: 0.4,
-    // },
-    headerContainer: {
-        paddingVertical: 5,
-    },
-    headerText: {
-        fontFamily: 'Roboto-Bold',
-        fontSize: 20,
-        color: 'white',
-        fontWeight: '500',
-    },
-    accentText: {
-        fontSize: 16,
-        fontWeight: '400',
-    },
-});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        surface: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.background,
+        },
+        activityIndicatorContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        activityIndicator: {
+            color: mtrTheme.colors.lightGraphic,
+        },
+        screenTitleContainer: {
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.accent,
+        },
+        subtitleContainer: {
+            paddingVertical: 10,
+            paddingHorizontal: 50,
+            marginBottom: 10,
+            marginHorizontal: 30,
+        },
+        subtitleText: {
+            fontFamily: 'Roboto-Medium',
+            fontSize: 16,
+            fontWeight: '500',
+            color: mtrTheme.colors.accent,
+            textAlign: 'center',
+        },
+        sectionContainer: {},
+        sectionTitle: { color: mtrTheme.colors.lightText },
+        headerContainer: {
+            paddingVertical: 5,
+        },
+        headerText: {
+            fontFamily: 'Roboto-Bold',
+            fontSize: 20,
+            color: 'white',
+            fontWeight: '500',
+        },
+    });

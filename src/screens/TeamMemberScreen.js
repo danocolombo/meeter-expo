@@ -151,6 +151,9 @@ const TeamMemberScreen = (props) => {
     }
     return (
         <>
+            <View>
+                <Text style={{ color: 'black' }}>TeamMemberScreen</Text>
+            </View>
             <Modal visible={showNotice} animationStyle='slide'>
                 <Surface style={styles(mtrTheme).modalWrapper}>
                     <View style={styles(mtrTheme).modalContentWrapper}>

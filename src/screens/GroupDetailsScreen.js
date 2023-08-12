@@ -271,7 +271,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                 </View>
                             </View>
                         </View>
-                        {authority && (
+                        {/* {authority && (
                             <View
                                 style={{
                                     marginVertical: 20,
@@ -281,7 +281,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                 <>
                                     {meeter.userRole !== 'guest' && (
                                         <CustomButton
-                                            text='DELETE'
+                                            text='DELETEWWW'
                                             bgColor={mtrTheme.colors.critical}
                                             fgColor={mtrTheme.colors.lightText}
                                             type='PRIMARY'
@@ -298,7 +298,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                     )}
                                 </>
                             </View>
-                        )}
+                        )} */}
                     </View>
                 </Surface>
             </View>

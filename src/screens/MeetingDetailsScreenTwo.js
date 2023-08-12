@@ -34,7 +34,7 @@ import {
 //   ==============
 const MeetingDetails = (props) => {
     const id = props.route.params.id;
-    printObject('MDST:60-->props.route.params :\n', props.route.params);
+    // printObject('MDST:60-->props.route.params :\n', props.route.params);
     const mtrTheme = useTheme();
     const userProfile = useSelector((state) => state.user.profile);
     const [showDefaultsButton, setShowDefaultButton] = useState(true);
@@ -60,8 +60,8 @@ const MeetingDetails = (props) => {
         ) || [];
 
     const memoizedMeetingGroups = useMemo(() => meetingGroups, [meetingGroups]);
-    printObject('MDST:91-->defaultGroups:\n', defaultGroups);
-    printObject('MDST:92-->meeting:\n', meeting);
+    // printObject('MDST:91-->defaultGroups:\n', defaultGroups);
+    // printObject('MDST:92-->meeting:\n', meeting);
     // Check if the meeting does not exist
     if (!meeting) {
         // If meeting is not found, you can set a flag to indicate that
@@ -179,7 +179,7 @@ const MeetingDetails = (props) => {
             </View>
         );
     }
-    printObject('MDST:240-->meeting:\n', meeting);
+    // printObject('MDST:240-->meeting:\n', meeting);
     // printObject('MDST:264-->defaultGroups\n', defaultGroups);
     // printObject('MDST:267-->userProfile:\n', userProfile);
     // printObject('MDST:268-->perms\n', perms);

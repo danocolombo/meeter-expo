@@ -46,7 +46,7 @@ const LandingScreen = () => {
     useEffect(() => {
         // check if authenticated and no profile
         if (!userProfile?.id) {
-            handleInfoRequest().then(() => console.log('good'));
+            handleInfoRequest().then(() => console.log('systme ready'));
         }
         if (userProfile?.activeOrg?.status !== 'active') {
             // console.log('LS:102-->NOT ACTIVE');
@@ -82,7 +82,7 @@ const LandingScreen = () => {
     // printObject('LS:131-->systemRedux:\n', sysRedux);
     // printObject('LS:138-->systemInfo:\n', systemInfo);
     // printObject('LS:139-->teamInfo:\n', teamInfo);
-    printObject('LS:140-->userProfile:\n', userProfile);
+    // printObject('LS:140-->userProfile:\n', userProfile);
     return (
         <>
             <StatusBar style='light' />

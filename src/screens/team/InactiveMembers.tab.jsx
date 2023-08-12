@@ -20,7 +20,6 @@ const InactiveMembers = () => {
                 'IMT:11-->GRANT ' + roleId + ' role: guest, status: active'
             );
             const grantedMember = inactiveMembers.find((m) => m.id === userId);
-            printObject('IMT:20-->grantedMember:\n', grantedMember);
             dispatch(activateMember(grantedMember));
         }
     }

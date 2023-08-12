@@ -34,26 +34,26 @@ const GroupForm = ({ group, meeting, handleUpdate }) => {
         navigation.setOptions({
             title: meeter.appName,
             headerBackTitle: 'Cancel',
-            headerRight: () => (
-                <>
-                    {meeting.id !== '0' && (
-                        <TouchableOpacity
-                            onPress={() =>
-                                navigation.navigate('DeleteGroupConfirm', {
-                                    group,
-                                    meeting,
-                                })
-                            }
-                        >
-                            <MaterialCommunityIcons
-                                name='delete-forever'
-                                size={30}
-                                color={mtrTheme.colors.critical}
-                            />
-                        </TouchableOpacity>
-                    )}
-                </>
-            ),
+            // headerRight: () => (
+            //     <>
+            //         {meeting.id !== '0' && (
+            //             <TouchableOpacity
+            //                 onPress={() =>
+            //                     navigation.navigate('DeleteGroupConfirm', {
+            //                         group,
+            //                         meeting,
+            //                     })
+            //                 }
+            //             >
+            //                 <MaterialCommunityIcons
+            //                     name='delete-forever'
+            //                     size={30}
+            //                     color={mtrTheme.colors.lightGraphic}
+            //                 />
+            //             </TouchableOpacity>
+            //         )}
+            //     </>
+            // ),
         });
     }, [navigation]);
 

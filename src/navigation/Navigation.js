@@ -25,8 +25,8 @@ import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import { useDispatch, useSelector } from 'react-redux';
-import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
-import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
+// import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
+// import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
 import DGModalScreen from '../components/modals/DefaultGroup.modal';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub, Cache } from 'aws-amplify';
@@ -139,7 +139,7 @@ function MeeterStack(props) {
                     headerTintColor: 'white',
                 })}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
                 name='DeleteConfirm'
                 component={DeleteConfirmScreen}
                 options={({ navigation }) => ({
@@ -149,8 +149,8 @@ function MeeterStack(props) {
                     },
                     headerTintColor: 'white',
                 })}
-            />
-            <Stack.Screen
+            /> */}
+            {/* <Stack.Screen
                 name='DeleteGroupConfirm'
                 component={DeleteGroupConfirmScreen}
                 options={({ navigation }) => ({
@@ -160,7 +160,7 @@ function MeeterStack(props) {
                     },
                     headerTintColor: 'white',
                 })}
-            />
+            /> */}
             <Stack.Screen
                 name='Profile'
                 component={ProfileScreen}

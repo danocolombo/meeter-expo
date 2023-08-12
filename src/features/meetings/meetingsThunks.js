@@ -17,7 +17,7 @@ export const getAllMeetings = createAsyncThunk(
     'meetings/getAllMeetings',
     async (inputs, thunkAPI) => {
         try {
-            console.log('MT:20-->getAllMeetings called');
+            // console.log('MT:20-->getAllMeetings called');
             const oId = inputs.orgId;
             const meetingList = await API.graphql({
                 query: queries.listMeetings,
@@ -388,7 +388,7 @@ export const updateGroup = createAsyncThunk(
     'meetings/updateGroup',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:393-->updateGroup__inputs:\n', inputs);
+            // printObject('MT:393-->updateGroup__inputs:\n', inputs);
 
             //* * * * * * * * * * * * * * * * * * * *
             //* update the meeting in graphql

@@ -1,7 +1,6 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
-import CustomButton from '../components/ui/CustomButton';
 import { Surface, useTheme } from 'react-native-paper';
 import { printObject } from '../utils/helpers';
 //   FUNCTION START
@@ -16,8 +15,6 @@ const GroupDetailsScreen = ({ route, navigation }) => {
     const perms = useSelector((state) => state.user.perms);
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
-    const authority =
-        perms.includes('manage') || perms.includes('manage') || false;
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {

@@ -8,7 +8,7 @@ const primaryColor = '#CAEBF2';
 const accentColor = '#F4D160';
 const activityIndicator = '#293462';
 const alternateColor = '#D61C4E';
-const errorTextBox = '#ff9999';
+const errorTextBox = '#F08080';
 const historyTileColor = '#fff';
 const darkColor = '#000';
 const lightColor = '#fff';
@@ -48,6 +48,9 @@ const theme = {
         lightShadow: '#cccccc',
         mediumShadow: '#8c8c8c',
         darkShadow: '#1a6985',
+        lightGrey: '#D3D3D3',
+        mediumGrey: '#A9A9A9',
+        darkGrey: '#808080',
         text: white,
         activityIndicator: activityIndicator,
         //color for the disabled elements

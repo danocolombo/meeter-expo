@@ -150,201 +150,239 @@ const GroupNewScreen = ({ route }) => {
     );
     if (isLoading) {
         return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
+            <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
                 <ActivityIndicator
-                    color={mtrTheme.colors.activityIndicator}
+                    color={mtrStyles(mtrTheme).activityIndicator}
                     size={80}
                 />
             </View>
         );
     }
     return (
-        <>
-            <View>
-                <Text>GroupNewScreen</Text>
+        <Surface style={mtrStyles(mtrTheme).surface}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    NEW GROUP
+                </Text>
             </View>
-            <Surface style={mtrTheme.groupEditSurface}>
-                <View>
-                    <Text style={mtrTheme.screenTitle}>NEW GROUP</Text>
-                </View>
-                <View style={mtrTheme.groupEditRow}>
-                    <GenderSelectors
-                        setPick={setGenderValue}
-                        pick={values.gender}
-                    />
-                </View>
-                <View
-                    style={[
-                        mtrTheme.groupEditRowBasic,
-                        { marginTop: 15, marginBottom: 0 },
-                    ]}
-                >
-                    <NumberInput
-                        value={values.attendance}
-                        numberStyle={{ color: 'white' }}
-                        graphicStyle={{ color: 'white' }}
-                        onAction={inputChangedHandler.bind(this, 'attendance')}
-                    />
-                </View>
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Group Title'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: isTitleValid
-                                ? 'lightgrey'
-                                : mtrTheme.colors.errorTextBox,
-                            value: values.title,
-                            paddingHorizontal: 5,
-                            fontSize: 24,
-                            color: 'black',
-                            marginHorizontal: 0,
-                            placeholder: 'Group Title',
-                            style: { color: 'black' },
-                            fontWeight: '500',
+            <View style={mtrStyles(mtrTheme).selectorRow}>
+                <GenderSelectors
+                    setPick={setGenderValue}
+                    pick={values.gender}
+                />
+            </View>
+            <View style={mtrStyles(mtrTheme).attendanceRow}>
+                <NumberInput
+                    value={values.attendance}
+                    numberStyle={{ color: mtrTheme.colors.lightText }}
+                    graphicStyle={{ color: mtrTheme.colors.lightText }}
+                    onAction={inputChangedHandler.bind(this, 'attendance')}
+                />
+            </View>
+            <View style={mtrStyles(mtrTheme).inputRow}>
+                <Input
+                    label='Group Title'
+                    labelStyle={mtrStyles(mtrTheme).inputLabelText}
+                    textInputConfig={{
+                        backgroundColor: isTitleValid
+                            ? mtrTheme.colors.lightGrey
+                            : mtrTheme.colors.errorTextBox,
+                        value: values.title,
+                        paddingHorizontal: 5,
+                        fontSize: 24,
+                        color: mtrTheme.colors.darkGraphic,
+                        marginHorizontal: 0,
+                        placeholder: 'Group Title',
+                        style: { color: mtrTheme.colors.darkGraphic },
+                        fontWeight: '500',
 
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'title'
-                            ),
-                        }}
-                    />
+                        letterSpacing: 0,
+                        onChangeText: inputChangedHandler.bind(this, 'title'),
+                    }}
+                />
+            </View>
+            {!isTitleValid && (
+                <View style={mtrStyles(mtrTheme).inputErrorContainer}>
+                    <Text style={mtrStyles(mtrTheme).inputErrorText}>
+                        REQUIRED: minimum length = 3
+                    </Text>
                 </View>
-                {!isTitleValid && (
-                    <View style={mtrTheme.groupEditInputErrorContainer}>
-                        <Text style={mtrTheme.groupEditInputErrorText}>
-                            REQUIRED: minimum length = 3
-                        </Text>
-                    </View>
-                )}
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Location'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: isLocationValid
-                                ? 'lightgrey'
-                                : mtrTheme.colors.errorTextBox,
-                            paddingHorizontal: 5,
-                            value: values.location,
-                            fontSize: 24,
-                            color: 'black',
-                            capitalize: 'words',
-                            marginHorizontal: 0,
-                            placeholder: 'where was group?',
-                            style: { color: 'black' },
+            )}
+            <View style={mtrStyles(mtrTheme).inputRow}>
+                <Input
+                    label='Location'
+                    labelStyle={mtrStyles(mtrTheme).inputLabelText}
+                    textInputConfig={{
+                        backgroundColor: isLocationValid
+                            ? mtrTheme.colors.lightGrey
+                            : mtrTheme.colors.errorTextBox,
+                        paddingHorizontal: 5,
+                        value: values.location,
+                        fontSize: 24,
+                        color: mtrTheme.colors.darkGraphic,
+                        capitalize: 'words',
+                        marginHorizontal: 0,
+                        placeholder: 'where was group?',
+                        style: { color: mtrTheme.colors.darkGraphic },
 
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'location'
-                            ),
-                        }}
-                    />
+                        fontWeight: '500',
+                        letterSpacing: 0,
+                        onChangeText: inputChangedHandler.bind(
+                            this,
+                            'location'
+                        ),
+                    }}
+                />
+            </View>
+            {!isLocationValid && (
+                <View style={mtrTheme.groupEditInputErrorContainer}>
+                    <Text style={mtrTheme.groupEditInputErrorText}>
+                        REQUIRED: minimum length = 3
+                    </Text>
                 </View>
-                {!isLocationValid && (
-                    <View style={mtrTheme.groupEditInputErrorContainer}>
-                        <Text style={mtrTheme.groupEditInputErrorText}>
-                            REQUIRED: minimum length = 3
-                        </Text>
-                    </View>
-                )}
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Faciliatator'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 5,
-                            fontSize: 24,
-                            value: values.facilitator,
-                            color: 'black',
-                            capitalize: 'words',
-                            marginHorizontal: 0,
-                            placeholder: 'who facilitated?',
-                            style: { color: 'black' },
+            )}
+            <View style={mtrStyles(mtrTheme).inputRow}>
+                <Input
+                    label='Facilitator'
+                    labelStyle={mtrStyles(mtrTheme).inputLabelText}
+                    textInputConfig={{
+                        backgroundColor: mtrTheme.colors.lightGrey,
+                        paddingHorizontal: 5,
+                        fontSize: 24,
+                        value: values.facilitator,
+                        color: mtrTheme.colors.darkGraphic,
+                        capitalize: 'words',
+                        marginHorizontal: 0,
+                        placeholder: 'who facilitated?',
+                        style: { color: mtrTheme.colors.darkGraphic },
 
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'facilitator'
-                            ),
-                        }}
-                    />
-                </View>
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Co-Faciliatator'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 5,
-                            fontSize: 24,
-                            value: values.cofacilitator,
-                            color: 'black',
-                            width: '100%',
-                            capitalize: 'words',
-                            marginHorizontal: 0,
-                            placeholder: 'who co-facilitated?',
-                            style: { color: 'black' },
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'cofacilitator'
-                            ),
-                        }}
-                    />
-                </View>
-                <View style={mtrTheme.groupEditRowBasic}>
-                    <Input
-                        label='Notes'
-                        labelStyle={mtrTheme.groupFormInputTitle}
-                        textInputConfig={{
-                            backgroundColor: 'lightgrey',
-                            paddingHorizontal: 10,
-                            fontSize: 24,
-                            color: 'black',
-                            value: values.notes,
-                            capitalize: 'sentence',
-                            autoCorrect: true,
-                            marginHorizontal: 5,
-                            placeholder: '',
-                            style: { color: 'black' },
-                            fontWeight: '500',
-                            letterSpacing: 0,
-                            multiline: true,
-                            minHeight: 100,
-                            onChangeText: inputChangedHandler.bind(
-                                this,
-                                'notes'
-                            ),
-                        }}
-                    />
-                </View>
+                        fontWeight: '500',
+                        letterSpacing: 0,
+                        onChangeText: inputChangedHandler.bind(
+                            this,
+                            'facilitator'
+                        ),
+                    }}
+                />
+            </View>
+            <View style={mtrStyles(mtrTheme).inputRow}>
+                <Input
+                    label='Co-Faciliatator'
+                    labelStyle={mtrStyles(mtrTheme).inputLabelText}
+                    textInputConfig={{
+                        backgroundColor: mtrTheme.colors.lightGrey,
+                        paddingHorizontal: 5,
+                        fontSize: 24,
+                        value: values.cofacilitator,
+                        color: mtrTheme.colors.darkGraphic,
+                        width: '100%',
+                        capitalize: 'words',
+                        marginHorizontal: 0,
+                        placeholder: 'who co-facilitated?',
+                        style: { color: mtrTheme.colors.darkGraphic },
+                        fontWeight: '500',
+                        letterSpacing: 0,
+                        onChangeText: inputChangedHandler.bind(
+                            this,
+                            'cofacilitator'
+                        ),
+                    }}
+                />
+            </View>
+            <View style={mtrStyles(mtrTheme).inputRow}>
+                <Input
+                    label='Notes'
+                    labelStyle={mtrStyles(mtrTheme).inputLabelText}
+                    textInputConfig={{
+                        backgroundColor: mtrTheme.colors.lightGrey,
+                        paddingHorizontal: 10,
+                        fontSize: 24,
+                        color: mtrTheme.colors.darkGraphic,
+                        value: values.notes,
+                        capitalize: 'sentence',
+                        autoCorrect: true,
+                        marginHorizontal: 5,
+                        placeholder: '',
+                        style: { color: mtrTheme.colors.darkGraphic },
+                        fontWeight: '500',
+                        letterSpacing: 0,
+                        multiline: true,
+                        minHeight: 100,
+                        onChangeText: inputChangedHandler.bind(this, 'notes'),
+                    }}
+                />
+            </View>
 
-                <View style={{ marginTop: 10, marginHorizontal: 20 }}>
-                    <CustomButton
-                        text='SAVE'
-                        bgColor={mtrTheme.colors.success}
-                        fgColor='white'
-                        type='PRIMARY'
-                        enabled={isTitleValid && isLocationValid}
-                        onPress={handleFormSubmit}
-                    />
-                </View>
-            </Surface>
-        </>
+            <View style={mtrStyles(mtrTheme).buttonContainer}>
+                <CustomButton
+                    text='SAVE'
+                    bgColor={mtrTheme.colors.success}
+                    fgColor={mtrTheme.colors.lightText}
+                    type='PRIMARY'
+                    enabled={isTitleValid && isLocationValid}
+                    onPress={handleFormSubmit}
+                />
+            </View>
+        </Surface>
     );
 };
-export default withTheme(GroupNewScreen);
+export default GroupNewScreen;
 const styles = StyleSheet.create({});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        surface: { flex: 1 },
+        screenTitleContainer: {
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.accent,
+        },
+        activityIndicatorContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        activityIndicator: {
+            color: mtrTheme.colors.lightGraphic,
+        },
+        selectorRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderWidth: 2,
+            borderColor: mtrTheme.colors.lightGraphic,
+            borderRadius: 5,
+            paddingVertical: 5,
+            marginTop: 10,
+            marginHorizontal: 10,
+        },
+        attendanceRow: {
+            marginVertical: 5,
+            marginTop: 15,
+            marginBottom: 0,
+        },
+        inputRow: {
+            marginHorizontal: 20,
+            marginVertical: 5,
+        },
+        inputLabelText: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 18,
+            fontWeight: '500',
+            color: 'white',
+        },
+        inputErrorContainer: {
+            marginHorizontal: 30,
+        },
+        inputErrorText: {
+            color: mtrTheme.colors.accent,
+            fontFamily: 'Roboto-MediumItalic',
+            fontSize: 18,
+        },
+        buttonContainer: {
+            marginTop: 10,
+            marginHorizontal: 20,
+        },
+    });

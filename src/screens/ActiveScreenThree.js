@@ -204,7 +204,7 @@ const ActiveScreen = () => {
                 {userProfile?.activeOrg?.role === 'manage' && (
                     <FAB
                         icon='calendar-plus'
-                        style={styles.FAB}
+                        style={mtrStyles(mtrTheme).FAB}
                         onPress={handleNewRequest}
                     />
                 )}
@@ -328,29 +328,12 @@ const mtrStyles = (mtrTheme) =>
             marginVertical: 10,
         },
         buttonWrapper: {},
-    });
-const styles = StyleSheet.create({
-    rootContainer: {
-        flex: 1,
-    },
-    screenHeader: {
-        alignItems: 'center',
-    },
-    screenHeaderText: {
-        fontSize: 30,
-        fontWeight: 'bold',
-    },
-    bgImageContainer: {
-        flex: 1,
-        height: '100%',
-        width: '100%',
-    },
-    FAB: {
-        position: 'absolute',
-        margin: 10,
+        FAB: {
+            position: 'absolute',
+            margin: 10,
 
-        right: 0,
-        bottom: -30,
-        backgroundColor: 'green',
-    },
-});
+            right: 0,
+            bottom: -30,
+            backgroundColor: 'green',
+        },
+    });

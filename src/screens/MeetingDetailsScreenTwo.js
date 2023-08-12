@@ -213,214 +213,192 @@ const MeetingDetails = (props) => {
         );
     }
     return (
-        <>
-            <Surface style={mtrStyles(mtrTheme).surface}>
-                {/* <SafeAreaView> */}
+        <Surface style={mtrStyles(mtrTheme).surface}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    {meeting?.meetingType}
+                </Text>
+            </View>
+            <View style={mtrStyles(mtrTheme).firstRow}>
+                <View style={mtrStyles(mtrTheme).dateWrapper}>
+                    {Platform.OS === 'ios' && (
+                        <View style={mtrStyles(mtrTheme).dateContainerIOS}>
+                            <DateBall date={formattedDate} />
+                        </View>
+                    )}
+                    {Platform.OS === 'android' && (
+                        <View style={mtrStyles(mtrTheme).dateContainerAndroid}>
+                            <DateStack date={formattedDate} />
+                        </View>
+                    )}
+                </View>
                 <View>
-                    <Text style={{ color: 'white' }}>
-                        MeetingDetailsScreenTwo
-                    </Text>
-                </View>
-                <View style={mtrStyles(mtrTheme).screenTitleContainer}>
-                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
-                        {meeting?.meetingType}
-                    </Text>
-                </View>
-                <View style={mtrStyles(mtrTheme).firstRow}>
-                    <View style={mtrStyles(mtrTheme).dateWrapper}>
-                        {Platform.OS === 'ios' && (
-                            <View style={mtrStyles(mtrTheme).dateContainerIOS}>
-                                <DateBall date={formattedDate} />
-                            </View>
-                        )}
-                        {Platform.OS === 'android' && (
-                            <View
-                                style={mtrStyles(mtrTheme).dateContainerAndroid}
-                            >
-                                <DateStack date={formattedDate} />
-                            </View>
-                        )}
-                    </View>
-                    <View>
-                        <View style={mtrStyles(mtrTheme).row1col2}>
-                            {meeting?.meetingType !== 'Testimony' && (
-                                <View style={mtrStyles(mtrTheme).textColumn}>
-                                    <Text
-                                        style={mtrStyles(mtrTheme).detailsTitle}
-                                    >
-                                        {meeting.title}
-                                    </Text>
-                                </View>
-                            )}
+                    <View style={mtrStyles(mtrTheme).row1col2}>
+                        {meeting?.meetingType !== 'Testimony' && (
                             <View style={mtrStyles(mtrTheme).textColumn}>
-                                <Text style={mtrStyles(mtrTheme).subTitle}>
-                                    {meeting?.meetingType !== 'Testimony'
-                                        ? meeting.supportContact
-                                        : meeting.title}
+                                <Text style={mtrStyles(mtrTheme).detailsTitle}>
+                                    {meeting.title}
                                 </Text>
                             </View>
-                            {meeting?.worship && (
-                                <View
-                                    style={mtrStyles(mtrTheme).worshipContainer}
-                                >
-                                    <MaterialCommunityIcons
-                                        name='music'
-                                        size={20}
-                                        color='white'
-                                    />
-                                    <Text
-                                        style={mtrStyles(mtrTheme).worshipText}
-                                    >
-                                        {meeting?.worship}
-                                    </Text>
-                                </View>
-                            )}
+                        )}
+                        <View style={mtrStyles(mtrTheme).textColumn}>
+                            <Text style={mtrStyles(mtrTheme).subTitle}>
+                                {meeting?.meetingType !== 'Testimony'
+                                    ? meeting.supportContact
+                                    : meeting.title}
+                            </Text>
                         </View>
+                        {meeting?.worship && (
+                            <View style={mtrStyles(mtrTheme).worshipContainer}>
+                                <MaterialCommunityIcons
+                                    name='music'
+                                    size={20}
+                                    color='white'
+                                />
+                                <Text style={mtrStyles(mtrTheme).worshipText}>
+                                    {meeting?.worship}
+                                </Text>
+                            </View>
+                        )}
                     </View>
                 </View>
+            </View>
+            <View style={mtrStyles(mtrTheme).row}>
+                <View style={mtrStyles(mtrTheme).detailsContainer}>
+                    <Text style={mtrTheme.detailsRowLabel}>
+                        {historic ? 'Meal:' : 'Meal Plans:'}
+                    </Text>
+                </View>
+                <View style={{ marginHorizontal: 2 }}>
+                    <Text style={mtrTheme.detailsRowValue}>
+                        {meeting.meal === '' ? 'TBD' : meeting.meal}
+                    </Text>
+                </View>
+                {historic && (
+                    <View style={mtrStyles(mtrTheme).detailsBadgeContainer}>
+                        <Badge
+                            size={30}
+                            style={mtrStyles(mtrTheme).detailsBadge}
+                        >
+                            {meeting.mealCount}
+                        </Badge>
+                    </View>
+                )}
+            </View>
+            {!historic && (
                 <View style={mtrStyles(mtrTheme).row}>
                     <View style={mtrStyles(mtrTheme).detailsContainer}>
                         <Text style={mtrTheme.detailsRowLabel}>
-                            {historic ? 'Meal:' : 'Meal Plans:'}
+                            Meal Contact:
                         </Text>
                     </View>
                     <View style={{ marginHorizontal: 2 }}>
                         <Text style={mtrTheme.detailsRowValue}>
-                            {meeting.meal === '' ? 'TBD' : meeting.meal}
+                            {meeting.mealContact === ''
+                                ? 'TBD'
+                                : meeting.mealContact}
                         </Text>
                     </View>
-                    {historic && (
-                        <View style={mtrStyles(mtrTheme).detailsBadgeContainer}>
-                            <Badge
-                                size={30}
-                                style={mtrStyles(mtrTheme).detailsBadge}
-                            >
-                                {meeting.mealCount}
-                            </Badge>
-                        </View>
-                    )}
                 </View>
-                {!historic && (
-                    <View style={mtrStyles(mtrTheme).row}>
-                        <View style={mtrStyles(mtrTheme).detailsContainer}>
-                            <Text style={mtrTheme.detailsRowLabel}>
-                                Meal Contact:
-                            </Text>
-                        </View>
-                        <View style={{ marginHorizontal: 2 }}>
-                            <Text style={mtrTheme.detailsRowValue}>
-                                {meeting.mealContact === ''
-                                    ? 'TBD'
-                                    : meeting.mealContact}
-                            </Text>
-                        </View>
-                    </View>
-                )}
-                {historic && (
-                    <View style={mtrStyles(mtrTheme).row}>
-                        <View style={mtrStyles(mtrTheme).detailsContainer}>
-                            <Text style={mtrTheme.detailsRowLabel}>
-                                Attendance:
-                            </Text>
-                        </View>
-
-                        <View style={mtrStyles(mtrTheme).detailsBadgeContainer}>
-                            <Badge
-                                size={30}
-                                style={mtrStyles(mtrTheme).detailsBadge}
-                            >
-                                {meeting.attendanceCount}
-                            </Badge>
-                        </View>
-                    </View>
-                )}
-                {meeting.newcomersCount > 0 && (
-                    <View style={mtrStyles(mtrTheme).row}>
-                        <View style={mtrStyles(mtrTheme).detailsContainer}>
-                            <Text style={mtrTheme.detailsRowLabel}>
-                                Newcomers:
-                            </Text>
-                        </View>
-
-                        <View style={mtrStyles(mtrTheme).detailsBadgeContainer}>
-                            <Badge
-                                size={30}
-                                style={mtrStyles(mtrTheme).detailsBadge}
-                            >
-                                {meeting.newcomersCount}
-                            </Badge>
-                        </View>
-                    </View>
-                )}
-                {meeting.notes && (
-                    <View style={mtrStyles(mtrTheme).notesContainer}>
-                        <Text style={mtrStyles(mtrTheme).notesText}>
-                            {meeting.notes}
+            )}
+            {historic && (
+                <View style={mtrStyles(mtrTheme).row}>
+                    <View style={mtrStyles(mtrTheme).detailsContainer}>
+                        <Text style={mtrTheme.detailsRowLabel}>
+                            Attendance:
                         </Text>
                     </View>
-                )}
-                <View style={mtrStyles(mtrTheme).openShareSection}>
-                    <View style={mtrStyles(mtrTheme).openShareContainer}>
-                        <Text style={mtrStyles(mtrTheme).openShareGroupsText}>
-                            Open-Share Groups
-                        </Text>
-                        {(newPerms.includes('manage') ||
-                            newPerms.includes('groups')) && (
-                            <View
-                                style={
-                                    mtrStyles(mtrTheme).openShareButtonContainer
+
+                    <View style={mtrStyles(mtrTheme).detailsBadgeContainer}>
+                        <Badge
+                            size={30}
+                            style={mtrStyles(mtrTheme).detailsBadge}
+                        >
+                            {meeting.attendanceCount}
+                        </Badge>
+                    </View>
+                </View>
+            )}
+            {meeting.newcomersCount > 0 && (
+                <View style={mtrStyles(mtrTheme).row}>
+                    <View style={mtrStyles(mtrTheme).detailsContainer}>
+                        <Text style={mtrTheme.detailsRowLabel}>Newcomers:</Text>
+                    </View>
+
+                    <View style={mtrStyles(mtrTheme).detailsBadgeContainer}>
+                        <Badge
+                            size={30}
+                            style={mtrStyles(mtrTheme).detailsBadge}
+                        >
+                            {meeting.newcomersCount}
+                        </Badge>
+                    </View>
+                </View>
+            )}
+            {meeting.notes && (
+                <View style={mtrStyles(mtrTheme).notesContainer}>
+                    <Text style={mtrStyles(mtrTheme).notesText}>
+                        {meeting.notes}
+                    </Text>
+                </View>
+            )}
+            <View style={mtrStyles(mtrTheme).openShareSection}>
+                <View style={mtrStyles(mtrTheme).openShareContainer}>
+                    <Text style={mtrStyles(mtrTheme).openShareGroupsText}>
+                        Open-Share Groups
+                    </Text>
+                    {(newPerms.includes('manage') ||
+                        newPerms.includes('groups')) && (
+                        <View
+                            style={mtrStyles(mtrTheme).openShareButtonContainer}
+                        >
+                            <TouchableOpacity
+                                key={0}
+                                onPress={() =>
+                                    navigation.navigate('GroupNew', {
+                                        meeting,
+                                    })
+                                }
+                                style={({ pressed }) =>
+                                    pressed && mtrStyles(mtrTheme).pressed
                                 }
                             >
-                                <TouchableOpacity
-                                    key={0}
-                                    onPress={() =>
-                                        navigation.navigate('GroupNew', {
-                                            meeting,
-                                        })
-                                    }
-                                    style={({ pressed }) =>
-                                        pressed && mtrStyles(mtrTheme).pressed
-                                    }
-                                >
-                                    <FontAwesome5
-                                        name='plus-circle'
-                                        size={20}
-                                        color={mtrTheme.colors.lightText}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                    </View>
-                </View>
-                <FlatList
-                    data={memoizedMeetingGroups}
-                    keyExtractor={(item) => item.id}
-                    persistentScrollbar={true}
-                    renderItem={({ item }) => (
-                        <GroupListCard
-                            group={item}
-                            meeting={meeting}
-                            authority={authority}
-                            handleDeleteRequest={handleDeleteRequest}
-                        />
+                                <FontAwesome5
+                                    name='plus-circle'
+                                    size={20}
+                                    color={mtrTheme.colors.lightText}
+                                />
+                            </TouchableOpacity>
+                        </View>
                     )}
-                    ListFooterComponent={<></>}
-                />
-                {authority && showDefaultsButton && (
-                    <View
-                        style={mtrStyles(mtrTheme).defaultGroupsButtonContainer}
-                    >
-                        <CustomButton
-                            text='Add Default Groups'
-                            bgColor={mtrTheme.colors.buttonFillMedium}
-                            fgColor={mtrTheme.colors.buttonTextLight}
-                            type='STANDARD'
-                            onPress={() => handleAddDefaults()}
-                        />
-                    </View>
+                </View>
+            </View>
+            <FlatList
+                data={memoizedMeetingGroups}
+                keyExtractor={(item) => item.id}
+                persistentScrollbar={true}
+                renderItem={({ item }) => (
+                    <GroupListCard
+                        group={item}
+                        meeting={meeting}
+                        authority={authority}
+                        handleDeleteRequest={handleDeleteRequest}
+                    />
                 )}
-            </Surface>
-        </>
+                ListFooterComponent={<></>}
+            />
+            {authority && showDefaultsButton && (
+                <View style={mtrStyles(mtrTheme).defaultGroupsButtonContainer}>
+                    <CustomButton
+                        text='Add Default Groups'
+                        bgColor={mtrTheme.colors.buttonFillMedium}
+                        fgColor={mtrTheme.colors.buttonTextLight}
+                        type='STANDARD'
+                        onPress={() => handleAddDefaults()}
+                    />
+                </View>
+            )}
+        </Surface>
     );
 };
 

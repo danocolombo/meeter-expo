@@ -7,6 +7,7 @@ import {
     KeyboardAvoidingView,
     TouchableOpacity,
     Modal,
+    Alert,
 } from 'react-native';
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
 import React, { useCallback, useState, useLayoutEffect } from 'react';
@@ -19,14 +20,16 @@ import { printObject } from '../utils/helpers';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { MEETER_DEFAULTS } from '../constants/meeter';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { joinOrganization } from '../features/user/userThunks';
 const AffiliationScreen = (props) => {
     const navigation = useNavigation();
     const mtrTheme = useTheme();
+    const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.profile);
     const meeter = useSelector((state) => state.system);
     const [showChangeModal, setShowChangeModal] = useState(false);
+    const [showDupModal, setShowDupModal] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [affCode, setAffCode] = useState('');
     const [availableAffiliations, setAvailableAffiliations] = useState([]);
@@ -88,65 +91,17 @@ const AffiliationScreen = (props) => {
     const handleNewCodeClick = () => {
         if (affCode.length !== 3) return;
         setIsUpdating(true);
-        //todo - check the code
-        let org = {};
-        let theCode = 'WBC';
-        try {
-            async function getTheOrg() {
-                const orgResponse = await API.graphql(
-                    graphqlOperation(queries.listOrganizations, {
-                        filter: { code: { eq: affCode.toLowerCase() } },
-                    })
-                );
-                if (orgResponse.data.listOrganizations.items.length > 0) {
-                    console.log('YES');
-                    org = orgResponse.data.listOrganizations.items[0];
-                    //todo - add as userProfile default org
-                    const updateInfo = {
-                        id: userProfile.id,
-                        organizationDefaultUsersId: org.id,
-                    };
-                    try {
-                        const updatedUser = await API.graphql({
-                            query: mutations.updateUser,
-                            variables: { input: updateInfo },
-                        });
-                        printObject('AS:115-->updatedUser:', updatedUser);
-                    } catch (error) {
-                        printObject('unexpected error updating user:', error);
-                    }
-                    //todo - if valid add affiliation
-                    try {
-                        const insertInfo = {
-                            organizationAffiliationsId: org.id,
-                            role: 'new',
-                            status: 'active',
-                            userAffiliationsId: userProfile.id,
-                        };
-                        API.graphql({
-                            query: mutations.createAffiliation,
-                            variables: { input: insertInfo },
-                        })
-                            .then((results) => {
-                                console.log('affiliation inserted');
-                                printObject('AS:135-->results:\n', results);
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                                console.error(error);
-                            });
-                    } catch (error) {
-                        console.log('a.p:142-->unexpected error:\n', error);
-                    }
-
-                    printObject('AS:103-->org', org);
-                }
-            }
-            getTheOrg();
-        } catch (error) {}
-
-        //todo - display Modal
+        //* check if user already has requested access
+        const existing = userProfile.affiliations.items.find(
+            (a) => a.organization.code.toUpperCase() === affCode.toUpperCase()
+        );
+        if (existing.length > 0) {
+            setIsUpdating(false);
+            setShowDupModal(true);
+        }
+        dispatch(joinOrganization(affCode));
         setIsUpdating(false);
+        setShowChangeModal(true);
     };
     const handleSaveClick = () => {
         //* update the users default id
@@ -257,12 +212,53 @@ const AffiliationScreen = (props) => {
                                 </View>
                             </Surface>
                         </Modal>
+                        <Modal visible={showDupModal} animationStyle='slide'>
+                            <Surface style={mtrStyles(mtrTheme).modalContainer}>
+                                <View>
+                                    <Text
+                                        style={mtrStyles(mtrTheme).modalTitle}
+                                    >
+                                        NOTIFICATION
+                                    </Text>
+                                </View>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme)
+                                            .modalMessageContainer
+                                    }
+                                >
+                                    <Text
+                                        style={
+                                            mtrStyles(mtrTheme).modalMessageText
+                                        }
+                                    >
+                                        You have previously requested access to
+                                        the organization, please contact the
+                                        organization leader to check status.
+                                    </Text>
+                                </View>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).modalButtonContainer
+                                    }
+                                >
+                                    <TouchableOpacity
+                                        style={mtrStyles(mtrTheme).modalButton}
+                                        onPress={() => setShowDupModal(false)}
+                                    >
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .modalButtonText
+                                            }
+                                        >
+                                            OK
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </Surface>
+                        </Modal>
                         <>
-                            <View>
-                                <Text style={{ color: 'white' }}>
-                                    Affiliation Screen
-                                </Text>
-                            </View>
                             <View>
                                 <View style={{ marginTop: 30 }}>
                                     <Text style={mtrTheme.screenTitle}>
@@ -299,10 +295,8 @@ const AffiliationScreen = (props) => {
                                                         .introText
                                                 }
                                             >
-                                                You need to provide an
-                                                affiliation code to get started.
-                                                You can use MTR to view a
-                                                sample.
+                                                This session is currently
+                                                associated with the test system.
                                             </Text>
                                         </View>
                                     ) : (
@@ -463,9 +457,10 @@ const AffiliationScreen = (props) => {
                                                 mtrStyles(mtrTheme).introText
                                             }
                                         >
-                                            If you have been invited to join a
-                                            team, enter the code you were
-                                            provided below and get connected.
+                                            If you have been invited to join an
+                                            organization, enter the code you
+                                            were provided below and send
+                                            request.
                                         </Text>
                                     </View>
                                     <View style={mtrTheme.profileFormRowStyle}>
@@ -662,8 +657,12 @@ const mtrStyles = (mtrTheme) =>
         },
         inputSearchStyle: {},
         affCodeInputText: {
-            color: mtrTheme.colors.lightText,
+            color: mtrTheme.colors.darkText,
             textAlign: 'center',
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            borderColor: mtrTheme.colors.mediumGrey,
+            borderWidth: 1,
+            borderRadius: 5,
             padding: 5,
             textTransform: 'uppercase',
         },

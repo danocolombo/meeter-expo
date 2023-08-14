@@ -131,7 +131,7 @@ const AuthDrawer = (navigation) => {
                     })}
                 />
             )}
-            {perms.includes('manage') && (
+            {perms?.includes('manage') && (
                 <Drawer.Screen
                     name='Your Team'
                     component={TeamConfig}
@@ -158,7 +158,7 @@ const AuthDrawer = (navigation) => {
                     })}
                 />
             )}
-            {(perms.includes('manage') || perms.includes('groups')) && (
+            {(perms?.includes('manage') || perms?.includes('groups')) && (
                 <Stack.Screen
                     name='Groups'
                     options={({ navigation }) => ({
@@ -179,7 +179,7 @@ const AuthDrawer = (navigation) => {
                     component={DefaultGroupsScreen}
                 />
             )}
-            {perms.includes('manage') && (
+            {perms?.includes('manage') && (
                 <Stack.Screen
                     name='Team'
                     options={({ navigation }) => ({
@@ -201,7 +201,7 @@ const AuthDrawer = (navigation) => {
                     component={TeamScreen}
                 />
             )}
-            {perms.includes('manage') && (
+            {perms?.includes('manage') && (
                 <Stack.Screen
                     name='Welcome'
                     options={({ navigation }) => ({

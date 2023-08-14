@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import React from 'react';
 import { Controller } from 'react-hook-form';
+
 const CustomInput = ({
     control,
     name,
@@ -31,6 +32,7 @@ const CustomInput = ({
                         <TextInput
                             value={value}
                             placeholder={placeholder}
+                            placeholderTextColor='blue' // Set placeholderTextColor here
                             onChangeText={onChange}
                             autoCapitalize={autoCapitalize}
                             autoCorrect={autoCorrect}
@@ -38,6 +40,7 @@ const CustomInput = ({
                             keyboardType={keyboardType}
                             onBlur={onBlur}
                             style={styles.input}
+                            padding={5}
                             secureTextEntry={secureTextEntry}
                         />
                     </View>
@@ -56,10 +59,8 @@ export default CustomInput;
 
 const styles = StyleSheet.create({
     container: {
-        background: 'white',
+        background: 'lightgrey',
         width: '100%',
-        // borderColor: '#e8e8e8',
-        // borderColor: 'black',
         paddingVertical: 5,
         borderWidth: 1,
         borderRadius: 5,
@@ -68,5 +69,7 @@ const styles = StyleSheet.create({
     },
     input: {
         fontSize: 18,
+        backgroundColor: 'lightgrey',
+        color: 'black',
     },
 });

@@ -7,7 +7,7 @@ import {
     getDateMinusDays,
     isDateDashBeforeToday,
 } from '../../utils/helpers';
-import { saveUserProfile, loginUser } from './userThunks';
+import { saveUserProfile, loginUser, joinOrganization } from './userThunks';
 
 const initialState = {
     profile: {},
@@ -67,6 +67,17 @@ export const userSlice = createSlice({
                 // console.log('Payload Data:', action.payload);
             })
             .addCase(loginUser.rejected, (state, action) => {
+                state.isLoading = false;
+            })
+            .addCase(joinOrganization.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(joinOrganization.fulfilled, (state, action) => {
+                state.profile = action.payload.userProfile;
+
+                state.isLoading = false;
+            })
+            .addCase(joinOrganization.rejected, (state, action) => {
                 state.isLoading = false;
             });
     },

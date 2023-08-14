@@ -1,8 +1,9 @@
 export const MEETER_DEFAULTS = {
-    ORGANIZATION_ID: '75fcef79-0e1f-4a8f-9f75-e920bb690164',
-    CODE: 'ZZZ',
-    NAME: 'Default Organization',
-    HERO_MESSAGE: 'Go to Profile | Affiliations to get started.',
+    ORGANIZATION_ID: 'c9d00915-fc0c-4f0e-ac23-d75acd1b80e2',
+    CODE: 'mtr',
+    NAME: 'Meeter Test System',
+    HERO_MESSAGE:
+        'Thanks for helping! You make this better. None of us are better than all of us!',
     ROLE: 'new',
 };
 

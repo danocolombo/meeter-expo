@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
 import React, { useState } from 'react';
 import CustomInput from '../../components/ui/CustomInput';
+import { useTheme } from 'react-native-paper';
 import CustomButton from '../../components/ui/Auth/CustomButton';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { registerUser } from '../../jerichoQL/providers/users.provider';
@@ -9,6 +10,7 @@ import { Auth } from 'aws-amplify';
 import { printObject } from '../../utils/helpers';
 const ConfirmEmailScreen = () => {
     const route = useRoute();
+    const mtrTheme = useTheme();
     const { control, handleSubmit, watch } = useForm({
         defaultValues: { username: route?.params?.username },
     });
@@ -23,7 +25,7 @@ const ConfirmEmailScreen = () => {
             console.log('confirmSignUp_reponse', response);
             navigation.navigate('SignIn');
         } catch (e) {
-            Alert.alert('Failure jericho user registration', e.message);
+            Alert.alert('Failure Meeter user registration', e.message);
         }
     };
 
@@ -42,11 +44,21 @@ const ConfirmEmailScreen = () => {
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.root}>
-                <Text style={styles.title}>Confirm your email</Text>
-                <View style={{ alignItems: 'center' }}>
-                    <Text>A code had been sent to your email.</Text>
-                    <Text>Please enter that code below.</Text>
+            <View style={mtrStyles(mtrTheme).root}>
+                <Text style={mtrStyles(mtrTheme).title}>
+                    Enter Confirmation Code
+                </Text>
+                <View style={mtrStyles(mtrTheme).instructionsContainer}>
+                    <Text style={mtrStyles(mtrTheme).instructionsText}>
+                        A code has been sent to your email. Please enter your
+                        username.
+                    </Text>
+                    <Text style={mtrStyles(mtrTheme).notEmailText}>
+                        (not email)
+                    </Text>
+                    <Text style={mtrStyles(mtrTheme).instructionsText}>
+                        Then enter that code below.
+                    </Text>
                 </View>
                 <CustomInput
                     name='username'
@@ -86,19 +98,41 @@ const ConfirmEmailScreen = () => {
         </ScrollView>
     );
 };
-
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        root: {
+            alignItems: 'center',
+            padding: 20,
+            marginTop: 75,
+        },
+        title: {
+            fontSize: 24,
+            fontWeight: 'bold',
+            color: mtrTheme.colors.background,
+            margin: 10,
+        },
+        instructionsContainer: {
+            alignItems: 'center',
+            padding: 20,
+        },
+        instructionsText: {
+            fontSize: 20,
+            textAlign: 'center',
+            fontFamily: 'Roboto-Regular',
+        },
+        notEmailText: {
+            fontSize: 18,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.critical,
+        },
+    });
 const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
         padding: 20,
         marginTop: 75,
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#051C60',
-        margin: 10,
-    },
+
     text: {
         color: 'gray',
         marginVertical: 10,

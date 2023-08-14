@@ -76,6 +76,9 @@ const SignInScreen = () => {
     const forgotPasswordPressed = () => {
         navigation.navigate('ForgotPassword', { user });
     };
+    const onCodeConfirm = () => {
+        navigation.navigate('ConfirmEmail');
+    };
     if (loading) {
         return (
             <View
@@ -150,12 +153,20 @@ const SignInScreen = () => {
                     text='Forgot Password'
                     onPress={forgotPasswordPressed}
                     type='TERTIARY'
+                    vPadding={10}
                 />
                 {/* <SocialSignInButtons /> */}
                 <CustomButton
                     text="Don't have an account? Create one"
                     onPress={onSignUpPressed}
                     type='TERTIARY'
+                    vPadding={5}
+                />
+                <CustomButton
+                    text='Need to enter confirmation code?'
+                    onPress={onCodeConfirm}
+                    type='TERTIARY'
+                    vPadding={0}
                 />
             </View>
         </ScrollView>

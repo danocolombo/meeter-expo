@@ -12,7 +12,7 @@ import TeamConfig from './TeamNav';
 import CustomDrawer from './CustomDrawer';
 import LandingScreen from '../screens/LandingScreen';
 import DefaultGroupsScreen from '../screens/DefaultGroupsScreen';
-import TeamScreen from '../screens/TeamScreen';
+import AccessScreen from '../screens/AccessScreen';
 import HeroMessageScreen from '../screens/HeroMessage';
 import { printObject } from '../utils/helpers';
 const Drawer = createDrawerNavigator();
@@ -183,7 +183,7 @@ const AuthDrawer = (navigation) => {
                 <Stack.Screen
                     name='Team'
                     options={({ navigation }) => ({
-                        title: 'Your Team',
+                        title: 'Access',
                         headerTitle: meeter.appName,
                         headerStyle: {
                             backgroundColor: mtrTheme.colors.background,
@@ -192,13 +192,13 @@ const AuthDrawer = (navigation) => {
 
                         drawerIcon: ({ color }) => (
                             <Ionicons
-                                name='people-outline'
+                                name='key-outline'
                                 size={28}
                                 color={color}
                             />
                         ),
                     })}
-                    component={TeamScreen}
+                    component={AccessScreen}
                 />
             )}
             {perms?.includes('manage') && (

@@ -26,9 +26,10 @@ const LandingScreen = () => {
     const dispatch = useDispatch();
     const [teamApproved, setTeamApproved] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [access, setAccess] = useState(false);
     const userProfile = useSelector((state) => state.user.profile);
     const meeting = useSelector((state) => state.system);
-
+    const perms = useSelector((state) => state.user.perms);
     const meeter = useSelector((state) => state.system.meeter);
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -41,8 +42,32 @@ const LandingScreen = () => {
             if (userProfile?.activeOrg?.id) {
                 dispatch(loadDefaultGroups({ id: userProfile.activeOrg.id }));
             }
+            // if (
+            //     perms.includes('manage') ||
+            //     perms.includes('meals') ||
+            //     perms.includes('groups') ||
+            //     perms.includes('director') ||
+            //     perms.includes('superuser')
+            // ) {
+            //     setAccess(true);
+            // } else {
+            //     setAccess(false);
+            // }
         }, [])
     );
+    useEffect(() => {
+        if (
+            perms.includes('manage') ||
+            perms.includes('meals') ||
+            perms.includes('groups') ||
+            perms.includes('director') ||
+            perms.includes('superuser')
+        ) {
+            setAccess(true);
+        } else {
+            setAccess(false);
+        }
+    }, [perms]);
     useEffect(() => {
         // check if authenticated and no profile
         if (!userProfile?.id) {
@@ -50,9 +75,19 @@ const LandingScreen = () => {
         }
         if (userProfile?.activeOrg?.status !== 'active') {
             // console.log('LS:102-->NOT ACTIVE');
+            setAccess(false);
             setTeamApproved(false);
         } else {
-            setTeamApproved(true);
+            if (
+                perms.includes('manage') ||
+                perms.includes('meals') ||
+                perms.includes('groups') ||
+                perms.includes('director') ||
+                perms.includes('superuser')
+            ) {
+                setAccess(true);
+                setTeamApproved(true);
+            }
         }
     }, []);
     const handleInfoRequest = async () => {
@@ -109,13 +144,14 @@ const LandingScreen = () => {
                         )}
                     </>
                 )}
-                {!teamApproved && (
+                {!access && (
                     <>
-                        <View style={mtrStyles(mtrTheme).heroContainer}>
-                            <Text style={mtrStyles(mtrTheme).heroText}>
+                        <View style={mtrStyles(mtrTheme).accessContainer}>
+                            <Text style={mtrStyles(mtrTheme).accessText}>
                                 You do not have authorization to access the
                                 default affiliation. Please go to your profile
-                                and change your affiliation.
+                                and change your affiliation. Or contact this
+                                affiliation leader.
                             </Text>
                         </View>
                     </>
@@ -171,6 +207,20 @@ const mtrStyles = (mtrTheme) =>
             padding: 10,
         },
         heroText: {
+            fontFamily: 'Roboto-Regular',
+            marginVertical: 20,
+            color: mtrTheme.colors.darkText,
+            fontSize: 20,
+            fontWeight: '400',
+            textAlign: 'center',
+        },
+        accessContainer: {
+            backgroundColor: mtrTheme.colors.warning,
+            margin: 20,
+            borderRadius: 10,
+            padding: 10,
+        },
+        accessText: {
             fontFamily: 'Roboto-Regular',
             marginVertical: 20,
             color: mtrTheme.colors.darkText,

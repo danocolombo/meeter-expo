@@ -10,9 +10,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { printObject } from '../utils/helpers';
 import TeamGroupCard from '../components/teams/Team.Group.Card';
 import { getProfiles } from '../features/profilesSlice';
-import { getAffiliationsUsersByOrgId } from '../jerichoQL/providers/team.provider';
+// import { getAffiliationsUsersByOrgId } from '../jerichoQL/providers/team.provider';
 import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
+import { getAffiliationsUsersByOrgId } from '../features/system/systemThunks';
 const TeamScreen = () => {
     const dispatch = useDispatch();
     const [storedProfiles, setStoredProfiles] = useState([]);
@@ -25,9 +26,14 @@ const TeamScreen = () => {
     const userProfile = useSelector((state) => state.user.profile);
     useFocusEffect(
         useCallback(() => {
-            dispatch(getProfiles);
-            getAffiliationsUsersByOrgId(userProfile.activeOrg.id)
-                .then((theTeam) => {
+            // dispatch(getProfiles);
+            dispatch(
+                getAffiliationsUsersByOrgId({ id: userProfile.activeOrg.id })
+            )
+                .then((data) => {
+                    const theTeam = data.payload;
+                    printObject('AS:31-->theTeam:\n', theTeam);
+
                     let nMembers = [];
                     let iMembers = [];
                     let aMembers = [];
@@ -55,7 +61,7 @@ const TeamScreen = () => {
                     setNewMembers(nMembers);
                 })
                 .catch((error) => {
-                    console.log('TS:73->CATCH\n', error, ' - return');
+                    console.log('AS:73->CATCH\n', error, ' - return');
                 });
             setIsLoading(false);
         }, [])
@@ -76,15 +82,15 @@ const TeamScreen = () => {
     return (
         <View style={mtrStyles(mtrTheme).surface}>
             <View style={mtrStyles(mtrTheme).screenTitleContainer}>
-                <Text style={mtrStyles(mtrTheme).screenTitleText}>
-                    TEAM MEMBERS
-                </Text>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>ACCESS</Text>
             </View>
 
             <View style={mtrStyles(mtrTheme).subtitleContainer}>
                 <Text style={mtrStyles(mtrTheme).subtitleText}>
-                    These are the current users that have access to this
-                    affiliation. Click each one for more details.
+                    These are the users affiliated with this organization.
+                </Text>
+                <Text style={mtrStyles(mtrTheme).subtitleText}>
+                    Click each one for more details.
                 </Text>
                 <Text style={mtrStyles(mtrTheme).subtitleText}>
                     New member requests will be highlighted and you can take
@@ -185,9 +191,9 @@ const mtrStyles = (mtrTheme) =>
         },
         subtitleContainer: {
             paddingVertical: 10,
-            paddingHorizontal: 50,
+            paddingHorizontal: 20,
             marginBottom: 10,
-            marginHorizontal: 30,
+            marginHorizontal: 0,
         },
         subtitleText: {
             fontFamily: 'Roboto-Medium',

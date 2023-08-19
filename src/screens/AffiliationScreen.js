@@ -276,50 +276,52 @@ const AffiliationScreen = (props) => {
                     <KeyboardAvoidingView behavior='padding'>
                         <Modal visible={showChangeModal} animationStyle='slide'>
                             <Surface style={mtrStyles(mtrTheme).modalContainer}>
-                                <View>
-                                    <Text
-                                        style={mtrStyles(mtrTheme).modalTitle}
-                                    >
-                                        NOTIFICATION
+                                <View style={{ marginTop: 30 }}>
+                                    <Text style={mtrTheme.screenTitle}>
+                                        CONFIRMATION
                                     </Text>
                                 </View>
-                                <View
-                                    style={
-                                        mtrStyles(mtrTheme)
-                                            .modalMessageContainer
-                                    }
-                                >
-                                    <Text
+                                <View style={mtrStyles(mtrTheme).infoSurface}>
+                                    <View
                                         style={
-                                            mtrStyles(mtrTheme).modalMessageText
-                                        }
-                                    >
-                                        The affiliations change has been made.
-                                        For the change to take effect, please
-                                        logout and log back in to switch
-                                        affiliations.
-                                    </Text>
-                                </View>
-                                <View
-                                    style={
-                                        mtrStyles(mtrTheme).modalButtonContainer
-                                    }
-                                >
-                                    <TouchableOpacity
-                                        style={mtrStyles(mtrTheme).modalButton}
-                                        onPress={() =>
-                                            setShowChangeModal(false)
+                                            mtrStyles(mtrTheme).introContainer
                                         }
                                     >
                                         <Text
                                             style={
-                                                mtrStyles(mtrTheme)
-                                                    .modalButtonText
+                                                mtrStyles(mtrTheme).introText
                                             }
                                         >
-                                            OK
+                                            The affiliations change has been
+                                            made. For the change to take effect,
+                                            please logout and log back in to
+                                            switch affiliations.
                                         </Text>
-                                    </TouchableOpacity>
+                                    </View>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .modalButtonContainer
+                                        }
+                                    >
+                                        <TouchableOpacity
+                                            style={
+                                                mtrStyles(mtrTheme).modalButton
+                                            }
+                                            onPress={() =>
+                                                setShowChangeModal(false)
+                                            }
+                                        >
+                                            <Text
+                                                style={
+                                                    mtrStyles(mtrTheme)
+                                                        .modalButtonText
+                                                }
+                                            >
+                                                OK
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </Surface>
                         </Modal>
@@ -342,33 +344,36 @@ const AffiliationScreen = (props) => {
                                             }
                                         >
                                             You already have affiliation
-                                            defined. If you cannot change to
+                                            requested. If you cannot change to
                                             affiliation, please contact the
                                             organization leader to check status.
                                         </Text>
                                     </View>
-                                </View>
-                                <View
-                                    style={
-                                        mtrStyles(mtrTheme).modalButtonContainer
-                                    }
-                                >
-                                    <TouchableOpacity
+                                    <View
                                         style={
                                             mtrStyles(mtrTheme)
-                                                .modalWarningButton
+                                                .modalButtonContainer
                                         }
-                                        onPress={() => setShowDupModal(false)}
                                     >
-                                        <Text
+                                        <TouchableOpacity
                                             style={
                                                 mtrStyles(mtrTheme)
-                                                    .modalWarningButtonText
+                                                    .modalWarningButton
+                                            }
+                                            onPress={() =>
+                                                setShowDupModal(false)
                                             }
                                         >
-                                            OK
-                                        </Text>
-                                    </TouchableOpacity>
+                                            <Text
+                                                style={
+                                                    mtrStyles(mtrTheme)
+                                                        .modalWarningButtonText
+                                                }
+                                            >
+                                                OK
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </Surface>
                         </Modal>
@@ -723,7 +728,7 @@ const mtrStyles = (mtrTheme) =>
         },
         modalButtonText: {
             fontSize: 16,
-            color: mtrTheme.colors.darkText,
+            color: mtrTheme.colors.lightText,
             fontFamily: 'Roboto-Regular',
             textAlign: 'center',
             paddingHorizontal: 30,

@@ -263,7 +263,7 @@ export const joinOrganization = createAsyncThunk(
             const insertInfo = {
                 organizationAffiliationsId: requestedOrg.id,
                 role: 'new',
-                status: 'active',
+                status: 'pending',
                 userAffiliationsId: inputs.userProfile.id,
             };
             printObject('UT:270-->insertInfo:\n', insertInfo);

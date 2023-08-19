@@ -759,6 +759,7 @@ export const usersBySub = /* GraphQL */ `
             items {
                 affiliations {
                     items {
+                        id
                         role
                         status
                         organization {

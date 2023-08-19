@@ -7,7 +7,12 @@ import {
     getDateMinusDays,
     isDateDashBeforeToday,
 } from '../../utils/helpers';
-import { saveUserProfile, loginUser, joinOrganization } from './userThunks';
+import {
+    saveUserProfile,
+    loginUser,
+    joinOrganization,
+    errorTest,
+} from './userThunks';
 
 const initialState = {
     profile: {},
@@ -74,11 +79,30 @@ export const userSlice = createSlice({
             })
             .addCase(joinOrganization.fulfilled, (state, action) => {
                 state.profile = action.payload.userProfile;
-
+                // printObject('US:82-->action.payload:\n', action.payload);
                 state.isLoading = false;
+                return state;
             })
             .addCase(joinOrganization.rejected, (state, action) => {
+                console.log('US:86 joinOrganization.rejected');
                 state.isLoading = false;
+                state.error = action.error.message; // Access the error message
+            })
+            .addCase(errorTest.pending, (state) => {
+                console.log('US:89 errorTest.pending');
+                state.isLoading = true;
+                return state;
+            })
+            .addCase(errorTest.fulfilled, (state, action) => {
+                console.log('US:99-->fulfilled.');
+                console.log(action);
+                state.isLoading = false;
+                return state;
+            })
+            .addCase(errorTest.rejected, (state, action) => {
+                console.log('US:99 errorTest.rejected');
+                state.isLoading = false;
+                state.error = action.error.message; // Access the error message
             });
     },
 });

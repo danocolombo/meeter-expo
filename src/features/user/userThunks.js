@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 // import axios from 'axios';
-import { API } from 'aws-amplify';
+import { API, graphqlOperation } from 'aws-amplify';
 import * as queries from '../../jerichoQL/queries';
 import * as gQueries from '../../graphql/queries';
 import * as mutations from '../../jerichoQL/mutations';
@@ -61,7 +61,8 @@ export const loginUser = createAsyncThunk(
                 }
                 const newProfile = { ...gqlProfile, activeOrg: activeOrg };
                 const results = { profile: newProfile, perms: perms };
-                printObject('UT:64-->results:', results);
+                printObject('UT:64-->profile&perms:', results);
+
                 return results;
             } else {
                 //*===========================================
@@ -99,7 +100,7 @@ export const loginUser = createAsyncThunk(
                     organizationDefaultUsersId: MEETER_DEFAULTS.ORGANIZATION_ID,
                     // activeOrg: defaultOrg,
                 };
-                printObject('UT:95-->newUser', newUser);
+                printObject('UT:103-->newUser', newUser);
                 let newUserRecord = {};
                 try {
                     const createUserResult = await API.graphql({
@@ -111,7 +112,7 @@ export const loginUser = createAsyncThunk(
                     console.error(error);
                     throw new Error('Failed to create new user');
                 }
-                printObject('UT:106-->newUserRecord', newUserRecord);
+                printObject('UT:115-->newUserRecord', newUserRecord);
                 //*----------------------------------
                 //todo -- createAff
                 //*----------------------------------
@@ -144,13 +145,13 @@ export const loginUser = createAsyncThunk(
                     variables: { sub: newUserRecord.sub },
                 });
                 printObject(
-                    'UT:138-->gqlProfileDataObject:\n',
+                    'UT:148-->gqlProfileDataObject:\n',
                     gqlProfileDataUpdated
                 );
                 if (gqlProfileDataUpdated?.data?.usersBySub?.items[0]?.id) {
                     const gqlProfile =
                         gqlProfileDataUpdated.data.usersBySub.items[0];
-                    printObject('UT:142-->gqlProfile:\n', gqlProfile);
+                    printObject('UT:154-->gqlProfile:\n', gqlProfile);
                     let clientData = {};
                     if (gqlProfile?.defaultOrg?.id) {
                         clientData = gqlProfile.affiliations.items.filter(
@@ -190,18 +191,18 @@ export const loginUser = createAsyncThunk(
                     perms = gqlProfile.affiliations.items.map(
                         (aff) => aff.role
                     );
-                    printObject('UT:185-->newProfile:\n', newProfile);
-                    printObject('UT:186-->perms:\n', perms);
+                    printObject('UT:195-->newProfile:\n', newProfile);
+                    printObject('UT:196-->perms:\n', perms);
                     return { profile: newProfile, perms: perms };
                 } else {
                     throw new Error('Failed to create user profile');
                 }
             }
         } catch (error) {
-            printObject('UT:82-->saveUserProfile ERROR', inputs);
-            printObject('UT:83-->error:\n', error);
+            printObject('UT:202-->saveUserProfile ERROR', inputs);
+            printObject('UT:203-->error:\n', error);
             // Rethrow the error to let createAsyncThunk handle it
-            throw new Error('UT:17-->Failed to saveUserProfile thunk');
+            throw new Error('UT:205-->Failed to saveUserProfile thunk');
         }
     }
 );
@@ -219,81 +220,136 @@ export const joinOrganization = createAsyncThunk(
             //      userProfile required
             if (!inputs?.userProfile?.id) {
                 console.log('UT:220-->userProfile is required');
-                throw new Error(
-                    'UT:221-->Failed to joinOrganization: userProfile missing'
-                );
+                throw new Error('01: userProfile required');
             }
             //      newCode required
             if (!inputs?.newCode) {
                 console.log('UT:224-->newCode is required');
-                throw new Error(
-                    'UT:225-->Failed to joinOrganization: newCode missing'
-                );
+                throw new Error('02: code required');
             }
+
             //      verify user does not have aff code
             const existing = inputs.userProfile.affiliations.items.find(
                 (a) =>
-                    a.organization.code.toUppercase() ===
+                    a.organization.code.toUpperCase() ===
                     inputs?.newCode?.toUpperCase()
             );
-            if (existing.length > 0) {
+            if (existing) {
                 printObject(
-                    'UT:232-->user already has affiliation for:',
+                    'UT:242-->user already has affiliation for:',
                     inputs.newCode
                 );
-                throw new Error(
-                    'UT:233-->Failed to joinOrganization: newCode duplicate'
-                );
+                throw new Error('03: duplicate');
             }
             //      confirm newCode is a valid code
             // note all codes in graphql organization table is all lowercase
-
+            const targetCode = inputs.newCode.toLowerCase();
+            console.log('targetCode:', targetCode);
             const orgResponse = await API.graphql(
                 graphqlOperation(queries.listOrganizations, {
-                    filter: { code: { eq: inputs.newCode.toLowerCase() } },
+                    filter: { code: { eq: targetCode } },
                 })
             );
             let requestedOrg = {};
             if (orgResponse.data.listOrganizations.items.length > 0) {
+                console.log('UT:254-->newCode is valid');
                 requestedOrg = orgResponse.data.listOrganizations.items[0];
             } else {
-                printObject('UT:249-->newCode is not valid:', inputs.newCode);
-                throw new Error(
-                    'UT:250-->Failed to joinOrganization: newCode invalid'
-                );
+                printObject('UT:258-->newCode is not valid:', inputs.newCode);
+                throw new Error('04: invalid code');
             }
             //      insert new affiliation request for org
             const newAffId = createAWSUniqueID();
             const insertInfo = {
-                id: newAffId,
                 organizationAffiliationsId: requestedOrg.id,
                 role: 'new',
                 status: 'active',
                 userAffiliationsId: inputs.userProfile.id,
             };
+            printObject('UT:270-->insertInfo:\n', insertInfo);
             const insertResponse = await API.graphql({
                 query: mutations.createAffiliation,
                 variables: { input: insertInfo },
             });
+            printObject('UT:273-->insertResponse:\n', insertResponse);
             if (!insertResponse?.data?.createAffiliation?.id) {
                 printObject(
-                    'UT:264-->could not add new affiliation:',
+                    'UT:281-->could not add new affiliation:',
                     insertInfo
                 );
-                printObject('UT:265-->insertResponse:\n', insertResponse);
-                throw new Error(
-                    'UT:266-->Failed to joinOrganization: insert failed'
-                );
+                printObject('UT:280-->insertInfo:\n', insertInfo);
+                printObject('UT:284-->insertResponse:\n', insertResponse);
+                throw new Error('05: createAffiliation failed');
             }
             //      now add the new affiliation to the user profile
-            const updatedUserProfile = { ...inputs.userProfile };
-            updatedUserProfile.affiliations.items.push(insertInfo);
-            return updatedUserProfile;
+            const newOrgInfo = {
+                id: insertResponse.data.createAffiliation.organization.id,
+                name: insertResponse.data.createAffiliation.organization.name,
+                code: insertResponse.data.createAffiliation.organization.code,
+                heroMessage:
+                    insertResponse.data.createAffiliation.organization
+                        .heroMessage,
+            };
+            const addedAff = {
+                id: insertResponse.data.createAffiliation.id,
+                role: insertResponse.data.createAffiliation.role,
+                status: insertResponse.data.createAffiliation.status,
+                organization: newOrgInfo,
+            };
+            printObject('UT:299-->addedAff:\n', addedAff);
+            // const updatedUserProfile = { ...inputs.userProfile };
+            // updatedUserProfile.affiliations.items.push(addedAff);
+            const updatedUserProfile = {
+                ...inputs.userProfile,
+                affiliations: {
+                    ...inputs.userProfile.affiliations,
+                    items: [...inputs.userProfile.affiliations.items, addedAff],
+                },
+            };
+            printObject('UT:302-->updatedUserProfile:\n', updatedUserProfile);
+            return { userProfile: updatedUserProfile };
         } catch (error) {
-            printObject('UT:82-->saveUserProfile ERROR', inputs);
-            printObject('UT:83-->error:\n', error);
-            // Rethrow the error to let createAsyncThunk handle it
-            throw new Error('UT:17-->Failed to saveUserProfile thunk');
+            console.log('UT:286:thunk catch hit');
+            printObject('UT:297-->error:\n', error);
+            if (error.message.startsWith('01:')) {
+                throw error; // Re-throw the specific error with code '01'
+            } else if (error.message.startsWith('02:')) {
+                throw error; // Re-throw the specific error with code '02'
+            } else if (error.message.startsWith('03:')) {
+                throw error; // Re-throw the specific error with code '03'
+            } else if (error.message.startsWith('04:')) {
+                throw error; // Re-throw the specific error with code '04'
+            } else {
+                // For unknown errors, throw a default code '99'
+                throw new Error('99: joinOrganization failure');
+            }
+        }
+    }
+);
+export const errorTest = createAsyncThunk(
+    'user/errorTest',
+    async (inputs, thunkAPI) => {
+        console.log('UT:333-->errorTest start');
+        // Simulating that code is duplicate
+        const throwError = true;
+        if (throwError) {
+            const errorCode = 3;
+            switch (errorCode) {
+                case 1:
+                    throw new Error('01: userProfile required');
+                    break;
+                case 2:
+                    throw new Error('02: code required');
+                    break;
+                case 3:
+                    throw new Error('03: duplicate');
+                    break;
+                default:
+                    throw new Error('99: unknown error');
+                    break;
+            }
+        } else {
+            return { results: 'PASS' };
         }
     }
 );
@@ -315,16 +371,16 @@ export const saveUserProfile = createAsyncThunk(
             const inputValues = { userProfile: inputs, perms: perms };
             return inputValues;
         } catch (error) {
-            printObject('UT:15-->saveUserProfile', inputs);
+            printObject('UT:319-->saveUserProfile', inputs);
             // Rethrow the error to let createAsyncThunk handle it
-            throw new Error('UT:17-->Failed to saveUserProfile thunk');
+            throw new Error('UT:321-->Failed to saveUserProfile thunk');
         }
     }
 );
 export const defineAndSaveUserProfile = createAsyncThunk(
     'user/defineAndSaveUserProfile',
     async (inputs, thunkAPI) => {
-        printObject('UT:35-->inputs:\n', inputs);
+        printObject('UT:328-->inputs:\n', inputs);
         let gqlProfile = {};
         let updatedProfile = {};
         let activeOrg = {};
@@ -339,17 +395,17 @@ export const defineAndSaveUserProfile = createAsyncThunk(
             //* check if user has profile
             //*****************************************
             if (gqlProfileData?.data?.usersBySub?.items[0]?.id) {
-                printObject('UT:47-->gqlProfileData:\n', gqlProfileData);
+                printObject('UT:343-->gqlProfileData:\n', gqlProfileData);
                 gqlProfile = gqlProfileData.data.usersBySub.items[0];
                 //      set activeOrg based on profile defaultOrg and affiliations
-                printObject('UT:51-->gqlProfile:\n', gqlProfile);
+                printObject('UT:346-->gqlProfile:\n', gqlProfile);
                 let clientData = {};
                 if (gqlProfile?.defaultOrg?.id) {
                     clientData = gqlProfile.affiliations.items.filter(
                         (a) => a.organization.id === gqlProfile.defaultOrg.id
                     );
                 }
-                printObject('UT:57-->clientData:\n', clientData);
+                printObject('UT:353-->clientData:\n', clientData);
                 let client = {};
 
                 if (clientData.length > 0) {
@@ -374,12 +430,12 @@ export const defineAndSaveUserProfile = createAsyncThunk(
                         status: 'active',
                     };
                 }
-                printObject('UT:82-->client:', client);
-                printObject('UT:83-->activeOrg:\n', activeOrg);
+                printObject('UT:378-->client:', client);
+                printObject('UT:379-->activeOrg:\n', activeOrg);
                 // printObject('AC:68-->activeOrg:\n', activeOrg);
                 // updatedProfile = { ...gqlProfile };
             } else {
-                console.log('UT:172-->ELSE---HELP');
+                console.log('UT:383-->ELSE---HELP');
                 //todo: what does it look like when new user and no profile?
                 //todo------------------------------------------------------
                 activeOrg = {
@@ -395,14 +451,14 @@ export const defineAndSaveUserProfile = createAsyncThunk(
             updatedProfile = { ...gqlProfile, activeOrg: activeOrg };
         } catch (error) {
             printObject(
-                'UT:96-->defineAndSaveUserProfile TryCatch failure:\n',
+                'UT:399-->defineAndSaveUserProfile TryCatch failure:\n',
                 error
             );
             return;
         }
 
         try {
-            printObject('UT:105-->updatedProfile\n', updatedProfile);
+            printObject('UT:406-->updatedProfile\n', updatedProfile);
             // rip perms out of affiliations
             let perms = [];
             updatedProfile?.affiliations?.items?.forEach((aff) => {
@@ -415,10 +471,10 @@ export const defineAndSaveUserProfile = createAsyncThunk(
             const inputValues = { userProfile: updatedProfile, perms: perms };
             return inputValues;
         } catch (error) {
-            printObject('UT:114-->defineAndSaveUserProfile', inputs);
+            printObject('UT:419-->defineAndSaveUserProfile', inputs);
             // Rethrow the error to let createAsyncThunk handle it
             throw new Error(
-                'UT:116-->Failed to defineAndSaveUserProfile thunk'
+                'UT:422-->Failed to defineAndSaveUserProfile thunk'
             );
         }
     }

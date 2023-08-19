@@ -10,9 +10,10 @@ import {
     Alert,
 } from 'react-native';
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
-import React, { useCallback, useState, useLayoutEffect } from 'react';
+import React, { useCallback, useRef, useState, useLayoutEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Dropdown } from 'react-native-element-dropdown';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API, graphqlOperation } from 'aws-amplify';
 import * as mutations from '../jerichoQL/mutations';
 import * as queries from '../jerichoQL/queries';
@@ -21,12 +22,14 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { MEETER_DEFAULTS } from '../constants/meeter';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-import { joinOrganization } from '../features/user/userThunks';
+import { joinOrganization, errorTest } from '../features/user/userThunks';
 const AffiliationScreen = (props) => {
-    const navigation = useNavigation();
+    const navigate = useNavigation();
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
+    const affCodeInputRef = useRef(null);
     const userProfile = useSelector((state) => state.user.profile);
+    const joinOrgError = useSelector((state) => state.user.error);
     const meeter = useSelector((state) => state.system);
     const [showChangeModal, setShowChangeModal] = useState(false);
     const [showDupModal, setShowDupModal] = useState(false);
@@ -37,16 +40,23 @@ const AffiliationScreen = (props) => {
     const [isAffiliationFocus, setIsAffiliationFocus] = useState(false);
     const [theMessage, setTheMessage] = useState();
     const [affiliationSelected, setAffiliationSelected] = useState(null);
+    const [affCount, setAffCount] = useState(0);
 
     useLayoutEffect(() => {
-        navigation.setOptions({
+        navigate.setOptions({
             title: meeter.appName,
             headerBackTitle: 'Back',
         });
-    }, [navigation]);
+    }, [navigate]);
     useFocusEffect(
         useCallback(() => {
             try {
+                const numberOfUniqueCodes = new Set();
+
+                userProfile.affiliations.items.forEach((item) => {
+                    numberOfUniqueCodes.add(item.organization.code);
+                });
+                setAffCount(numberOfUniqueCodes.size);
                 async function getAffList() {
                     if (userProfile?.affiliations?.items) {
                         if (userProfile?.affiliations.items.length > 1) {
@@ -76,6 +86,7 @@ const AffiliationScreen = (props) => {
                     }
                 }
                 getAffList();
+                affCodeInputRef.current.focus();
             } catch (error) {
                 console.log('HM:51-->unexpected error:\n', error);
             }
@@ -89,6 +100,67 @@ const AffiliationScreen = (props) => {
         }
     };
     const handleNewCodeClick = () => {
+        setIsUpdating(true);
+        if (affCode.length !== 3) return;
+        setIsUpdating(true);
+        //* check if user already has requested access
+        const existing = userProfile.affiliations.items.find(
+            (a) => a.organization.code.toUpperCase() === affCode.toUpperCase()
+        );
+        printObject('AS:102A-->userProfile', userProfile);
+        printObject('AS:102-->existing: ', existing);
+        if (existing) {
+            setIsUpdating(false);
+            setShowDupModal(true);
+            return;
+        }
+        console.log('AS:103-->calling thunk...');
+        dispatch(
+            joinOrganization({ userProfile: userProfile, newCode: affCode })
+        )
+            .then((resultAction) => {
+                // printObject('AS:112-->resultAction:\n', resultAction);
+                if (joinOrganization.rejected.match(resultAction)) {
+                    const errorMessage = resultAction.error.message; // Access the error message
+                    let errorMsg = '';
+                    switch (errorMessage.slice(0, 2)) {
+                        case '01':
+                            errorMsg = 'System Error 01: profile required';
+                            break;
+                        case '02':
+                            errorMsg = 'System Error 02: code required';
+                            break;
+                        case '03':
+                            errorMsg = 'You already have access';
+                            break;
+                        case '04':
+                            errorMsg = 'Invalid code submitted';
+                        default:
+                            errorMsg = errorMessage;
+                            break;
+                    }
+
+                    console.error(errorMsg);
+                } else {
+                    printObject(
+                        'AS:109-->errorTest complete. Function done:\n',
+                        null
+                    );
+                    navigate.goBack();
+                }
+
+                setIsUpdating(false);
+                // setShowChangeModal(true);
+            })
+            .catch((error) => {
+                console.error('AS:126-->An unexpected error occurred:', error);
+                // Handle any other unexpected errors
+
+                setIsUpdating(false);
+            });
+    };
+
+    const handleNewCodeClick2 = () => {
         if (affCode.length !== 3) return;
         setIsUpdating(true);
         //* check if user already has requested access
@@ -99,9 +171,40 @@ const AffiliationScreen = (props) => {
             setIsUpdating(false);
             setShowDupModal(true);
         }
-        dispatch(joinOrganization(affCode));
+        dispatch(
+            joinOrganization({ userProfile: userProfile, newCode: affCode })
+        ).catch((error) => {
+            if (error.message === 'USER_PROFILE_MISSING') {
+                console.log('AS:107-->User profile is missing.');
+            } else if (error.message === 'NEW_CODE_MISSING') {
+                console.log('AS:109-->New code is missing.');
+            } else if (error.message === 'NEW_CODE_DUPLICATE') {
+                console.log(
+                    'AS:111-->You already have affiliation for this new code.'
+                );
+            } else {
+                printObject('AS:113-->dispatch(error):\n', error);
+                console.log('AS:114-->An error occurred:', error.message);
+            }
+        });
+        if (joinOrgError) {
+            // Display an alert or handle the error message
+            console.log('AS:121-->Error:', joinOrgError);
+        }
+        if (joinOrgError) {
+            switch (joinOrgError.slice(0, 6)) {
+                case 'UT:297':
+                    Alert.alert('you already have affiliation');
+                    break;
+
+                default:
+                    Alert.alert(joinOrgError);
+                    break;
+            }
+        }
+        printObject('AS:134-->joinOrgError:\n', joinOrgError);
         setIsUpdating(false);
-        setShowChangeModal(true);
+        // setShowChangeModal(true);
     };
     const handleSaveClick = () => {
         //* update the users default id
@@ -134,6 +237,13 @@ const AffiliationScreen = (props) => {
             return;
         }
     }
+    function showCurrentAffiliations() {
+        let affs = [];
+        userProfile.affiliations.items.forEach((a) => {
+            affs.push({ [a.organization.code]: a.id });
+        });
+        printObject('Affiliations\n', affs);
+    }
     if (isUpdating) {
         return (
             <View
@@ -150,6 +260,7 @@ const AffiliationScreen = (props) => {
             </View>
         );
     }
+    printObject('AS:248-->userProfile:\n', userProfile);
     return (
         <>
             <SafeAreaView
@@ -214,28 +325,28 @@ const AffiliationScreen = (props) => {
                         </Modal>
                         <Modal visible={showDupModal} animationStyle='slide'>
                             <Surface style={mtrStyles(mtrTheme).modalContainer}>
-                                <View>
-                                    <Text
-                                        style={mtrStyles(mtrTheme).modalTitle}
-                                    >
+                                <View style={{ marginTop: 30 }}>
+                                    <Text style={mtrTheme.screenTitle}>
                                         NOTIFICATION
                                     </Text>
                                 </View>
-                                <View
-                                    style={
-                                        mtrStyles(mtrTheme)
-                                            .modalMessageContainer
-                                    }
-                                >
-                                    <Text
+                                <View style={mtrStyles(mtrTheme).infoSurface}>
+                                    <View
                                         style={
-                                            mtrStyles(mtrTheme).modalMessageText
+                                            mtrStyles(mtrTheme).introContainer
                                         }
                                     >
-                                        You have previously requested access to
-                                        the organization, please contact the
-                                        organization leader to check status.
-                                    </Text>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme).introText
+                                            }
+                                        >
+                                            You already have affiliation
+                                            defined. If you cannot change to
+                                            affiliation, please contact the
+                                            organization leader to check status.
+                                        </Text>
+                                    </View>
                                 </View>
                                 <View
                                     style={
@@ -243,13 +354,16 @@ const AffiliationScreen = (props) => {
                                     }
                                 >
                                     <TouchableOpacity
-                                        style={mtrStyles(mtrTheme).modalButton}
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .modalWarningButton
+                                        }
                                         onPress={() => setShowDupModal(false)}
                                     >
                                         <Text
                                             style={
                                                 mtrStyles(mtrTheme)
-                                                    .modalButtonText
+                                                    .modalWarningButtonText
                                             }
                                         >
                                             OK
@@ -281,6 +395,7 @@ const AffiliationScreen = (props) => {
                                             specific organization.{' '}
                                         </Text>
                                     </View>
+
                                     {userProfile.activeOrg.id ===
                                     MEETER_DEFAULTS.ORGANIZATION_ID ? (
                                         <View
@@ -299,7 +414,8 @@ const AffiliationScreen = (props) => {
                                                 associated with the test system.
                                             </Text>
                                         </View>
-                                    ) : (
+                                    ) : null}
+                                    {affCount > 1 && (
                                         <>
                                             <View
                                                 style={
@@ -313,11 +429,10 @@ const AffiliationScreen = (props) => {
                                                             .introText
                                                     }
                                                 >
-                                                    If you have access to other
-                                                    affiliates, you can switch
-                                                    to them by selecting them in
-                                                    the dropdown list, and tap
-                                                    "CHANGE"
+                                                    You have access to other
+                                                    affiliations, you can switch
+                                                    by selecting in the dropdown
+                                                    list, and tap "CHANGE"
                                                 </Text>
                                             </View>
                                             <View
@@ -477,6 +592,7 @@ const AffiliationScreen = (props) => {
                                                 }
                                             >
                                                 <TextInput
+                                                    ref={affCodeInputRef} // Set the ref here
                                                     minWidth={80}
                                                     backgroundColor={
                                                         mtrTheme.colors
@@ -496,13 +612,18 @@ const AffiliationScreen = (props) => {
                                             </View>
 
                                             <TouchableOpacity
-                                                onPress={() =>
-                                                    handleNewCodeClick()
-                                                }
-                                                style={
+                                                onPress={handleNewCodeClick}
+                                                style={[
                                                     mtrStyles(mtrTheme)
-                                                        .changeButton
-                                                }
+                                                        .changeButton,
+                                                    {
+                                                        opacity:
+                                                            affCode.length === 3
+                                                                ? 1
+                                                                : 0.5,
+                                                    }, // Set opacity based on condition
+                                                ]}
+                                                disabled={affCode.length !== 3} // Disable the button based on condition
                                             >
                                                 <Text
                                                     style={
@@ -515,7 +636,22 @@ const AffiliationScreen = (props) => {
                                             </TouchableOpacity>
                                         </View>
                                     </View>
+                                    <View style={mtrStyles(mtrTheme).infoRow}>
+                                        <TouchableOpacity
+                                            onPress={showCurrentAffiliations}
+                                            // Disable the button based on condition
+                                        >
+                                            <Text
+                                                style={
+                                                    mtrStyles(mtrTheme).infoText
+                                                }
+                                            >
+                                                INFO ({affCount})
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
+
                                 {/* Use a light status bar on iOS to account for the black space above the modal */}
                                 <StatusBar
                                     style={
@@ -587,8 +723,20 @@ const mtrStyles = (mtrTheme) =>
         },
         modalButtonText: {
             fontSize: 16,
-            color: mtrTheme.colors.mediumText,
-            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.darkText,
+            fontFamily: 'Roboto-Regular',
+            textAlign: 'center',
+            paddingHorizontal: 30,
+            paddingVertical: 5,
+        },
+        modalWarningButton: {
+            backgroundColor: mtrTheme.colors.warning,
+            borderRadius: 5,
+        },
+        modalWarningButtonText: {
+            fontSize: 16,
+            color: mtrTheme.colors.darkText,
+            fontFamily: 'Roboto-Regular',
             textAlign: 'center',
             paddingHorizontal: 30,
             paddingVertical: 5,
@@ -688,9 +836,10 @@ const mtrStyles = (mtrTheme) =>
             justifyContent: 'space-around',
         },
         changeButton: {
-            backgroundColor: mtrTheme.colors.lightBlue,
+            backgroundColor: mtrTheme.colors.success,
             borderRadius: 5,
             marginHorizontal: 3,
+            marginTop: 10,
         },
         changeButtonText: {
             fontSize: 14,
@@ -699,6 +848,13 @@ const mtrStyles = (mtrTheme) =>
             textAlign: 'center',
             paddingHorizontal: 20,
             paddingVertical: 5,
+        },
+        infoRow: {
+            marginLeft: 'auto',
+            marginRight: 10,
+        },
+        infoText: {
+            color: mtrTheme.colors.mediumText,
         },
     });
 export default AffiliationScreen;

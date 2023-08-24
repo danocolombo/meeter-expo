@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Pressable,
+} from 'react-native';
 import Permissions from './Permissions';
 
 import { updateTeamMemberPermissions } from '../../jerichoQL/providers/team.provider';
 import { printObject, transformPatePhone } from '../../utils/helpers';
 
 function MemberCard({ member, editFlag, deactivate, updatePermission }) {
+    printObject('MC:9-->member:\n', member);
     const [response, setResponse] = useState('<>');
     const [permissions, setPermissions] = useState(null);
     const [displayPhone, setDisplayPhone] = useState('');
@@ -19,30 +26,26 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
         let manage = false;
         let groups = false;
         let meals = false;
-        //printObject('MC:28-->member:\n', member);
-        member?.roles?.forEach((role) => {
-            // printObject('MC:11-->role:', role);
-            if ((role?.role === 'manage') & (role?.status === 'active')) {
-                manage = true;
-            }
-            if ((role?.role === 'groups') & (role?.status === 'active')) {
-                groups = true;
-            }
-            if ((role?.role === 'meals') & (role?.status === 'active')) {
-                meals = true;
-            }
-            setPermissions({
-                manage: manage,
-                groups: groups,
-                meals: meals,
-            });
+        if (member.roles.includes('manage')) {
+            manage = true;
+        }
+        if (member.roles.includes('groups')) {
+            groups = true;
+        }
+        if (member.roles.includes('meals')) {
+            meals = true;
+        }
+        setPermissions({
+            manage: manage,
+            groups: groups,
+            meals: meals,
         });
     }, []);
     const deactivateUser = () => {
         // printObject('member:\n', member);
         deactivate({
             memberId: member.id,
-            roles: member.roles,
+            roles: member.affiliations,
         });
     };
     const permissionHandler = async (value) => {
@@ -133,30 +136,26 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
                 break;
         }
     };
+    const handleMemberPress = () => {
+        printObject('MC:159-->member:\n', member);
+    };
     // printObject('MC:34-->member:\n', member);
     // printObject('MC:35-->permissions:\n', permissions);
     return (
-        <View
-            style={[
-                styles.item,
-                { backgroundColor: editFlag ? 'yellow' : '#A1C2F1' },
-            ]}
-        >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View>
+        <TouchableOpacity onPress={handleMemberPress}>
+            <View
+                style={[
+                    styles.item,
+                    { backgroundColor: editFlag ? 'yellow' : '#A1C2F1' },
+                ]}
+            >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View>
-                        <Text style={styles.name}>
-                            {member?.firstName} {member?.lastName}
-                        </Text>
-                    </View>
-                    <View
-                        style={{ flexDirection: 'row', alignItems: 'center' }}
-                    >
                         <View>
-                            <Text style={styles.details}>{member?.email}</Text>
+                            <Text style={styles.name}>
+                                {member?.firstName} {member?.lastName}
+                            </Text>
                         </View>
-                    </View>
-                    {displayPhone?.length > 0 && (
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -165,46 +164,63 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
                         >
                             <View>
                                 <Text style={styles.details}>
-                                    {displayPhone}
+                                    {member?.email}
                                 </Text>
                             </View>
                         </View>
-                    )}
-                    {member?.location?.city && member?.location?.stateProv && (
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                            }}
+                        {displayPhone?.length > 0 && (
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <View>
+                                    <Text style={styles.details}>
+                                        {displayPhone}
+                                    </Text>
+                                </View>
+                            </View>
+                        )}
+                        {member?.location?.city &&
+                            member?.location?.stateProv && (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <View style={{ paddingVertical: 3 }}>
+                                        <Text style={styles.details}>
+                                            {member?.location?.city},{' '}
+                                            {member?.location?.stateProv}
+                                        </Text>
+                                    </View>
+                                </View>
+                            )}
+                    </View>
+                    <View style={{ marginLeft: 'auto' }}>
+                        <Permissions
+                            permissions={permissions}
+                            editFlag={editFlag}
+                            togglePermission={permissionHandler}
+                        />
+                    </View>
+                </View>
+                {editFlag && (
+                    <View>
+                        <Pressable
+                            onPress={deactivateUser}
+                            style={styles.editButton}
                         >
-                            <View style={{ paddingVertical: 3 }}>
-                                <Text style={styles.details}>
-                                    {member?.location?.city},{' '}
-                                    {member?.location?.stateProv}
-                                </Text>
-                            </View>
-                        </View>
-                    )}
-                </View>
-                <View style={{ marginLeft: 'auto' }}>
-                    <Permissions
-                        permissions={permissions}
-                        editFlag={editFlag}
-                        togglePermission={permissionHandler}
-                    />
-                </View>
+                            <Text style={styles.editButtonText}>
+                                De-Activate
+                            </Text>
+                        </Pressable>
+                    </View>
+                )}
             </View>
-            {editFlag && (
-                <View>
-                    <Pressable
-                        onPress={deactivateUser}
-                        style={styles.editButton}
-                    >
-                        <Text style={styles.editButtonText}>De-Activate</Text>
-                    </Pressable>
-                </View>
-            )}
-        </View>
+        </TouchableOpacity>
     );
 }
 export default MemberCard;

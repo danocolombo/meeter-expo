@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { API } from 'aws-amplify';
+import { API, graphqlOperation } from 'aws-amplify';
 import * as queries from '../../jerichoQL/queries';
 import * as mutations from '../../jerichoQL/mutations';
 import { createAWSUniqueID, printObject } from '../../utils/helpers';
@@ -147,6 +147,7 @@ export const loadTeam = createAsyncThunk(
                                 (r.role === 'new' && r.status === 'active')
                         );
                         if (!activeConfirmed) {
+                            m.affiliations = [];
                             iMembers.push(m);
                         }
                     });
@@ -162,6 +163,7 @@ export const loadTeam = createAsyncThunk(
                             (r) => r.role === 'new' && r.status === 'active'
                         );
                         if (newConfirmed) {
+                            m.affiliations = [];
                             nMembers.push(m);
                         }
                     });
@@ -176,10 +178,131 @@ export const loadTeam = createAsyncThunk(
                             (r) => r.role === 'guest' && r.status === 'active'
                         );
                         if (guestConfirmed) {
+                            m.affiliations = [];
                             aMembers.push(m);
                         }
                     });
                     resolve(aMembers);
+                });
+            };
+            const organizeAffiliates = (affiliatedUsers) => {
+                return new Promise((resolve, reject) => {
+                    //* ----------------------------------
+                    //* this function takes the array of
+                    //* users and puts them in object
+                    //* summarized by status
+                    //* ----------------------------------
+
+                    const summarizedTeam = {
+                        active: [],
+                        inactive: [],
+                        new: [],
+                    };
+
+                    affiliatedUsers.forEach((user) => {
+                        if (user.roles.length > 0) {
+                            summarizedTeam.active.push(user);
+                        } else if (user.affiliations.length > 0) {
+                            const allAffiliationsActive =
+                                user.affiliations.every(
+                                    (affiliation) =>
+                                        affiliation.status === 'active'
+                                );
+                            if (allAffiliationsActive) {
+                                summarizedTeam.active.push(user);
+                            } else {
+                                summarizedTeam.inactive.push(user);
+                            }
+                        } else {
+                            summarizedTeam.new.push(user);
+                        }
+                    });
+
+                    resolve(summarizedTeam);
+                });
+            };
+            const affiliateUsers = (teamInfo) => {
+                return new Promise((resolve, reject) => {
+                    //* convert array of affiliations to array of users
+                    //* with container array of affiliations
+
+                    const newUserArray = [];
+
+                    // Helper function to find a user's index in newUserArray based on user id
+                    function findUserIndexById(userId) {
+                        return newUserArray.findIndex(
+                            (user) => user.id === userId
+                        );
+                    }
+
+                    teamInfo.forEach((info) => {
+                        const userIndex = findUserIndexById(info.user.id);
+
+                        if (userIndex === -1) {
+                            const newUser = {
+                                // id: info.user.id,
+                                // sub: info.user.sub,
+                                // username: info.user.username,
+                                ...info.user,
+                                affiliations: [],
+                                roles: [],
+                            };
+
+                            if (info.status === 'active') {
+                                newUser.affiliations.push({
+                                    id: info.id,
+                                    role: info.role,
+                                    status: info.status,
+                                    organizationAffiliationsId:
+                                        info.organizationAffiliationsId,
+                                });
+
+                                if (info.role !== 'inactive') {
+                                    newUser.roles.push(info.role);
+                                }
+                            }
+
+                            newUserArray.push(newUser);
+                        } else {
+                            const existingUser = newUserArray[userIndex];
+
+                            if (info.status === 'active') {
+                                existingUser.affiliations.push({
+                                    id: info.id,
+                                    role: info.role,
+                                    status: info.status,
+                                    organizationAffiliationsId:
+                                        info.organizationAffiliationsId,
+                                });
+
+                                if (
+                                    info.role !== 'inactive' &&
+                                    !existingUser.roles.includes(info.role)
+                                ) {
+                                    existingUser.roles.push(info.role);
+                                }
+                            }
+                        }
+                    });
+                    newUserArray.sort((a, b) => {
+                        const aLastName = a.lastName || '';
+                        const bLastName = b.lastName || '';
+
+                        const aFirstName = a.firstName || '';
+                        const bFirstName = b.firstName || '';
+
+                        const aUserName = a.userName || '';
+                        const bUserName = b.userName || '';
+
+                        if (aLastName !== bLastName) {
+                            return aLastName.localeCompare(bLastName);
+                        } else if (aFirstName !== bFirstName) {
+                            return aFirstName.localeCompare(bFirstName);
+                        } else {
+                            return aUserName.localeCompare(bUserName);
+                        }
+                    });
+                    resolve(newUserArray);
                 });
             };
 
@@ -188,8 +311,8 @@ export const loadTeam = createAsyncThunk(
                     let teamMembers = [];
                     let nonMembers = [];
                     teamInfo.forEach((item) => {
-                        let guestApproved = item.roles.find(
-                            (r) => r.role === 'guest' && r.status === 'active'
+                        let guestApproved = item.affiliations.find(
+                            (a) => a.role === 'guest' && a.status === 'active'
                         );
                         if (guestApproved) {
                             teamMembers.push(item);
@@ -223,13 +346,14 @@ export const loadTeam = createAsyncThunk(
                                 phone: user?.phone || '',
                                 organizationId: id,
                                 location: user?.location || null,
-                                roles: [
+                                affiliations: [
                                     {
                                         id: item.id,
                                         role: item.role,
                                         status: item.status,
                                     },
                                 ],
+                                roles: [],
                             });
                         }
                     }
@@ -238,13 +362,41 @@ export const loadTeam = createAsyncThunk(
                     };
                     return theTeam;
                 } catch (error) {
-                    throw new Error('Failed to convert team info.');
+                    throw new Error('TT:241-->Failed to convert team info.');
                 }
             };
-            const teamInfo = await API.graphql({
-                query: queries.listAffiliationsForOrg,
-                filter: { organizationAffiliationsId: { eq: id } },
-            });
+            // const teamInfo = await API.graphql({
+            //     query: queries.listAffiliationsForOrg,
+            //     filter: { organizationAffiliationsId: { eq: id } },
+            // });
+            //* -------------------------------
+            //* 1. get team profiles for org
+            //* -------------------------------
+            const teamInfo = await API.graphql(
+                graphqlOperation(queries.listAffiliationsForOrg, {
+                    filter: { organizationAffiliationsId: { eq: id } },
+                })
+            );
+            // printObject('TT:325-->teamInfo:\n', teamInfo);
+            //* -------------------------------
+            //* 2. flip affiliations and users
+            //* -------------------------------
+            const affiliatedUsers = await affiliateUsers(
+                teamInfo.data.listAffiliations.items
+            );
+            // printObject('TT:327-->affiliatedUsers:\n', affiliatedUsers);
+            //* -------------------------------
+            //* 3. summarize affiliatedUsers
+            //* put them in summary object
+            //* -------------------------------
+            const organizedAffiliatedTeam = await organizeAffiliates(
+                affiliatedUsers
+            );
+            printObject(
+                'TT:372-->organizedAffiliatedTeam:\n',
+                organizedAffiliatedTeam
+            );
+            return { ...organizedAffiliatedTeam, all: affiliatedUsers };
             // make sure there are only members for this org
             const validatedTeamInfo = {
                 ...teamInfo,
@@ -258,12 +410,15 @@ export const loadTeam = createAsyncThunk(
                     },
                 },
             };
-
+            //printObject('TT:270-->validatedTeamInfo:\n', validatedTeamInfo);
             const affiliations =
                 validatedTeamInfo?.data?.listAffiliations?.items;
+            //      we now have all the affiliations with user info
+            // printObject('TT:345:--affiliations:\n', affiliations);
             const convertedTeamInfo = await convertTeamInfo(affiliations);
+            // console.log('TT:347-->convertedTeamInfo');
             const TEAM = await summarizeTeamInfo(convertedTeamInfo.all);
-
+            printObject('TT:349-->TEAM:\n', TEAM);
             const activeMembers = await identifyActiveMembers(
                 convertedTeamInfo.all
             );
@@ -272,12 +427,12 @@ export const loadTeam = createAsyncThunk(
                 convertedTeamInfo.all
             );
 
-            return {
-                actives: activeMembers,
-                inactives: inactiveMembers,
-                newMembers: newMembers,
-                team: TEAM,
-            };
+            // return {
+            //     actives: activeMembers,
+            //     inactives: inactiveMembers,
+            //     newMembers: newMembers,
+            //     team: TEAM,
+            // };
         } catch (error) {
             console.log(error);
             throw new Error('Failed to load team.');
@@ -318,16 +473,18 @@ export const updateActiveMember = createAsyncThunk(
                             status: 'active',
                         };
                         printObject('TT:296-->addPermission:\n', newAff);
+                        //* create the affiliation
                         const memberInfo = await API.graphql({
                             query: mutations.createAffiliation,
                             variables: { input: newAff },
                         });
                         printObject('TT:309-->memberInfo:\n', memberInfo);
-                        let modRoles = [...member.roles];
+                        let modRoles = [...member.affiliations];
+                        modRoles.add(value.role);
                         //reduce aff for redux
-                        delete newAff.organizationAffiliationsId;
-                        delete newAff.userAffiliationsId;
-                        modRoles.push(newAff);
+                        // delete newAff.organizationAffiliationsId;
+                        // delete newAff.userAffiliationsId;
+                        // modRoles.push(newAff);
                         const updatedUser = {
                             ...member,
                             roles: modRoles,
@@ -615,6 +772,78 @@ export const declineMember = createAsyncThunk(
         } catch (error) {
             console.log(error);
             throw new Error('Failed to declineMember.');
+        }
+    }
+);
+export const loadOrgUsers = createAsyncThunk(
+    'team/loadOrgUsers',
+    async (input, thunkAPI) => {
+        //* * * * * * * * * * * * * * * * * * *
+        //* This thunk requires input. Supported
+        //*     input: {
+        //*         orgId: "id"
+        //*     }
+        console.log('TT:639-->loadOrgUsers THUNK');
+        printObject('TT:640-->input:\n', input);
+        try {
+            //* * * * * * * * * * * * * * * * * * *
+            //* This function gets all members of
+            //* organization and organizes them
+            //*
+            //* * * * * * * * * * * * * * * * * * *
+            const teamInfo = await API.graphql(
+                graphqlOperation(queries.listAffiliationsForOrg, {
+                    filter: { organizationAffiliationsId: { eq: input.orgId } },
+                })
+            );
+            const userAffiliations = {};
+            teamInfo.data.listAffiliations.items.forEach((item) => {
+                if (item.status === 'active' && item.status !== 'denied') {
+                    if (!userAffiliations[item.user.id]) {
+                        userAffiliations[item.user.id] = {
+                            id: item.user.id,
+                            organizationId: input.orgId,
+                            username: item.user.username,
+                            firstName: item.user.firstName,
+                            lastName: item.user.lastName,
+                            status: item.status,
+                            affiliations: [],
+                        };
+                    }
+                    userAffiliations[item.user.id].affiliations.push(item.role);
+                } else if (item.status === 'denied') {
+                    userAffiliations[item.user.id] = {
+                        id: item.user.id,
+                        username: item.user.username,
+                        status: item.status,
+                        affiliations: [],
+                    };
+                }
+            });
+            // Convert the userAffiliations object to an array
+            const processedArray = Object.values(userAffiliations);
+            // printObject('TT:675-->processedArray:\n', processedArray);
+            const orgUsers = {
+                active: [],
+                inactive: [],
+                requests: [],
+            };
+
+            processedArray.forEach((user) => {
+                if (user.status === 'active') {
+                    orgUsers.active.push(user);
+                } else if (user.status === 'pending') {
+                    orgUsers.requests.push(user);
+                } else {
+                    orgUsers.inactive.push(user);
+                }
+            });
+            // printObject('TT:691-->orgUsers:\n', orgUsers);
+            // send organization users to slice
+            return orgUsers;
+        } catch (error) {
+            console.log(error);
+            throw new Error('99: TeamThunk_loadOrgUsers catch error.');
         }
     }
 );

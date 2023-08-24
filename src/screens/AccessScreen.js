@@ -4,6 +4,9 @@ import {
     FlatList,
     StyleSheet,
     ActivityIndicator,
+    SectionList,
+    ScrollView,
+    SafeAreaView,
 } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -18,7 +21,7 @@ const TeamScreen = () => {
     const dispatch = useDispatch();
     const [storedProfiles, setStoredProfiles] = useState([]);
     const allProfiles = useSelector((store) => store.profiles.allProfiles);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [inactiveMembers, setInactiveMembers] = useState([]);
     const [newMembers, setNewMembers] = useState([]);
     const [activeMembers, setActiveMembers] = useState([]);
@@ -66,9 +69,9 @@ const TeamScreen = () => {
             setIsLoading(false);
         }, [])
     );
-    useEffect(() => {
-        setStoredProfiles(allProfiles);
-    }, [allProfiles]);
+    // useEffect(() => {
+    //     setStoredProfiles(allProfiles);
+    // }, [allProfiles]);
     if (isLoading) {
         return (
             <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
@@ -80,88 +83,61 @@ const TeamScreen = () => {
         );
     }
     return (
-        <View style={mtrStyles(mtrTheme).surface}>
-            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
-                <Text style={mtrStyles(mtrTheme).screenTitleText}>ACCESS</Text>
-            </View>
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={mtrStyles(mtrTheme).surface}>
+                <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                        ACCESS
+                    </Text>
+                </View>
 
-            <View style={mtrStyles(mtrTheme).subtitleContainer}>
-                <Text style={mtrStyles(mtrTheme).subtitleText}>
-                    These are the users affiliated with this organization.
-                </Text>
-                <Text style={mtrStyles(mtrTheme).subtitleText}>
-                    Click each one for more details.
-                </Text>
-                <Text style={mtrStyles(mtrTheme).subtitleText}>
-                    New member requests will be highlighted and you can take
-                    appropriate action as you see fit.
-                </Text>
-            </View>
+                <View style={mtrStyles(mtrTheme).subtitleContainer}>
+                    <Text style={mtrStyles(mtrTheme).subtitleText}>
+                        These are the users affiliated with this organization.
+                    </Text>
+                    <Text style={mtrStyles(mtrTheme).subtitleText}>
+                        Click each one for more details.
+                    </Text>
+                    <Text style={mtrStyles(mtrTheme).subtitleText}>
+                        New member requests will be highlighted and you can take
+                        appropriate action as you see fit.
+                    </Text>
+                </View>
 
-            {newMembers && (
-                <>
-                    <View style={mtrStyles(mtrTheme).headerContainer}>
-                        <Text style={mtrStyles(mtrTheme).headerText}>
-                            NEW MEMBER REQUESTS ({newMembers.length})
-                        </Text>
-                    </View>
-                    <FlatList
-                        data={newMembers}
-                        keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                            <TeamGroupCard
-                                team={item}
-                                listType='new'
-                                active={true}
-                                handleDelete={() => {}}
-                            />
-                        )}
-                    />
-                </>
-            )}
-            {activeMembers && (
-                <>
-                    <View style={mtrStyles(mtrTheme).headerContainer}>
-                        <Text style={mtrStyles(mtrTheme).headerText}>
-                            ACTIVE MEMBERS ({activeMembers.length})
-                        </Text>
-                    </View>
-                    <FlatList
-                        data={activeMembers}
-                        keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                            <TeamGroupCard
-                                team={item}
-                                listType='active'
-                                active={true}
-                                handleDelete={() => {}}
-                            />
-                        )}
-                    />
-                </>
-            )}
-            {inactiveMembers && (
-                <>
-                    <View style={mtrStyles(mtrTheme).headerContainer}>
-                        <Text style={mtrStyles(mtrTheme).headerText}>
-                            INACTIVE MEMBERS ({newMembers.length})
-                        </Text>
-                    </View>
-                    <FlatList
-                        data={inactiveMembers}
-                        keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                            <TeamGroupCard
-                                team={item}
-                                listType='inactive'
-                                active={true}
-                                handleDelete={() => {}}
-                            />
-                        )}
-                    />
-                </>
-            )}
-        </View>
+                <SectionList
+                    sections={[
+                        {
+                            title: `NEW MEMBER REQUESTS (${newMembers.length})`,
+                            data: newMembers,
+                        },
+                        {
+                            title: `ACTIVE MEMBERS (${activeMembers.length})`,
+                            data: activeMembers,
+                        },
+                        {
+                            title: `INACTIVE MEMBERS (${inactiveMembers.length})`,
+                            data: inactiveMembers,
+                        },
+                    ]}
+                    keyExtractor={(item, index) => item.id + index}
+                    renderItem={({ item }) => (
+                        <TeamGroupCard
+                            team={item}
+                            listType={'activeMembers'}
+                            active={true}
+                            handleDelete={() => {}}
+                        />
+                    )}
+                    renderSectionHeader={({ section }) => (
+                        <View style={mtrStyles(mtrTheme).headerContainer}>
+                            <Text style={mtrStyles(mtrTheme).headerText}>
+                                {section.title}
+                            </Text>
+                        </View>
+                    )}
+                />
+            </View>
+        </SafeAreaView>
     );
 };
 

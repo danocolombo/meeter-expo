@@ -6,6 +6,7 @@ import {
     updateActiveMember,
     acceptMember,
     declineMember,
+    loadOrgUsers,
 } from './teamThunks';
 import { printObject } from '../../utils/helpers';
 
@@ -49,10 +50,15 @@ const teamSlice = createSlice({
             .addCase(loadTeam.fulfilled, (state, action) => {
                 // printObject('TS:43-->action.payload:\n', action.payload);
                 state.isLoading = false;
-                state.allMembers = action.payload.team;
-                state.activeMembers = action.payload.actives;
-                state.inactiveMembers = action.payload.inactives;
-                state.newMembers = action.payload.newMembers;
+                // state.allMembers = action.payload.team;
+                // state.activeMembers = action.payload.actives;
+                // state.inactiveMembers = action.payload.inactives;
+                // state.newMembers = action.payload.newMembers;
+                state.activeMembers = action.payload.active;
+                state.inactiveMembers = action.payload.inactive;
+                state.newMembers = action.payload.new;
+                state.allMembers = action.payload.all;
+                return state;
             })
             .addCase(loadTeam.rejected, (state, action) => {
                 console.log(action);
@@ -215,6 +221,51 @@ const teamSlice = createSlice({
             })
             .addCase(declineMember.rejected, (state, action) => {
                 console.log(action);
+                state.isLoading = false;
+            })
+            .addCase(loadOrgUsers.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(loadOrgUsers.fulfilled, (state, action) => {
+                // printObject('TS:225-->action.payload:\n', action.payload);
+                const sortedActiveMembers = action.payload.active.sort(
+                    (a, b) => {
+                        if (a.lastName !== b.lastName) {
+                            return a.lastName.localeCompare(b.lastName);
+                        }
+                        return a.firstName.localeCompare(b.firstName);
+                    }
+                );
+
+                const sortedInactiveMembers = action.payload.inactive.sort(
+                    (a, b) => {
+                        if (a.lastName !== b.lastName) {
+                            return a.lastName.localeCompare(b.lastName);
+                        }
+                        return a.firstName.localeCompare(b.firstName);
+                    }
+                );
+
+                const sortedNewMembers = action.payload.requests.sort(
+                    (a, b) => {
+                        if (a.lastName !== b.lastName) {
+                            return a.lastName.localeCompare(b.lastName);
+                        }
+                        return a.firstName.localeCompare(b.firstName);
+                    }
+                );
+                state.activeMembers = sortedActiveMembers;
+                state.inactiveMembers = sortedInactiveMembers;
+                state.newMembers = sortedNewMembers;
+                state.isLoading = false;
+                // state.allMembers = action.payload.team;
+                // state.activeMembers = action.payload.actives;
+                // state.inactiveMembers = action.payload.inactives;
+                // state.newMembers = action.payload.newMembers;
+                return state;
+            })
+            .addCase(loadOrgUsers.rejected, (state, action) => {
+                console.log('TS:234--rejected');
                 state.isLoading = false;
             });
     },

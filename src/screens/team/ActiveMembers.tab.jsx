@@ -35,59 +35,25 @@ const ActiveMembers = () => {
         useCallback(() => {
             const fetchData = async () => {
                 setIsLocallyLoading(true);
-                // dispatch(loadOrgUsers({ orgId: userProfile?.activeOrg?.id }))
-                //     .then((loadingResults) => {
-                //         printObject(
-                //             'AMT:112-->loadingResults:\n',
-                //             loadingResults
-                //         );
-                //         //if (loadingResults.rejected.match(resultAction)) {
-                //         // const errorMessage = loadingResults.error.message; // Access the error message
-                //         // let errorMsg = '';
-                //         // switch (errorMessage.slice(0, 2)) {
-                //         //     case '01':
-                //         //         errorMsg =
-                //         //             'System Error 01: profile required';
-                //         //         break;
-                //         //     case '02':
-                //         //         errorMsg = 'System Error 02: code required';
-                //         //         break;
-                //         //     case '03':
-                //         //         errorMsg = 'You already have access';
-                //         //         break;
-                //         //     case '04':
-                //         //         errorMsg = 'Invalid code submitted';
-                //         //     default:
-                //         //         errorMsg = errorMessage;
-                //         //         break;
-                //         // }
-
-                //         //console.error(errorMsg);
-                //         // } else {
-                //         //     printObject(
-                //         //         'AS:109-->errorTest complete. Function done:\n',
-                //         //         null
-                //         //     );
-                //         //     setIsLocallyLoading(false);
-                //         //     // navigate.goBack();
-                //         // }
-
-                //         setIsLocallyLoading(false);
-                //         // setShowChangeModal(true);
-                //     })
-                //     .catch((error) => {
-                //         console.error(
-                //             'AMT:78-->An unexpected error occurred:',
-                //             error
-                //         );
-                //         // Handle any other unexpected errors
-
-                //         setIsLocallyLoading(false);
-                //     });
                 try {
-                    dispatch(loadTeam(userProfile?.activeOrg?.id));
-                    // dispatch(loadOrgUsers(userProfile?.activeOrg?.id));
-                    console.log('AMT:36-->loadTeam finished');
+                    dispatch(loadTeam(userProfile?.activeOrg?.id))
+                        .then((results) => {
+                            // console.log('AMT:41-->loadTeam finished');
+                            // printObject(
+                            //     'AMT:43-->loadTeam-results:\n',
+                            //     results
+                            // );
+                            setDisplayMembers(results.payload.active);
+                        })
+                        .catch((error) => {
+                            console.log(
+                                'AM:50-->Error occurred while loading team:',
+                                error
+                            );
+                        })
+                        .finally(() => {
+                            setIsLocallyLoading(false);
+                        });
                 } catch (error) {
                     // Handle the error, e.g., display an error message
                     console.log(
@@ -101,9 +67,9 @@ const ActiveMembers = () => {
             fetchData();
         }, [dispatch, userProfile?.activeOrg?.id])
     );
-    useEffect(() => {
-        setDisplayMembers(activeMembers);
-    }, []);
+    // useEffect(() => {
+    //     setDisplayMembers(activeMembers);
+    // }, []);
 
     const styles = StyleSheet.create({
         pageTitleContainer: {
@@ -154,7 +120,7 @@ const ActiveMembers = () => {
             </View>
         );
     }
-    printObject('AMT:154-->displayMembers:\n', displayMembers);
+    // printObject('AMT:154-->displayMembers:\n', displayMembers);
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.pageTitleContainer}>

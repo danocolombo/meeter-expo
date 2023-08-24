@@ -12,7 +12,7 @@ import { updateTeamMemberPermissions } from '../../jerichoQL/providers/team.prov
 import { printObject, transformPatePhone } from '../../utils/helpers';
 
 function MemberCard({ member, editFlag, deactivate, updatePermission }) {
-    printObject('MC:9-->member:\n', member);
+    // printObject('MC:9-->member:\n', member);
     const [response, setResponse] = useState('<>');
     const [permissions, setPermissions] = useState(null);
     const [displayPhone, setDisplayPhone] = useState('');

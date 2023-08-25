@@ -96,12 +96,37 @@ const ActiveMembers = () => {
     });
     function addAffiliationHandler(settings) {}
     function deactivateHandler(settings) {
-        const exiledMember = activeMembers.find(
-            (m) => m.id === settings?.memberId
-        );
-        printObject('AMT:96-->exiledMember:\n', exiledMember);
-        dispatch(deactivateMember(exiledMember));
-        setDisplayMembers(activeMembers);
+        try {
+            setIsLocallyLoading(true);
+            const exiledMember = displayMembers.find(
+                (m) => m.id === settings?.memberId
+            );
+            printObject('AMT:96-->exiledMember:\n', exiledMember);
+            dispatch(deactivateMember(exiledMember))
+                .then((results) => {
+                    const updatedDisplayMembers = displayMembers.filter(
+                        (member) => member.id !== exiledMember.id
+                    );
+
+                    setDisplayMembers(updatedDisplayMembers);
+                    // printObject('AMT:114-->results:\n', results);
+                    // printObject('AMT:115-->displayMembers:\n', displayMembers);
+                })
+                .catch((error) => {
+                    console.log(
+                        'AMT:118-->Error occurred while deactivating member:',
+                        error
+                    );
+                })
+                .finally(() => {
+                    setIsLocallyLoading(false);
+                });
+        } catch (error) {
+            // Handle the error, e.g., display an error message
+            console.log('AMT:56-->Error occurred while loading team:', error);
+        }
+
+        //setDisplayMembers(activeMembers);
     }
     function updatePermissionHandler(settings) {
         dispatch(updateActiveMember(settings));

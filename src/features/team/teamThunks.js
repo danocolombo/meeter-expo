@@ -18,7 +18,7 @@ export const activateMember = createAsyncThunk(
             API.graphql({
                 query: mutations.updateAffiliation,
                 variables: {
-                    input: { id: member.roles[0].id, status: 'active' },
+                    input: { id: member.affiliations[0].id, status: 'active' },
                 },
             })
                 .then(() => {
@@ -50,13 +50,13 @@ export const deactivateMember = createAsyncThunk(
         try {
             //* * * * * * * * * * * * * * * * * * *
             //* This function gets the member from
-            //* authContext then update GQL entries
+            //* then update GQL entries
             //* 1. update guest affiliation to inactive
             //* 2. delete non-guest roles
             //* 3. modify member object for slice
             //* * * * * * * * * * * * * * * * * * *
             // loop and delete non guest roles
-            member.roles.forEach((r) => {
+            member.affiliations.forEach((r) => {
                 if (r.role === 'guest') {
                     //      update guest
                     try {
@@ -114,14 +114,14 @@ export const deactivateMember = createAsyncThunk(
                 }
             });
             //      modify user to send to slice
-            const singleRole = member.roles
-                .filter((r) => r.role === 'guest')
-                .map((r) => ({ ...r, status: 'inactive' }));
-
+            // const singleRole = member.roles
+            //     .filter((r) => r.role === 'guest')
+            //     .map((r) => ({ ...r, status: 'inactive' }));
+            const noRoles = [];
             //      3. member updated to send to slice
             const newMember = {
                 ...member,
-                roles: singleRole,
+                roles: noRoles,
             };
             return newMember;
         } catch (error) {
@@ -141,12 +141,11 @@ export const loadTeam = createAsyncThunk(
                 return new Promise((resolve, reject) => {
                     let iMembers = [];
                     members.forEach((m) => {
-                        let activeConfirmed = m.roles.find(
-                            (r) =>
-                                (r.role === 'guest' && r.status === 'active') ||
-                                (r.role === 'new' && r.status === 'active')
+                        let inActiveMember = m.roles.find(
+                            (r) => r.status === 'inactive'
                         );
-                        if (!activeConfirmed) {
+
+                        if (inActiveMember) {
                             m.affiliations = [];
                             iMembers.push(m);
                         }
@@ -248,7 +247,10 @@ export const loadTeam = createAsyncThunk(
                                 roles: [],
                             };
 
-                            if (info.status === 'active') {
+                            if (
+                                info.status === 'active' ||
+                                info.status === 'inactive'
+                            ) {
                                 newUser.affiliations.push({
                                     id: info.id,
                                     role: info.role,
@@ -257,7 +259,7 @@ export const loadTeam = createAsyncThunk(
                                         info.organizationAffiliationsId,
                                 });
 
-                                if (info.role !== 'inactive') {
+                                if (info.status !== 'inactive') {
                                     newUser.roles.push(info.role);
                                 }
                             }
@@ -377,7 +379,7 @@ export const loadTeam = createAsyncThunk(
                     filter: { organizationAffiliationsId: { eq: id } },
                 })
             );
-            // printObject('TT:325-->teamInfo:\n', teamInfo);
+            printObject('TT:325-->teamInfo:\n', teamInfo);
             //* -------------------------------
             //* 2. flip affiliations and users
             //* -------------------------------

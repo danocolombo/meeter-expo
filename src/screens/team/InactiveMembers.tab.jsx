@@ -10,16 +10,14 @@ const InactiveMembers = () => {
     // need orgId
     const inactiveMembers = useSelector((state) => state.team.inactiveMembers);
     function actionHandler({ action, userId, orgId, roleId }) {
-        printObject('IMT:13-->actionHandler:action:', action);
-        printObject('IMT:13-->actionHandler:userId:', userId);
-        printObject('IMT:13-->actionHandler:orgId:', orgId);
-        printObject('IMT:13-->actionHandler:roleId:', roleId);
+        // printObject('IMT:13-->actionHandler:action:', action);
+        // printObject('IMT:13-->actionHandler:userId:', userId);
+        // printObject('IMT:13-->actionHandler:orgId:', orgId);
+        // printObject('IMT:13-->actionHandler:roleId:', roleId);
 
         if (action === 'GRANT') {
-            console.log(
-                'IMT:11-->GRANT ' + roleId + ' role: guest, status: active'
-            );
             const grantedMember = inactiveMembers.find((m) => m.id === userId);
+            // printObject('IMT:23-->grantedMember:\n', grantedMember);
             dispatch(activateMember(grantedMember));
         }
     }
@@ -47,10 +45,9 @@ const InactiveMembers = () => {
                 <Text
                     style={{ fontSize: 18, padding: 10, marginHorizontal: 10 }}
                 >
-                    These users have either previously been a part of the team
-                    or have requested access, but all of these users do not have
-                    access at this time. You can grant access as guest (view
-                    only) and adjust permissions on the ACTIVE tab.
+                    These users do not have access at this time. You can grant
+                    access as guest (view only) and adjust permissions on the
+                    ACTIVE tab.
                 </Text>
             </View>
             <View style={{ paddingHorizontal: 5 }}>

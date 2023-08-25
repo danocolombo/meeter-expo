@@ -23,7 +23,7 @@ import MemberCard from '../../components/teams/MemberCard';
 const ActiveMembers = () => {
     const userProfile = useSelector((state) => state.user.profile);
     const dispatch = useDispatch();
-    const activeMembers = useSelector((state) => state.team.activeMembers);
+    // const activeMembers = useSelector((state) => state.team.activeMembers);
     const [displayMembers, setDisplayMembers] = useState([]);
     // const isLoading = useSelector((state) => state.team.isLoading);
     const [isLocallyLoading, setIsLocallyLoading] = useState(false);
@@ -38,16 +38,17 @@ const ActiveMembers = () => {
                 try {
                     dispatch(loadTeam(userProfile?.activeOrg?.id))
                         .then((results) => {
-                            // console.log('AMT:41-->loadTeam finished');
-                            // printObject(
-                            //     'AMT:43-->loadTeam-results:\n',
-                            //     results
-                            // );
                             setDisplayMembers(results.payload.active);
+                            const totals = {
+                                active: results.payload.active.length,
+                                inactive: results.payload.inactive.length,
+                                new: results.payload.new.length,
+                            };
+                            printObject('AMT:48-->totals:\n', totals);
                         })
                         .catch((error) => {
                             console.log(
-                                'AM:50-->Error occurred while loading team:',
+                                'AMT:46-->Error occurred while loading team:',
                                 error
                             );
                         })
@@ -57,7 +58,7 @@ const ActiveMembers = () => {
                 } catch (error) {
                     // Handle the error, e.g., display an error message
                     console.log(
-                        'AM:32-->Error occurred while loading team:',
+                        'AMT:56-->Error occurred while loading team:',
                         error
                     );
                 }
@@ -65,7 +66,8 @@ const ActiveMembers = () => {
             };
 
             fetchData();
-        }, [dispatch, userProfile?.activeOrg?.id])
+            // }, [dispatch, userProfile?.activeOrg?.id])
+        }, [])
     );
     // useEffect(() => {
     //     setDisplayMembers(activeMembers);
@@ -97,8 +99,9 @@ const ActiveMembers = () => {
         const exiledMember = activeMembers.find(
             (m) => m.id === settings?.memberId
         );
-
+        printObject('AMT:96-->exiledMember:\n', exiledMember);
         dispatch(deactivateMember(exiledMember));
+        setDisplayMembers(activeMembers);
     }
     function updatePermissionHandler(settings) {
         dispatch(updateActiveMember(settings));

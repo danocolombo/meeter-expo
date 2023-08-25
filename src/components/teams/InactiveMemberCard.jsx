@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { printObject, transformPatePhone } from '../../utils/helpers';
 
 function InactiveMemberCard({ member, action }) {
+    printObject('IMC:7-->member:\n', member);
     const [response, setResponse] = useState('<>');
     const [displayPhone, setDisplayPhone] = useState('');
     useEffect(() => {
@@ -14,14 +15,13 @@ function InactiveMemberCard({ member, action }) {
     }, []);
 
     const grantHandler = (value) => {
-        printObject('IMC:17-->member:\n', member);
-        const inactiveRole = member.roles.find(
-            (r) => r.role === 'guest' || r.role === 'new'
+        const inactiveRole = member.affiliations.find(
+            (r) => r.role === 'guest'
         );
         action({
             action: 'GRANT',
             userId: member.id,
-            orgId: member.organizationId,
+            orgId: inactiveRole.organizationAffiliationsId,
             roleId: inactiveRole.id,
         });
     };

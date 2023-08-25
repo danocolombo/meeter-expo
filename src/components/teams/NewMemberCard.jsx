@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 
-import { printObject, displayPhone } from '../../utils/helpers';
+import {
+    printObject,
+    displayPhone,
+    transformPatePhone,
+} from '../../utils/helpers';
 
 function NewMemberCard({ member, action }) {
     const [displayPhone, setDisplayPhone] = useState('');
@@ -13,8 +17,9 @@ function NewMemberCard({ member, action }) {
     }, []);
 
     const acceptHandler = (value) => {
-        const guestRole = member.roles.find((r) => r.role === 'new');
-        // printObject('guestRole:\n', guestRole);
+        const guestRole = member.affiliations.find((r) => r.role === 'new');
+        printObject('guestRole:\n', guestRole);
+        return;
         action({
             action: 'ACCEPT',
             userId: member.id,
@@ -48,7 +53,7 @@ function NewMemberCard({ member, action }) {
 
                     <Text style={styles.details}>{member?.email}</Text>
 
-                    {displayPhone.length > 0 && (
+                    {displayPhone?.length > 0 && (
                         <Text style={styles.details}>{displayPhone}</Text>
                     )}
                     {member?.location?.city && member?.location?.stateProv && (

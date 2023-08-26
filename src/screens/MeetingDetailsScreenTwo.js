@@ -96,7 +96,7 @@ const MeetingDetails = (props) => {
 
         if (newPerms.includes('manage') || newPerms.includes('meals')) {
             navigation.setOptions({
-                title: meeter.appName,
+                title: meeter.appName || 'Meeter',
                 headerBackTitle: 'Back',
                 headerRight: () => (
                     <Button
@@ -134,12 +134,10 @@ const MeetingDetails = (props) => {
             return;
         }
         setIsLoading(true);
-        printObject('MDST:152-->values', values);
         const deleteRequest = {
             meetingId: id,
             groupId: values,
         };
-        printObject('MDST:157-->deleteRequest:\n', deleteRequest);
         dispatch(deleteGroupFromMeeting(deleteRequest));
         setIsLoading(false);
     }

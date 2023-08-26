@@ -17,7 +17,7 @@ const MeetingNewScreen = ({ route, navigation }) => {
     const mtrTheme = useTheme();
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: meeter.appName,
+            title: meeter.appName || 'Meeter',
             headerBackTitle: 'Cancel',
         });
     }, [navigation, meeter]);
@@ -28,7 +28,7 @@ const MeetingNewScreen = ({ route, navigation }) => {
             meeting: { id: newId, ...values },
             orgId: userProfile.activeOrg.id,
         };
-        printObject('MNS:48-->submitValues:\n', submitValues);
+        // printObject('MNS:48-->submitValues:\n', submitValues);
         dispatch(addMeeting(submitValues));
         navigate.goBack();
     };

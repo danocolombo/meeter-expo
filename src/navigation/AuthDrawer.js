@@ -97,7 +97,7 @@ const AuthDrawer = (navigation) => {
                     // component={() => <LandingScreen theme={props.theme} />}
                     component={MeetingsConfig}
                     options={({ navigation }) => ({
-                        title: meeter.appName,
+                        title: meeter.appName || 'Meeter',
                         // headerRight: () => (
                         //     <>
                         //         <Button
@@ -133,12 +133,12 @@ const AuthDrawer = (navigation) => {
             )}
             {perms?.includes('manage') && (
                 <Drawer.Screen
-                    name='Your Team'
+                    name={meeter.appName || 'Meeter'}
                     component={TeamConfig}
                     options={({ navigation }) => ({
-                        title: meeter.appName,
+                        title: meeter.appName || 'Meeter',
 
-                        drawerLabel: 'My Team',
+                        drawerLabel: 'User Access',
                         drawerIcon: ({ color }) => (
                             <Ionicons
                                 name='people-outline'
@@ -162,8 +162,8 @@ const AuthDrawer = (navigation) => {
                 <Stack.Screen
                     name='Groups'
                     options={({ navigation }) => ({
-                        title: 'Default Groups',
-                        headerTitle: meeter.appName,
+                        title: meeter.appName || 'Groups',
+                        headerTitle: meeter.appName || 'Meeter',
                         headerStyle: {
                             backgroundColor: mtrTheme.colors.background,
                         },
@@ -179,7 +179,7 @@ const AuthDrawer = (navigation) => {
                     component={DefaultGroupsScreen}
                 />
             )}
-            {perms?.includes('manage') && (
+            {/* {perms?.includes('manage') && (
                 <Stack.Screen
                     name='Team'
                     options={({ navigation }) => ({
@@ -200,7 +200,7 @@ const AuthDrawer = (navigation) => {
                     })}
                     component={AccessScreen}
                 />
-            )}
+            )} */}
             {perms?.includes('manage') && (
                 <Stack.Screen
                     name='Welcome'

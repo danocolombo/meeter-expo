@@ -5,7 +5,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { activateMember } from '../../features/team/teamThunks';
 import InactiveMemberCard from '../../components/teams/InactiveMemberCard';
 import { printObject } from '../../utils/helpers';
+import { useTheme, Surface } from 'react-native-paper';
 const InactiveMembers = () => {
+    const mtrTheme = useTheme();
     const dispatch = useDispatch();
     // need orgId
     const inactiveMembers = useSelector((state) => state.team.inactiveMembers);
@@ -23,72 +25,93 @@ const InactiveMembers = () => {
     }
     if (inactiveMembers?.length < 1) {
         return (
-            <View style={{ flex: 1, flexDirection: 'column' }}>
-                <View style={styles.pageTitleContainer}>
-                    <Text style={styles.pageTitle}>Inactive Members</Text>
+            <Surface style={mtrStyles(mtrTheme).surface}>
+                <View style={{ flex: 1, flexDirection: 'column' }}>
+                    <View style={mtrStyles(mtrTheme).pageTitleContainer}>
+                        <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                            Inactive Members
+                        </Text>
+                    </View>
+                    <View
+                        style={{ paddingVertical: 20, paddingHorizontal: 10 }}
+                    >
+                        <Text>There are no inactive users identified.</Text>
+                    </View>
                 </View>
-                <View style={{ paddingVertical: 20, paddingHorizontal: 10 }}>
-                    <Text>There are no inactive users identified.</Text>
-                </View>
-            </View>
+            </Surface>
         );
     }
     return (
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-            <View style={styles.pageTitleContainer}>
-                <Text style={styles.pageTitle}>Inactive Members</Text>
+        <Surface style={mtrStyles(mtrTheme).surface}>
+            <View style={{ flex: 1, flexDirection: 'column' }}>
+                <View style={mtrStyles(mtrTheme).pageTitleContainer}>
+                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                        Inactive Members
+                    </Text>
+                </View>
+                <View>
+                    <Text
+                        style={{
+                            fontSize: 18,
+                            padding: 10,
+                            marginHorizontal: 10,
+                        }}
+                    >
+                        These users do not have access at this time. You can
+                        grant access as guest (view only) and adjust permissions
+                        on the ACTIVE tab.
+                    </Text>
+                </View>
+                <View style={{ paddingHorizontal: 5 }}>
+                    <FlatList
+                        data={inactiveMembers}
+                        renderItem={({ item }) => (
+                            <InactiveMemberCard
+                                member={item}
+                                action={actionHandler}
+                            />
+                        )}
+                        keyExtractor={(item) => item.id}
+                    />
+                </View>
             </View>
-            <View>
-                <Text>screens/team/InactiveMembers.tab</Text>
-            </View>
-            <View>
-                <Text
-                    style={{ fontSize: 18, padding: 10, marginHorizontal: 10 }}
-                >
-                    These users do not have access at this time. You can grant
-                    access as guest (view only) and adjust permissions on the
-                    ACTIVE tab.
-                </Text>
-            </View>
-            <View style={{ paddingHorizontal: 5 }}>
-                <FlatList
-                    data={inactiveMembers}
-                    renderItem={({ item }) => (
-                        <InactiveMemberCard
-                            member={item}
-                            action={actionHandler}
-                        />
-                    )}
-                    keyExtractor={(item) => item.id}
-                />
-            </View>
-        </View>
+        </Surface>
     );
 };
 
 export default InactiveMembers;
 
-const styles = StyleSheet.create({
-    pageTitleContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        paddingVertical: 10,
-    },
-    pageTitle: {
-        fontSize: 24,
-        fontWeight: '700',
-    },
-    editContainer: {
-        flexDirection: 'row',
-    },
-    editButton: {
-        marginLeft: 'auto',
-        marginRight: 10,
-    },
-    editButtonText: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: 'white',
-        padding: 5,
-    },
-});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        surface: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.background,
+        },
+        pageTitleContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            paddingVertical: 10,
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.lightText,
+        },
+        pageTitle: {
+            fontSize: 24,
+            fontWeight: '700',
+        },
+        editContainer: {
+            flexDirection: 'row',
+        },
+        editButton: {
+            marginLeft: 'auto',
+            marginRight: 10,
+        },
+        editButtonText: {
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: 'white',
+            padding: 5,
+        },
+    });

@@ -88,7 +88,7 @@ const ActiveScreen = () => {
                 id: meeting.id,
                 groups: groups,
             };
-            printObject('AST:85-->deleteRequest:\n', deleteRequest);
+            // printObject('AST:85-->deleteRequest:\n', deleteRequest);
             dispatch(deleteMeeting(deleteRequest));
             setMeeting(null);
             setShowDeleteConfirmModal(false);
@@ -133,7 +133,7 @@ const ActiveScreen = () => {
             // If meetingType is the same, sort by title in ascending order
             return a.title.localeCompare(b.title);
         });
-
+    // printObject('AST:136-->userProfile:\n', userProfile);
     return (
         <Surface style={mtrStyles(mtrTheme).surface}>
             <Modal visible={showDeleteConfirmModal} animationStyle='slide'>
@@ -198,7 +198,7 @@ const ActiveScreen = () => {
             <View>
                 <View style={mtrStyles(mtrTheme).screenTitleContainer}>
                     <Text style={mtrStyles(mtrTheme).screenTitleText}>
-                        ACTIVE
+                        Active Meetings
                     </Text>
                 </View>
                 {userProfile?.activeOrg?.role === 'manage' && (

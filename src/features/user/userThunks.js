@@ -61,7 +61,7 @@ export const loginUser = createAsyncThunk(
                 }
                 const newProfile = { ...gqlProfile, activeOrg: activeOrg };
                 const results = { profile: newProfile, perms: perms };
-                printObject('UT:64-->profile&perms:', results);
+                // printObject('UT:64-->profile&perms:', results);
 
                 return results;
             } else {

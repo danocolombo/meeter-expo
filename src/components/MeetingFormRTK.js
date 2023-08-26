@@ -43,9 +43,9 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
     const [dateValue, setDateValue] = useState();
     const [isSavable, setIsSavable] = useState(false);
     useEffect(() => {
-        printObject('MFRTK:81-->hit:\n', hit);
+        // printObject('MFRTK:81-->hit:\n', hit);
         if (!hit?.id) {
-            console.log('MFRTK:83-->meeting defined from template');
+            // console.log('MFRTK:83-->meeting defined from template');
             const currentDate = new Date(); // Get the current date
             const localCurrentDate = new Date(
                 currentDate.getTime() - localTimezoneOffsetInMinutes * 60 * 1000
@@ -61,27 +61,21 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
             setMeeting(newMeeting);
         } else {
             if (hit?.meetingDate) {
-                console.log('[[ 2.1 ]]');
                 const meetingDate = new Date(hit.meetingDate);
                 setDateValue(meetingDate);
             } else {
                 const daDate = new Date();
-                console.log('daDate use ', daDate);
-                console.log('iso:', daDate.toISOString().slice(0, 10));
                 setDateValue(daDate.toISOString().slice(0, 10)); // Passing the date in 'YYYY-MM-DD' format
-                console.log('[[ 2.2 ]]');
-                console.log(`daDate: ${daDate}`);
             }
 
             setMeeting(hit);
         }
-        console.log('end of load');
     }, []);
 
     useEffect(() => {
-        console.log(`MFRTK:129-->beginning of meeting useState`);
+        // console.log(`MFRTK:129-->beginning of meeting useState`);
         if (meeting?.meetingDate) {
-            printObject('MFRTK:132-->meeting:\n', meeting);
+            // printObject('MFRTK:132-->meeting:\n', meeting);
             //* **************************************
             //* ENABLE OR DISABLE SAVE BUTTON
             //* **************************************
@@ -115,12 +109,12 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                     break;
             }
         }
-        console.log('MFRTK:161-->done with meeting useState');
+        // console.log('MFRTK:161-->done with meeting useState');
     }, [meeting]); // Add meeting dependency to this useEffect to handle changes in the meeting object
 
     function inputChangedHandler(inputIdentifier, enteredValue) {
         setMeeting((curInputValues) => {
-            console.log('inputIdentifier:', inputIdentifier);
+            // console.log('inputIdentifier:', inputIdentifier);
 
             if (inputIdentifier === 'title') {
                 if (enteredValue.length < 3) {
@@ -130,7 +124,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                 }
             }
             if (inputIdentifier === 'donations') {
-                console.log('MFRTK:203-->donations:', enteredValue);
+                // console.log('MFRTK:203-->donations:', enteredValue);
             }
             if (inputIdentifier === 'supportContact') {
                 if (enteredValue.length < 1) {
@@ -181,17 +175,14 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
         let contactVal = false;
         switch (meeting.meetingType) {
             case 'Testimony':
-                console.log('Testimony');
                 setIsSavable(titleVal);
                 break;
             case 'Special':
-                console.log('Special');
                 if (titleVal && contactVal) {
                     setIsSavable(true);
                 }
                 break;
             case 'Lesson':
-                console.log('Lesson');
                 if (titleVal && contactVal) {
                     setIsSavable(true);
                 }

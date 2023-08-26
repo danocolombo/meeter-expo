@@ -82,7 +82,7 @@ const GroupNewScreen = ({ route }) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: meeter.appName,
+            title: meeter.appName || 'Meeter',
             headerBackTitle: 'Cancel',
         });
     }, [navigation, group]);

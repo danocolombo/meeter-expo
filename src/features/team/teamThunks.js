@@ -379,7 +379,7 @@ export const loadTeam = createAsyncThunk(
                     filter: { organizationAffiliationsId: { eq: id } },
                 })
             );
-            printObject('TT:325-->teamInfo:\n', teamInfo);
+            // printObject('TT:325-->teamInfo:\n', teamInfo);
             //* -------------------------------
             //* 2. flip affiliations and users
             //* -------------------------------
@@ -394,10 +394,10 @@ export const loadTeam = createAsyncThunk(
             const organizedAffiliatedTeam = await organizeAffiliates(
                 affiliatedUsers
             );
-            printObject(
-                'TT:372-->organizedAffiliatedTeam:\n',
-                organizedAffiliatedTeam
-            );
+            // printObject(
+            //     'TT:372-->organizedAffiliatedTeam:\n',
+            //     organizedAffiliatedTeam
+            // );
             return { ...organizedAffiliatedTeam, all: affiliatedUsers };
             // make sure there are only members for this org
             const validatedTeamInfo = {
@@ -452,7 +452,7 @@ export const updateActiveMember = createAsyncThunk(
         //*  value: {affId, role, status}
         //* }
 
-        const { member, action, value } = input;
+        const { member, action, value, orgId } = input;
         try {
             //* * * * * * * * * * * * * * * * * * *
             //* This function gets the member and
@@ -466,31 +466,28 @@ export const updateActiveMember = createAsyncThunk(
             switch (action) {
                 case 'addPermission':
                     try {
+                        // printObject('TT:469-->input\n', input);
                         const newId = createAWSUniqueID();
                         const newAff = {
                             id: newId,
-                            organizationAffiliationsId: member.organizationId,
+                            organizationAffiliationsId: orgId,
                             userAffiliationsId: member.id,
                             role: value.role,
                             status: 'active',
                         };
-                        printObject('TT:296-->addPermission:\n', newAff);
                         //* create the affiliation
                         const memberInfo = await API.graphql({
                             query: mutations.createAffiliation,
                             variables: { input: newAff },
                         });
-                        printObject('TT:309-->memberInfo:\n', memberInfo);
-                        let modRoles = [...member.affiliations];
-                        modRoles.add(value.role);
-                        //reduce aff for redux
-                        // delete newAff.organizationAffiliationsId;
-                        // delete newAff.userAffiliationsId;
-                        // modRoles.push(newAff);
+                        let modRoles = [...member?.roles];
+                        modRoles.push(value.role);
+
                         const updatedUser = {
                             ...member,
                             roles: modRoles,
                         };
+                        printObject('TT:490-->updatedUser:\n', updatedUser);
                         return updatedUser;
                     } catch (error) {
                         console.log(error);
@@ -499,13 +496,14 @@ export const updateActiveMember = createAsyncThunk(
                     break;
                 case 'removePermission':
                     try {
+                        printObject('TT:469-->input\n', input);
                         // need to get the role id
-                        const role = member.roles.find(
-                            (r) => r.role === value.role
+                        const aff = member.affiliations.find(
+                            (a) => a.role === value.role
                         );
                         const results = await API.graphql({
                             query: mutations.deleteAffiliation,
-                            variables: { input: { id: role.id } },
+                            variables: { input: { id: aff.id } },
                         });
                         let modRoles = member.roles.filter(
                             (r) => r.role !== value.role

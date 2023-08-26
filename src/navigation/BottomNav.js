@@ -12,7 +12,7 @@ const BottomTab = createBottomTabNavigator();
 const MeetingsConfig = () => {
     const mtrTheme = useTheme();
     const userProfile = useSelector((state) => state.user.profile);
-    const { appName } = useSelector((state) => state.system);
+    const meeter = useSelector((state) => state.system);
     let director = false;
     if (userProfile?.ActiveOrg?.affiliations.active.role === 'director') {
         director = true;
@@ -43,7 +43,7 @@ const MeetingsConfig = () => {
                 id='HISTORY'
                 component={HistoricScreen}
                 options={{
-                    title: appName,
+                    title: meeter.appName || 'Meeter',
                     id: 'HISTORIC_MEETINGS',
                     tabBarLabel: ({ focused, color, fontSize }) => (
                         <Text
@@ -74,7 +74,7 @@ const MeetingsConfig = () => {
                 id='ACTIVE'
                 component={ActiveScreen}
                 options={{
-                    title: appName,
+                    title: meeter.appName || 'Meeter',
                     id: 'ACTIVE_MEETINGS',
                     tabBarLabel: ({ focused, color, size }) => (
                         <Text

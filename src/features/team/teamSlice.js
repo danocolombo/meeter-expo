@@ -75,15 +75,14 @@ const teamSlice = createSlice({
                 //* 2. update member in allMembers
                 //*
                 //* * * * * * * * * * * * * * * * * * *
-                const index = state.activeMembers.findIndex(
-                    (member) => member.id === action.payload.id
-                );
-                // printObject(
-                //     'TS:73-->replace this...\n',
-                //     state.activeMembers[index]
-                // );
-                // printObject('TS:65-->update this:\n', action.payload);
-                state.activeMembers[index] = action.payload;
+                const updatedMembers = state.activeMembers.map((member) => {
+                    if (member.id === action.payload.id) {
+                        return action.payload; // Replace the member with the updated payload
+                    }
+                    return member; // Keep other members unchanged
+                });
+
+                state.activeMembers = updatedMembers;
                 state.isLoading = false;
             })
             .addCase(updateActiveMember.rejected, (state, action) => {

@@ -304,10 +304,10 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(updateGroup.fulfilled, (state, action) => {
-                printObject(
-                    'MS:314-->updateGroup.FULFILLED:action.payload:\n',
-                    action.payload
-                );
+                // printObject(
+                //     'MS:314-->updateGroup.FULFILLED:action.payload:\n',
+                //     action.payload
+                // );
                 const existingMeetings = state.meetings;
                 const updatedMeetings = existingMeetings.map((mtg) => {
                     if (mtg.id === action.payload.meetingId) {
@@ -326,10 +326,10 @@ export const meetingsSlice = createSlice({
                             ...mtg,
                             groups: groupItems,
                         };
-                        printObject(
-                            'MS:335-->updatedMeeting:\n',
-                            updatedMeeting
-                        );
+                        // printObject(
+                        //     'MS:335-->updatedMeeting:\n',
+                        //     updatedMeeting
+                        // );
                         return updatedMeeting;
                     } else {
                         return mtg;
@@ -428,10 +428,10 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(updateMeeting.fulfilled, (state, action) => {
-                printObject(
-                    'MS:326-->updateMeeting.FULFILLED:action.payload:\n',
-                    action.payload
-                );
+                // printObject(
+                //     'MS:326-->updateMeeting.FULFILLED:action.payload:\n',
+                //     action.payload
+                // );
                 //* * * * * * * * * * * * * * * * * * * * *
                 //* this should get a meeting that
                 //* needs to be replaced in state.meetings
@@ -441,7 +441,6 @@ export const meetingsSlice = createSlice({
                         const updatedMeeting = { ...action.payload };
                         const newMeetingList = state.meetings.map((m) => {
                             if (m.id === updatedMeeting.id) {
-                                console.log('MS344-->hit_hit');
                                 return updatedMeeting;
                             } else {
                                 return m;

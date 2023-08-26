@@ -32,7 +32,7 @@ const GroupForm = ({ group, meeting, handleUpdate }) => {
     );
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: meeter.appName,
+            title: meeter.appName || 'Meeter',
             headerBackTitle: 'Cancel',
             // headerRight: () => (
             //     <>
@@ -91,7 +91,6 @@ const GroupForm = ({ group, meeting, handleUpdate }) => {
         //todo--- gather values
 
         //todo--- pass them up
-        console.log('GF:94--> handleFormSubmit\n', values);
         handleUpdate(values);
         navigation.goBack();
     };

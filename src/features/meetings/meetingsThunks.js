@@ -195,8 +195,6 @@ export const addDefaultGroups = createAsyncThunk(
     'meetings/addDefaultGroups',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:198-->inputs:\n', inputs);
-
             const newGroupList = inputs?.meeting?.groups?.items
                 ? [...inputs.meeting.groups.items]
                 : [];
@@ -331,10 +329,10 @@ export const updateMeeting = createAsyncThunk(
                 variables: { input: mtg },
             });
             if (results.data.updateMeeting.id) {
-                printObject(
-                    'MT:336-->results.data.updateMeeting:\n',
-                    results.data.updateMeeting
-                );
+                // printObject(
+                //     'MT:336-->results.data.updateMeeting:\n',
+                //     results.data.updateMeeting
+                // );
                 return inputs;
             } else {
                 throw new Error('MT:208-->Failed to update meeting');
@@ -351,7 +349,7 @@ export const addGroup = createAsyncThunk(
     'meetings/addGroup',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:351-->inputs:\n', inputs);
+            // printObject('MT:351-->inputs:\n', inputs);
             const newId = createAWSUniqueID();
             // printObject('MT:196-->addGroup__inputs:\n', inputs);
             let inputInfo = {
@@ -406,7 +404,6 @@ export const updateGroup = createAsyncThunk(
                 query: mutations.updateGroup,
                 variables: { input: inputInfo },
             });
-            printObject('MT:402-->results:\n', results);
             if (results.data.updateGroup.id) {
                 const resultDef = {
                     group: inputInfo,

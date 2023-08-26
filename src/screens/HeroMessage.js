@@ -60,7 +60,7 @@ const HeroMessageScreen = (props) => {
             </View>
         );
     }
-    printObject('HM:93-->userProfile:\n', userProfile);
+    // printObject('HM:93-->userProfile:\n', userProfile);
     return (
         <>
             <SafeAreaView style={mtrStyles(mtrTheme).container}>

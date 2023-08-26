@@ -81,7 +81,7 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
 
             case 'meals':
                 if (response[1] === 'add') {
-                    // printObject('MC:187-->member:', member);
+                    printObject('MC:187-->member:', member);
                     const response = {
                         member: member,
                         action: 'addPermission',
@@ -146,7 +146,11 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
             <View
                 style={[
                     styles.item,
-                    { backgroundColor: editFlag ? 'yellow' : '#A1C2F1' },
+                    {
+                        backgroundColor: editFlag
+                            ? styles.item.backgroundColor
+                            : '#A1C2F1',
+                    },
                 ]}
             >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>

@@ -22,7 +22,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
         }
         if (perms.includes('manage') || perms.includes('groups')) {
             navigation.setOptions({
-                title: meeter.appName,
+                title: meeter.appName || 'Meeter',
                 headerBackTitle: 'Back',
                 headerRight: () => (
                     <Button

@@ -42,7 +42,11 @@ function Permissions({ permissions, editFlag, togglePermission }) {
         <View
             style={[
                 styles.item,
-                { backgroundColor: editFlag ? 'yellow' : '#A1C2F1' },
+                {
+                    backgroundColor: editFlag
+                        ? styles.item.backgroundColor
+                        : '#A1C2F1',
+                },
             ]}
         >
             <View style={{ flexDirection: 'row' }}>
@@ -89,7 +93,7 @@ function Permissions({ permissions, editFlag, togglePermission }) {
 export default Permissions;
 const styles = StyleSheet.create({
     item: {
-        backgroundColor: '#f9c2ff',
+        backgroundColor: '#A1C2F1',
         padding: 2,
         // marginVertical: 8,
         // marginHorizontal: 16

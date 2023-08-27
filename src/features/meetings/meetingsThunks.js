@@ -53,10 +53,30 @@ export const getAllMeetings = createAsyncThunk(
                       return a.title.localeCompare(b.title);
                   })
                 : [];
+            const allTheMeetingsSorted = sortedMeetings;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Set time to midnight
 
+            const summary = {
+                all: [],
+                active: [],
+                historic: [],
+            };
+
+            allTheMeetingsSorted.forEach((meeting) => {
+                const meetingDate = new Date(meeting.date);
+
+                if (meetingDate >= today) {
+                    summary.active.push(meeting);
+                } else {
+                    summary.historic.push(meeting);
+                }
+
+                summary.all.push(meeting);
+            });
             const returnValue = {
                 status: '200',
-                meetings: sortedMeetings,
+                meetings: summary,
             };
 
             return returnValue;

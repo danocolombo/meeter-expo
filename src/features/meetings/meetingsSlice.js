@@ -198,12 +198,17 @@ export const meetingsSlice = createSlice({
                 // );
                 try {
                     if (action.payload.status === '200') {
-                        state.meetings = [...action.payload.meetings];
-                        // action.payload.body.Items.map((m) => {
-                        //     console.log('date:', m.meetingDate);
-                        // });
+                        state.meetings = [...action.payload.meetings.all];
+                        state.activeMeetings = [
+                            ...action.payload.meetings.active,
+                        ];
+                        state.historicMeetings = [
+                            ...action.payload.meetings.historic,
+                        ];
                     } else {
                         state.meetings = [];
+                        state.activeMeetings = [];
+                        state.historicMeetings = [];
                     }
                 } catch (error) {
                     printObject('MS:230-->error getting all meetings\n', error);

@@ -82,8 +82,11 @@ const teamSlice = createSlice({
                     return member; // Keep other members unchanged
                 });
 
-                state.activeMembers = updatedMembers;
-                state.isLoading = false;
+                return {
+                    ...state,
+                    activeMembers: updatedMembers,
+                    isLoading: false,
+                };
             })
             .addCase(updateActiveMember.rejected, (state, action) => {
                 console.log(action);

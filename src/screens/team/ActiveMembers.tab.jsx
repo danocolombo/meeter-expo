@@ -33,10 +33,12 @@ const ActiveMembers = () => {
     useFocusEffect(
         useCallback(() => {
             const fetchData = async () => {
+                console.log('NEW_FETCH');
                 setIsLocallyLoading(true);
                 try {
                     dispatch(loadTeam(userProfile?.activeOrg?.id))
                         .then((results) => {
+                            printObject('AMT:41-->results:\n', results);
                             setDisplayMembers(results.payload.active);
                             const totals = {
                                 active: results.payload.active.length,
@@ -147,7 +149,7 @@ const ActiveMembers = () => {
     if (isLocallyLoading) {
         console.log('HERE-2');
         return (
-            <View style={styles.loadingContainer}>
+            <View style={mtrStyles(mtrTheme).loadingContainer}>
                 <ActivityIndicator size='large' color='yellow' />
             </View>
         );
@@ -161,20 +163,6 @@ const ActiveMembers = () => {
                         Active Members
                     </Text>
                 </View>
-
-                {/* <View style={{ marginLeft: 'auto' }}>
-                <Pressable
-                    onPress={() => setEditFlag(!editFlag)}
-                    style={[
-                        styles.editButton,
-                        { backgroundColor: editFlag ? 'yellow' : 'blue' },
-                    ]}
-                >
-                    <Text style={styles.editButtonText}>
-                        {editFlag ? 'SAVE' : 'EDIT'}
-                    </Text>
-                </Pressable>
-            </View> */}
                 <View style={{ paddingHorizontal: 5, flex: 1 }}>
                     {/* <View>
                     <Text>ACTIVE MEMBERS</Text>

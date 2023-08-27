@@ -141,6 +141,9 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
     };
     // printObject('MC:34-->member:\n', member);
     // printObject('MC:35-->permissions:\n', permissions);
+    if (member.id === '891b384a-d958-43f2-82cc-428f67d75bd5') {
+        printObject('MC:145-->mtrGroups:\n', member);
+    }
     return (
         <TouchableOpacity onPress={handleMemberPress}>
             <View

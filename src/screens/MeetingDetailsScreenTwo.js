@@ -383,7 +383,46 @@ const MeetingDetails = (props) => {
                         handleDeleteRequest={handleDeleteRequest}
                     />
                 )}
-                ListFooterComponent={<></>}
+                ListHeaderComponent={
+                    <View
+                        style={
+                            mtrStyles(mtrTheme)
+                                .openShareGroupsListHeaderContainer
+                        }
+                    >
+                        {memoizedMeetingGroups.length > 0 && (
+                            <Text
+                                style={
+                                    mtrStyles(mtrTheme)
+                                        .openShareGroupsListHeaderText
+                                }
+                            >
+                                Scroll to see all groups
+                            </Text>
+                        )}
+                    </View>
+                }
+                ListFooterComponent={
+                    <View
+                        style={
+                            mtrStyles(mtrTheme)
+                                .openShareGroupsListFooterContainer
+                        }
+                    >
+                        {memoizedMeetingGroups.length > 0 && (
+                            <Text
+                                style={
+                                    mtrStyles(mtrTheme)
+                                        .openShareGroupsListFooterText
+                                }
+                            >
+                                End of Group List
+                            </Text>
+                        )}
+                    </View>
+                }
+                showsVerticalScrollIndicator={true}
+                indicatorStyle={mtrTheme.colors.lightGraphic}
             />
             {authority && showDefaultsButton && (
                 <View style={mtrStyles(mtrTheme).defaultGroupsButtonContainer}>
@@ -515,7 +554,7 @@ const mtrStyles = (mtrTheme) =>
             borderTopColor: mtrTheme.colors.accent,
             borderBottomColor: mtrTheme.colors.accent,
             marginHorizontal: 20,
-            marginBottom: 20,
+            marginBottom: 5,
             borderBottomWidth: StyleSheet.hairlineWidth,
             borderTopWidth: StyleSheet.hairlineWidth,
         },
@@ -527,6 +566,22 @@ const mtrStyles = (mtrTheme) =>
         openShareButtonContainer: {
             justifyContent: 'center',
             marginLeft: 10,
+        },
+        openShareGroupsListHeaderContainer: {
+            alignItems: 'center',
+            // paddingVertical: 10,
+        },
+        openShareGroupsListHeaderText: {
+            color: mtrTheme.colors.accent,
+            fontFamily: 'Roboto-Regular',
+        },
+        openShareGroupsListFooterContainer: {
+            alignItems: 'center',
+            // paddingVertical: 10,
+        },
+        openShareGroupsListFooterText: {
+            color: mtrTheme.colors.accent,
+            fontFamily: 'Roboto-Regular',
         },
         defaultGroupsButtonContainer: {
             marginHorizontal: 20,

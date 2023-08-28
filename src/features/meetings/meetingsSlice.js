@@ -84,26 +84,14 @@ export const meetingsSlice = createSlice({
             );
             return grp;
         },
-        addNewGroup: (state, action) => {
-            let grps = state.groups;
-            printObject('MS:216-->grps(before)', grps);
-            printObject('MS:217-->payload:', action.payload);
-            grps.push(action.payload);
-            function GetASCSortOrder(prop) {
-                return function (a, b) {
-                    if (a[prop] > b[prop]) {
-                        return 1;
-                    } else if (a[prop] < b[prop]) {
-                        return -1;
-                    }
-                    return 0;
-                };
-            }
-            let newSortResults = grps.sort(GetASCSortOrder('gender'));
-            state.groups = newSortResults;
-            // return
+        addSubscribeMeeting: (state, action) => {
+            const newMeeting = action.payload;
+            const updatedMeetings = [...state.meetings, ...newMeeting];
+            printObject('MS:89-->updatedMeetings:\n', updatedMeetings);
+            state.meetings = updatedMeetings;
             return state;
         },
+
         deleteGroup: (state, action) => {
             const smaller = state.groups.filter(
                 (m) => m.groupId !== action.payload.groupId
@@ -111,22 +99,7 @@ export const meetingsSlice = createSlice({
             state.groups = smaller;
             return state;
         },
-        // updateGroup: (state, action) => {
-        //     const newValue = action.payload;
 
-        //     // printObject('newValue:', newValue);
-        //     const newGroupList = state.groups.map((g) => {
-        //         // console.log('typeof ral:', typeof ral);
-        //         // console.log('typeof action.payload', typeof action.payload);
-        //         //printObject('g', g);
-        //         //console.log('g.groupId', g.groupId);
-        //         //console.log('newValue.groupId', newValue.groupId);
-        //         return g.groupId === newValue.groupId ? newValue : g;
-        //     });
-        //     printObject('newGroupList:', newGroupList);
-        //     state.groups = newGroupList;
-        //     return state;
-        // },
         clearGroups: (state) => {
             state.groups = [];
             return state;
@@ -475,7 +448,7 @@ export const meetingsSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-    //loadActiveMeetings,
+    addSubscribeMeeting,
     loadHistoricMeetings,
     loadMeetings,
     getMeetings,
@@ -485,254 +458,8 @@ export const {
     deleteGroup,
     clearGroups,
     addNewGroup,
-    // updateGroup,
     addActiveMeeting,
-    //addHistoricMeeting,
     getGroup,
     logout,
 } = meetingsSlice.actions;
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched
-// export const deleteGroupList = (groups) => (dispatch) => {
-//     const deleteThisGroup = async (groupId) => {
-//         printObject('MS:317-->groupId:', groupId);
-//         let obj = {
-//             operation: 'deleteGroup',
-//             payload: {
-//                 Key: {
-//                     groupId: groupId,
-//                 },
-//             },
-//         };
-//         let body = JSON.stringify(obj);
-//         let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-
-//         try {
-//             let res = await axios.post(api2use, body, config);
-//             if (res.status === 200) {
-//                 return true;
-//             } else {
-//                 console.log('MS:335-->deleteGroupList:', groupId, ' FAILURE');
-//                 return false;
-//             }
-//         } catch (error) {
-//             printObject('MS:339 --> ERROR deleteGroupList:', error);
-//             return false;
-//         }
-//     };
-//     //   gitterdone
-//     let groupDeleteSuccess = true;
-//     if (groups.length > 0) {
-//         groupDeleteSuccess = true;
-//         console.log('MS:346-->deleting groups');
-//         groups.forEach((g) => {
-//             console.log('MS:348-->deleting: ', g.groupId);
-//             deleteThisGroup(g)
-//                 .then((success) => {
-//                     if (!success) {
-//                         groupDeleteSuccess = false;
-//                         console.log('MS:354-->failed to delete:', g.groupId);
-//                     } else {
-//                         console.log('MS:356--> success deleting ', g.groupId);
-//                         // groupDeleteSuccess = true;
-//                     }
-//                 })
-//                 .catch((error) => {
-//                     printObject('MS:361-->deleteThisGroup FAIL:', error);
-//                     console.warn('MS:362-->Error deleting group');
-//                     groupDeleteSuccess = false;
-//                 });
-//         });
-
-//         if (groupDeleteSuccess !== false) {
-//             console.log('MS:368-->groupDeleteSuccess');
-//             groupDeleteSuccess = true;
-//             dispatch(clearGroups());
-//         } else {
-//             console.log('MS:372 --> groupDeleteSuccess false');
-//         }
-//     }
-// };
-
-// export const getMeetingGroups = (meetingId) => (dispatch) => {
-//     console.log('MS:506--> SLICE');
-//     // this will get some remove data
-//     const getData = async (meetingId) => {
-//         dispatch(clearGroups());
-//         let obj = {
-//             operation: 'getGroupsByMeetingId',
-//             payload: {
-//                 meetingId: meetingId,
-//             },
-//         };
-//         let body = JSON.stringify(obj);
-//         let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-//         let res = await axios.post(api2use, body, config);
-
-//         if (res?.data?.status === '200') {
-//             const results = res.data.body;
-
-//             function GetASCSortOrder(prop) {
-//                 return function (a, b) {
-//                     if (a[prop] > b[prop]) {
-//                         return 1;
-//                     } else if (a[prop] < b[prop]) {
-//                         return -1;
-//                     }
-//                     return 0;
-//                 };
-//             }
-//             let newSortResults = results.sort(GetASCSortOrder('gender'));
-//             dispatch(loadGroups(newSortResults));
-//             return results;
-//         } else {
-//             dispatch(clearGroups());
-//         }
-
-//         // return;
-//     };
-//     getData(meetingId);
-// };
-// export const updateMeetingValues = (values) => (dispatch) => {
-//     const userProfile = useSelector((state) => state.user.profile);
-//     // always make sure that the mtgCompKey is equal to the meetingDate
-//     console.log('A');
-//     let mDate = values.meetingDate;
-//     let mtgCompKey =
-//         userProfile?.activeOrg.code.toLowerCase() +
-//         '#' +
-//         mDate.substring(0, 4) +
-//         '#' +
-//         mDate.substring(5, 7) +
-//         '#' +
-//         mDate.substring(8, 10);
-//     values.mtgCompKey = mtgCompKey;
-//     console.log('B');
-//     const updateData = async (values) => {
-//         console.log('D');
-//         let obj = {
-//             operation: 'putMeeting',
-//             payload: {
-//                 Item: values,
-//             },
-//         };
-//         console.log('E');
-//         let body = JSON.stringify(obj);
-//         console.log('F');
-//         let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
-//         console.log('G');
-
-//         await axios
-//             .post(api2use, body, config)
-//             .then((res) => {
-//                 console.log('H');
-//                 // printObject('MS:617-->res:', res);
-//                 const results = res.data;
-//                 console.log('I');
-//                 //dispatch(updateTmp(values));
-//                 dispatch(updateMeeting(results));
-//                 console.log('J');
-//                 return results;
-//             })
-//             .catch((error) => {
-//                 printObject('MS:641', error);
-//             });
-//     };
-//     console.log('C');
-//     updateData(values);
-// };
-// // export const getAMeeting = (meetingId) => (dispatch) => {
-// //     const getIt = async (meetingId) => {
-// //         let mtg = dispatch(getMeeting(meetingId));
-// //         printObject('getAMeeting response:', mtg);
-// //         return mtg;
-// //     };
-// //     getIt(meetingId);
-// // };
-// // export const getHistoricMeetings = () => (dispatch) => {
-// //     var d = new Date();
-// //     let yesterday = getDateMinusDays(d, 1);
-// //     let twoMonthsAgo = getDateMinusDays(d, 120);
-
-// //     const getData = async () => {
-// //         let obj = {
-// //             operation: 'getMeetingsBetweenDates',
-// //             payload: {
-// //                 clientId: 'wbc',
-// //                 startDate: twoMonthsAgo,
-// //                 stopDate: yesterday,
-// //                 direction: 'DESC',
-// //             },
-// //         };
-// //         let body = JSON.stringify(obj);
-// //         let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
-// //         let res = await axios.post(api2use, body, config);
-// //         const results = res.data.body.Items;
-// //         dispatch(loadHistoricMeetings(results));
-// //         return;
-// //     };
-// //     getData();
-// // };
-// // export const updateGroupValues = (values) => (dispatch) => {
-// //     const saveGroupToDDB = async () => {
-// //         let obj = {
-// //             operation: 'updateGroup',
-// //             payload: {
-// //                 Item: values,
-// //             },
-// //         };
-// //         let body = JSON.stringify(obj);
-// //         let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-// //         let res = await axios.post(api2use, body, config);
-// //         //const results = res.data.body.Items;
-// //         dispatch(updateGroup(values));
-// //         return;
-// //     };
-// //     saveGroupToDDB();
-// // };
-// export const addGroupValues = (values) => (dispatch) => {
-//     //   this is NEW group
-//     const saveGroupToDDB = async () => {
-//         let obj = {
-//             operation: 'addGroup',
-//             payload: {
-//                 Item: values,
-//             },
-//         };
-//         let body = JSON.stringify(obj);
-//         let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-//         let res = await axios.post(api2use, body, config);
-//         // now take the response that has GroupId and save to redux
-
-//         const results = res.data.Item;
-//         dispatch(addNewGroup(results));
-//         return;
-//     };
-//     saveGroupToDDB();
-// };
-// export const deleteIndividualGroup = (groupId) => (dispatch) => {
-//     const deleteGroupFromDDB = async () => {
-//         let obj = {
-//             operation: 'deleteGroup',
-//             payload: {
-//                 Key: {
-//                     groupId: groupId,
-//                 },
-//             },
-//         };
-//         let body = JSON.stringify(obj);
-//         let api2use = process.env.AWS_API_ENDPOINT + '/groups';
-//         let res = await axios.post(api2use, body, config);
-//         //const results = res.data.body.Items;
-//         dispatch(deleteGroup(groupId));
-//         return;
-//     };
-//     deleteGroupFromDDB();
-// };
-
-// The function below is called a selector and allows us to select a value from
-// the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state) => state.counter.value)`
 export default meetingsSlice.reducer;

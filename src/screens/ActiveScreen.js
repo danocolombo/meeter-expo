@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useRef, useLayoutEffect } from 'react';
+import React, {
+    useState,
+    useCallback,
+    useRef,
+    useLayoutEffect,
+    useEffect,
+} from 'react';
 import {
     StyleSheet,
     Text,
@@ -18,6 +24,10 @@ import {
     getActiveMeetings,
     deleteMeeting,
 } from '../features/meetings/meetingsThunks';
+import {
+    subscribeToMeetingCreation,
+    unsubscribeFromMeetingCreation,
+} from '../features/meetings/meetingsSubscriptions.js';
 import { dateDashMadePretty, printObject } from '../utils/helpers';
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
@@ -45,38 +55,32 @@ const ActiveScreen = () => {
     }, [navigation, meeter]);
     useFocusEffect(
         useCallback(() => {
-            if (!isFormDisplayedRef.current) {
-                async function fetchAndSetMeetings() {
-                    setIsLoading(true);
-                    try {
-                        dispatch(
-                            getAllMeetings({ orgId: userProfile.activeOrg.id })
-                        )
-                            .then((results) => {
-                                printObject('AS:54-->results received', '');
-                            })
-                            .catch((error) => {
-                                printObject(
-                                    'AS:57-->catch error getAllMeetings:\n',
-                                    error
-                                );
-                            })
-                            .finally(() => {
-                                setIsLoading(false);
-                            });
-
-                        // await dispatch(
-                        //     getAllMeetings({ orgId: userProfile.activeOrg.id })
-                        // );
-                        // await dispatch(getActiveMeetings());
-                    } catch (error) {
-                        console.error('Error:', error);
-                    }
+            async function fetchAndSetMeetings() {
+                setIsLoading(true);
+                try {
+                    await dispatch(
+                        getAllMeetings({ orgId: userProfile.activeOrg.id })
+                    );
+                } catch (error) {
+                    console.error('Error:', error);
+                } finally {
                     setIsLoading(false);
                 }
+            }
 
+            if (!isFormDisplayedRef.current) {
                 fetchAndSetMeetings();
             }
+
+            // Start the subscription when the component gains focus
+            const orgId = userProfile.activeOrg.id;
+            console.log('AS:77-->orgId:', orgId);
+            const subscription = dispatch(subscribeToMeetingCreation(orgId));
+
+            // Clean up the subscription when the component loses focus
+            return () => {
+                dispatch(unsubscribeFromMeetingCreation(subscription));
+            };
         }, [])
     );
 

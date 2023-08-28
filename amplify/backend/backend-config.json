@@ -1,36 +1,126 @@
 {
+  "api": {
+    "jericho": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 7
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
   "auth": {
     "jericho": {
-      "service": "Cognito",
-      "serviceType": "imported",
-      "providerPlugin": "awscloudformation",
+      "customAuth": false,
       "dependsOn": [],
-      "customAuth": false
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "imported"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_jericho_allowUnauthenticatedIdentities": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_authRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_authRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_identityPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_identityPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_unauthRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_unauthRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
+    },
+    "AMPLIFY_auth_jericho_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "jericho"
+        }
+      ]
     }
   },
   "storage": {
     "jerichos3": {
-      "service": "S3",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": []
-    }
-  },
-  "api": {
-    "jericho": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
       "dependsOn": [],
-      "output": {
-        "authConfig": {
-          "defaultAuthentication": {
-            "authenticationType": "API_KEY",
-            "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
-            }
-          },
-          "additionalAuthenticationProviders": []
-        }
-      }
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
     }
   }
 }

@@ -1,12 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 // import axios from 'axios';
-import { API } from 'aws-amplify';
+import { API, graphqlOperation } from 'aws-amplify';
 import * as queries from '../../jerichoQL/queries';
 import * as gQueries from '../../graphql/queries';
 import * as mutations from '../../jerichoQL/mutations';
 import * as gMutations from '../../graphql/mutations';
 import { createAWSUniqueID, printObject } from '../../utils/helpers';
-
 export const getSpecificMeeting = createAsyncThunk(
     'meetings/getSpecificMeeting',
     async (id, thunkAPI) => {

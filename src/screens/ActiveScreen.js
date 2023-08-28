@@ -55,22 +55,40 @@ const ActiveScreen = () => {
     }, [navigation, meeter]);
     useFocusEffect(
         useCallback(() => {
-            async function fetchAndSetMeetings() {
-                setIsLoading(true);
+            const fetchData = async () => {
+                console.log('NEW_FETCH');
+                setIsLocallyLoading(true);
                 try {
-                    await dispatch(
-                        getAllMeetings({ orgId: userProfile.activeOrg.id })
-                    );
+                    dispatch(loadTeam(userProfile?.activeOrg?.id))
+                        .then((results) => {
+                            printObject('AMT:41-->results:\n', results);
+                            setDisplayMembers(results.payload.active);
+                            const totals = {
+                                active: results.payload.active.length,
+                                inactive: results.payload.inactive.length,
+                                new: results.payload.new.length,
+                            };
+                        })
+                        .catch((error) => {
+                            console.log(
+                                'AMT:46-->Error occurred while loading team:',
+                                error
+                            );
+                        })
+                        .finally(() => {
+                            setIsLocallyLoading(false);
+                        });
                 } catch (error) {
-                    console.error('Error:', error);
-                } finally {
-                    setIsLoading(false);
+                    // Handle the error, e.g., display an error message
+                    console.log(
+                        'AMT:56-->Error occurred while loading team:',
+                        error
+                    );
                 }
-            }
+                setIsLocallyLoading(false);
+            };
 
-            if (!isFormDisplayedRef.current) {
-                fetchAndSetMeetings();
-            }
+            fetchData();
 
             // Start the subscription when the component gains focus
             const orgId = userProfile.activeOrg.id;

@@ -1,17 +1,21 @@
 // subscriptionHandlers.js
 import { API, graphqlOperation } from 'aws-amplify';
-import { onCreateMeetingForOrg } from '../../graphql/subscriptions';
+import {
+    onCreateMeetingForOrg,
+    onCreateMeeting,
+} from '../../graphql/subscriptions';
 import { addSubscribeMeeting } from './meetingsSlice';
 import { printObject } from '../../utils/helpers';
 
 export const subscribeToMeetingCreation = (orgId, dispatch) => {
     try {
         console.log('MS:7-->orgId:', orgId);
-        const subscription = API.graphql(
-            graphqlOperation(onCreateMeetingForOrg, {
-                organizationMeetingsId: orgId,
-            })
-        );
+        // const subscription = API.graphql(
+        //     graphqlOperation(onCreateMeetingForOrg, {
+        //         organizationMeetingsId: orgId,
+        //     })
+        // );
+        const subscription = API.graphql(graphqlOperation(onCreateMeeting));
         printObject('MS:12-->subscription:\n', subscription);
         subscription.subscribe({
             next: (event) => {

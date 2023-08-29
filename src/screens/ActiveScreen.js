@@ -27,7 +27,7 @@ import {
 import {
     subscribeToMeetingCreation,
     unsubscribeFromMeetingCreation,
-} from '../features/meetings/meetingsSubscriptions.js';
+} from '../features/meetings/meetingsSubscriptions';
 import { dateDashMadePretty, printObject } from '../utils/helpers';
 const ActiveScreen = () => {
     const mtrTheme = useTheme();

@@ -1610,8 +1610,10 @@ export const onCreateMeeting = /* GraphQL */ `
   }
 `;
 export const onCreateMeetingForOrg = /* GraphQL */ `
-  subscription OnCreateMeetingForOrg($organizationMeetingsId: ID!) {
-    onCreateMeetingForOrg(organizationMeetingsId: $organizationMeetingsId) {
+  subscription OnCreateMeetingForOrg(
+    $filter: ModelSubscriptionMeetingOrgFilterInput
+  ) {
+    onCreateMeetingForOrg(filter: $filter) {
       id
       meetingDate
       title

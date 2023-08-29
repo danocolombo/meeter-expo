@@ -165,7 +165,7 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
                                                                     .meetingTypeText
                                                             }
                                                         >
-                                                            {meeting.supportContact.trim()}
+                                                            {meeting?.supportContact?.trim()}
                                                         </Text>
                                                     </View>
                                                 )}

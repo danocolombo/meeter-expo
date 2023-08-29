@@ -14,6 +14,8 @@ import {
     Modal,
     StatusBar,
 } from 'react-native';
+import { API, graphqlOperation } from 'aws-amplify';
+import { onCreateMeeting } from '../graphql/subscriptions';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Surface, useTheme, FAB } from 'react-native-paper';
@@ -37,6 +39,7 @@ const ActiveScreen = () => {
     const meetings = useSelector((state) => state.meetings.meetings);
     const [meeting, setMeeting] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [displayMeetings, setDisplayMeetings] = useState([]);
     const isFormDisplayedRef = useRef(false); // Track form display
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const getCurrentDateInUserTimezone = useCallback(() => {
@@ -57,51 +60,103 @@ const ActiveScreen = () => {
         useCallback(() => {
             const fetchData = async () => {
                 console.log('NEW_FETCH');
-                setIsLocallyLoading(true);
+                setIsLoading(true);
                 try {
-                    dispatch(loadTeam(userProfile?.activeOrg?.id))
+                    dispatch(
+                        getAllMeetings({ orgId: userProfile.activeOrg.id })
+                    )
                         .then((results) => {
-                            printObject('AMT:41-->results:\n', results);
-                            setDisplayMembers(results.payload.active);
-                            const totals = {
-                                active: results.payload.active.length,
-                                inactive: results.payload.inactive.length,
-                                new: results.payload.new.length,
-                            };
+                            // printObject('AS:66-->results:\n', results);
+                            if (results?.payload?.length < 1) {
+                                throw new Error(
+                                    'AS:69-->No meetings identified'
+                                );
+                            } else {
+                                console.log(
+                                    'AS:73-->meetings actives: ',
+                                    results?.payload?.meetings?.active?.length
+                                );
+                                console.log(
+                                    'AS:77-->meetings all: ',
+                                    results?.payload?.meetings?.all?.length
+                                );
+                                console.log(
+                                    'AS:81-->meetings historic: ',
+                                    results?.payload?.meetings?.historic?.length
+                                );
+                                // console.log('AS:76-->results:\n', results);
+
+                                dispatch(getActiveMeetings())
+                                    .then((activeResults) => {
+                                        if (
+                                            activeResults?.payload?.length < 1
+                                        ) {
+                                            // no active results identified.
+                                            throw new Error(
+                                                'AS:75-->activeResults resulted in 0.'
+                                            );
+                                        } else {
+                                            console.log(
+                                                'AS:76-->activeResults: ',
+                                                activeResults?.payload?.length
+                                            );
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        printObject(
+                                            'AS:72-->getActiveMeetings catch error:\n',
+                                            error
+                                        );
+                                    });
+                            }
                         })
                         .catch((error) => {
-                            console.log(
-                                'AMT:46-->Error occurred while loading team:',
+                            printObject(
+                                'AS:76-->getAllMeetings catch error:\n',
                                 error
                             );
                         })
                         .finally(() => {
-                            setIsLocallyLoading(false);
+                            setIsLoading(false);
                         });
                 } catch (error) {
                     // Handle the error, e.g., display an error message
                     console.log(
-                        'AMT:56-->Error occurred while loading team:',
+                        'AS:92-->Error occurred while loading team:',
                         error
                     );
                 }
-                setIsLocallyLoading(false);
+                setDisplayMeetings(activeMeetings);
+                setIsLoading(false);
             };
 
             fetchData();
+            // const subscription = API.graphql(
+            //     graphqlOperation(onCreateMeeting)
+            // ).subscribe({
+            //     next: (data) => {
+            //         const meeting = data.value.data.onCreateMeeting;
+            //         // Do something with the newly created meeting data
+            //         console.log('New meeting:', meeting);
+            //     },
+            //     error: (error) => {
+            //         console.error('Subscription error:', error);
+            //     },
+            // });
+            // // Start the subscription when the component gains focus
+            // const orgId = userProfile.activeOrg.id;
+            // console.log('AS:77-->orgId:', orgId);
+            // const subscription = dispatch(subscribeToMeetingCreation(orgId));
 
-            // Start the subscription when the component gains focus
-            const orgId = userProfile.activeOrg.id;
-            console.log('AS:77-->orgId:', orgId);
-            const subscription = dispatch(subscribeToMeetingCreation(orgId));
-
-            // Clean up the subscription when the component loses focus
-            return () => {
-                dispatch(unsubscribeFromMeetingCreation(subscription));
-            };
+            // // Clean up the subscription when the component loses focus
+            // return () => {
+            //     dispatch(unsubscribeFromMeetingCreation(subscription));
+            // };
         }, [])
     );
-
+    useEffect(() => {
+        setDisplayMeetings(activeMeetings);
+    }, [meetings]);
     const handleNewRequest = () => {
         isFormDisplayedRef.current = true;
         navigation.navigate('MeetingNew');
@@ -255,7 +310,7 @@ const ActiveScreen = () => {
             </View>
 
             <FlatList
-                data={activeMeetings}
+                data={displayMeetings}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <MeetingListCard

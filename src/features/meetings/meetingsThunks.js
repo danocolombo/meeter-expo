@@ -266,7 +266,6 @@ export const addDefaultGroups = createAsyncThunk(
         }
     }
 );
-
 export const addMeeting = createAsyncThunk(
     'meetings/addMeeting',
     async (inputs, thunkAPI) => {
@@ -511,6 +510,34 @@ export const deleteMeeting = createAsyncThunk(
             return inputs;
         } catch (error) {
             printObject('MT:477-->deleteMeeting thunk try failure.\n', error);
+            throw new Error('MT:478-->Failed to deleteMeeting');
+        }
+    }
+);
+export const addSubscriptionMeeting = createAsyncThunk(
+    'meetings/addSubscriptionMeeting',
+    async (input, thunkAPI) => {
+        try {
+            //*===========================================
+            //* subscription input will be json object
+            //* required field is "__typename": "Meeting"
+            //*===========================================
+            if (input?.__typename === 'Meeting') {
+                const mtg = input;
+                delete mtg.__typename;
+                delete mtg.groups;
+                delete mtg.updatedAt;
+                printObject('MT:530-->newSubscription');
+                return mtg;
+            } else {
+                // If data.createGroup.id is missing, handle the error
+                throw new Error('MT:264-->Failed to create meeting');
+            }
+        } catch (error) {
+            printObject(
+                'MT:477-->addSubscriptionMeeting thunk try failure.\n',
+                error
+            );
             throw new Error('MT:478-->Failed to deleteMeeting');
         }
     }

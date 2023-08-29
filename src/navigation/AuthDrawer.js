@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+import { API, graphqlOperation } from 'aws-amplify';
+import { useDispatch } from 'react-redux';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,14 +19,46 @@ import HeroMessageScreen from '../screens/HeroMessage';
 import { printObject } from '../utils/helpers';
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
-
+import { onCreateMeeting } from '../graphql/subscriptions';
+import { addSubscriptionMeeting } from '../features/meetings/meetingsThunks';
 const AuthDrawer = (navigation) => {
     const mtrTheme = useTheme();
+    const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.profile);
     const perms = useSelector((state) => state.user.perms);
     //printObject('AD:26-->userProfile', userProfile);
     // printObject('mtrTheme:', mtrTheme);
     const meeter = useSelector((state) => state.system);
+
+    //* subscription to new meetings
+    useEffect(() => {
+        const subscription = API.graphql(
+            graphqlOperation(onCreateMeeting)
+        ).subscribe({
+            next: (data) => {
+                const meeting = data.value.data.onCreateMeeting;
+                console.log('New meeting:', meeting);
+                dispatch(addSubscriptionMeeting(meeting))
+                    .then((results) => {
+                        console.log('back from dispatch');
+                        printObject('AD:44-->results:\n', results);
+                    })
+                    .catch((error) => {
+                        console.log('error from dispatch');
+                        printObject('AD:48-->error:\n', error);
+                    });
+                // Dispatch a Redux action or update state as needed
+            },
+            error: (error) => {
+                console.error('Subscription error:', error);
+            },
+        });
+
+        // Clean up the subscription when the component unmounts
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, []); // Empty dependency array to ensure the effect runs only once
 
     // console.log('AD: affiliations:', user)
     let manager = false;

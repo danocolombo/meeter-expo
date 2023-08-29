@@ -91,7 +91,11 @@ export const meetingsSlice = createSlice({
             state.meetings = updatedMeetings;
             return state;
         },
-
+        addSubscriptionMeeting: (state, action) => {
+            state.meetings.push(action.payload);
+            state.isLoading = false;
+            return state;
+        },
         deleteGroup: (state, action) => {
             const smaller = state.groups.filter(
                 (m) => m.groupId !== action.payload.groupId

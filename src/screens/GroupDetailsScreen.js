@@ -1,116 +1,56 @@
-import React, { useCallback, useLayoutEffect } from 'react';
-import { View, Text, Button, StyleSheet, AppState } from 'react-native';
+import React, { useLayoutEffect } from 'react';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
-import { focusManager } from '@tanstack/react-query';
-import CustomButton from '../components/ui/CustomButton';
-import { Badge } from 'react-native-paper';
-import {
-    Surface,
-    withTheme,
-    useTheme,
-    ActivityIndicator,
-} from 'react-native-paper';
-import { useQuery } from '@tanstack/react-query';
-import { FetchGroup } from '../components/common/hooks/groupQueries';
+import { Surface, useTheme } from 'react-native-paper';
 import { printObject } from '../utils/helpers';
 //   FUNCTION START
 //   ===============
 const GroupDetailsScreen = ({ route, navigation }) => {
-    let group = route.params.group;
-    let groupId = group?.groupId;
-    const meeting = route.params.meeting;
+    const meeting = useSelector((state) =>
+        state.meetings.meetings.find((m) => m.id === route.params.meeting.id)
+    );
+    const group = meeting.groups.items.find(
+        (g) => g.id === route.params.group.id
+    );
+    const perms = useSelector((state) => state.user.perms);
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
-
     useLayoutEffect(() => {
         let headerLabelColor = '';
         if (Platform.OS === 'ios') {
-            headerLabelColor = 'white';
+            headerLabelColor = mtrTheme.colors.lightText;
         }
-        if (meeter.userRole !== 'guest') {
+        if (perms.includes('manage') || perms.includes('groups')) {
             navigation.setOptions({
-                title: meeter.appName,
+                title: meeter.appName || 'Meeter',
                 headerBackTitle: 'Back',
                 headerRight: () => (
                     <Button
                         onPress={() =>
                             navigation.navigate('GroupEdit', {
                                 group: group,
-                                meeting,
-                                meeting,
+                                meeting: meeting,
                             })
                         }
                         // color='red'
-                        color={headerLabelColor}
+                        color={mtrTheme.colors.lightText}
                         title='Edit'
                     />
                 ),
             });
         }
     }, [navigation, meeter]);
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
-    useFocusEffect(
-        useCallback(() => {
-            const subscription = AppState.addEventListener(
-                'change',
-                onAppStateChange
-            );
-            refetch();
-            printObject('GDS:64-->REFETCH', null);
 
-            return () => subscription.remove();
-        }, [])
-    );
-
-    const { data, isError, error, isLoading, isFetching, refetch } = useQuery(
-        ['group', groupId],
-        () => FetchGroup(groupId),
-        {
-            refetchInterval: 60000,
-            cacheTime: 2000,
-            enabled: true,
-        }
-    );
-
-    if (data) {
-        group = data.body;
-    }
-    if (isLoading) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <ActivityIndicator
-                    color={mtrTheme.colors.activityIndicator}
-                    size={80}
-                />
-            </View>
-        );
-    }
-    if (isError) {
-        console.error('Error getting group', error);
-    }
     return (
         <>
-            <View style={{ flex: 1 }}>
-                <Surface style={styles.surface}>
-                    <View
-                        style={{
-                            width: '95%',
-                            height: '100%',
-
-                            backgroundColor: mtrTheme.backgroundColor,
-                        }}
-                    >
+            <View style={mtrStyles(mtrTheme).flex}>
+                <Surface style={mtrStyles(mtrTheme).surface}>
+                    <View style={mtrStyles(mtrTheme).container}>
+                        <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                            <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                                GROUP DETAILS
+                            </Text>
+                        </View>
                         <View
                             style={{
                                 flexDirection: 'column',
@@ -118,40 +58,28 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                             }}
                         >
                             <View
-                                style={{
-                                    margin: 10,
-                                    width: 'auto',
-                                    height: 'auto',
-                                }}
+                                style={
+                                    mtrStyles(mtrTheme).groupDetailsContainer
+                                }
                             >
-                                <View
-                                    style={{
-                                        width: 'auto',
-                                        height: 'auto',
-                                        paddingHorizontal: 0,
-                                    }}
-                                >
-                                    <View>
-                                        <Text style={mtrTheme.screenTitle}>
-                                            GROUP DETAILS
-                                        </Text>
-                                    </View>
+                                <View style={mtrStyles(mtrTheme).logistics}>
                                     <View
-                                        style={{
-                                            alignItems: 'center',
-                                            marginTop: 20,
-                                        }}
+                                        style={
+                                            mtrStyles(mtrTheme).logisticsBreak
+                                        }
                                     >
                                         <Text
                                             style={
-                                                mtrTheme.groupCardDetailsLabel
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsLabel
                                             }
                                         >
                                             {meeting.meetingDate}
                                         </Text>
                                         <Text
                                             style={
-                                                mtrTheme.groupCardDetailsLabel
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsLabel
                                             }
                                         >
                                             {meeting.meetingType}
@@ -159,230 +87,317 @@ const GroupDetailsScreen = ({ route, navigation }) => {
                                             {meeting.title}
                                         </Text>
                                     </View>
+                                </View>
 
-                                    <View
-                                        style={[
-                                            mtrTheme.groupCardTopRow,
-                                            { maxWidth: '90%' },
-                                        ]}
-                                    >
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsData
-                                                }
-                                            >
-                                                {group.gender === 'f' && (
-                                                    <Text
-                                                        style={
-                                                            mtrTheme.groupCardDetailsData
-                                                        }
-                                                    >
-                                                        Women's {group.title}
-                                                    </Text>
-                                                )}
-                                                {group.gender === 'm' && (
-                                                    <Text
-                                                        style={
-                                                            mtrTheme.groupCardDetailsData
-                                                        }
-                                                    >
-                                                        Men's {group.title}
-                                                    </Text>
-                                                )}
-                                                {group.gender === 'x' && (
-                                                    <Text
-                                                        style={
-                                                            mtrTheme.groupCardDetailsData
-                                                        }
-                                                    >
-                                                        {group.title}
-                                                    </Text>
-                                                )}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            marginTop: 10,
-                                        }}
-                                    >
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsLabel
-                                                }
-                                            >
-                                                Attendance:
-                                            </Text>
-                                        </View>
-                                        <View
-                                            style={{
-                                                paddingLeft: 20,
-                                                // marginLeft: 'auto',
-                                                // marginRight: 0,
-                                            }}
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).groupDetailContainer
+                                    }
+                                >
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsLabel
+                                            }
                                         >
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsLabel
-                                                }
-                                            >
-                                                {group.attendance}
-                                            </Text>
-                                        </View>
+                                            Group:
+                                        </Text>
                                     </View>
-                                    <View style={mtrTheme.groupCardRow}>
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsLabel
-                                                }
-                                            >
-                                                Location:
-                                            </Text>
-                                        </View>
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsData
-                                                }
-                                            >
-                                                {group.location}
-                                            </Text>
-                                        </View>
+                                    {group.gender === 'f' && (
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsData
+                                            }
+                                        >
+                                            Women's {group.title}
+                                        </Text>
+                                    )}
+                                    {group.gender === 'm' && (
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsData
+                                            }
+                                        >
+                                            Men's {group.title}
+                                        </Text>
+                                    )}
+                                    {group.gender === 'x' && (
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsData
+                                            }
+                                        >
+                                            {group.title}
+                                        </Text>
+                                    )}
+                                </View>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).groupDetailContainer
+                                    }
+                                >
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsLabel
+                                            }
+                                        >
+                                            Attendance:
+                                        </Text>
                                     </View>
-                                    <View style={mtrTheme.groupCardRow}>
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsLabel
-                                                }
-                                            >
-                                                Faciliator:
-                                            </Text>
-                                        </View>
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsData
-                                                }
-                                            >
-                                                {group.facilitator}
-                                            </Text>
-                                        </View>
+
+                                    <Text
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .groupCardDetailsData
+                                        }
+                                    >
+                                        {group.attendance}
+                                    </Text>
+                                </View>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).groupDetailContainer
+                                    }
+                                >
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsLabel
+                                            }
+                                        >
+                                            Location:
+                                        </Text>
                                     </View>
-                                    <View style={mtrTheme.groupCardRow}>
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsLabel
-                                                }
-                                            >
-                                                Co-faciliator:
-                                            </Text>
-                                        </View>
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsData
-                                                }
-                                            >
-                                                {group.cofacilitator}
-                                            </Text>
-                                        </View>
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsData
+                                            }
+                                        >
+                                            {group.location}
+                                        </Text>
                                     </View>
-                                    <View style={mtrTheme.groupCardRow}>
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupCardDetailsLabel
-                                                }
-                                            >
-                                                Notes:
-                                            </Text>
-                                        </View>
+                                </View>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).groupDetailContainer
+                                    }
+                                >
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsLabel
+                                            }
+                                        >
+                                            Facilitator:
+                                        </Text>
                                     </View>
-                                    <View style={mtrTheme.groupCardRow}>
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.groupDetailsNotesText
-                                                }
-                                            >
-                                                {group.notes}
-                                            </Text>
-                                        </View>
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsData
+                                            }
+                                        >
+                                            {group.facilitator}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).groupDetailContainer
+                                    }
+                                >
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsLabel
+                                            }
+                                        >
+                                            Co-facilitator:
+                                        </Text>
+                                    </View>
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsData
+                                            }
+                                        >
+                                            {group.cofacilitator}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).groupDetailContainer
+                                    }
+                                >
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupCardDetailsLabel
+                                            }
+                                        >
+                                            Notes:
+                                        </Text>
+                                    </View>
+                                </View>
+                                <View style={mtrStyles(mtrTheme).groupCardRow}>
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .groupDetailsNotesText
+                                            }
+                                        >
+                                            {group.notes}
+                                        </Text>
                                     </View>
                                 </View>
                             </View>
                         </View>
-                        <View
-                            style={{ marginVertical: 20, marginHorizontal: 50 }}
-                        >
-                            <>
-                                {meeter.userRole !== 'guest' && (
-                                    <CustomButton
-                                        text='DELETE'
-                                        bgColor='red'
-                                        fgColor='white'
-                                        type='PRIMARY'
-                                        onPress={() => {
-                                            navigation.navigate(
-                                                'DeleteGroupConfirm',
-                                                {
-                                                    group,
-                                                    meeting,
-                                                }
-                                            );
-                                        }}
-                                    />
-                                )}
-                            </>
-                        </View>
+                        {/* {authority && (
+                            <View
+                                style={{
+                                    marginVertical: 20,
+                                    marginHorizontal: 50,
+                                }}
+                            >
+                                <>
+                                    {meeter.userRole !== 'guest' && (
+                                        <CustomButton
+                                            text='DELETEWWW'
+                                            bgColor={mtrTheme.colors.critical}
+                                            fgColor={mtrTheme.colors.lightText}
+                                            type='PRIMARY'
+                                            onPress={() => {
+                                                navigation.navigate(
+                                                    'DeleteGroupConfirm',
+                                                    {
+                                                        group,
+                                                        meeting,
+                                                    }
+                                                );
+                                            }}
+                                        />
+                                    )}
+                                </>
+                            </View>
+                        )} */}
                     </View>
                 </Surface>
             </View>
         </>
     );
 };
-export default withTheme(GroupDetailsScreen);
-const styles = StyleSheet.create({
-    surface: {
-        // flex: 1,
-        alignItems: 'center',
-    },
-    firstRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 5,
-    },
+export default GroupDetailsScreen;
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+        },
+        surface: {
+            // flex: 1,
+            alignItems: 'center',
+        },
+        container: {
+            width: '95%',
+            height: '100%',
 
-    dateWrapper: {
-        margin: 5,
-    },
-    buttonContainer: { marginTop: 20, marginHorizontal: 20 },
-    button: {
-        backgroundColor: 'blue',
-        marginHorizontal: 20,
-        marginTop: 20,
-    },
-    surfaceContainer: {
-        marginHorizontal: 10,
-        width: '95%',
-        marginHorizontal: 10,
-        padding: 20,
-    },
-    titleContainer: {},
-    titleText: {
-        fontSize: 28,
-        fontWeight: '600',
-        color: 'white',
-    },
-});
+            backgroundColor: mtrTheme.colors.background,
+        },
+        screenTitleContainer: {
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.accent,
+        },
+        groupDetailsContainer: {
+            backgroundColor: mtrTheme.colors.backgroundLight,
+            borderRadius: 5,
+            marginTop: 10,
+            marginHorizontal: 10,
+            width: 'auto',
+            height: 'auto',
+            paddingHorizontal: 0,
+        },
+        logistics: {
+            alignItems: 'center',
+            marginTop: 10,
+        },
+        logisticsBreak: {
+            // borderTopColor: mtrTheme.colors.mediumGraphic,
+            borderBottomColor: mtrTheme.colors.darkGraphic,
+            marginHorizontal: 0,
+            marginBottom: 5,
+            padding: 10,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            alignItems: 'center',
+        },
+        groupCardDetailsLabel: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 26,
+            paddingLeft: 0,
+            fontWeight: '400',
+            textAlign: 'left',
+            letterSpacing: 0.5,
+            color: mtrTheme.colors.darkText,
+        },
+        groupCardTopRow: {
+            flexDirection: 'row',
+            marginTop: 10,
+            marginHorizontal: 0,
+            alignItems: 'center',
+        },
+        groupCardRow: {
+            flexDirection: 'row',
+            marginTop: 10,
+            marginHorizontal: 5,
+        },
+        groupCardDetailsLabel: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 26,
+            paddingLeft: 0,
+            fontWeight: '400',
+            textAlign: 'left',
+            letterSpacing: 0.5,
+            color: mtrTheme.colors.darkText,
+        },
+        groupDetailContainer: {
+            flexDirection: 'row',
+            // marginTop: 10,
+            marginLeft: 20,
+        },
+        groupCardDetailsData: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 26,
+            fontWeight: '200',
+            paddingHorizontal: 5,
+            color: mtrTheme.colors.darkText,
+        },
+        groupDetailsNotesText: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 24,
+            color: mtrTheme.colors.darkText,
+            fontWeight: '200',
+            marginTop: -10,
+            letterSpacing: 0.2,
+            paddingBottom: 10,
+            marginLeft: 15,
+        },
+    });

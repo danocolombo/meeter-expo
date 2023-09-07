@@ -1,3 +1,6 @@
+//* ---------------------------------------------
+//* this is the details of a team member
+//* ---------------------------------------------
 import {
     Text,
     View,
@@ -12,14 +15,15 @@ import {
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
 import React, { useState } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { updateAffiliations } from '../jerichoQL/providers/affiliations.provider';
-
+import { useDispatch } from 'react-redux';
 import { useNavigation, NavigationActions } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 // import Navigation from '../navigation/Navigation';
 
 const TeamMemberScreen = (props) => {
+    const dispatch = useDispatch();
     const teamMember = props.route.params.teamMember;
     const navigation = useNavigation();
     printObject('teamMember***** ', teamMember);
@@ -28,7 +32,7 @@ const TeamMemberScreen = (props) => {
         teamMember.activeRoles ? false : true
     );
     const [showDeleteWarning, setShowDeleteWarning] = useState(false);
-    const { userProfile } = useUserContext();
+    const userProfile = useSelector((state) => state.user.profile);
     const [isUpdating, setIsUpdating] = useState(false);
     const [pictureObject, setPictureObject] = useState(
         props.route.params.pictureUri
@@ -95,7 +99,8 @@ const TeamMemberScreen = (props) => {
             add: adds,
             remove: removes,
         };
-
+        printObject('TMS:99-->changeRequest:\n', changeRequest);
+        dispatch(changeRequest);
         updateAffiliations(changeRequest)
             .then(() => {
                 console.log('updateAffiliations passed');
@@ -149,6 +154,9 @@ const TeamMemberScreen = (props) => {
     }
     return (
         <>
+            <View>
+                <Text style={{ color: 'black' }}>TeamMemberScreen</Text>
+            </View>
             <Modal visible={showNotice} animationStyle='slide'>
                 <Surface style={styles(mtrTheme).modalWrapper}>
                     <View style={styles(mtrTheme).modalContentWrapper}>

@@ -179,6 +179,71 @@ export const getOrganization = /* GraphQL */ `
         }
     }
 `;
+export const listMeetings = /* GraphQL */ `
+    query ListMeetings(
+        $filter: ModelMeetingFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listMeetings(filter: $filter, limit: $limit, nextToken: $nextToken) {
+            items {
+                id
+                meetingDate
+                title
+                meetingType
+                mtgCompKey
+                announcementsContact
+                attendanceCount
+                avContact
+                cafeContact
+                cafeCount
+                childrenContact
+                childrenCount
+                cleanupContact
+                closingContact
+                donations
+                facilitatorContact
+                greeterContact1
+                greeterContact2
+                meal
+                mealContact
+                mealCount
+                newcomersCount
+                notes
+                nurseryContact
+                nurseryCount
+                resourceContact
+                securityContact
+                setupContact
+                supportContact
+                transportationContact
+                transportationCount
+                youthContact
+                youthCount
+                worship
+                organization {
+                    id
+                    code
+                }
+                groups {
+                    items {
+                        id
+                        grpCompKey
+                        meetingGroupsId
+                        organizationGroupsId
+                        title
+                        location
+                        gender
+                        facilitator
+                        cofacilitator
+                        attendance
+                        notes
+                    }
+                }
+            }
+        }
+    }
+`;
 export const getAffiliationsForTeam = `
     query ListAffiliations($orgId: ID){
         listAffiliations(filter: {organizationAffiliationsId: {eq: $orgId}}) {
@@ -474,6 +539,160 @@ export const listSystems = /* GraphQL */ `
         }
     }
 `;
+export const listAllMeetings = `
+    query listAllMeetings {
+        listMeetings
+        {
+            items {
+                id
+                meetingDate
+                title
+                announcementsContact
+                attendanceCount
+                avContact
+                cafeContact
+                cafeCount
+                childrenContact
+                childrenCount
+                cleanupContact
+                closingContact
+                donations
+                facilitatorContact
+                greeterContact1
+                greeterContact2
+                meal
+                mealContact
+                mealCount
+                newcomersCount
+                notes
+                nurseryContact
+                nurseryCount
+                resourceContact
+                securityContact
+                setupContact
+                supportContact
+                transportationContact
+                transportationCount
+                youthContact
+                youthCount
+                worship
+                organization {
+                    id
+                    code
+                }
+                groups {
+                    items {
+                        id
+                        grpCompKey
+                        meetingGroupsId
+                        organizationGroupsId
+                        title
+                        location
+                        gender
+                        facilitator
+                        cofacilitator
+                        attendance
+                        notes
+                    }
+                }
+            }
+        }
+    }
+`;
+export const listAffiliationsForOrg = /* GraphQL */ `
+    query ListAffiliations(
+        $filter: ModelAffiliationFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listAffiliations(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                role
+                status
+                organizationAffiliationsId
+                user {
+                    id
+                    sub
+                    username
+                    firstName
+                    lastName
+                    email
+                    phone
+                    shirt
+                    birthday
+                    picture
+                    createdAt
+                    updatedAt
+                    organizationDefaultUsersId
+                    locationUsersId
+                    location {
+                        street
+                        city
+                        stateProv
+                        postalCode
+                    }
+                }
+                organization {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                createdAt
+                updatedAt
+                userAffiliationsId
+            }
+            nextToken
+        }
+    }
+`;
+export const listAffiliationsUsersByOrg = /* GraphQL */ `
+    query ListAffUsers(
+        $filter: ModelAffiliationFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listAffiliations(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                role
+                status
+                organizationAffiliationsId
+                user {
+                    id
+                    firstName
+                    lastName
+                    username
+                    email
+                    phone
+                    picture
+                    birthday
+                    location {
+                        street
+                        city
+                        stateProv
+                        postalCode
+                    }
+                }
+            }
+            nextToken
+        }
+    }
+`;
+/* filter: {organizationAffiliationsId: {eq: "c9d00915-fc0c-4f0e-ac23-d75acd1b80e2"}} */
+
 export const listUsers = /* GraphQL */ `
     query ListUsers(
         $filter: ModelUserFilterInput
@@ -540,6 +759,7 @@ export const usersBySub = /* GraphQL */ `
             items {
                 affiliations {
                     items {
+                        id
                         role
                         status
                         organization {
@@ -608,6 +828,32 @@ export const getOrganizationDefaultGroups = /* GraphQL */ `
             }
             createdAt
             updatedAt
+        }
+    }
+`;
+export const getActiveOrganization = /* GraphQL */ `
+    query GetActiveOrganization($orgId: ID!) {
+        getOrganization(id: $orgId) {
+            id
+            code
+            name
+            location {
+                id
+                street
+                city
+                stateProv
+                postalCode
+            }
+            heroMessage
+            defaultGroups {
+                items {
+                    id
+                    title
+                    gender
+                    location
+                    facilitator
+                }
+            }
         }
     }
 `;

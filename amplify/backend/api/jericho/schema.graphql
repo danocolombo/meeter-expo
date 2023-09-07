@@ -45,6 +45,8 @@ type Organization @model {
     affiliations: [Affiliation] @hasMany
     defaultUsers: [User] @hasMany
     heroMessage: String
+    meetings: [Meeting] @hasMany
+    groups: [Group] @hasMany
     defaultGroups: [DefaultGroup] @hasMany
     managers: [User] @manyToMany(relationName: "ManageOrganization")
 }
@@ -67,4 +69,57 @@ type System @model {
     version: String
     defaultProfilePicture: String
     logoPicture: String
+}
+
+type Meeting @model {
+    id: ID! @index(name: "meetingsByDate", sortKeyFields: ["meetingDate"])
+    meetingDate: String
+    title: String
+    meetingType: String
+    mtgCompKey: String
+    organization: Organization @belongsTo
+    groups: [Group] @hasMany
+    announcementsContact: String
+    attendanceCount: Int
+    avContact: String
+    cafeContact: String
+    cafeCount: Int
+    childrenContact: String
+    childrenCount: Int
+    cleanupContact: String
+    closingContact: String
+    donations: Float
+    facilitatorContact: String
+    greeterContact1: String
+    greeterContact2: String
+    meal: String
+    mealContact: String
+    mealCount: Int
+    newcomersCount: Int
+    notes: String
+    nurseryContact: String
+    nurseryCount: Int
+    resourceContact: String
+    securityContact: String
+    setupContact: String
+    supportContact: String
+    transportationContact: String
+    transportationCount: Int
+    worship: String
+    youthContact: String
+    youthCount: Int
+}
+
+type Group @model {
+    id: ID!
+    meeting: Meeting @belongsTo
+    organization: Organization @belongsTo
+    grpCompKey: String
+    title: String
+    location: String
+    gender: String
+    attendance: Int
+    facilitator: String
+    cofacilitator: String
+    notes: String
 }

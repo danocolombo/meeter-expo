@@ -3,21 +3,14 @@ import {
     Text,
     View,
     Pressable,
-    Platform,
-    Alert,
     TouchableOpacity,
 } from 'react-native';
-import React, { useState } from 'react';
-import { useTheme, withTheme, Badge } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-// import MeetingCardDate from './ui/Meeting.Card.Date';
-import DateBall from '../ui/DateBall';
-import DateStack from '../ui/DateStack';
 import { printObject } from '../../utils/helpers';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 const DefaultGroupListCard = ({ group, active, handleDelete }) => {
     const navigation = useNavigation();
-    printObject('GROUP:\n', group);
     let iconToDisplay;
     switch (group?.gender) {
         case 'f':
@@ -33,7 +26,6 @@ const DefaultGroupListCard = ({ group, active, handleDelete }) => {
     const mtrTheme = useTheme();
     //printObject('mtrTheme:', mtrTheme);
     function groupPressHandler() {
-        // if the user is registered, take them to registerForm
         navigation.navigate('DGModal', {
             id: group.id,
             gender: group.gender,
@@ -41,117 +33,75 @@ const DefaultGroupListCard = ({ group, active, handleDelete }) => {
             location: group.location,
             facilitator: group.facilitator,
         });
-        // navigation.navigate('MeetingDetails', {
-        //     meetingId: meeting.meetingId,
-        // });
     }
     function handleDeleteClick() {
         handleDelete(group.id);
     }
     return (
         <>
-            <View style={styles.rootContainer}>
+            <View style={mtrStyles(mtrTheme).rootContainer}>
                 <Pressable
                     onPress={groupPressHandler}
-                    style={({ pressed }) => pressed && styles.pressed}
+                    style={({ pressed }) =>
+                        pressed && mtrStyles(mtrTheme).pressed
+                    }
                 >
                     <View
                         style={[
-                            styles.meetingItem,
+                            mtrStyles(mtrTheme).meetingItem,
 
                             active
-                                ? mtrTheme.meetingCardActivePrimary
-                                : mtrTheme.meetingCardHistoricPrimary,
+                                ? mtrStyles(mtrTheme).meetingCardActivePrimary
+                                : mtrStyles(mtrTheme)
+                                      .meetingCardHistoricPrimary,
                         ]}
                     >
-                        <View style={styles.firstRow}>
-                            <View style={{ marginTop: 20 }}>
+                        <View style={mtrStyles(mtrTheme).wrapper}>
+                            <View
+                                style={mtrStyles(mtrTheme).genderIconContainer}
+                            >
                                 <MaterialCommunityIcons
                                     name={iconToDisplay}
                                     size={50}
-                                    color='black'
+                                    color={mtrTheme.colors.darkGraphic}
                                 />
                             </View>
 
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    // borderWidth: 1,
-                                    // borderColor: 'blue',
-                                    justifyContent: 'space-between',
-                                    width: '85%',
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        // borderWidth: 1,
-                                        // borderColor: 'blue',
-                                        width: '75%',
-                                    }}
-                                >
-                                    <View
-                                        style={{
-                                            flexDirection: 'column',
-                                            paddingLeft: 10,
-                                        }}
-                                    >
-                                        <View
-                                            style={
-                                                {
-                                                    // borderWidth: 1,
-                                                    // borderColor: 'blue',
-                                                }
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    mtrTheme.meetingCardActiveTypeText
-                                                }
-                                            >
-                                                {group.title.trim()}
-                                            </Text>
-                                        </View>
-                                        <View
-                                            style={
-                                                {
-                                                    // borderWidth: 1,
-                                                    // borderColor: 'blue',
-                                                }
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    mtrTheme.meetingCardActiveTitleText
-                                                }
-                                            >
-                                                {group.location.trim()}
-                                            </Text>
-                                        </View>
+                            <View style={mtrStyles(mtrTheme).column2}>
+                                <View style={mtrStyles(mtrTheme).textWrapper}>
+                                    <Text style={mtrStyles(mtrTheme).titleText}>
+                                        {group.title.trim()}
+                                    </Text>
 
-                                        <View>
-                                            <Text
-                                                style={
-                                                    mtrTheme.meetingCardActivePersonText
-                                                }
-                                            >
-                                                {group.facilitator.trim()}
-                                            </Text>
-                                        </View>
+                                    <Text
+                                        style={mtrStyles(mtrTheme).locationText}
+                                    >
+                                        {group.location.trim()}
+                                    </Text>
+
+                                    <View>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .facilitatorText
+                                            }
+                                        >
+                                            {group.facilitator.trim()}
+                                        </Text>
                                     </View>
                                 </View>
+
                                 <View
-                                    style={{
-                                        justifyContent: 'flex-start',
-                                    }}
+                                    style={mtrStyles(mtrTheme).trashIconWrapper}
                                 >
                                     <TouchableOpacity
                                         onPress={() => handleDeleteClick()}
                                     >
-                                        <View style={{ marginTop: 20 }}>
+                                        <View>
                                             <MaterialCommunityIcons
                                                 name='trash-can-outline'
                                                 size={30}
-                                                color='black'
+                                                color={mtrTheme.colors.critical}
                                             />
                                         </View>
                                     </TouchableOpacity>
@@ -165,111 +115,72 @@ const DefaultGroupListCard = ({ group, active, handleDelete }) => {
     );
 };
 
-export default withTheme(DefaultGroupListCard);
+export default DefaultGroupListCard;
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        rootContainer: {
+            marginHorizontal: 20,
+        },
+        pressed: {
+            opacity: 0.75,
+        },
+        meetingItem: {
+            marginVertical: 5,
+            paddingBottom: 5,
+            backgroundColor: 'darkgrey',
+            flexDirection: 'row',
+            //justifyContent: 'space-between',
+            borderRadius: 10,
+            elevation: 3,
+            shadowColor: 'yellow',
+            shadowRadius: 4,
+            shadowOffset: { width: 1, height: 1 },
+            shadowOpacity: 0.4,
+        },
+        meetingCardActivePrimary: {
+            backgroundColor: mtrTheme.colors.backgroundAlternate1,
+        },
+        meetingCardHistoricPrimary: {
+            backgroundColor: mtrTheme.colors.background,
+        },
+        wrapper: {
+            flexDirection: 'row',
+            paddingVertical: 5,
+        },
+        genderIconContainer: {
+            marginTop: 20,
+            paddingHorizontal: 5,
+        },
 
-const styles = StyleSheet.create({
-    pressed: {
-        opacity: 0.75,
-    },
-    rootContainer: {
-        marginHorizontal: 10,
-    },
-    meetingItem: {
-        marginVertical: 5,
-        paddingBottom: 5,
-        backgroundColor: 'darkgrey',
-        flexDirection: 'row',
-        //justifyContent: 'space-between',
-        borderRadius: 10,
-        elevation: 3,
-        shadowColor: 'yellow',
-        shadowRadius: 4,
-        shadowOffset: { width: 1, height: 1 },
-        shadowOpacity: 0.4,
-    },
-    firstRow: {
-        flexDirection: 'row',
-    },
-    dateWrapper: {
-        margin: 5,
-    },
-    // dataWrapper: {
-    //     flexDirection: 'column',
-    // },
-    col1: {
-        paddingVertical: 8,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        paddingLeft: 10,
-        // borderWidth: 1,
-        // borderColor: 'yellow',
-    },
-    eventDateWrapper: {
-        // paddingTop: 5,
-        // borderWidth: 1,
-        // borderColor: 'yellow',
-    },
-
-    eventTimeWrapper: {
-        marginTop: 5,
-        marginBottom: 5,
-        // paddingHorizontal: 0,
-        // justifyContent: 'center',
-        alignItems: 'center',
-        paddingVertical: 2,
-        // borderWidth: 1,
-        // borderColor: 'white',
-    },
-    eventTime: {
-        // marginLeft: 5,
-        // marginRight: 30,
-        fontSize: 16,
-        color: 'white',
-        justifyContent: 'center',
-    },
-    registeredWrapper: {
-        borderWidth: 1,
-        padding: 4,
-        borderRadius: 10,
-        borderColor: 'green',
-        backgroundColor: 'green',
-        alignItems: 'center',
-    },
-    registeredText: { color: 'white', fontSize: 10 },
-    col2: {
-        flex: 1,
-        paddingVertical: 8,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        // borderWidth: 1,
-        // borderColor: 'yellow',
-    },
-    locationWrapper: {
-        justifyContent: 'center',
-        // borderWidth: 1,
-        // borderColor: 'white',
-    },
-    locationText: {
-        width: '100%',
-        marginLeft: 20,
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'lightgrey',
-    },
-    hostWrapper: {
-        paddingLeft: 25,
-        // borderWidth: 1,
-        // borderColor: 'white',
-    },
-    hostName: {
-        // marginLeft: 20,
-        fontSize: 20,
-        // fontWeight: 'bold',
-        color: 'lightgrey',
-    },
-    hostRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-start',
-    },
-});
+        trashIconWrapper: {
+            justifyContent: 'center',
+            paddingRight: 15,
+        },
+        column2: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '85%',
+        },
+        textWrapper: {
+            width: '85%',
+        },
+        titleText: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 24,
+            paddingLeft: 0,
+            letterSpacing: 0.5,
+        },
+        locationText: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 24,
+            paddingLeft: 0,
+            textAlign: 'left',
+            letterSpacing: 0.5,
+        },
+        facilitatorText: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 24,
+            paddingLeft: 0,
+            letterSpacing: 0.5,
+        },
+    });

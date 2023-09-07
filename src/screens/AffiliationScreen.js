@@ -2,85 +2,187 @@ import {
     Text,
     View,
     StyleSheet,
-    Alert,
     TextInput,
     SafeAreaView,
     KeyboardAvoidingView,
     TouchableOpacity,
     Modal,
+    Alert,
 } from 'react-native';
-import Picker from '@react-native-picker/picker';
 import { useTheme, Surface, ActivityIndicator } from 'react-native-paper';
-import React, { useCallback, useState, useLayoutEffect } from 'react';
+import React, {
+    useCallback,
+    useRef,
+    useState,
+    useLayoutEffect,
+    useEffect,
+} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import Input from '../components/ui/Input';
 import { Dropdown } from 'react-native-element-dropdown';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API, graphqlOperation } from 'aws-amplify';
 import * as mutations from '../jerichoQL/mutations';
 import * as queries from '../jerichoQL/queries';
-import { useUserContext } from '../contexts/UserContext';
 import { printObject } from '../utils/helpers';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { MEETER_DEFAULTS } from '../constants/meeter';
 import { ScrollView } from 'react-native-gesture-handler';
-
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    joinOrganization,
+    saveUserProfile,
+    updatePermissions,
+    changeDefaultOrg,
+    errorTest,
+} from '../features/user/userThunks';
+import { clearAllMembers, clearTeamSlice } from '../features/team/teamSlice';
+import { clearGroupSlice } from '../features/groups/groupsSlice';
+import { clearMeetingsSlice } from '../features/meetings/meetingsSlice';
+import { unsubscribeFromMeetingCreation } from '../features/meetings/meetingsSubscriptions';
 const AffiliationScreen = (props) => {
+    const navigate = useNavigation();
     const navigation = useNavigation();
     const mtrTheme = useTheme();
-    const { userProfile, updateHeroMessage } = useUserContext();
-    // printObject('AFF:34-->userProfile:', userProfile);
+    const dispatch = useDispatch();
+    const affCodeInputRef = useRef(null);
+    const userProfile = useSelector((state) => state.user.profile);
+    const [perms, setPerms] = useState(null);
+    const joinOrgError = useSelector((state) => state.user.error);
+    const meeter = useSelector((state) => state.system);
     const [showChangeModal, setShowChangeModal] = useState(false);
+    const [showDupModal, setShowDupModal] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [affCode, setAffCode] = useState('');
     const [availableAffiliations, setAvailableAffiliations] = useState([]);
+    const [pendingAffs, setPendingAffs] = useState([]);
+    const [activeAffs, setActiveAffs] = useState([]);
+    //* dropdown variables
+    const [ddOpen, setDDOpen] = useState(false);
+    const [ddValue, setDDValue] = useState(null);
+    const [ddValues, setDDValues] = useState([]);
+    const [showDefaultChangedDialog, setShowDefaultChangedDialog] =
+        useState(false);
+    const [affiliationOpen, setAffiliationOpen] = useState(false);
+    const [affiliationValue, setAffiliationValue] = useState(null);
+    const [aff, setAff] = useState([]);
+    const [logout, setLogout] = useState(false);
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isAffiliationFocus, setIsAffiliationFocus] = useState(false);
     const [theMessage, setTheMessage] = useState();
     const [affiliationSelected, setAffiliationSelected] = useState(null);
+    const [affCount, setAffCount] = useState(0);
+
     useLayoutEffect(() => {
-        navigation.setOptions({
-            //title: meeter.appName,
+        navigate.setOptions({
+            title: meeter.appName,
             headerBackTitle: 'Back',
         });
-    }, [navigation]);
+    }, [navigate]);
     useFocusEffect(
         useCallback(() => {
             try {
+                // let numberOfUniqueCodes = new Set();
+
+                // userProfile.affiliations.items.forEach((item) => {
+                //     const organizationCode = item.organization.code;
+                //     console.log('Adding organization code:', organizationCode);
+                //     numberOfUniqueCodes.add(organizationCode);
+                // });
+                // const uniqueOrganizationCodes = [...numberOfUniqueCodes];
+                // console.log('Unique organization codes:', numberOfUniqueCodes);
+                // printObject(
+                //     'AF:75-->uniqueOrganizationCodes:\n',
+                //     uniqueOrganizationCodes
+                // );
+
+                // setAffCount(uniqueOrganizationCodes.length);
                 async function getAffList() {
                     if (userProfile?.affiliations?.items) {
                         if (userProfile?.affiliations.items.length > 1) {
                             let affList = [];
                             const allAffs = userProfile.affiliations.items;
-                            allAffs.forEach((a) => {
-                                if (
-                                    a.organization.id !=
-                                        userProfile.activeOrg.id &&
-                                    (a.status === 'active' ||
-                                        a.status === 'new')
-                                ) {
-                                    let entry = {
-                                        label: a.organization.name,
-                                        value: a.organization.id,
-                                    };
-                                    affList.push(entry);
+                            //* find any pending affiliations
+                            const pendingAffiliations = allAffs.filter(
+                                (entry) => {
+                                    if (entry.status === 'pending') {
+                                        return entry;
+                                    }
                                 }
-                            });
-                            const uniqueAffs = affList.filter(
-                                (obj, index, self) =>
-                                    index ===
-                                    self.findIndex((t) => t.id === obj.id)
                             );
-                            printObject('uniqueAffs:\n', uniqueAffs);
-                            setAvailableAffiliations(uniqueAffs);
+                            if (pendingAffiliations.length > 0) {
+                                setPendingAffs(pendingAffiliations);
+                            }
+                            //* find active affiliations, make options
+                            //* array of objects to display in dropdown
+                            //* [ {label: "Name of Org", value: "org-id"}]
+                            // printObject('AS:91-->allAffs:\n', allAffs);
+                            const activeAffiliations = allAffs.filter(
+                                (entry) => {
+                                    if (entry.status === 'active') {
+                                        return {
+                                            label: entry.organization.name,
+                                            value: entry.organization.id,
+                                        };
+                                    }
+                                }
+                            );
+
+                            //* Create a map to group affiliations by organization id
+
+                            const uniqueValuesMap = new Map();
+                            const summary = activeAffiliations.reduce(
+                                (result, entry) => {
+                                    if (
+                                        !uniqueValuesMap.has(
+                                            entry.organization.code
+                                        )
+                                    ) {
+                                        // Check for uniqueness based on organization code
+                                        uniqueValuesMap.set(
+                                            entry.organization.code,
+                                            true
+                                        );
+                                        result.push({
+                                            label: entry.organization.name, // You can use name as label
+                                            value: entry.organization.id, // You can use id as value
+                                        });
+                                    }
+                                    return result;
+                                },
+                                []
+                            );
+                            //* Sort the summary array by organization label
+                            summary.sort((a, b) =>
+                                a.label.localeCompare(b.label)
+                            );
+                            //* now remove the current active org
+                            const targetValue = userProfile.activeOrg.id;
+                            const filteredSummary = summary.filter(
+                                (entry) => entry.value !== targetValue
+                            );
+                            setActiveAffs(filteredSummary);
+                            setDDValues(filteredSummary);
+                            // setAff(filteredSummary);
                         }
                     }
                 }
                 getAffList();
+                affCodeInputRef.current.focus();
             } catch (error) {
                 console.log('HM:51-->unexpected error:\n', error);
             }
         }, [])
     );
+    const onAffiliationOpen = useCallback(() => {
+        setAffiliationOpen(false);
+    }, []);
+    const handleSaveChange = () => {
+        console.log('ddValue:', ddValue);
+        dispatch
+            .changeDefaultOrg({ profile: userProfile, orgId: ddValue })
+            .then((changeResults) => {});
+    };
     const handleCodeChange = (text) => {
         // Regular expression that matches only alphabetical characters
         const regex = /^[a-zA-Z]*$/;
@@ -89,68 +191,70 @@ const AffiliationScreen = (props) => {
         }
     };
     const handleNewCodeClick = () => {
+        setIsUpdating(true);
         if (affCode.length !== 3) return;
         setIsUpdating(true);
-        //todo - check the code
-        let org = {};
-        let theCode = 'WBC';
-        try {
-            async function getTheOrg() {
-                const orgResponse = await API.graphql(
-                    graphqlOperation(queries.listOrganizations, {
-                        filter: { code: { eq: affCode.toLowerCase() } },
-                    })
-                );
-                if (orgResponse.data.listOrganizations.items.length > 0) {
-                    console.log('YES');
-                    org = orgResponse.data.listOrganizations.items[0];
-                    //todo - add as userProfile default org
-                    const updateInfo = {
-                        id: userProfile.id,
-                        organizationDefaultUsersId: org.id,
-                    };
-                    try {
-                        const updatedUser = await API.graphql({
-                            query: mutations.updateUser,
-                            variables: { input: updateInfo },
-                        });
-                        printObject('AS:115-->updatedUser:', updatedUser);
-                    } catch (error) {
-                        printObject('unexpected error updating user:', error);
-                    }
-                    //todo - if valid add affiliation
-                    try {
-                        const insertInfo = {
-                            organizationAffiliationsId: org.id,
-                            role: 'new',
-                            status: 'active',
-                            userAffiliationsId: userProfile.id,
-                        };
-                        API.graphql({
-                            query: mutations.createAffiliation,
-                            variables: { input: insertInfo },
-                        })
-                            .then((results) => {
-                                console.log('affiliation inserted');
-                                printObject('AS:135-->results:\n', results);
-                            })
-                            .catch((error) => {
-                                console.log(error);
-                                console.error(error);
-                            });
-                    } catch (error) {
-                        console.log('a.p:142-->unexpected error:\n', error);
+        //* check if user already has requested access
+        const existing = userProfile.affiliations.items.find(
+            (a) => a.organization.code.toUpperCase() === affCode.toUpperCase()
+        );
+        // printObject('AS:102A-->userProfile', userProfile);
+        // printObject('AS:102-->existing: ', existing);
+        if (existing) {
+            setIsUpdating(false);
+            setShowDupModal(true);
+            return;
+        }
+        // console.log('AS:103-->calling thunk...');
+        dispatch(
+            joinOrganization({ userProfile: userProfile, newCode: affCode })
+        )
+            .then((resultAction) => {
+                // printObject('AS:112-->resultAction:\n', resultAction);
+                if (joinOrganization.rejected.match(resultAction)) {
+                    const errorMessage = resultAction.error.message; // Access the error message
+                    let errorMsg = '';
+                    switch (errorMessage.slice(0, 2)) {
+                        case '01':
+                            errorMsg = 'System Error 01: profile required';
+                            break;
+                        case '02':
+                            errorMsg = 'System Error 02: code required';
+                            break;
+                        case '03':
+                            errorMsg = 'You already have access';
+                            break;
+                        case '04':
+                            errorMsg = 'Unrecognized code';
+                            break;
+                        default:
+                            console.log('default');
+                            console.log(errorMessage.slice(0, 2));
+                            errorMsg = errorMessage;
+                            break;
                     }
 
-                    printObject('AS:103-->org', org);
+                    console.error(errorMsg);
+                } else {
+                    // printObject(
+                    //     'AS:149-->AffiliactionScreen::handleNewCode not rejected\n',
+                    //     null
+                    // );
+                    console.error('Request submitted.');
+                    navigate.goBack();
                 }
-            }
-            getTheOrg();
-        } catch (error) {}
 
-        //todo - display Modal
-        setIsUpdating(false);
+                setIsUpdating(false);
+                // setShowChangeModal(true);
+            })
+            .catch((error) => {
+                console.error('AS:126-->An unexpected error occurred:', error);
+                // Handle any other unexpected errors
+
+                setIsUpdating(false);
+            });
     };
+
     const handleSaveClick = () => {
         //* update the users default id
         try {
@@ -175,13 +279,94 @@ const AffiliationScreen = (props) => {
         }
         setIsUpdating(false);
     };
-    function inputChangedHandler(inputIdentifier, enteredValue) {
-        // console.log('inputChangeHandler::inputIdentifier:', inputIdentifier);
-        if (inputIdentifier === 'affiliate') {
-            setAffiliationSelected(enteredValue);
-            return;
-        }
+    const onDDOpen = useCallback(() => {
+        // do whatever you want when it opens, maybe close other things?
+    }, []);
+    const onChange = useCallback(() => {
+        // do whatever you want when it changes, maybe close other things?
+        setDDOpen(false);
+    }, []);
+
+    function showCurrentAffiliations() {
+        let affs = [];
+        userProfile.affiliations.items.forEach((a) => {
+            affs.push({ [a.organization.code]: a.id });
+        });
+        printObject('Affiliations\n', affs);
     }
+    const handleSaveDefaultOrg = async () => {
+        //* -----------------------------------------
+        //* user has selected a new default org. save
+        //* profile and have them logout.
+        //* -----------------------------------------
+        dispatch(
+            changeDefaultOrg({ profile: userProfile, orgId: ddValue })
+        ).then((changeResults) => {
+            //      changeDefaultOrg complete
+            setShowChangeModal(true);
+        });
+    };
+    const handleSaveChangeActive = async () => {
+        //* -----------------------------------------
+        //* user has selected a new org to switch to
+        //* -----------------------------------------
+        //      get the affiliation value of the guest
+        //      for the org picked
+        // printObject('AS:340-->userProfile:\n', userProfile);
+        const desiredObject = userProfile.affiliations.items.find((item) => {
+            return (
+                item.role === 'guest' &&
+                item.status === 'active' &&
+                item.organization.id === ddValue
+            );
+        });
+        // printObject('AS:347-->desiredObject:\n', desiredObject);
+        const updatedUserProfile = {
+            ...userProfile,
+            activeOrg: desiredObject,
+        };
+        // printObject('AS:350-->updatedUserProfile:\n', updatedUserProfile);
+        dispatch(saveUserProfile(updatedUserProfile)).then((profileResults) => {
+            //* --------------------------------
+            //* userProfile is changed, now clear
+            //* the slices
+            //* --------------------------------
+            // dispatch(unsubscribeFromMeetingCreation());
+            // printObject('AS:371-->profileResults:\n', profileResults);
+            const newProfile = profileResults?.payload?.userProfile;
+            dispatch(
+                updatePermissions({
+                    affiliations: newProfile.affiliations.items,
+                    orgId: ddValue,
+                })
+            ).then((updatePermsResults) => {
+                // printObject(
+                //     'AS:377-->updatePermsResults:\n',
+                //     updatePermsResults
+                // );
+                //dispatch(clearTeamSlice());
+                //dispatch(clearGroupSlice());
+                //dispatch(clearMeetingsSlice());
+                console.error('Organization Changed');
+            });
+        });
+    };
+    const goToLogoutScreen = () => {
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Logout' }],
+        });
+    };
+    const handleOrgChangeLogout = () => {
+        setLogout(true);
+        setShowChangeModal(false);
+        //now go logout
+    };
+    useEffect(() => {
+        if (logout) {
+            goToLogoutScreen();
+        }
+    }, [logout]);
     if (isUpdating) {
         return (
             <View
@@ -198,296 +383,416 @@ const AffiliationScreen = (props) => {
             </View>
         );
     }
+    // printObject('AS:248-->userProfile:\n', userProfile);
     return (
         <>
             <SafeAreaView
-                style={{
-                    backgroundColor: mtrTheme.colors.background,
+                style={mtrStyles(mtrTheme).surface}
+                // style={{
+                //     backgroundColor: mtrTheme.colors.background,
 
-                    flex: 1,
-                    paddingVertical: 20,
-                }}
+                //     flex: 1,
+                //     paddingVertical: 20,
+                // }}
             >
-                <ScrollView>
-                    <KeyboardAvoidingView behavior='padding'>
-                        <Modal visible={showChangeModal} animationStyle='slide'>
-                            <Surface style={styles(mtrTheme).modalContainer}>
-                                <View>
-                                    <Text style={styles(mtrTheme).modalTitle}>
-                                        NOTIFICATION
-                                    </Text>
-                                </View>
+                <KeyboardAvoidingView behavior='padding'>
+                    <Modal visible={showChangeModal} animationStyle='slide'>
+                        <Surface
+                            style={
+                                mtrStyles(mtrTheme).modalConfirmationContainer
+                            }
+                        >
+                            <View
+                                style={mtrStyles(mtrTheme).screenTitleContainer}
+                            >
+                                <Text
+                                    style={mtrStyles(mtrTheme).screenTitleText}
+                                >
+                                    CONFIRMATION
+                                </Text>
+                            </View>
+                            <View
+                                style={mtrStyles(mtrTheme).confirmationSurface}
+                            >
                                 <View
                                     style={
-                                        styles(mtrTheme).modalMessageContainer
+                                        mtrStyles(mtrTheme)
+                                            .confirmationContainer
                                     }
                                 >
                                     <Text
                                         style={
-                                            styles(mtrTheme).modalMessageText
+                                            mtrStyles(mtrTheme).confirmationText
                                         }
                                     >
-                                        The affiliations change has been made.
-                                        For the change to take effect, please
-                                        logout and log back in to switch
-                                        affiliations.
+                                        The affiliation change has been made.
+                                    </Text>
+                                    <Text
+                                        style={
+                                            mtrStyles(mtrTheme).confirmationText
+                                        }
+                                    >
+                                        You will now be logged out and when you
+                                        log in again you will be in that
+                                        organization.
                                     </Text>
                                 </View>
                                 <View
                                     style={
-                                        styles(mtrTheme).modalButtonContainer
+                                        mtrStyles(mtrTheme).modalButtonContainer
                                     }
                                 >
                                     <TouchableOpacity
-                                        style={styles(mtrTheme).modalButton}
-                                        onPress={() =>
-                                            setShowChangeModal(false)
-                                        }
+                                        style={mtrStyles(mtrTheme).modalButton}
+                                        onPress={() => handleOrgChangeLogout()}
                                     >
                                         <Text
                                             style={
-                                                styles(mtrTheme).modalButtonText
+                                                mtrStyles(mtrTheme)
+                                                    .modalButtonText
                                             }
                                         >
                                             OK
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                            </Surface>
-                        </Modal>
-                        <>
-                            <View>
-                                <View style={{ marginTop: 30 }}>
-                                    <Text style={mtrTheme.screenTitle}>
-                                        AFFILIATIONS
+                            </View>
+                        </Surface>
+                    </Modal>
+                    <Modal visible={showDupModal} animationStyle='slide'>
+                        <Surface style={mtrStyles(mtrTheme).modalContainer}>
+                            <View style={{ marginTop: 30 }}>
+                                <Text style={mtrTheme.screenTitle}>
+                                    NOTIFICATION
+                                </Text>
+                            </View>
+                            <View style={mtrStyles(mtrTheme).infoSurface}>
+                                <View
+                                    style={mtrStyles(mtrTheme).introContainer}
+                                >
+                                    <Text style={mtrStyles(mtrTheme).introText}>
+                                        You already have affiliation requested.
+                                        If you cannot change to affiliation,
+                                        please contact the organization leader
+                                        to check status.
                                     </Text>
                                 </View>
-                                <View style={styles(mtrTheme).introContainer}>
-                                    <Text style={styles(mtrTheme).introText}>
-                                        Affiliations are how the system
-                                        associates your activity with a specific
-                                        organization.{' '}
-                                    </Text>
-                                </View>
-                                {userProfile.activeOrg.id ===
-                                MEETER_DEFAULTS.ORGANIZATION_ID ? (
-                                    <View
-                                        style={styles(mtrTheme).introContainer}
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).modalButtonContainer
+                                    }
+                                >
+                                    <TouchableOpacity
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .modalWarningButton
+                                        }
+                                        onPress={() => setShowDupModal(false)}
                                     >
                                         <Text
-                                            style={styles(mtrTheme).introText}
-                                        >
-                                            You need to provide an affiliation
-                                            code to get started. You can use MTR
-                                            to view a sample.
-                                        </Text>
-                                    </View>
-                                ) : (
-                                    <>
-                                        <View
                                             style={
-                                                styles(mtrTheme).introContainer
+                                                mtrStyles(mtrTheme)
+                                                    .modalWarningButtonText
                                             }
                                         >
-                                            <Text
-                                                style={
-                                                    styles(mtrTheme).introText
-                                                }
-                                            >
-                                                If you have access to other
-                                                affiliates, you can switch to
-                                                them by selecting them in the
-                                                dropdown list, and tap "CHANGE"
-                                            </Text>
-                                        </View>
+                                            OK
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Surface>
+                    </Modal>
+                    <>
+                        <View style={{ marginTop: 30 }}>
+                            <Text style={mtrTheme.screenTitle}>
+                                AFFILIATIONS
+                            </Text>
+                        </View>
+                        <View style={mtrStyles(mtrTheme).infoSurface}>
+                            <View style={mtrStyles(mtrTheme).introContainer}>
+                                <Text style={mtrStyles(mtrTheme).introText}>
+                                    Affiliations are how the system associates
+                                    your activity with a specific organization.{' '}
+                                </Text>
+                            </View>
+                            {pendingAffs?.length > 0 && (
+                                <View
+                                    style={mtrStyles(mtrTheme).pendingContainer}
+                                >
+                                    <Text
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .pendingHeaderText
+                                        }
+                                    >
+                                        Pending Requests
+                                    </Text>
+                                    <Text
+                                        style={mtrStyles(mtrTheme).pendingText}
+                                    >
+                                        The following organizations have been
+                                        requested. Please check with
+                                        organization leader for status.
+                                    </Text>
+                                    {pendingAffs.map((org) => (
+                                        <Text
+                                            key={org.organization.id}
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .pendingOrgText
+                                            }
+                                        >
+                                            {org?.organization?.name}
+                                        </Text>
+                                    ))}
+                                </View>
+                            )}
+
+                            {userProfile?.activeOrg?.id ===
+                            MEETER_DEFAULTS.ORGANIZATION_ID ? (
+                                <View
+                                    style={mtrStyles(mtrTheme).introContainer}
+                                >
+                                    <Text style={mtrStyles(mtrTheme).introText}>
+                                        This session is currently associated
+                                        with the test system.
+                                    </Text>
+                                </View>
+                            ) : null}
+                            {activeAffs?.length > 0 && (
+                                <>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .changeAffContainer
+                                        }
+                                    >
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme).introText
+                                            }
+                                        >
+                                            You have access to other
+                                            affiliations, you can switch by
+                                            selecting in the dropdown list, and
+                                            tap "CHANGE"
+                                        </Text>
+
                                         <View
-                                            style={{
-                                                flexDirection: 'column',
-                                                // borderWidth: 1,
-                                                // borderColor: 'yellow',
-                                                marginLeft: '20%',
-                                            }}
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .dropDownContainer
+                                            }
                                         >
                                             <View
-                                                style={
-                                                    styles(mtrTheme)
-                                                        .dropDownContainer
-                                                }
+                                                style={{
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    zIndex: 3000,
+                                                }}
                                             >
-                                                <View>
-                                                    <Dropdown
-                                                        style={[
-                                                            styles(mtrTheme)
-                                                                .dropdown,
-                                                            isAffiliationFocus && {
-                                                                borderColor:
-                                                                    'blue',
-                                                            },
-                                                        ]}
-                                                        placeholderStyle={
-                                                            styles(mtrTheme)
-                                                                .placeholderStyle
-                                                        }
-                                                        selectedTextStyle={
-                                                            styles(mtrTheme)
-                                                                .selectedTextStyle
-                                                        }
-                                                        inputSearchStyle={
-                                                            styles(mtrTheme)
-                                                                .inputSearchStyle
-                                                        }
-                                                        containerStyle={
-                                                            styles(mtrTheme)
-                                                                .dropDownContainer
-                                                        }
-                                                        itemContainerStyle={{
-                                                            paddingVertical: 0,
-                                                            marginVertical: 0,
+                                                <View
+                                                    style={{
+                                                        marginHorizontal: 10,
+                                                        width: '70%',
+                                                        marginVertical: 5,
+                                                        zIndex: 3000,
+                                                    }}
+                                                >
+                                                    <DropDownPicker
+                                                        style={{
+                                                            borderColor:
+                                                                '#B7B7B7',
+                                                            height: 50,
+                                                            backgroundColor:
+                                                                'white',
                                                         }}
-                                                        iconStyle={
-                                                            styles(mtrTheme)
-                                                                .iconStyle
-                                                        }
-                                                        data={
-                                                            availableAffiliations
-                                                        }
-                                                        search={false}
-                                                        maxHeight={300}
-                                                        labelField='label'
-                                                        placeholder='available affiliations'
-                                                        valueField='value'
-                                                        // placeholder={!isShirtFocus ? 'Shirt' : '...'}
-                                                        //searchPlaceholder='Search...'
-                                                        value={
-                                                            affiliationSelected
-                                                        }
-                                                        onFocus={() =>
-                                                            setIsAffiliationFocus(
-                                                                true
-                                                            )
-                                                        }
-                                                        onBlur={() =>
-                                                            setIsAffiliationFocus(
-                                                                false
-                                                            )
-                                                        }
-                                                        onChange={(item) => {
-                                                            inputChangedHandler(
-                                                                'affiliate',
-                                                                item.value
-                                                            ),
-                                                                //setStateValue(item.value);
-                                                                setIsAffiliationFocus(
-                                                                    false
-                                                                );
+                                                        open={ddOpen}
+                                                        value={ddValue} //genderValue
+                                                        items={ddValues}
+                                                        setOpen={setDDOpen}
+                                                        setValue={setDDValue}
+                                                        setItems={setDDValues}
+                                                        placeholder='Select Organization'
+                                                        placeholderStyle={{
+                                                            borderColor:
+                                                                '#B7B7B7',
+                                                            color: 'blue',
                                                         }}
+                                                        onOpen={onDDOpen}
+                                                        // onChangeValue={onChange}
+                                                        zIndex={3000}
+                                                        zIndexInverse={1000}
                                                     />
                                                 </View>
                                             </View>
                                         </View>
-                                    </>
-                                )}
-
-                                {affiliationSelected && (
-                                    <View>
-                                        <View
-                                            style={
-                                                styles(mtrTheme)
-                                                    .changeButtonContainer
-                                            }
-                                        >
-                                            <TouchableOpacity
-                                                onPress={() =>
-                                                    handleSaveClick()
-                                                }
-                                                style={
-                                                    styles(mtrTheme)
-                                                        .changeButton
-                                                }
-                                            >
-                                                <Text
-                                                    style={
-                                                        styles(mtrTheme)
-                                                            .changeButtonText
-                                                    }
-                                                >
-                                                    CHANGE
-                                                </Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                )}
-                                <View style={styles(mtrTheme).introContainer}>
-                                    <Text style={styles(mtrTheme).introText}>
-                                        If you have been invited to join a team,
-                                        enter the code you were provided below
-                                        and get connected.
-                                    </Text>
-                                </View>
-                                <View style={mtrTheme.profileFormRowStyle}>
-                                    <View
-                                        style={{
-                                            minWidth: '90%',
-                                            flexDirection: 'row',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                borderColor: 'white',
-                                                borderWidth: 1,
-                                                justifyContent: 'center',
-                                                marginRight: 10,
-                                            }}
-                                        >
-                                            <TextInput
-                                                minWidth={80}
-                                                backgroundColor='lightgrey'
-                                                value={affCode}
+                                        {ddValue && (
+                                            <View
                                                 style={{
-                                                    textAlign: 'center',
-                                                    padding: 5,
+                                                    zIndex: 200,
+                                                    alignItems: 'center',
                                                 }}
-                                                onChangeText={handleCodeChange}
-                                                keyboardType='default'
-                                                maxLength={3}
-                                            />
-                                        </View>
+                                            >
+                                                <TouchableOpacity
+                                                    onPress={
+                                                        handleSaveDefaultOrg
+                                                    }
+                                                    style={[
+                                                        mtrStyles(mtrTheme)
+                                                            .saveButton,
+                                                    ]}
+                                                >
+                                                    <Text
+                                                        style={
+                                                            mtrStyles(mtrTheme)
+                                                                .changeButtonText
+                                                        }
+                                                    >
+                                                        Save Change
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )}
+                                    </View>
+                                </>
+                            )}
 
+                            {affiliationSelected && (
+                                <View>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .changeButtonContainer
+                                        }
+                                    >
                                         <TouchableOpacity
-                                            onPress={() => handleNewCodeClick()}
+                                            onPress={() => handleSaveClick()}
                                             style={
-                                                styles(mtrTheme).changeButton
+                                                mtrStyles(mtrTheme).changeButton
                                             }
                                         >
                                             <Text
                                                 style={
-                                                    styles(mtrTheme)
+                                                    mtrStyles(mtrTheme)
                                                         .changeButtonText
                                                 }
                                             >
-                                                REQUEST
+                                                CHANGE
                                             </Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-                                {/* Use a light status bar on iOS to account for the black space above the modal */}
-                                <StatusBar
-                                    style={
-                                        Platform.OS === 'ios' ? 'light' : 'auto'
-                                    }
-                                />
+                            )}
+                            <View style={mtrStyles(mtrTheme).introContainer}>
+                                <Text style={mtrStyles(mtrTheme).introText}>
+                                    If you have been invited to join an
+                                    organization, enter the code you were
+                                    provided below and send request.
+                                </Text>
                             </View>
-                        </>
-                    </KeyboardAvoidingView>
-                </ScrollView>
+                            <View style={mtrTheme.profileFormRowStyle}>
+                                <View style={mtrStyles(mtrTheme).buttonWrapper}>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .affInputContainer
+                                        }
+                                    >
+                                        <TextInput
+                                            ref={affCodeInputRef} // Set the ref here
+                                            minWidth={80}
+                                            backgroundColor={
+                                                mtrTheme.colors.mediumGraphic
+                                            }
+                                            value={affCode}
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .affCodeInputText
+                                            }
+                                            onChangeText={handleCodeChange}
+                                            keyboardType='default'
+                                            maxLength={3}
+                                        />
+                                    </View>
+
+                                    <TouchableOpacity
+                                        onPress={handleNewCodeClick}
+                                        style={[
+                                            mtrStyles(mtrTheme).changeButton,
+                                            {
+                                                opacity:
+                                                    affCode.length === 3
+                                                        ? 1
+                                                        : 0.5,
+                                            }, // Set opacity based on condition
+                                        ]}
+                                        disabled={affCode.length !== 3} // Disable the button based on condition
+                                    >
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .changeButtonText
+                                            }
+                                        >
+                                            REQUEST
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <View style={mtrStyles(mtrTheme).infoRow}>
+                                <TouchableOpacity
+                                    onPress={showCurrentAffiliations}
+                                    // Disable the button based on condition
+                                >
+                                    <Text style={mtrStyles(mtrTheme).infoText}>
+                                        INFO ({affCount})
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        {/* Use a light status bar on iOS to account for the black space above the modal */}
+                        <StatusBar
+                            style={Platform.OS === 'ios' ? 'light' : 'auto'}
+                        />
+                    </>
+                </KeyboardAvoidingView>
             </SafeAreaView>
         </>
     );
 };
 
-const styles = (mtrTheme) =>
+const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
+        surface: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.background,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            paddingVertical: 10,
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.lightText,
+        },
+        infoSurface: {
+            // flex: 1,
+            flexDirection: 'column',
+            marginVertical: 10,
+            maxWidth: '90%',
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            // width: '90%',
+            // marginHorizontal: 20,
+            // marginTop: 20,
+            paddingBottom: 20,
+            borderRadius: 10,
+        },
         container: {
             flex: 1,
             alignItems: 'center',
@@ -503,7 +808,7 @@ const styles = (mtrTheme) =>
         },
         modalTitle: {
             fontSize: 28,
-            color: 'white',
+            color: mtrTheme.colors.darkText,
             fontFamily: 'Roboto-Bold',
             textAlign: 'center',
         },
@@ -528,8 +833,20 @@ const styles = (mtrTheme) =>
         },
         modalButtonText: {
             fontSize: 16,
-            color: 'white',
-            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.lightText,
+            fontFamily: 'Roboto-Regular',
+            textAlign: 'center',
+            paddingHorizontal: 30,
+            paddingVertical: 5,
+        },
+        modalWarningButton: {
+            backgroundColor: mtrTheme.colors.warning,
+            borderRadius: 5,
+        },
+        modalWarningButtonText: {
+            fontSize: 16,
+            color: mtrTheme.colors.darkText,
+            fontFamily: 'Roboto-Regular',
             textAlign: 'center',
             paddingHorizontal: 30,
             paddingVertical: 5,
@@ -537,42 +854,145 @@ const styles = (mtrTheme) =>
         body: {
             color: 'white',
         },
+        modalConfirmationContainer: {
+            flex: 1,
+            justifyContent: 'center',
+        },
+        confirmationSurface: {
+            backgroundColor: 'white',
+            borderRadius: 10,
+            marginHorizontal: 20,
+            marginVertical: 5,
+            paddingBottom: 10,
+        },
+        confirmationContainer: {
+            flexDirection: 'column',
+            alignItems: 'center',
+            paddingHorizontal: 25,
+            paddingVertical: 10,
+            zIndex: 1000,
+        },
+        confirmationText: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 20,
+            color: mtrTheme.colors.darkText,
+            paddingVertical: 5,
+            textAlign: 'center',
+        },
         introContainer: {
             flexDirection: 'column',
             alignItems: 'center',
             paddingHorizontal: 25,
             paddingVertical: 10,
+            zIndex: 1000,
+        },
+        changeAffContainer: {
+            flexDirection: 'column',
+            alignItems: 'center',
+            paddingHorizontal: 25,
+            paddingVertical: 10,
+            zIndex: 3000,
         },
         introText: {
             fontFamily: 'Roboto-Regular',
             fontSize: 20,
-            color: 'white',
+            color: mtrTheme.colors.darkText,
             paddingVertical: 5,
             textAlign: 'center',
         },
-        dropDownContainer: {
-            // flexDirection: 'row',
-            // backgroundColor: 'lightgrey',
+        pendingContainer: {
+            flexDirection: 'column',
+            alignItems: 'center',
+            paddingHorizontal: 25,
+            paddingVertical: 10,
+            marginHorizontal: 10,
+            borderRadius: 10,
+            backgroundColor: mtrTheme.colors.accent,
+        },
+        pendingHeaderText: {
+            fontFamily: 'Roboto-Bold',
+            fontSize: 20,
+        },
+        pendingText: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 16,
+            color: mtrTheme.colors.darkText,
+            paddingVertical: 5,
+            textAlign: 'center',
+        },
+        pendingOrgText: {
+            fontFamily: 'Roboto-BoldItalic',
+            fontSize: 16,
+            color: mtrTheme.colors.darkText,
+            paddingVertical: 5,
+            textAlign: 'center',
+        },
+        activeContainer: {
+            flexDirection: 'column',
+            alignItems: 'center',
+            paddingHorizontal: 25,
+            paddingVertical: 10,
+        },
+        activeText: {
             fontFamily: 'Roboto-Regular',
             fontSize: 20,
-            // width: '80%',
-            justifyContent: 'center',
+            color: mtrTheme.colors.darkText,
+            paddingVertical: 5,
+            textAlign: 'center',
         },
-        dropdown: {
-            height: 40,
-            borderColor: 'gray',
-            color: 'black',
-            fontWeight: 500,
-            fontSize: 30,
-            backgroundColor: 'lightgrey',
-            marginVertical: 1,
-            minWidth: '80%',
-            maxWidth: '80%',
-            borderWidth: 0.5,
-            borderRadius: 1,
-            // paddingHorizontal: 2,
-            paddingVertical: 0,
+
+        dropDownContainer: {
+            // flex: 1,
+            // flexDirection: 'row',
+            borderWidth: 1,
+            alignItems: 'center',
+            // borderColor: 'black',
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            // marginLeft: '20%',
+            zIndex: 3000,
         },
+        dropdownPicker: {
+            borderColor: '#B7B7B7',
+            height: 50,
+            // width: '100%',
+        },
+        // dropDownWrapper: {
+        //     // flexDirection: 'row',
+        //     // backgroundColor: 'lightgrey',
+        //     fontFamily: 'Roboto-Regular',
+        //     fontSize: 20,
+        //     // width: '80%',
+        //     justifyContent: 'center',
+        // },
+
+        // dropdownWas: {
+        //     height: 40,
+        //     borderColor: 'gray',
+        //     color: 'black',
+        //     fontWeight: 500,
+        //     fontSize: 30,
+        //     backgroundColor: 'lightgrey',
+        //     marginVertical: 1,
+        //     minWidth: '80%',
+        //     maxWidth: '80%',
+        //     borderWidth: 0.5,
+        //     borderRadius: 1,
+        //     // paddingHorizontal: 2,
+        //     paddingVertical: 0,
+        // },
+
+        // placeholderStyles: {
+        //     color: 'grey',
+        // },
+        // dropdownAffiliation: {
+        //     marginHorizontal: 10,
+        //     width: '50%',
+        //     marginBottom: 15,
+        // },
+        // dropdownPlaceholderStyles: {
+        //     color: 'grey',
+        // },
+
         placeholderStyle: {
             backgroundColor: 'lightgrey',
             color: 'black',
@@ -583,40 +1003,76 @@ const styles = (mtrTheme) =>
         },
         selectedTextStyle: {
             // backgroundColor: 'lightgrey',
-            fontFamily: 'Roboto-Bold',
-            fontSize: 22,
-            color: 'black',
+            fontFamily: 'Roboto-Regular',
+            fontSize: 18,
+            color: mtrTheme.colors.darkText,
             paddingLeft: 10,
             paddingVertical: 5,
         },
         inputSearchStyle: {},
+        affCodeInputText: {
+            color: mtrTheme.colors.darkText,
+            textAlign: 'center',
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            borderColor: mtrTheme.colors.mediumGrey,
+            borderWidth: 1,
+            borderRadius: 5,
+            padding: 5,
+            textTransform: 'uppercase',
+        },
+        affInputContainer: {
+            paddingVertical: 5,
+        },
+        textInputContainer: {
+            borderColor: 'white',
+            backgroundColor: mtrTheme.colors.mediumGraphic,
+            borderWidth: 1,
+            justifyContent: 'center',
+            marginRight: 10,
+        },
         changeButtonContainer: {
             flexDirection: 'row',
             justifyContent: 'center',
             marginTop: 15,
         },
-        changeButton: {
-            backgroundColor: mtrTheme.colors.lightBlue,
+        buttonWrapper: {
+            flexDirection: 'column',
+
+            alignItems: 'center',
+            justifyContent: 'space-around',
+        },
+        saveButtonContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        saveButton: {
+            backgroundColor: mtrTheme.colors.mediumGreen,
             borderRadius: 5,
+            marginHorizontal: 3,
+            marginTop: 10,
+            maxWidth: 150,
+        },
+        changeButton: {
+            backgroundColor: mtrTheme.colors.mediumGreen,
+            borderRadius: 5,
+            marginHorizontal: 3,
+            marginTop: 10,
         },
         changeButtonText: {
-            fontSize: 16,
-            fontColor: 'white',
+            fontSize: 14,
+            color: mtrTheme.colors.lightText,
             fontFamily: 'Roboto-Regular',
             textAlign: 'center',
             paddingHorizontal: 20,
             paddingVertical: 5,
         },
-        messageBox: {
-            height: 40,
-            margin: 12,
-            borderWidth: 1,
-            padding: 10,
+        infoRow: {
+            marginLeft: 'auto',
+            marginRight: 10,
         },
-        separator: {
-            marginVertical: 30,
-            height: 1,
-            width: '80%',
+        infoText: {
+            color: mtrTheme.colors.mediumText,
         },
     });
 export default AffiliationScreen;

@@ -24,24 +24,42 @@ export const createDefaultGroup = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
         }
         affiliations {
           nextToken
+          __typename
         }
         defaultUsers {
           nextToken
+          __typename
         }
         heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
         defaultGroups {
           nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         locationOrganizationsId
+        __typename
       }
       createdAt
       updatedAt
       organizationDefaultGroupsId
+      __typename
     }
   }
 `;
@@ -68,24 +86,42 @@ export const updateDefaultGroup = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
         }
         affiliations {
           nextToken
+          __typename
         }
         defaultUsers {
           nextToken
+          __typename
         }
         heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
         defaultGroups {
           nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         locationOrganizationsId
+        __typename
       }
       createdAt
       updatedAt
       organizationDefaultGroupsId
+      __typename
     }
   }
 `;
@@ -112,24 +148,42 @@ export const deleteDefaultGroup = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
         }
         affiliations {
           nextToken
+          __typename
         }
         defaultUsers {
           nextToken
+          __typename
         }
         heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
         defaultGroups {
           nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         locationOrganizationsId
+        __typename
       }
       createdAt
       updatedAt
       organizationDefaultGroupsId
+      __typename
     }
   }
 `;
@@ -160,20 +214,37 @@ export const createUser = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
         }
         affiliations {
           nextToken
+          __typename
         }
         defaultUsers {
           nextToken
+          __typename
         }
         heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
         defaultGroups {
           nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         locationOrganizationsId
+        __typename
       }
       picture
       affiliations {
@@ -185,8 +256,10 @@ export const createUser = /* GraphQL */ `
           updatedAt
           userAffiliationsId
           organizationAffiliationsId
+          __typename
         }
         nextToken
+        __typename
       }
       location {
         id
@@ -196,17 +269,33 @@ export const createUser = /* GraphQL */ `
         postalCode
         organizations {
           nextToken
+          __typename
         }
         users {
           nextToken
+          __typename
         }
         createdAt
         updatedAt
+        __typename
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+          __typename
+        }
+        nextToken
+        __typename
       }
       createdAt
       updatedAt
       organizationDefaultUsersId
       locationUsersId
+      __typename
     }
   }
 `;
@@ -237,20 +326,37 @@ export const updateUser = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
         }
         affiliations {
           nextToken
+          __typename
         }
         defaultUsers {
           nextToken
+          __typename
         }
         heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
         defaultGroups {
           nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         locationOrganizationsId
+        __typename
       }
       picture
       affiliations {
@@ -262,8 +368,10 @@ export const updateUser = /* GraphQL */ `
           updatedAt
           userAffiliationsId
           organizationAffiliationsId
+          __typename
         }
         nextToken
+        __typename
       }
       location {
         id
@@ -273,17 +381,33 @@ export const updateUser = /* GraphQL */ `
         postalCode
         organizations {
           nextToken
+          __typename
         }
         users {
           nextToken
+          __typename
         }
         createdAt
         updatedAt
+        __typename
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+          __typename
+        }
+        nextToken
+        __typename
       }
       createdAt
       updatedAt
       organizationDefaultUsersId
       locationUsersId
+      __typename
     }
   }
 `;
@@ -314,20 +438,37 @@ export const deleteUser = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
         }
         affiliations {
           nextToken
+          __typename
         }
         defaultUsers {
           nextToken
+          __typename
         }
         heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
         defaultGroups {
           nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         locationOrganizationsId
+        __typename
       }
       picture
       affiliations {
@@ -339,8 +480,10 @@ export const deleteUser = /* GraphQL */ `
           updatedAt
           userAffiliationsId
           organizationAffiliationsId
+          __typename
         }
         nextToken
+        __typename
       }
       location {
         id
@@ -350,17 +493,33 @@ export const deleteUser = /* GraphQL */ `
         postalCode
         organizations {
           nextToken
+          __typename
         }
         users {
           nextToken
+          __typename
         }
         createdAt
         updatedAt
+        __typename
+      }
+      manages {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+          __typename
+        }
+        nextToken
+        __typename
       }
       createdAt
       updatedAt
       organizationDefaultUsersId
       locationUsersId
+      __typename
     }
   }
 `;
@@ -391,10 +550,12 @@ export const createAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
           locationOrganizationsId
+          __typename
         }
         picture
         affiliations {
           nextToken
+          __typename
         }
         location {
           id
@@ -404,11 +565,17 @@ export const createAffiliation = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
+        }
+        manages {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         organizationDefaultUsersId
         locationUsersId
+        __typename
       }
       organization {
         id
@@ -422,25 +589,43 @@ export const createAffiliation = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
         }
         affiliations {
           nextToken
+          __typename
         }
         defaultUsers {
           nextToken
+          __typename
         }
         heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
         defaultGroups {
           nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         locationOrganizationsId
+        __typename
       }
       createdAt
       updatedAt
       userAffiliationsId
       organizationAffiliationsId
+      __typename
     }
   }
 `;
@@ -471,10 +656,12 @@ export const updateAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
           locationOrganizationsId
+          __typename
         }
         picture
         affiliations {
           nextToken
+          __typename
         }
         location {
           id
@@ -484,11 +671,17 @@ export const updateAffiliation = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
+        }
+        manages {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         organizationDefaultUsersId
         locationUsersId
+        __typename
       }
       organization {
         id
@@ -502,25 +695,43 @@ export const updateAffiliation = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
         }
         affiliations {
           nextToken
+          __typename
         }
         defaultUsers {
           nextToken
+          __typename
         }
         heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
         defaultGroups {
           nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         locationOrganizationsId
+        __typename
       }
       createdAt
       updatedAt
       userAffiliationsId
       organizationAffiliationsId
+      __typename
     }
   }
 `;
@@ -551,10 +762,12 @@ export const deleteAffiliation = /* GraphQL */ `
           createdAt
           updatedAt
           locationOrganizationsId
+          __typename
         }
         picture
         affiliations {
           nextToken
+          __typename
         }
         location {
           id
@@ -564,11 +777,17 @@ export const deleteAffiliation = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
+        }
+        manages {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         organizationDefaultUsersId
         locationUsersId
+        __typename
       }
       organization {
         id
@@ -582,25 +801,43 @@ export const deleteAffiliation = /* GraphQL */ `
           postalCode
           createdAt
           updatedAt
+          __typename
         }
         affiliations {
           nextToken
+          __typename
         }
         defaultUsers {
           nextToken
+          __typename
         }
         heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
         defaultGroups {
           nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
         }
         createdAt
         updatedAt
         locationOrganizationsId
+        __typename
       }
       createdAt
       updatedAt
       userAffiliationsId
       organizationAffiliationsId
+      __typename
     }
   }
 `;
@@ -621,12 +858,15 @@ export const createOrganization = /* GraphQL */ `
         postalCode
         organizations {
           nextToken
+          __typename
         }
         users {
           nextToken
+          __typename
         }
         createdAt
         updatedAt
+        __typename
       }
       affiliations {
         items {
@@ -637,8 +877,10 @@ export const createOrganization = /* GraphQL */ `
           updatedAt
           userAffiliationsId
           organizationAffiliationsId
+          __typename
         }
         nextToken
+        __typename
       }
       defaultUsers {
         items {
@@ -656,10 +898,76 @@ export const createOrganization = /* GraphQL */ `
           updatedAt
           organizationDefaultUsersId
           locationUsersId
+          __typename
         }
         nextToken
+        __typename
       }
       heroMessage
+      meetings {
+        items {
+          id
+          meetingDate
+          title
+          meetingType
+          mtgCompKey
+          announcementsContact
+          attendanceCount
+          avContact
+          cafeContact
+          cafeCount
+          childrenContact
+          childrenCount
+          cleanupContact
+          closingContact
+          donations
+          facilitatorContact
+          greeterContact1
+          greeterContact2
+          meal
+          mealContact
+          mealCount
+          newcomersCount
+          notes
+          nurseryContact
+          nurseryCount
+          resourceContact
+          securityContact
+          setupContact
+          supportContact
+          transportationContact
+          transportationCount
+          worship
+          youthContact
+          youthCount
+          createdAt
+          updatedAt
+          organizationMeetingsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      groups {
+        items {
+          id
+          grpCompKey
+          title
+          location
+          gender
+          attendance
+          facilitator
+          cofacilitator
+          notes
+          createdAt
+          updatedAt
+          organizationGroupsId
+          meetingGroupsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       defaultGroups {
         items {
           id
@@ -670,12 +978,27 @@ export const createOrganization = /* GraphQL */ `
           createdAt
           updatedAt
           organizationDefaultGroupsId
+          __typename
         }
         nextToken
+        __typename
+      }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+          __typename
+        }
+        nextToken
+        __typename
       }
       createdAt
       updatedAt
       locationOrganizationsId
+      __typename
     }
   }
 `;
@@ -696,12 +1019,15 @@ export const updateOrganization = /* GraphQL */ `
         postalCode
         organizations {
           nextToken
+          __typename
         }
         users {
           nextToken
+          __typename
         }
         createdAt
         updatedAt
+        __typename
       }
       affiliations {
         items {
@@ -712,8 +1038,10 @@ export const updateOrganization = /* GraphQL */ `
           updatedAt
           userAffiliationsId
           organizationAffiliationsId
+          __typename
         }
         nextToken
+        __typename
       }
       defaultUsers {
         items {
@@ -731,10 +1059,76 @@ export const updateOrganization = /* GraphQL */ `
           updatedAt
           organizationDefaultUsersId
           locationUsersId
+          __typename
         }
         nextToken
+        __typename
       }
       heroMessage
+      meetings {
+        items {
+          id
+          meetingDate
+          title
+          meetingType
+          mtgCompKey
+          announcementsContact
+          attendanceCount
+          avContact
+          cafeContact
+          cafeCount
+          childrenContact
+          childrenCount
+          cleanupContact
+          closingContact
+          donations
+          facilitatorContact
+          greeterContact1
+          greeterContact2
+          meal
+          mealContact
+          mealCount
+          newcomersCount
+          notes
+          nurseryContact
+          nurseryCount
+          resourceContact
+          securityContact
+          setupContact
+          supportContact
+          transportationContact
+          transportationCount
+          worship
+          youthContact
+          youthCount
+          createdAt
+          updatedAt
+          organizationMeetingsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      groups {
+        items {
+          id
+          grpCompKey
+          title
+          location
+          gender
+          attendance
+          facilitator
+          cofacilitator
+          notes
+          createdAt
+          updatedAt
+          organizationGroupsId
+          meetingGroupsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       defaultGroups {
         items {
           id
@@ -745,12 +1139,27 @@ export const updateOrganization = /* GraphQL */ `
           createdAt
           updatedAt
           organizationDefaultGroupsId
+          __typename
         }
         nextToken
+        __typename
+      }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+          __typename
+        }
+        nextToken
+        __typename
       }
       createdAt
       updatedAt
       locationOrganizationsId
+      __typename
     }
   }
 `;
@@ -771,12 +1180,15 @@ export const deleteOrganization = /* GraphQL */ `
         postalCode
         organizations {
           nextToken
+          __typename
         }
         users {
           nextToken
+          __typename
         }
         createdAt
         updatedAt
+        __typename
       }
       affiliations {
         items {
@@ -787,8 +1199,10 @@ export const deleteOrganization = /* GraphQL */ `
           updatedAt
           userAffiliationsId
           organizationAffiliationsId
+          __typename
         }
         nextToken
+        __typename
       }
       defaultUsers {
         items {
@@ -806,10 +1220,76 @@ export const deleteOrganization = /* GraphQL */ `
           updatedAt
           organizationDefaultUsersId
           locationUsersId
+          __typename
         }
         nextToken
+        __typename
       }
       heroMessage
+      meetings {
+        items {
+          id
+          meetingDate
+          title
+          meetingType
+          mtgCompKey
+          announcementsContact
+          attendanceCount
+          avContact
+          cafeContact
+          cafeCount
+          childrenContact
+          childrenCount
+          cleanupContact
+          closingContact
+          donations
+          facilitatorContact
+          greeterContact1
+          greeterContact2
+          meal
+          mealContact
+          mealCount
+          newcomersCount
+          notes
+          nurseryContact
+          nurseryCount
+          resourceContact
+          securityContact
+          setupContact
+          supportContact
+          transportationContact
+          transportationCount
+          worship
+          youthContact
+          youthCount
+          createdAt
+          updatedAt
+          organizationMeetingsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      groups {
+        items {
+          id
+          grpCompKey
+          title
+          location
+          gender
+          attendance
+          facilitator
+          cofacilitator
+          notes
+          createdAt
+          updatedAt
+          organizationGroupsId
+          meetingGroupsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
       defaultGroups {
         items {
           id
@@ -820,12 +1300,27 @@ export const deleteOrganization = /* GraphQL */ `
           createdAt
           updatedAt
           organizationDefaultGroupsId
+          __typename
         }
         nextToken
+        __typename
+      }
+      managers {
+        items {
+          id
+          userId
+          organizationId
+          createdAt
+          updatedAt
+          __typename
+        }
+        nextToken
+        __typename
       }
       createdAt
       updatedAt
       locationOrganizationsId
+      __typename
     }
   }
 `;
@@ -849,8 +1344,10 @@ export const createLocation = /* GraphQL */ `
           createdAt
           updatedAt
           locationOrganizationsId
+          __typename
         }
         nextToken
+        __typename
       }
       users {
         items {
@@ -868,11 +1365,14 @@ export const createLocation = /* GraphQL */ `
           updatedAt
           organizationDefaultUsersId
           locationUsersId
+          __typename
         }
         nextToken
+        __typename
       }
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -896,8 +1396,10 @@ export const updateLocation = /* GraphQL */ `
           createdAt
           updatedAt
           locationOrganizationsId
+          __typename
         }
         nextToken
+        __typename
       }
       users {
         items {
@@ -915,11 +1417,14 @@ export const updateLocation = /* GraphQL */ `
           updatedAt
           organizationDefaultUsersId
           locationUsersId
+          __typename
         }
         nextToken
+        __typename
       }
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -943,8 +1448,10 @@ export const deleteLocation = /* GraphQL */ `
           createdAt
           updatedAt
           locationOrganizationsId
+          __typename
         }
         nextToken
+        __typename
       }
       users {
         items {
@@ -962,11 +1469,14 @@ export const deleteLocation = /* GraphQL */ `
           updatedAt
           organizationDefaultUsersId
           locationUsersId
+          __typename
         }
         nextToken
+        __typename
       }
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -985,6 +1495,7 @@ export const createSystem = /* GraphQL */ `
       logoPicture
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -1003,6 +1514,7 @@ export const updateSystem = /* GraphQL */ `
       logoPicture
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -1021,6 +1533,1015 @@ export const deleteSystem = /* GraphQL */ `
       logoPicture
       createdAt
       updatedAt
+      __typename
+    }
+  }
+`;
+export const createMeeting = /* GraphQL */ `
+  mutation CreateMeeting(
+    $input: CreateMeetingInput!
+    $condition: ModelMeetingConditionInput
+  ) {
+    createMeeting(input: $input, condition: $condition) {
+      id
+      meetingDate
+      title
+      meetingType
+      mtgCompKey
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        affiliations {
+          nextToken
+          __typename
+        }
+        defaultUsers {
+          nextToken
+          __typename
+        }
+        heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        defaultGroups {
+          nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+        __typename
+      }
+      groups {
+        items {
+          id
+          grpCompKey
+          title
+          location
+          gender
+          attendance
+          facilitator
+          cofacilitator
+          notes
+          createdAt
+          updatedAt
+          organizationGroupsId
+          meetingGroupsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      announcementsContact
+      attendanceCount
+      avContact
+      cafeContact
+      cafeCount
+      childrenContact
+      childrenCount
+      cleanupContact
+      closingContact
+      donations
+      facilitatorContact
+      greeterContact1
+      greeterContact2
+      meal
+      mealContact
+      mealCount
+      newcomersCount
+      notes
+      nurseryContact
+      nurseryCount
+      resourceContact
+      securityContact
+      setupContact
+      supportContact
+      transportationContact
+      transportationCount
+      worship
+      youthContact
+      youthCount
+      createdAt
+      updatedAt
+      organizationMeetingsId
+      __typename
+    }
+  }
+`;
+export const updateMeeting = /* GraphQL */ `
+  mutation UpdateMeeting(
+    $input: UpdateMeetingInput!
+    $condition: ModelMeetingConditionInput
+  ) {
+    updateMeeting(input: $input, condition: $condition) {
+      id
+      meetingDate
+      title
+      meetingType
+      mtgCompKey
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        affiliations {
+          nextToken
+          __typename
+        }
+        defaultUsers {
+          nextToken
+          __typename
+        }
+        heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        defaultGroups {
+          nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+        __typename
+      }
+      groups {
+        items {
+          id
+          grpCompKey
+          title
+          location
+          gender
+          attendance
+          facilitator
+          cofacilitator
+          notes
+          createdAt
+          updatedAt
+          organizationGroupsId
+          meetingGroupsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      announcementsContact
+      attendanceCount
+      avContact
+      cafeContact
+      cafeCount
+      childrenContact
+      childrenCount
+      cleanupContact
+      closingContact
+      donations
+      facilitatorContact
+      greeterContact1
+      greeterContact2
+      meal
+      mealContact
+      mealCount
+      newcomersCount
+      notes
+      nurseryContact
+      nurseryCount
+      resourceContact
+      securityContact
+      setupContact
+      supportContact
+      transportationContact
+      transportationCount
+      worship
+      youthContact
+      youthCount
+      createdAt
+      updatedAt
+      organizationMeetingsId
+      __typename
+    }
+  }
+`;
+export const deleteMeeting = /* GraphQL */ `
+  mutation DeleteMeeting(
+    $input: DeleteMeetingInput!
+    $condition: ModelMeetingConditionInput
+  ) {
+    deleteMeeting(input: $input, condition: $condition) {
+      id
+      meetingDate
+      title
+      meetingType
+      mtgCompKey
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        affiliations {
+          nextToken
+          __typename
+        }
+        defaultUsers {
+          nextToken
+          __typename
+        }
+        heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        defaultGroups {
+          nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+        __typename
+      }
+      groups {
+        items {
+          id
+          grpCompKey
+          title
+          location
+          gender
+          attendance
+          facilitator
+          cofacilitator
+          notes
+          createdAt
+          updatedAt
+          organizationGroupsId
+          meetingGroupsId
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      announcementsContact
+      attendanceCount
+      avContact
+      cafeContact
+      cafeCount
+      childrenContact
+      childrenCount
+      cleanupContact
+      closingContact
+      donations
+      facilitatorContact
+      greeterContact1
+      greeterContact2
+      meal
+      mealContact
+      mealCount
+      newcomersCount
+      notes
+      nurseryContact
+      nurseryCount
+      resourceContact
+      securityContact
+      setupContact
+      supportContact
+      transportationContact
+      transportationCount
+      worship
+      youthContact
+      youthCount
+      createdAt
+      updatedAt
+      organizationMeetingsId
+      __typename
+    }
+  }
+`;
+export const createGroup = /* GraphQL */ `
+  mutation CreateGroup(
+    $input: CreateGroupInput!
+    $condition: ModelGroupConditionInput
+  ) {
+    createGroup(input: $input, condition: $condition) {
+      id
+      meeting {
+        id
+        meetingDate
+        title
+        meetingType
+        mtgCompKey
+        organization {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        announcementsContact
+        attendanceCount
+        avContact
+        cafeContact
+        cafeCount
+        childrenContact
+        childrenCount
+        cleanupContact
+        closingContact
+        donations
+        facilitatorContact
+        greeterContact1
+        greeterContact2
+        meal
+        mealContact
+        mealCount
+        newcomersCount
+        notes
+        nurseryContact
+        nurseryCount
+        resourceContact
+        securityContact
+        setupContact
+        supportContact
+        transportationContact
+        transportationCount
+        worship
+        youthContact
+        youthCount
+        createdAt
+        updatedAt
+        organizationMeetingsId
+        __typename
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        affiliations {
+          nextToken
+          __typename
+        }
+        defaultUsers {
+          nextToken
+          __typename
+        }
+        heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        defaultGroups {
+          nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+        __typename
+      }
+      grpCompKey
+      title
+      location
+      gender
+      attendance
+      facilitator
+      cofacilitator
+      notes
+      createdAt
+      updatedAt
+      organizationGroupsId
+      meetingGroupsId
+      __typename
+    }
+  }
+`;
+export const updateGroup = /* GraphQL */ `
+  mutation UpdateGroup(
+    $input: UpdateGroupInput!
+    $condition: ModelGroupConditionInput
+  ) {
+    updateGroup(input: $input, condition: $condition) {
+      id
+      meeting {
+        id
+        meetingDate
+        title
+        meetingType
+        mtgCompKey
+        organization {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        announcementsContact
+        attendanceCount
+        avContact
+        cafeContact
+        cafeCount
+        childrenContact
+        childrenCount
+        cleanupContact
+        closingContact
+        donations
+        facilitatorContact
+        greeterContact1
+        greeterContact2
+        meal
+        mealContact
+        mealCount
+        newcomersCount
+        notes
+        nurseryContact
+        nurseryCount
+        resourceContact
+        securityContact
+        setupContact
+        supportContact
+        transportationContact
+        transportationCount
+        worship
+        youthContact
+        youthCount
+        createdAt
+        updatedAt
+        organizationMeetingsId
+        __typename
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        affiliations {
+          nextToken
+          __typename
+        }
+        defaultUsers {
+          nextToken
+          __typename
+        }
+        heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        defaultGroups {
+          nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+        __typename
+      }
+      grpCompKey
+      title
+      location
+      gender
+      attendance
+      facilitator
+      cofacilitator
+      notes
+      createdAt
+      updatedAt
+      organizationGroupsId
+      meetingGroupsId
+      __typename
+    }
+  }
+`;
+export const deleteGroup = /* GraphQL */ `
+  mutation DeleteGroup(
+    $input: DeleteGroupInput!
+    $condition: ModelGroupConditionInput
+  ) {
+    deleteGroup(input: $input, condition: $condition) {
+      id
+      meeting {
+        id
+        meetingDate
+        title
+        meetingType
+        mtgCompKey
+        organization {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        announcementsContact
+        attendanceCount
+        avContact
+        cafeContact
+        cafeCount
+        childrenContact
+        childrenCount
+        cleanupContact
+        closingContact
+        donations
+        facilitatorContact
+        greeterContact1
+        greeterContact2
+        meal
+        mealContact
+        mealCount
+        newcomersCount
+        notes
+        nurseryContact
+        nurseryCount
+        resourceContact
+        securityContact
+        setupContact
+        supportContact
+        transportationContact
+        transportationCount
+        worship
+        youthContact
+        youthCount
+        createdAt
+        updatedAt
+        organizationMeetingsId
+        __typename
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        affiliations {
+          nextToken
+          __typename
+        }
+        defaultUsers {
+          nextToken
+          __typename
+        }
+        heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        defaultGroups {
+          nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+        __typename
+      }
+      grpCompKey
+      title
+      location
+      gender
+      attendance
+      facilitator
+      cofacilitator
+      notes
+      createdAt
+      updatedAt
+      organizationGroupsId
+      meetingGroupsId
+      __typename
+    }
+  }
+`;
+export const createManageOrganization = /* GraphQL */ `
+  mutation CreateManageOrganization(
+    $input: CreateManageOrganizationInput!
+    $condition: ModelManageOrganizationConditionInput
+  ) {
+    createManageOrganization(input: $input, condition: $condition) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+          __typename
+        }
+        picture
+        affiliations {
+          nextToken
+          __typename
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        manages {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+        __typename
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        affiliations {
+          nextToken
+          __typename
+        }
+        defaultUsers {
+          nextToken
+          __typename
+        }
+        heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        defaultGroups {
+          nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateManageOrganization = /* GraphQL */ `
+  mutation UpdateManageOrganization(
+    $input: UpdateManageOrganizationInput!
+    $condition: ModelManageOrganizationConditionInput
+  ) {
+    updateManageOrganization(input: $input, condition: $condition) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+          __typename
+        }
+        picture
+        affiliations {
+          nextToken
+          __typename
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        manages {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+        __typename
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        affiliations {
+          nextToken
+          __typename
+        }
+        defaultUsers {
+          nextToken
+          __typename
+        }
+        heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        defaultGroups {
+          nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteManageOrganization = /* GraphQL */ `
+  mutation DeleteManageOrganization(
+    $input: DeleteManageOrganizationInput!
+    $condition: ModelManageOrganizationConditionInput
+  ) {
+    deleteManageOrganization(input: $input, condition: $condition) {
+      id
+      userId
+      organizationId
+      user {
+        id
+        sub
+        username
+        firstName
+        lastName
+        email
+        phone
+        shirt
+        birthday
+        defaultOrg {
+          id
+          name
+          code
+          heroMessage
+          createdAt
+          updatedAt
+          locationOrganizationsId
+          __typename
+        }
+        picture
+        affiliations {
+          nextToken
+          __typename
+        }
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        manages {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        organizationDefaultUsersId
+        locationUsersId
+        __typename
+      }
+      organization {
+        id
+        name
+        code
+        location {
+          id
+          street
+          city
+          stateProv
+          postalCode
+          createdAt
+          updatedAt
+          __typename
+        }
+        affiliations {
+          nextToken
+          __typename
+        }
+        defaultUsers {
+          nextToken
+          __typename
+        }
+        heroMessage
+        meetings {
+          nextToken
+          __typename
+        }
+        groups {
+          nextToken
+          __typename
+        }
+        defaultGroups {
+          nextToken
+          __typename
+        }
+        managers {
+          nextToken
+          __typename
+        }
+        createdAt
+        updatedAt
+        locationOrganizationsId
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
     }
   }
 `;

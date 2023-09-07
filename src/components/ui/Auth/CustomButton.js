@@ -5,6 +5,7 @@ const CustomButton = ({
     onPress,
     text,
     type = 'PRIMARY',
+    vPadding = 15,
     bgColor,
     fgColor,
 }) => {
@@ -34,6 +35,7 @@ const CustomButton = ({
                 styles.container,
                 styles[cStyle],
                 bgColor ? { backgroundColor: bgColor } : {},
+                { paddingVertical: vPadding },
             ]}
         >
             <Text

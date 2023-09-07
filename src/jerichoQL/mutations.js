@@ -89,6 +89,38 @@ export const updateDefaultGroup = /* GraphQL */ `
         }
     }
 `;
+export const deleteGroup = /* GraphQL */ `
+    mutation DeleteGroup(
+        $input: DeleteGroupInput!
+        $condition: ModelGroupConditionInput
+    ) {
+        deleteGroup(input: $input, condition: $condition) {
+            id
+        }
+    }
+`;
+export const updateGroup = /* GraphQL */ `
+    mutation UpdateGroup(
+        $input: UpdateGroupInput!
+        $condition: ModelGroupConditionInput
+    ) {
+        updateGroup(input: $input, condition: $condition) {
+            id
+            grpCompKey
+            title
+            location
+            gender
+            attendance
+            facilitator
+            cofacilitator
+            notes
+            createdAt
+            updatedAt
+            organizationGroupsId
+            meetingGroupsId
+        }
+    }
+`;
 export const deleteDefaultGroup = /* GraphQL */ `
     mutation DeleteDefaultGroup(
         $input: DeleteDefaultGroupInput!
@@ -210,22 +242,65 @@ export const createUser = /* GraphQL */ `
         }
     }
 `;
-export const updateUser = /* GraphQL */ `
-    mutation UpdateUser(
-        $input: UpdateUserInput!
-        $condition: ModelUserConditionInput
+export const createGroup = /* GraphQL */ `
+    mutation CreateGroup(
+        $input: CreateGroupInput!
+        $condition: ModelGroupConditionInput
     ) {
-        updateUser(input: $input, condition: $condition) {
+        createGroup(input: $input, condition: $condition) {
             id
-            sub
-            username
-            firstName
-            lastName
-            email
-            phone
-            shirt
-            birthday
-            defaultOrg {
+            meeting {
+                id
+                meetingDate
+                title
+                meetingType
+                mtgCompKey
+                organization {
+                    id
+                    name
+                    code
+                    heroMessage
+                    createdAt
+                    updatedAt
+                    locationOrganizationsId
+                }
+                groups {
+                    nextToken
+                }
+                announcementsContact
+                attendanceCount
+                avContact
+                cafeContact
+                cafeCount
+                childrenContact
+                childrenCount
+                cleanupContact
+                closingContact
+                donations
+                facilitatorContact
+                greeterContact1
+                greeterContact2
+                meal
+                mealContact
+                mealCount
+                newcomersCount
+                notes
+                nurseryContact
+                nurseryCount
+                resourceContact
+                securityContact
+                setupContact
+                supportContact
+                transportationContact
+                transportationCount
+                worship
+                youthContact
+                youthCount
+                createdAt
+                updatedAt
+                organizationMeetingsId
+            }
+            organization {
                 id
                 name
                 code
@@ -245,11 +320,56 @@ export const updateUser = /* GraphQL */ `
                     nextToken
                 }
                 heroMessage
+                meetings {
+                    nextToken
+                }
+                groups {
+                    nextToken
+                }
                 defaultGroups {
+                    nextToken
+                }
+                managers {
                     nextToken
                 }
                 createdAt
                 updatedAt
+                locationOrganizationsId
+            }
+            grpCompKey
+            title
+            location
+            gender
+            attendance
+            facilitator
+            cofacilitator
+            notes
+            createdAt
+            updatedAt
+            organizationGroupsId
+            meetingGroupsId
+        }
+    }
+`;
+export const updateUser = /* GraphQL */ `
+    mutation UpdateUser(
+        $input: UpdateUserInput!
+        $condition: ModelUserConditionInput
+    ) {
+        updateUser(input: $input, condition: $condition) {
+            id
+            sub
+            username
+            firstName
+            lastName
+            email
+            phone
+            shirt
+            birthday
+            defaultOrg {
+                id
+                name
+                code
                 locationOrganizationsId
             }
             picture
@@ -258,12 +378,14 @@ export const updateUser = /* GraphQL */ `
                     id
                     role
                     status
-                    createdAt
-                    updatedAt
                     userAffiliationsId
-                    organizationAffiliationsId
+                    organization {
+                        id
+                        name
+                        code
+                        heroMessage
+                    }
                 }
-                nextToken
             }
             location {
                 id
@@ -271,17 +393,7 @@ export const updateUser = /* GraphQL */ `
                 city
                 stateProv
                 postalCode
-                organizations {
-                    nextToken
-                }
-                users {
-                    nextToken
-                }
-                createdAt
-                updatedAt
             }
-            createdAt
-            updatedAt
             organizationDefaultUsersId
             locationUsersId
         }
@@ -361,6 +473,72 @@ export const deleteUser = /* GraphQL */ `
             updatedAt
             organizationDefaultUsersId
             locationUsersId
+        }
+    }
+`;
+export const createMeeting = /* GraphQL */ `
+    mutation CreateMeeting(
+        $input: CreateMeetingInput!
+        $condition: ModelMeetingConditionInput
+    ) {
+        createMeeting(input: $input, condition: $condition) {
+            id
+            meetingDate
+            title
+            meetingType
+            mtgCompKey
+            organization {
+                id
+                name
+                code
+            }
+            groups {
+                items {
+                    id
+                    grpCompKey
+                    title
+                    location
+                    gender
+                    attendance
+                    facilitator
+                    cofacilitator
+                    notes
+                    organizationGroupsId
+                    meetingGroupsId
+                }
+            }
+            announcementsContact
+            attendanceCount
+            avContact
+            cafeContact
+            cafeCount
+            childrenContact
+            childrenCount
+            cleanupContact
+            closingContact
+            donations
+            facilitatorContact
+            greeterContact1
+            greeterContact2
+            meal
+            mealContact
+            mealCount
+            newcomersCount
+            notes
+            nurseryContact
+            nurseryCount
+            resourceContact
+            securityContact
+            setupContact
+            supportContact
+            transportationContact
+            transportationCount
+            worship
+            youthContact
+            youthCount
+            createdAt
+            updatedAt
+            organizationMeetingsId
         }
     }
 `;
@@ -1036,6 +1214,86 @@ export const deleteSystem = /* GraphQL */ `
             logoPicture
             createdAt
             updatedAt
+        }
+    }
+`;
+export const updateMeeting = /* GraphQL */ `
+    mutation UpdateMeeting(
+        $input: UpdateMeetingInput!
+        $condition: ModelMeetingConditionInput
+    ) {
+        updateMeeting(input: $input, condition: $condition) {
+            id
+            meetingDate
+            title
+            meetingType
+            mtgCompKey
+            organization {
+                id
+                name
+                code
+            }
+            groups {
+                items {
+                    id
+                    grpCompKey
+                    title
+                    location
+                    gender
+                    attendance
+                    facilitator
+                    cofacilitator
+                    notes
+                    createdAt
+                    updatedAt
+                    organizationGroupsId
+                    meetingGroupsId
+                }
+                nextToken
+            }
+            announcementsContact
+            attendanceCount
+            avContact
+            cafeContact
+            cafeCount
+            childrenContact
+            childrenCount
+            cleanupContact
+            closingContact
+            donations
+            facilitatorContact
+            greeterContact1
+            greeterContact2
+            meal
+            mealContact
+            mealCount
+            newcomersCount
+            notes
+            nurseryContact
+            nurseryCount
+            resourceContact
+            securityContact
+            setupContact
+            supportContact
+            transportationContact
+            transportationCount
+            worship
+            youthContact
+            youthCount
+            createdAt
+            updatedAt
+            organizationMeetingsId
+        }
+    }
+`;
+
+export const deleteMeeting = /* GraphQL */ `
+    mutation DeleteMeeting(
+        $input: DeleteMeetingInput!
+        $condition: ModelMeetingConditionInput
+    ) {
+        deleteMeeting(input: $input, condition: $condition) {
+            id
         }
     }
 `;

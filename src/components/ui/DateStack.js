@@ -1,5 +1,8 @@
 import { Text, TextInput, View, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
+//* ---------------------------------------
+//* ANDROID display of date
+//* ---------------------------------------
 function DateStack({ date }) {
     const mtrTheme = useTheme();
     if (!date) {

@@ -1,22 +1,21 @@
-import {
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    Pressable,
-    TouchableOpacity,
-} from 'react-native';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Foundation } from '@expo/vector-icons';
-import { useTheme, withTheme, Badge } from 'react-native-paper';
+//* ==========================================
+//* this is the list cards of users on the
+//* TeamScreen. It is to display user pic
+//* and name, then ability to touch and go
+//* to the TeamMemberScreen for user details
+//* ==========================================
+import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { useTheme } from 'react-native-paper';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Storage } from 'aws-amplify';
-import { useSysContext } from '../../contexts/SysContext';
 import { printObject } from '../../utils/helpers';
-const TeamGroupListCard = ({ team, active, handleDelete }) => {
+import { useSelector } from 'react-redux';
+const TeamGroupListCard = (props) => {
     const navigation = useNavigation();
+    const { team } = props;
     const mtrTheme = useTheme();
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const [pictureObject, setPictureObject] = useState(null);
 
     useFocusEffect(
@@ -41,12 +40,6 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
         }, [])
     );
 
-    function groupPressHandler() {
-        return;
-    }
-    function handleDeleteClick() {
-        return;
-    }
     function handleDetailsPress() {
         navigation.navigate('TeamMember', {
             teamMember: team,
@@ -56,106 +49,39 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
     // printObject('team:\n', team);
     return (
         <>
-            <View style={styles.rootContainer}>
+            <View style={mtrStyles(mtrTheme).container}>
                 <Pressable
                     onPress={handleDetailsPress}
-                    style={({ pressed }) => pressed && styles.pressed}
+                    style={({ pressed }) =>
+                        pressed && mtrStyles(mtrTheme).pressed
+                    }
                 >
-                    <View style={[styles.teamMemberItem]}>
-                        <View
-                            style={{
-                                borderWidth: 1,
-                                borderColor: 'blue',
-                                width: '100%',
-                                // minWidth: '100%',
-                            }}
-                        >
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    marginVertical: 10,
-                                    flexWrap: 'wrap',
-                                    width: '100%',
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flex: 0,
-                                        justifyContent: 'center',
-                                    }}
-                                >
+                    <View style={mtrStyles(mtrTheme).teamMemberContainer}>
+                        <View style={mtrStyles(mtrTheme).pictureContainer}>
+                            {pictureObject && (
+                                <>
                                     <View
-                                        style={{
-                                            width: 100,
-                                            alignItems: 'center',
-                                        }}
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .pictureBackground
+                                        }
                                     >
-                                        {pictureObject && (
-                                            <>
-                                                <View
-                                                    style={{
-                                                        backgroundColor:
-                                                            'white',
-                                                        borderRadius: 40,
-                                                    }}
-                                                >
-                                                    <Image
-                                                        source={{
-                                                            uri: pictureObject,
-                                                        }}
-                                                        style={{
-                                                            height: 80,
-                                                            width: 80,
-                                                            borderRadius: 40,
-                                                        }}
-                                                    />
-                                                </View>
-                                            </>
-                                        )}
-                                    </View>
-                                </View>
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            fontFamily: 'Roboto-Bold',
-                                            fontSize: 20,
-                                        }}
-                                    >
-                                        {team.firstName} {team.lastName}
-                                    </Text>
-                                    <Text
-                                        style={{
-                                            fontFamily: 'Roboto-Regular',
-                                            fontSize: 20,
-                                        }}
-                                    >
-                                        {team.activeRoles.length > 0
-                                            ? team.activeRoles
-                                            : 'READ-ONLY'}
-                                    </Text>
-                                </View>
-                                {team.activeRoles &&
-                                    team.activeRoles.includes('new') && (
-                                        <View
-                                            style={{
-                                                flex: 0,
-                                                justifyContent: 'center',
-                                                marginRight: 10,
+                                        <Image
+                                            source={{
+                                                uri: pictureObject,
                                             }}
-                                        >
-                                            <Foundation
-                                                name='burst-new'
-                                                size={80}
-                                                color='yellow'
-                                            />
-                                        </View>
-                                    )}
-                            </View>
+                                            style={
+                                                mtrStyles(mtrTheme).pictureStyle
+                                            }
+                                        />
+                                    </View>
+                                </>
+                            )}
+                        </View>
+                        <View style={mtrStyles(mtrTheme).teamDetailsContainer}>
+                            <Text style={mtrStyles(mtrTheme).teamDetailsText}>
+                                {team.firstName} {team.lastName}
+                            </Text>
                         </View>
                     </View>
                 </Pressable>
@@ -164,26 +90,48 @@ const TeamGroupListCard = ({ team, active, handleDelete }) => {
     );
 };
 
-export default withTheme(TeamGroupListCard);
-
-const styles = StyleSheet.create({
-    pressed: {
-        opacity: 0.75,
-    },
-    rootContainer: {
-        marginHorizontal: 10,
-    },
-    teamMemberItem: {
-        marginVertical: 5,
-        // paddingBottom: 5,
-        backgroundColor: 'darkgrey',
-        flexDirection: 'row',
-        //justifyContent: 'space-between',
-        borderRadius: 10,
-        elevation: 3,
-        shadowColor: 'yellow',
-        shadowRadius: 4,
-        shadowOffset: { width: 1, height: 1 },
-        shadowOpacity: 0.4,
-    },
-});
+export default TeamGroupListCard;
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.background,
+        },
+        pressed: {
+            opacity: 0.75,
+        },
+        teamMemberContainer: {
+            marginVertical: 5,
+            marginHorizontal: 10,
+            backgroundColor: mtrTheme.colors.mediumGraphic,
+            paddingVertical: 5,
+            flexDirection: 'row',
+            borderRadius: 10,
+            elevation: 3,
+            shadowColor: mtrTheme.colors.darkShadow,
+            shadowRadius: 4,
+            shadowOffset: { width: 1, height: 1 },
+            shadowOpacity: 0.4,
+        },
+        pictureContainer: {
+            width: 100,
+            alignItems: 'center',
+        },
+        pictureBackground: {
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            borderRadius: 40,
+        },
+        pictureStyle: {
+            height: 50,
+            width: 50,
+            borderRadius: 25,
+        },
+        teamDetailsContainer: {
+            flex: 1,
+            justifyContent: 'center',
+        },
+        teamDetailsText: {
+            fontSize: 20,
+            fontFamily: 'Roboto-Regular',
+        },
+    });

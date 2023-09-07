@@ -48,6 +48,29 @@ export function dateIsBeforeToday(testDate) {
     }
     return results;
 }
+export function createAWSUniqueID() {
+    // this returns a unique value for use as AWS ID
+    // example:  eca1dda7-f6d3-4b0c-8c5d-716da1cafaa8
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return (
+        s4() +
+        s4() +
+        '-' +
+        s4() +
+        '-' +
+        s4() +
+        '-' +
+        s4() +
+        '-' +
+        s4() +
+        s4() +
+        s4()
+    );
+}
 export async function getUniqueId() {
     const digest = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
@@ -250,6 +273,15 @@ export function dateDashToDateObject(dateDash) {
     let newDate = new Date(datePart[0], datePart[1] - 1, datePart[2]);
     return newDate;
 }
+export function dateObjectToDashDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so we add 1 and padStart to ensure two digits
+    const day = String(date.getDate()).padStart(2, '0'); // Pad day with zero to ensure two digits
+
+    return `${year}-${month}-${day}`;
+}
+
 export function dateDashMadePretty(dateDash) {
     if (!dateDash) {
         return null;

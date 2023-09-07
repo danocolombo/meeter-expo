@@ -2,17 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import NetInfo from '@react-native-community/netinfo';
 import { StyleSheet, Text, View, SafeAreaView, Platform } from 'react-native';
-////RB ---
-import {
-    QueryClient,
-    QueryClientProvider,
-    onlineManager,
-    useOnlineManager,
-} from '@tanstack/react-query';
-import AuthContextProvider from './src/contexts/AuthContext';
-import UserContextProvider from './src/contexts/UserContext';
-import SysContextProvider from './src/contexts/SysContext';
-// import NetInfo from '@react-native-community/netinfo';
+
 import Navigation from './src/navigation/Navigation';
 import { store } from './src/app/store';
 import { Provider, useSelector } from 'react-redux';
@@ -28,18 +18,6 @@ Amplify.configure({
         disabled: true,
     },
 });
-import { Auth, Hub } from 'aws-amplify';
-// onlineManager.setEventListener((setOnline) => {
-//     return NetInfo.addEventListener((state) => {
-//         setOnline(state.isConnected);
-//     });
-// });
-onlineManager.setEventListener((setOnline) => {
-    return NetInfo.addEventListener((state) => {
-        setOnline(!!state.isConnected);
-    });
-});
-const queryClient = new QueryClient();
 
 function App() {
     const [fontsLoaded] = useFonts({
@@ -79,25 +57,17 @@ function App() {
 
     return (
         <Provider store={store}>
-            <AuthContextProvider>
-                <UserContextProvider>
-                    <SysContextProvider>
-                        <QueryClientProvider client={queryClient}>
-                            <PaperProvider theme={theme}>
-                                <SafeAreaView
-                                    style={
-                                        Platform === 'ios'
-                                            ? styles.containerIOS
-                                            : styles.container
-                                    }
-                                >
-                                    <Navigation theme={theme} />
-                                </SafeAreaView>
-                            </PaperProvider>
-                        </QueryClientProvider>
-                    </SysContextProvider>
-                </UserContextProvider>
-            </AuthContextProvider>
+            <PaperProvider theme={theme}>
+                <SafeAreaView
+                    style={
+                        Platform === 'ios'
+                            ? styles.containerIOS
+                            : styles.container
+                    }
+                >
+                    <Navigation theme={theme} />
+                </SafeAreaView>
+            </PaperProvider>
         </Provider>
     );
 }

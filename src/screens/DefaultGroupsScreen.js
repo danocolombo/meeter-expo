@@ -1,135 +1,72 @@
 import { StyleSheet, Text, View, FlatList, AppState } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import * as queries from '../jerichoQL/queries';
+import { useSelector, useDispatch } from 'react-redux';
 import { API } from 'aws-amplify';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Surface, useTheme, ActivityIndicator, FAB } from 'react-native-paper';
 import DefaultGroupCard from '../components/groups/Default.Group.Card';
-import { useSysContext } from '../contexts/SysContext';
-import { useUserContext } from '../contexts/UserContext';
 import CustomButton from '../components/ui/CustomButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as mutations from '../jerichoQL/mutations';
 import { printObject } from '../utils/helpers';
+import {
+    loadDefaultGroups,
+    deleteDefaultGroup,
+} from '../features/groups/groupsThunks';
+import { NativeScreen } from 'react-native-screens';
 
 const DefaultGroupsScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
-    const { meeter, defaultGroups } = useSysContext();
-    const { userProfile } = useUserContext();
-    const [groups, setGroups] = useState([]);
+    const dispatch = useDispatch();
+    const userProfile = useSelector((state) => state.user.profile);
+    const defaultGroups = useSelector((state) => state.groups.defaultGroups);
+    const [displayGroups, setDisplayGroups] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
         }
     }
-    useFocusEffect(
-        useCallback(() => {
-            const subscription = AppState.addEventListener(
-                'change',
-                onAppStateChange
-            );
-            getDefaultGroups();
-            return () => subscription.remove();
-        }, [])
-    );
+
     useEffect(() => {
-        getDefaultGroups().then(() => {
-            console.log('DONE');
-        });
-    }, []);
-    async function getDefaultGroups() {
-        setIsLoading(true);
-        try {
-            const systemInfo = await API.graphql({
-                query: queries.getOrganizationDefaultGroups,
-                variables: { id: userProfile.activeOrg.id },
-            });
-            const defaultGroups =
-                systemInfo.data.getOrganization.defaultGroups.items;
-            setGroups(defaultGroups);
-            setIsLoading(false);
-        } catch (error) {
-            printObject('DGS:52-->systemInfo TryCatch failure:\n', error);
-            setIsLoading(false);
-            return;
-        }
-    }
-    async function deleteDefaultGroup(value) {
-        try {
-            const results = await API.graphql({
-                query: mutations.deleteDefaultGroup,
-                variables: { input: { id: value } },
-            });
-        } catch (error) {
-            printObject('failed to delete default group:', error);
-        }
-        getDefaultGroups();
-    }
+        setDisplayGroups(defaultGroups);
+    }, [defaultGroups]);
+
     const handleDeleteRequest = (value) => {
-        deleteDefaultGroup(value);
+        dispatch(deleteDefaultGroup({ groupId: value }));
     };
     const handleNewRequest = () => {
         navigation.navigate('DGModal');
     };
     if (isLoading) {
         return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
+            <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
                 <ActivityIndicator
-                    color={mtrTheme.colors.activityIndicator}
+                    color={mtrStyles(mtrTheme).activityIndicator}
                     size={80}
                 />
             </View>
         );
     }
     return (
-        // <SafeAreaView
-        //     style={[
-        //         mtrTheme.defaultGroupScreenSafeArea,
-        //         {
-        //             flexDirection: 'column',
-        //             backgroundColor: mtrTheme.colors.background,
-        //             justifyContent: 'flex-start',
-        //             borderWidth: 1,
-        //             borderColor: 'yellow',
-        //         },
-        //     ]}
-        // >
-        <View
-            style={{
-                backgroundColor: mtrTheme.colors.background,
-
-                flex: 1,
-            }}
-        >
-            <View>
-                <Text style={mtrTheme.screenTitle}>DEFAULT GROUPS</Text>
+        <View style={mtrStyles(mtrTheme).container}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    DEFAULT GROUPS
+                </Text>
             </View>
 
-            <View
-                style={{
-                    paddingVertical: 10,
-                    paddingHorizontal: 50,
-                    marginBottom: 10,
-                    marginHorizontal: 30,
-                }}
-            >
-                <Text style={mtrTheme.subTitleSmall}>
+            <View style={mtrStyles(mtrTheme).subtitleContainer}>
+                <Text style={mtrStyles(mtrTheme).subtitleText}>
                     Default groups can be dynamically added to meetings.
                 </Text>
             </View>
-            {groups && (
+            {displayGroups && (
                 <>
-                    {groups && (
+                    {displayGroups && (
                         <FlatList
-                            data={groups}
+                            data={displayGroups}
                             keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (
                                 <DefaultGroupCard
@@ -142,11 +79,11 @@ const DefaultGroupsScreen = () => {
                     )}
                 </>
             )}
-            <View style={{ marginHorizontal: 20, paddingBottom: 20 }}>
+            <View style={mtrStyles(mtrTheme).buttonContainer}>
                 <CustomButton
                     text='ADD DEFAULT GROUP'
                     bgColor={mtrTheme.colors.success}
-                    fgColor='white'
+                    fgColor={mtrTheme.colors.lightText}
                     type='PRIMARY'
                     enabled='true'
                     onPress={() => handleNewRequest()}
@@ -159,9 +96,44 @@ const DefaultGroupsScreen = () => {
 
 export default DefaultGroupsScreen;
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'flex-start',
-    },
-});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        container: {
+            backgroundColor: mtrTheme.colors.background,
+            flex: 1,
+        },
+        screenTitleContainer: {
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.lightText,
+        },
+        subtitleContainer: {
+            paddingVertical: 10,
+            paddingHorizontal: 50,
+            marginBottom: 10,
+            marginHorizontal: 30,
+        },
+        subtitleText: {
+            fontFamily: 'Roboto-Medium',
+            fontSize: 16,
+            fontWeight: '500',
+            color: mtrTheme.colors.accent,
+            textAlign: 'center',
+        },
+        activityIndicatorContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        activityIndicator: {
+            color: mtrTheme.colors.lightGraphic,
+        },
+        buttonContainer: {
+            marginHorizontal: 20,
+            paddingBottom: 20,
+        },
+    });

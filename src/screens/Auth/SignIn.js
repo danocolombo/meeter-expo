@@ -16,15 +16,18 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
-import { checkUserProfile } from '../../jerichoQL/providers/users.provider';
 import { printObject } from '../../utils/helpers';
-
+import { useDispatch } from 'react-redux';
+import {
+    defineAndSaveUserProfile,
+    loginUser,
+} from '../../features/user/userThunks';
 //   FUNCTION START
 const SignInScreen = () => {
     const mtrTheme = useTheme();
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
-
+    const dispatch = useDispatch();
     const [loggedInUser, setLoggedInUser] = useState(null);
     const {
         control,
@@ -37,19 +40,16 @@ const SignInScreen = () => {
     // need this to pass the username on to forgot password
     const user = watch('username');
     const onSignInPressed = async (data) => {
+        console.log('onSignInPressed');
         if (loading) {
             return;
         }
         setLoading(true);
+        console.log('loading true');
         try {
             const response = await Auth.signIn(data.username, data.password);
-            checkUserProfile(response)
-                .then((response) => {
-                    printObject('SI:response:\n', response);
-                })
-                .catch((error) => {
-                    console.log('SI:62-->error', error);
-                });
+            dispatch(loginUser(response));
+            console.log('done with loginUser dispatch');
         } catch (error) {
             switch (error.code) {
                 case 'UserNotFoundException':
@@ -76,6 +76,9 @@ const SignInScreen = () => {
     const forgotPasswordPressed = () => {
         navigation.navigate('ForgotPassword', { user });
     };
+    const onCodeConfirm = () => {
+        navigation.navigate('ConfirmEmail');
+    };
     if (loading) {
         return (
             <View
@@ -92,6 +95,7 @@ const SignInScreen = () => {
             </View>
         );
     }
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.root}>
@@ -149,12 +153,20 @@ const SignInScreen = () => {
                     text='Forgot Password'
                     onPress={forgotPasswordPressed}
                     type='TERTIARY'
+                    vPadding={10}
                 />
                 {/* <SocialSignInButtons /> */}
                 <CustomButton
                     text="Don't have an account? Create one"
                     onPress={onSignUpPressed}
                     type='TERTIARY'
+                    vPadding={5}
+                />
+                <CustomButton
+                    text='Need to enter confirmation code?'
+                    onPress={onCodeConfirm}
+                    type='TERTIARY'
+                    vPadding={0}
                 />
             </View>
         </ScrollView>

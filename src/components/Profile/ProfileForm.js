@@ -20,7 +20,6 @@ import {
     Linking,
 } from 'react-native';
 import { Storage } from 'aws-amplify';
-import { focusManager } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
 import { v4 as uuid } from 'uuid';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -38,9 +37,8 @@ import * as MediaLibrary from 'expo-media-library';
 import Button from '../ui/IButton';
 import { ScreenStackHeaderBackButtonImage } from 'react-native-screens';
 
-import { useUserContext } from '../../contexts/UserContext';
-import { useSysContext } from '../../contexts/SysContext';
 import CustomButton from '../ui/CustomButton';
+import { updateProfile } from '../../jerichoQL/providers/users.provider';
 import Input from '../ui/Input';
 import {
     printObject,
@@ -51,12 +49,14 @@ import {
     createPatePhone,
 } from '../../utils/helpers';
 import { STATESBY2, SHIRTSIZESBY2 } from '../../constants/meeter';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { saveUserProfile } from '../../features/user/userThunks';
 //   FUNCTION START
 //   ===============
 const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const today = new Date();
     const navigation = useNavigation();
+    const dispatch = useDispatch();
     const [savingProfile, setSavingProfile] = useState(false);
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isShirtFocus, setIsShirtFocus] = useState(false);
@@ -74,7 +74,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     //      the picture file
     const [profilePic, setProfilePic] = useState(null);
     const [profilePicDetails, setProfilePicDetails] = useState(null);
-    const { meeter } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
     const [stateProv, setStateProv] = useState(
         profile?.location?.stateProv || ''
     );
@@ -157,13 +157,13 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             level: 'public',
         }).then((hardPic) => {
             setProfilePic(hardPic);
-            printObject('PF:132-->Storage.get', hardPic);
+            // printObject('PF:132-->Storage.get', hardPic);
             profilePicture.current = hardPic;
         });
     }, []);
 
     //* Camera Permissions and settings
-    async function getPermssions() {
+    async function getPermissions() {
         const cameraPermission = await Camera.requestCameraPermissionsAsync();
         const mediaLibraryPermission =
             await MediaLibrary.requestPermissionsAsync();
@@ -234,7 +234,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
         Storage.get(picRef, {
             level: 'public',
         }).then((hardPic) => {
-            printObject('PF:208-->Storage.get', hardPic);
+            // printObject('PF:208-->Storage.get', hardPic);
             setProfilePic(hardPic);
         });
     }, []);
@@ -301,9 +301,11 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                 }
             }
             if (inputIdentifier === 'shirt') {
+                printObject('PF:304-->inputIdentifier:\n', inputIdentifier);
+                printObject('PF:305-->enteredValue:\n', enteredValue);
                 let shirt = enteredValue;
                 let newValues = { ...curInputValues, shirt };
-
+                printObject('PF:308-->newValues:\n', newValues);
                 curInputValues = newValues;
                 return curInputValues;
             }
@@ -353,11 +355,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             headerBackTitle: 'Back',
         });
     }, [navigation]);
-    function onAppStateChange(status) {
-        if (Platform.OS !== 'web') {
-            focusManager.setFocused(status === 'active');
-        }
-    }
+
     const fetchImageFromUri = async (uri) => {
         const response = await fetch(uri);
         const blob = await response.blob();
@@ -433,7 +431,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
         //* prep the phone number
         //* --------------------------
         let phoneToPass;
-        if (values.phone) {
+        if (values?.phone) {
             //ensure that the phone is in expected format (xxx) xxx-xxxx
             // 1. value needs to be either 0 or 14 characters.
             let phoneValue = values.phone;
@@ -469,26 +467,65 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
         } else {
             phoneToPass = '';
         }
+        // printObject('PF:475-->profile:\n', profile);
+        // console.log('street:', values?.street);
+        // console.log('city:', values?.city);
+        // console.log('stateProv:', values?.stateProv);
+        // console.log('postalCode:', values?.postalCode);
+        if (
+            values?.street ||
+            values?.city ||
+            values?.stateProv ||
+            values?.postalCode
+        ) {
+            profile.location = {
+                street: values?.street || null,
+                city: values?.city || null,
+                stateProv: values?.stateProv || null,
+                postalCode: values?.postalCode || null,
+            };
+        } else {
+            // no address info provided.
+            //      if we have locationUsersId we need
+            //      to clear the data
+            if (profile?.locationUsersId !== null) {
+                console.log('NEED TO CLEAR THE LOCATION DATA');
+            } else {
+                console.log('NO locationUsersId, nothting to update');
+            }
+            profile.location = null;
+        }
+
         const resultantProfile = {
+            ...profile,
             phone: phoneToPass,
-            birthday: birthDay.toISOString().slice(0, 10),
-            shirt: values.shirt,
-            picture: pictureToSave,
-            location: {
-                street: values.street,
-                city: values.city,
-                stateProv: values.stateProv,
-                postalCode: values.postalCode,
-            },
+            birthday: values?.birthday || null,
+            shirt: values?.shirt || null,
+            picture: pictureToSave || null,
         };
-        console.log('PF:369-->old name', oldProfilePictureName);
-        console.log('PF:370-->new name:', pictureToSave);
-        printObject('PF:371-->resultantProfile:\n', resultantProfile);
+
+        // console.log('PF:491-->old name', oldProfilePictureName);
+        // console.log('PF:492-->new name:', pictureToSave);
+        printObject('PF:493-->resultantProfile:\n', resultantProfile);
         //      ========================
         //      save the form to graphql
         //      ========================
-
-        handleUpdate(resultantProfile);
+        updateProfile(resultantProfile)
+            .then((results) => {
+                //then update context
+                let newValues = {
+                    ...resultantProfile,
+                    ...results,
+                };
+                dispatch(saveUserProfile(newValues));
+            })
+            .catch((err) => {
+                printObject(
+                    'PF:495-->Error updating via Provider failed:\n',
+                    err
+                );
+            });
+        //handleUpdate(resultantProfile);
         setSavingProfile(false);
     };
 
@@ -530,17 +567,19 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     // printObject('PF:490-->cameraImage:', cameraImage);
     // printObject('PF:491-->profilePic:', profilePic);
     // printObject('PF:452-->profilePicture: \n', profilePicture);
-    console.log('type of birthDay:', typeof birthDay);
-    printObject('birthDay:\n', birthDay);
-    console.log('type of values.birthday:', typeof values.birthday);
-    printObject('values.birthday:\n', values.birthday);
+    // console.log('type of birthDay:', typeof birthDay);
+    // printObject('birthDay:\n', birthDay);
+    // console.log('type of values.birthday:', typeof values.birthday);
+    // printObject('values.birthday:\n', values.birthday);
     return (
         <SafeAreaView>
             <ScrollView>
                 <>
                     <KeyboardAvoidingView behavior='padding'>
                         <Modal visible={showCameraModal} animationStyle='slide'>
-                            <Surface style={styles(mtrTheme).cameraContainer}>
+                            <Surface
+                                style={mtrStyles(mtrTheme).cameraContainer}
+                            >
                                 <View>
                                     <Text
                                         style={
@@ -551,7 +590,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                     </Text>
                                 </View>
                                 <Camera
-                                    style={styles(mtrTheme).camera}
+                                    style={mtrStyles(mtrTheme).camera}
                                     type={type}
                                     flashMode={flashMode}
                                     ref={(r) => {
@@ -570,7 +609,8 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                 >
                                     <View
                                         style={
-                                            styles(mtrTheme).cameraControlRotate
+                                            mtrStyles(mtrTheme)
+                                                .cameraControlRotate
                                         }
                                     >
                                         <TouchableOpacity
@@ -591,7 +631,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                     </View>
                                     <View
                                         style={
-                                            styles(mtrTheme)
+                                            mtrStyles(mtrTheme)
                                                 .cameraControlCapture
                                         }
                                     >
@@ -611,17 +651,6 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                         <>
                             <KeyboardAvoidingView behavior='padding'>
                                 <ScrollView>
-                                    {/* <View>
-                                    <TouchableOpacity
-                                        onPress={() => setShowCameraModal(true)}
-                                    >
-                                        <MaterialIcons
-                                            name='camera'
-                                            size={24}
-                                            color='white'
-                                        />
-                                    </TouchableOpacity>
-                                </View> */}
                                     <View
                                         style={mtrTheme.profileImageContainer}
                                     >
@@ -653,7 +682,9 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
 
                                                 <FAB
                                                     icon='camera'
-                                                    style={styles(mtrTheme).fab}
+                                                    style={
+                                                        mtrStyles(mtrTheme).fab
+                                                    }
                                                     onPress={() =>
                                                         setShowCameraModal(true)
                                                     }
@@ -678,9 +709,9 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             <View
                                                 style={
                                                     showPhoneError
-                                                        ? styles(mtrTheme)
+                                                        ? mtrStyles(mtrTheme)
                                                               .phoneWrapperError
-                                                        : styles(mtrTheme)
+                                                        : mtrStyles(mtrTheme)
                                                               .phoneWrapper
                                                 }
                                             >
@@ -701,8 +732,9 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     <View>
                                                         <PhoneInput
                                                             overrideStyle={
-                                                                styles(mtrTheme)
-                                                                    .phoneInput
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                ).phoneInput
                                                             }
                                                             value={values.phone}
                                                             onChange={inputChangedHandler.bind(
@@ -716,8 +748,9 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     <View>
                                                         <Text
                                                             style={
-                                                                styles(mtrTheme)
-                                                                    .phoneError
+                                                                mtrStyles(
+                                                                    mtrTheme
+                                                                ).phoneError
                                                             }
                                                         >
                                                             Phone number
@@ -756,7 +789,8 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     <View
                                                         style={{
                                                             backgroundColor:
-                                                                'lightgrey',
+                                                                mtrTheme.colors
+                                                                    .lightGrey,
                                                             // maxWidth: 170,
                                                             // minWidth: 170,
                                                             marginRight: 10,
@@ -764,10 +798,17 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     >
                                                         <Text
                                                             style={{
-                                                                color: 'black',
-                                                                fontSize: 24,
+                                                                color: mtrTheme
+                                                                    .colors
+                                                                    .darkText,
+                                                                fontSize:
+                                                                    values?.birthday
+                                                                        ? 24
+                                                                        : 18,
                                                                 fontWeight:
-                                                                    '500',
+                                                                    values?.birthday
+                                                                        ? '500'
+                                                                        : '200',
                                                                 padding: 5,
                                                             }}
                                                         >
@@ -791,25 +832,26 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             </View>
                                             <Dropdown
                                                 style={[
-                                                    styles(mtrTheme).dropdown,
+                                                    mtrStyles(mtrTheme)
+                                                        .dropdown,
                                                     isStateFocus && {
                                                         borderColor: 'blue',
                                                     },
                                                 ]}
                                                 placeholderStyle={
-                                                    styles(mtrTheme)
+                                                    mtrStyles(mtrTheme)
                                                         .placeholderStyle
                                                 }
                                                 selectedTextStyle={
-                                                    styles(mtrTheme)
+                                                    mtrStyles(mtrTheme)
                                                         .selectedTextStyle
                                                 }
                                                 inputSearchStyle={
-                                                    styles(mtrTheme)
+                                                    mtrStyles(mtrTheme)
                                                         .inputSearchStyle
                                                 }
                                                 containerStyle={
-                                                    styles(mtrTheme)
+                                                    mtrStyles(mtrTheme)
                                                         .dropDownContainer
                                                 }
                                                 itemContainerStyle={{
@@ -817,7 +859,8 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     marginVertical: 0,
                                                 }}
                                                 iconStyle={
-                                                    styles(mtrTheme).iconStyle
+                                                    mtrStyles(mtrTheme)
+                                                        .iconStyle
                                                 }
                                                 data={SHIRTSIZESBY2}
                                                 search={false}
@@ -871,16 +914,20 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     }
                                                     textInputConfig={{
                                                         backgroundColor:
-                                                            'lightgrey',
+                                                            mtrTheme.colors
+                                                                .lightGrey,
                                                         value: values?.street,
                                                         paddingHorizontal: 5,
                                                         marginRight: 5,
                                                         fontSize: 24,
-                                                        color: 'black',
+                                                        color: mtrTheme.colors
+                                                            .darkText,
                                                         marginHorizontal: 0,
                                                         placeholder: 'Street',
                                                         style: {
-                                                            color: 'black',
+                                                            color: mtrTheme
+                                                                .colors
+                                                                .darkText,
                                                         },
                                                         fontWeight: '500',
                                                         //fontFamily: 'Roboto-Regular',
@@ -905,16 +952,20 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     }
                                                     textInputConfig={{
                                                         backgroundColor:
-                                                            'lightgrey',
+                                                            mtrTheme.colors
+                                                                .lightGrey,
                                                         value: values?.city,
                                                         paddingHorizontal: 5,
                                                         marginRight: 5,
                                                         fontSize: 24,
-                                                        color: 'black',
+                                                        color: mtrTheme.colors
+                                                            .darkText,
                                                         marginHorizontal: 0,
                                                         placeholder: 'City',
                                                         style: {
-                                                            color: 'black',
+                                                            color: mtrTheme
+                                                                .colors
+                                                                .darkText,
                                                         },
                                                         fontWeight: '500',
                                                         //fontFamily: 'Roboto-Regular',
@@ -950,26 +1001,26 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                 </View>
                                                 <Dropdown
                                                     style={[
-                                                        styles(mtrTheme)
+                                                        mtrStyles(mtrTheme)
                                                             .dropdown,
                                                         isStateFocus && {
                                                             borderColor: 'blue',
                                                         },
                                                     ]}
                                                     placeholderStyle={
-                                                        styles(mtrTheme)
+                                                        mtrStyles(mtrTheme)
                                                             .placeholderStyle
                                                     }
                                                     selectedTextStyle={
-                                                        styles(mtrTheme)
+                                                        mtrStyles(mtrTheme)
                                                             .selectedTextStyle
                                                     }
                                                     inputSearchStyle={
-                                                        styles(mtrTheme)
+                                                        mtrStyles(mtrTheme)
                                                             .inputSearchStyle
                                                     }
                                                     iconStyle={
-                                                        styles(mtrTheme)
+                                                        mtrStyles(mtrTheme)
                                                             .iconStyle
                                                     }
                                                     data={STATESBY2}
@@ -1010,20 +1061,23 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                     }
                                                     textInputConfig={{
                                                         backgroundColor:
-                                                            'lightgrey',
+                                                            mtrTheme.colors
+                                                                .lightGrey,
                                                         value: values?.postalCode,
                                                         paddingHorizontal: 5,
                                                         fontSize: 24,
-                                                        color: 'black',
+                                                        color: mtrTheme.colors
+                                                            .darkText,
                                                         height: 40,
                                                         width: 100,
                                                         placeholder:
                                                             'Postal Code',
                                                         style: {
-                                                            color: 'black',
+                                                            color: mtrTheme
+                                                                .colors
+                                                                .darkText,
                                                         },
                                                         fontWeight: '500',
-                                                        //fontFamily: 'Roboto-Regular',
                                                         letterSpacing: 0,
                                                         onChangeText:
                                                             inputChangedHandler.bind(
@@ -1035,20 +1089,24 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             </View>
                                         </View>
                                     </View>
-                                    <View style={styles(mtrTheme).uidContainer}>
+                                    <View
+                                        style={mtrStyles(mtrTheme).uidContainer}
+                                    >
                                         <Text
-                                            style={{
-                                                color: 'silver',
-                                                fontSize: 10,
-                                            }}
+                                            style={mtrStyles(mtrTheme).uidText}
                                         >
                                             UID: {profile?.id}
                                         </Text>
                                     </View>
-                                    <View style={styles.saveButtonContainer}>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .saveButtonContainer
+                                        }
+                                    >
                                         <View
                                             style={
-                                                styles(mtrTheme)
+                                                mtrStyles(mtrTheme)
                                                     .saveButtonWrapper
                                             }
                                         >
@@ -1058,8 +1116,12 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                                         ? 'Saving...'
                                                         : 'SAVE'
                                                 }
-                                                bgColor='green'
-                                                fgColor='white'
+                                                bgColor={
+                                                    mtrTheme.colors.mediumGreen
+                                                }
+                                                fgColor={
+                                                    mtrTheme.colors.lightText
+                                                }
                                                 type='PRIMARY'
                                                 enabled={
                                                     isFirstNameValid &&
@@ -1069,29 +1131,36 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             />
                                         </View>
                                     </View>
-                                    <View
-                                        style={
-                                            styles(mtrTheme).affButtonContainer
-                                        }
-                                    >
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                navigation.navigate(
-                                                    'Affiliation'
-                                                )
+                                    {profile.organizationDefaultUsersId ===
+                                        profile?.activeOrg?.id && (
+                                        <View
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .affButtonContainer
                                             }
-                                            style={styles(mtrTheme).affButton}
                                         >
-                                            <Text
+                                            <TouchableOpacity
+                                                onPress={() =>
+                                                    navigation.navigate(
+                                                        'Affiliation'
+                                                    )
+                                                }
                                                 style={
-                                                    styles(mtrTheme)
-                                                        .affButtonText
+                                                    mtrStyles(mtrTheme)
+                                                        .affButton
                                                 }
                                             >
-                                                AFFILIATIONS
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
+                                                <Text
+                                                    style={
+                                                        mtrStyles(mtrTheme)
+                                                            .affButtonText
+                                                    }
+                                                >
+                                                    AFFILIATIONS
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
                                     <DateTimePickerModal
                                         isVisible={modalBirthDateVisible}
                                         mode='date'
@@ -1099,13 +1168,15 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             values.birthday ? birthDay : today
                                         }
                                         display='inline'
-                                        style={{
-                                            backgroundColor:
-                                                mtrTheme.colors.background,
+                                        dateTextStyle={{
+                                            color: mtrTheme.colors.lightText,
                                         }}
-                                        dateTextStyle={{ color: 'white' }}
-                                        headerLabelColor={{ color: 'yellow' }}
-                                        headerBackTitle={{ color: 'yellow' }}
+                                        headerLabelColor={{
+                                            color: mtrTheme.colors.accent,
+                                        }}
+                                        headerBackTitle={{
+                                            color: mtrTheme.colors.accent,
+                                        }}
                                         onConfirm={onBirthDateConfirm}
                                         onCancel={onBirthDateCancel}
                                     />
@@ -1122,7 +1193,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
 
 export default ProfileForm;
 
-const styles = (mtrTheme) =>
+const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
         formContainer: {
             //marginTop: 10,
@@ -1234,7 +1305,10 @@ const styles = (mtrTheme) =>
         uidContainer: {
             alignItems: 'center',
         },
-
+        uidText: {
+            color: mtrTheme.colors.mediumGrey,
+            fontSize: 10,
+        },
         saveButtonContainer: {
             marginBottom: 10,
         },
@@ -1253,7 +1327,7 @@ const styles = (mtrTheme) =>
         },
         affButtonText: {
             fontSize: 14,
-            fontColor: 'white',
+            color: mtrTheme.colors.lightText,
             fontFamily: 'Roboto-Regular',
             textAlign: 'center',
             paddingHorizontal: 10,

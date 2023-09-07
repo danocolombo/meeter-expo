@@ -4,12 +4,12 @@ import TypeSelector from './ui/TypeSelector';
 const TypeSelectors = ({ pick, setPick }) => {
     const bUnselected = {
         paddingHorizontal: 8,
-        paddingVertical: 6,
+        // paddingVertical: 6,
         borderRadius: 4,
         backgroundColor: 'orange',
         alignSelf: 'flex-start',
         marginHorizontal: '1%',
-        marginBottom: 6,
+        // marginBottom: 6,
         minWidth: '30%',
         textAlign: 'center',
     };

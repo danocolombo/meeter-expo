@@ -15,17 +15,14 @@ import {
 } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
-import { useUserContext } from '../contexts/UserContext';
-import { useSysContext, sysSignOut } from '../contexts/SysContext';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { printObject } from '../utils/helpers';
 
 const CustomDrawer = (props) => {
     const mtrTheme = useTheme();
-    const { meeter } = useSysContext();
-    const { userProfile } = useUserContext();
-    const { systemDef, sysSignOut } = useSysContext();
+    const meeter = useSelector((state) => state.system.meeter);
+    const userProfile = useSelector((state) => state.user.profile);
     const [profilePicture, setProfilePicture] = useState(null);
     const [pictureName, setPictureName] = useState(null);
     const [pictureObject, setPictureObject] = useState(null);
@@ -34,8 +31,8 @@ const CustomDrawer = (props) => {
 
     async function checkUserRole() {
         try {
-            printObject('CD:37-->userProfile:\n', userProfile);
-            console.log('CD:37-->role', userProfile?.activeOrg?.role);
+            // printObject('CD:37-->userProfile:\n', userProfile);
+            // console.log('CD:37-->role', userProfile?.activeOrg?.role);
             if (userProfile?.activeOrg?.role) {
                 setUserRole(userProfile?.activeOrg?.role);
             } else {
@@ -68,21 +65,21 @@ const CustomDrawer = (props) => {
                     printObject('CD:68-->error getting storage ref:\n', error);
                 });
         } catch (error) {
-            console.log('CD:71-->error Storeage.get\n', error);
+            console.log('CD:71-->error Storage.get\n', error);
         }
     }
-    useFocusEffect(
-        React.useCallback(() => {
-            getPictureDetails()
-                .then(() => {
-                    console.log('CD:78-->picRef:', picRef);
-                    console.log('CD:79-->pictureObject:', pictureObject);
-                })
-                .catch((error) => {
-                    printObject('CD:82-->ERROR:\n', error);
-                });
-        }, [userProfile])
-    );
+    // useFocusEffect(
+    React.useCallback(() => {
+        getPictureDetails()
+            .then(() => {
+                console.log('CD:78-->in getPicDetails()');
+                console.log('CD:80-->in getPicDetails()');
+                console.log('CD:81-->pictureObject:', pictureObject);
+            })
+            .catch((error) => {
+                printObject('CD:83-->ERROR:\n', error);
+            });
+    }, [userProfile]);
 
     const signUserOut = async () => {
         Auth.signOut();

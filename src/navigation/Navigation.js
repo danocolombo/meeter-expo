@@ -7,27 +7,15 @@ import {
     NavigationHelpersContext,
     StackActions,
 } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
 import { useTheme } from 'react-native-paper';
-import { Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-    createDrawerNavigator,
-    DrawerContentScrollView,
-    DrawerItemList,
-    DrawerItem,
-} from '@react-navigation/drawer';
-import { useSysContext } from '../contexts/SysContext';
-import { useAuthContext } from '../contexts/AuthContext';
-import { useUserContext } from '../contexts/UserContext';
-import LandingScreen from '../screens/LandingScreen';
+
 import SignInScreen from '../screens/Auth/SignIn';
 import SignUpScreen from '../screens/Auth/SignUp';
-import ConfirmEmailScreen from '../screens/Auth/ConfirmEmail';
+import ConfirmEmailScreen from '../screens/Auth/ConfirmationCode';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPassword';
 import NewPasswordScreen from '../screens/Auth/NewPassword';
-import MeetingDetailsScreen from '../screens/MeetingDetailsScreen';
+import MeetingDetailsScreen from '../screens/MeetingDetailsScreenTwo';
 import TeamMemberScreen from '../screens/TeamMemberScreen'; // import MeetingDelete from '../screens/MeetingDelete';
 import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
 import MeetingNewScreen from '../screens/MeetingNewScreen';
@@ -35,27 +23,21 @@ import AffiliationScreen from '../screens/AffiliationScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
-import ProfileScreen from '../screens/profille/ProfileScreen';
-import { logout } from '../features/usersSlice';
-// import { logout as meetingsSignout } from '../features/meetingsSlice';
-// import { logout as profilesLogout } from '../features/profilesSlice';
-// import { logout as systemLogout } from '../features/systemSlice';
-import { useDispatch } from 'react-redux';
-// import ProfilePicModal from '../screens/ProfilePicModal';
-import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
-import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
+import { useDispatch, useSelector } from 'react-redux';
+// import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
+// import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
 import DGModalScreen from '../components/modals/DefaultGroup.modal';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub, Cache } from 'aws-amplify';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
+import { clearUser } from '../features/user/userSlice';
 import { printObject } from '../utils/helpers';
 const Stack = createNativeStackNavigator();
 function MeeterStack(props) {
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
-    const { meeter, sysSignOut } = useSysContext();
-    const { authSignOut } = useAuthContext();
-    const { useSignOut } = useUserContext();
+    const meeter = useSelector((state) => state.system.meeter);
     return (
         <Stack.Navigator>
             <Stack.Screen
@@ -69,7 +51,7 @@ function MeeterStack(props) {
                 name='MeetingDetails'
                 component={MeetingDetailsScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -81,7 +63,7 @@ function MeeterStack(props) {
                     name='DGModal'
                     component={DGModalScreen}
                     options={({ navigation }) => ({
-                        title: meeter?.appName,
+                        title: meeter?.appName || 'YIKES',
                         headerStyle: {
                             backgroundColor: mtrTheme.colors.background,
                         },
@@ -104,7 +86,7 @@ function MeeterStack(props) {
                 name='MeetingNew'
                 component={MeetingNewScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -115,7 +97,7 @@ function MeeterStack(props) {
                 name='GroupNew'
                 component={GroupNewScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -127,7 +109,7 @@ function MeeterStack(props) {
                 name='GroupDetails'
                 component={GroupDetailsScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -139,7 +121,7 @@ function MeeterStack(props) {
                 name='GroupEdit'
                 component={GroupDetailsEditScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -150,14 +132,14 @@ function MeeterStack(props) {
                 name='TeamMember'
                 component={TeamMemberScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
                     headerTintColor: 'white',
                 })}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
                 name='DeleteConfirm'
                 component={DeleteConfirmScreen}
                 options={({ navigation }) => ({
@@ -167,23 +149,23 @@ function MeeterStack(props) {
                     },
                     headerTintColor: 'white',
                 })}
-            />
-            <Stack.Screen
+            /> */}
+            {/* <Stack.Screen
                 name='DeleteGroupConfirm'
                 component={DeleteGroupConfirmScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
                     headerTintColor: 'white',
                 })}
-            />
+            /> */}
             <Stack.Screen
                 name='Profile'
                 component={ProfileScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -194,7 +176,7 @@ function MeeterStack(props) {
                 name='Affiliation'
                 component={AffiliationScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -205,7 +187,7 @@ function MeeterStack(props) {
                 name='Logout'
                 component={MeeterSignOut}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'YIKES',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -219,8 +201,8 @@ function MeeterStack(props) {
 function Navigation() {
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
-    const { meeter, loadSystem } = useSysContext();
-    const { clearUser } = useUserContext();
+    const meeter = useSelector((state) => state.system.meeter);
+
     const [isUserAuthenticated, setIsUserAuthenticated] = useState(undefined);
     const checkUser = async () => {
         try {
@@ -236,18 +218,18 @@ function Navigation() {
             setIsUserAuthenticated(null);
         }
     };
-    const getSystemVariables = async () => {
-        try {
-            loadSystem().then((res) => {
-                // printObject('NAV:203-->system:\n', res);
-            });
-        } catch (error) {
-            printObject('NAV:206-->error loading system', error);
-        }
-    };
+    // const getSystemVariables = async () => {
+    //     try {
+    //         loadSystem().then((res) => {
+    //             // printObject('NAV:203-->system:\n', res);
+    //         });
+    //     } catch (error) {
+    //         printObject('NAV:206-->error loading system', error);
+    //     }
+    // };
 
     useEffect(() => {
-        getSystemVariables();
+        // getSystemVariables();
         checkUser();
     }, []);
     useEffect(() => {
@@ -258,26 +240,8 @@ function Navigation() {
                 Cache.clear();
                 clearUser();
                 printObject('NAV:221-->signOut() received', '');
-                // try {
-                //     authSignOut()
-                //         .then(() => console.log('authSignOut complete'))
-                //         .catch((e) => console.log('authSignOut failure:', e));
-                //     sysSignOut()
-                //         .then(() => console.log('sysSignOut complete'))
-                //         .then((e) => {
-                //             printObject('CD:48-->sysSignOut failure:', e);
-                //         });
-                //     Auth.signOut();
-                // } catch (error) {
-                //     printObject('signUserOut error:', error);
-                // }
 
                 setIsUserAuthenticated(false);
-
-                // dispatch(logout());
-                // dispatch(meetingsSignout());
-                // dispatch(profilesLogout());
-                // dispatch(systemLogout());
             }
         };
         try {

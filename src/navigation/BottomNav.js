@@ -3,17 +3,17 @@ import { View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useTheme } from 'react-native-paper';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useUserContext } from '../contexts/UserContext';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
-import HistoricScreen from '../screens/HistoricScreen';
+import HistoricScreen from '../screens/HistoricScreenRTK';
+// import ActiveScreen from '../screens/ActiveScreenThree';
 import ActiveScreen from '../screens/ActiveScreen';
-import AdminScreen from '../screens/AdminScreen';
-import systemSlice from '../features/systemSlice';
+// import AdminScreen from '../screens/AdminScreen';
+import systemSlice from '../features/system/systemSlice';
 const BottomTab = createBottomTabNavigator();
 const MeetingsConfig = () => {
     const mtrTheme = useTheme();
-    const { userProfile } = useUserContext();
-    const { appName } = useSelector((state) => state.system);
+    const userProfile = useSelector((state) => state.user.profile);
+    const meeter = useSelector((state) => state.system);
     let director = false;
     if (userProfile?.ActiveOrg?.affiliations.active.role === 'director') {
         director = true;
@@ -44,7 +44,7 @@ const MeetingsConfig = () => {
                 id='HISTORY'
                 component={HistoricScreen}
                 options={{
-                    title: appName,
+                    title: meeter.appName || 'Meeter',
                     id: 'HISTORIC_MEETINGS',
                     tabBarLabel: ({ focused, color, fontSize }) => (
                         <Text
@@ -75,7 +75,7 @@ const MeetingsConfig = () => {
                 id='ACTIVE'
                 component={ActiveScreen}
                 options={{
-                    title: appName,
+                    title: meeter.appName || 'Meeter',
                     id: 'ACTIVE_MEETINGS',
                     tabBarLabel: ({ focused, color, size }) => (
                         <Text

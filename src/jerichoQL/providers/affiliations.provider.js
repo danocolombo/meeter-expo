@@ -2,10 +2,11 @@
 //* ======================================
 //      this file deals with custom work relating
 //      to affiliations (permissions/roles)
-import { printObject } from '../../utils/helpers';
+import { createAWSUniqueID, printObject } from '../../utils/helpers';
 import * as queries from '../queries';
 import * as mutations from '../mutations';
 import { API } from 'aws-amplify';
+import { printLocation } from 'graphql';
 export const getAffiliationsForTeam = async (teamId) => {
     //      get all affiliations for org
     //      organize by user
@@ -103,8 +104,186 @@ export const getAffiliationsForTeam = async (teamId) => {
     printObject('A.P:98-->team:', team);
     return team;
 };
+export const addNewAffiliationForUser = async (newValues) => {
+    try {
+        const newAffId = createAWSUniqueID();
+        const insertInfo = {
+            organizationAffiliationsId: newValues.organizationId,
+            id: newAffId,
+            role: newValues.role,
+            status: newValues.status,
+            userAffiliationsId: newValues.userId,
+        };
+        printObject('AP:131-->insertInfo:\n', insertInfo);
+        const results = await API.graphql({
+            query: mutations.createAffiliation,
+            variables: { input: insertInfo },
+        });
+        console.log('AP:122-->affiliation inserted');
+        printObject('AP:123-->results:\n', results);
+        const returnValue = {
+            status: 200,
+            results: results,
+        };
+        return returnValue;
+    } catch (error) {
+        console.log('AP:143-->unexpected error:\n', error);
+        let returnValue = {
+            status: 404,
+            details: 'unexpected error inserting new affiliation',
+            request: newValues,
+            error: error,
+        };
+        return returnValue;
+    }
+};
+
+export const addNewAffiliationForUser1 = async (newValues) => {
+    /***********************************************************
+     *      {
+     *          userId: "abc123",           // user id
+     *          organizationId: "123abc",   // organization id
+     *          role: "manage",             // role
+     *          status: "active"            // status
+     *      }
+     ***********************************************************/
+    printObject('AP:115-->newValues:', newValues);
+    // let tmpReturnValue = {
+    //     status: 200,
+    //     results: newValues,
+    // };
+    // return tmpReturnValue;
+    try {
+        const newAffId = createAWSUniqueID();
+        const insertInfo = {
+            organizationAffiliationsId: newValues.organizationId,
+            id: newAffId,
+            role: newValues.role,
+            status: newValues.status,
+            userAffiliationsId: newValues.userId,
+        };
+        printObject('AP:131-->insertInfo:\n', insertInfo);
+        API.graphql({
+            query: mutations.createAffiliation,
+            variables: { input: insertInfo },
+        })
+            .then((results) => {
+                console.log('AP:122-->affiliation inserted');
+                printObject('AP:123-->results:\n', results);
+                const returnValue = {
+                    status: 200,
+                    results: results,
+                };
+                return returnValue;
+            })
+            .catch((error) => {
+                console.log('AP:132-->', error);
+                console.error(error);
+                let returnValue = {
+                    status: 404,
+                    details: 'error inserting new affiliation',
+                    request: newValues,
+                    error: error,
+                };
+                return returnValue;
+            });
+    } catch (error) {
+        console.log('AP:143-->unexpected error:\n', error);
+        let returnValue = {
+            status: 404,
+            details: 'unexpected error inserting new affiliation',
+            request: newValues,
+            error: error,
+        };
+        return returnValue;
+    }
+};
+export const updateAffiliationStatus = async (changeRequest) => {
+    // set changeRequest.id, status = changeRequest.status
+    return true;
+    try {
+        const updateInfo = {
+            id: changeRequest.id,
+            status: changeRequest.status,
+        };
+        API.graphql({
+            query: mutations.updateAffiliation,
+            variables: { input: updateInfo },
+        })
+            .then((results) => {
+                console.log('AP:118-->affiliation updated');
+            })
+            .catch((error) => {
+                console.log(error);
+                console.error(error);
+            });
+    } catch (error) {
+        console.log('AP:125-->unexpected error:\n', error);
+        return false;
+    }
+    return true;
+};
+export const changeAffiliation = async (affiliationValues) => {
+    //this updates an existing affiliation
+    // id is required, as well as role and status
+    const { affiliationId, newRoleValue, newStatusValue } = affiliationValues;
+    printObject('affiliation:\n', affiliationValues);
+    console.log('affiliationId: ', affiliationId);
+    console.log('newRoleValue: ', newRoleValue);
+    console.log('newStatusValue: ', newStatusValue);
+    if (
+        affiliationId === undefined ||
+        newRoleValue === undefined ||
+        newStatusValue === undefined
+    ) {
+        let returnValue = {
+            statusCode: 404,
+            details: 'required fields not provided',
+            error: 'required fields not provided',
+        };
+        return returnValue;
+    } else {
+        // ---------------------------------------
+        // update the affiliation values
+        try {
+            const updateInfo = {
+                id: affiliationId,
+                role: newRoleValue,
+                status: newStatusValue,
+            };
+            API.graphql({
+                query: mutations.updateAffiliation,
+                variables: { input: updateInfo },
+            })
+                .then((results) => {
+                    console.log('AP:222=>affiliation updated');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.error(error);
+                });
+        } catch (error) {
+            console.log('AP:229-->unexpected error:\n', error);
+        }
+        let returnValue = {
+            statusCode: 200,
+            details: 'good to go',
+            id: affiliationId,
+            role: newRoleValue,
+            status: newStatusValue,
+        };
+        return returnValue;
+    }
+    /* 
+        {
+            id: affiliationId,
+            role: newRoleValue,
+            status: newStateValue
+        }
+    */
+};
 export const updateAffiliations = async (changeRequest) => {
-    printObject('a.p:10--changeRequest', changeRequest);
+    printObject('AP:131--changeRequest', changeRequest);
 
     //* get current affiliations for org/user
     const affiliationResponse = await API.graphql({
@@ -116,7 +295,7 @@ export const updateAffiliations = async (changeRequest) => {
     });
     const existingAffiliations =
         affiliationResponse.data.listAffiliations.items;
-    printObject('a.p:19-->existingAffiliations:\n', existingAffiliations);
+    printObject('AP:143-->existingAffiliations:\n', existingAffiliations);
     //* identify "add" requests
     const addRequests = changeRequest.add;
     if (addRequests.length > 0) {
@@ -128,7 +307,7 @@ export const updateAffiliations = async (changeRequest) => {
                 (item) => item.role === r
             );
             if (existing.length > 0) {
-                console.log('the role (', r, ') exists');
+                console.log('AP:155-->the role (', r, ') exists');
 
                 try {
                     const updateInfo = {
@@ -140,24 +319,24 @@ export const updateAffiliations = async (changeRequest) => {
                         variables: { input: updateInfo },
                     })
                         .then((results) => {
-                            console.log('affiliation updated');
+                            console.log('AP:167-->affiliation updated');
                         })
                         .catch((error) => {
                             console.log(error);
                             console.error(error);
                         });
                 } catch (error) {
-                    console.log('a.p:59-->unexpected error:\n', error);
+                    console.log('AP:174-->unexpected error:\n', error);
                 }
             } else {
-                console.log('the role (', r, ') is new');
+                console.log('AP:177-->the role (', r, ') is new');
                 const addInfo = {
                     organizationId: changeRequest.organizationId,
                     userId: changeRequest.userId,
                     role: r,
                     status: 'active',
                 };
-                printObject('addInfo:\n', addInfo);
+                printObject('AP: 184-->addInfo:\n', addInfo);
                 //todo: insert new affiliation for the org/user
                 try {
                     const insertInfo = {
@@ -172,28 +351,28 @@ export const updateAffiliations = async (changeRequest) => {
                         variables: { input: insertInfo },
                     })
                         .then((results) => {
-                            console.log('affiliation inserted');
-                            printObject('results:\n', results);
+                            console.log('AP:199-->affiliation inserted');
+                            printObject('AP:200-->results:\n', results);
                         })
                         .catch((error) => {
-                            console.log(error);
+                            console.log('AP:203-->', error);
                             console.error(error);
                         });
                 } catch (error) {
-                    console.log('a.p:91-->unexpected error:\n', error);
+                    console.log('AP:207-->unexpected error:\n', error);
                 }
             }
         });
     } else {
-        console.log('No add requests received');
+        console.log('AP:212-->No add requests received');
     }
     //* identify "remove" requests
     const removeRequests = changeRequest.remove;
     if (removeRequests.length > 0) {
-        printObject('A.P:102-->removeRequests:\n', removeRequests);
+        printObject('AP:217-->removeRequests:\n', removeRequests);
 
         removeRequests.forEach((r) => {
-            console.log('remove ', r, ' from the user');
+            console.log('AP:220-->remove ', r, ' from the user');
 
             //* check if the role is already defined
             const existing = existingAffiliations.filter(
@@ -210,24 +389,99 @@ export const updateAffiliations = async (changeRequest) => {
                         variables: { input: updateInfo },
                     })
                         .then((results) => {
-                            console.log('affiliation updated');
+                            console.log('AP:237-->affiliation updated');
                         })
                         .catch((error) => {
                             console.log(error);
                             console.error(error);
                         });
                 } catch (error) {
-                    console.log('a.p:130-->unexpected error:\n', error);
+                    console.log('AP:244-->unexpected error:\n', error);
                 }
                 //todo: update existing affiliation status = "inactive"
             } else {
-                console.log('the role (', r, ') is not existing');
+                console.log('AP:248-->the role (', r, ') is not existing');
                 //      believe it is okay to ignore action.
             }
         });
     } else {
-        console.log('No remove requests received');
+        console.log('AP:253-->No remove requests received');
     }
 
     return true;
+};
+export const deactivateUser = async (memberInfo) => {
+    //* * * * * * * * * * * * * * * * * * *
+    //* This function gets the member from
+    //* authContext then update GQL entries
+    //* 1. set guest role to inactive
+    //* 2. delete any other roles defined.
+    //*
+    //* * * * * * * * * * * * * * * * * * *
+    const { memberId, roles } = memberInfo;
+    printObject('AP:383-->member:\n', memberInfo);
+    // get guest affiliationId
+    const guest = roles.find((r) => r.role === 'guest');
+    printObject('AP:387-->guest:', guest);
+    changeAffiliation({
+        affiliationId: guest.id,
+        newRoleValue: 'guest',
+        newStatusValue: 'inactive',
+    }).then((guestChangeResponse) => {
+        // for each affiliation != guest, delete
+        if (guestChangeResponse.statusCode === 200) {
+            roles.forEach((r) => {
+                if (r.role !== 'guest') {
+                    printObject('AP:395-->delete aff: ', r.id);
+                    try {
+                        API.graphql({
+                            query: mutations.deleteAffiliation,
+                            variables: { input: { id: r.id } },
+                        })
+                            .then(() => {
+                                printObject(
+                                    'AP:400-->affiliation deleted: ',
+                                    r.id
+                                );
+                            })
+                            .catch((err) => {
+                                printObject(
+                                    'AP:403-->error deleting affiliation\n',
+                                    err
+                                );
+                            });
+                    } catch (error) {
+                        printObject(
+                            'AP:406-->catch failure to delete affilation:',
+                            error
+                        );
+                    }
+                }
+            });
+        } else {
+            printObject(
+                'AP:413-->changeAffiliation FAILURE:\n',
+                guestChangeResponse
+            );
+        }
+    });
+};
+export const removeAffiliation = async (removeRequest) => {
+    // this is a request to delete a specific
+    console.log('DELETE AFFILIATION: ', removeRequest.id);
+    try {
+        API.graphql({
+            query: mutations.deleteAffiliation,
+            variables: { input: { id: removeRequest.id } },
+        })
+            .then(() => {
+                printObject('AP:442-->affiliation deleted: ', removeRequest.id);
+            })
+            .catch((err) => {
+                printObject('AP:445-->error deleting affiliation\n', err);
+            });
+        printObject('removeRequest:', removeRequest);
+    } catch (error) {
+        printObject('AP:448-->catch failure to delete affiliation:', error);
+    }
 };

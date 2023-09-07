@@ -3,10 +3,7 @@ import {
     Text,
     View,
     FlatList,
-    Pressable,
     ActivityIndicator,
-    ScrollView,
-    Dimensions,
 } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,7 +11,6 @@ import {
     loadTeam,
     deactivateMember,
     updateActiveMember,
-    loadOrgUsers,
 } from '../../features/team/teamThunks';
 import { useTheme, Surface } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
@@ -26,8 +22,6 @@ const ActiveMembers = () => {
     const dispatch = useDispatch();
     const [displayMembers, setDisplayMembers] = useState([]);
     const [isLocallyLoading, setIsLocallyLoading] = useState(false);
-    const { height: screenHeight } = Dimensions.get('window');
-    const flatListHeight = screenHeight - 200; // Subtract the height of the bottom tab bar
 
     const [editFlag, setEditFlag] = useState(true);
     useFocusEffect(
@@ -66,44 +60,9 @@ const ActiveMembers = () => {
             };
 
             fetchData();
-            // }, [dispatch, userProfile?.activeOrg?.id])
         }, [])
     );
-    // useEffect(() => {
-    //     setDisplayMembers(activeMembers);
-    // }, []);
-    const mtrStyles = (mtrTheme) =>
-        StyleSheet.create({
-            root: {
-                flex: 1,
-                backgroundColor: mtrTheme.colors.background,
-            },
-            screenTitleContainer: {
-                flexDirection: 'row',
-                justifyContent: 'center',
-                paddingVertical: 10,
-            },
-            // screenTitleContainer: {
-            //     paddingTop: 10,
-            //     justifyContent: 'center',
-            //     alignItems: 'center',
-            // },
-            screenTitleText: {
-                fontSize: 30,
-                fontFamily: 'Roboto-Bold',
-                color: mtrTheme.colors.lightText,
-            },
-            surface: {
-                backgroundColor: 'white',
-                borderRadius: 10,
-                marginHorizontal: 10,
-                marginVertical: 5,
-                paddingBottom: 10,
-            },
-            listContainer: {
-                paddingHorizontal: 5,
-            },
-        });
+
     function addAffiliationHandler(settings) {}
     function deactivateHandler(settings) {
         try {
@@ -152,14 +111,14 @@ const ActiveMembers = () => {
     }
     // printObject('AMT:154-->displayMembers:\n', displayMembers);
     return (
-        <View style={mtrStyles(mtrTheme).root}>
-            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
-                <Text style={mtrStyles(mtrTheme).screenTitleText}>
-                    Active Members
-                </Text>
-            </View>
-            <View style={mtrStyles(mtrTheme).surface}>
-                <View style={mtrStyles(mtrTheme).listContainer}>
+        <>
+            <Surface style={mtrStyles(mtrTheme).screenSurface}>
+                <View style={mtrStyles(mtrTheme).screenHeader}>
+                    <Text style={mtrStyles(mtrTheme).screenHeaderText}>
+                        Active Members
+                    </Text>
+                </View>
+                <>
                     <FlatList
                         data={displayMembers}
                         renderItem={({ item }) => (
@@ -173,10 +132,28 @@ const ActiveMembers = () => {
                         )}
                         keyExtractor={(item) => item.id}
                     />
-                </View>
-            </View>
-        </View>
+                </>
+            </Surface>
+        </>
     );
 };
 
 export default ActiveMembers;
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        screenSurface: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.background,
+        },
+        screenHeader: {
+            marginTop: 10,
+            marginBottom: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenHeaderText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.lightText,
+        },
+    });

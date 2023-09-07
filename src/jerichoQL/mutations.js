@@ -370,27 +370,6 @@ export const updateUser = /* GraphQL */ `
                 id
                 name
                 code
-                location {
-                    id
-                    street
-                    city
-                    stateProv
-                    postalCode
-                    createdAt
-                    updatedAt
-                }
-                affiliations {
-                    nextToken
-                }
-                defaultUsers {
-                    nextToken
-                }
-                heroMessage
-                defaultGroups {
-                    nextToken
-                }
-                createdAt
-                updatedAt
                 locationOrganizationsId
             }
             picture
@@ -399,12 +378,14 @@ export const updateUser = /* GraphQL */ `
                     id
                     role
                     status
-                    createdAt
-                    updatedAt
                     userAffiliationsId
-                    organizationAffiliationsId
+                    organization {
+                        id
+                        name
+                        code
+                        heroMessage
+                    }
                 }
-                nextToken
             }
             location {
                 id
@@ -412,17 +393,7 @@ export const updateUser = /* GraphQL */ `
                 city
                 stateProv
                 postalCode
-                organizations {
-                    nextToken
-                }
-                users {
-                    nextToken
-                }
-                createdAt
-                updatedAt
             }
-            createdAt
-            updatedAt
             organizationDefaultUsersId
             locationUsersId
         }

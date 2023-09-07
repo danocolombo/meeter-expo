@@ -17,7 +17,7 @@ const lightText = '#fff';
 const mediumText = '#999';
 const yellow = '#F0DE36';
 const red = '#D61C4E';
-const green = '#04CC09';
+const green = '#00ff00';
 const white = '#fff';
 
 const theme = {
@@ -52,7 +52,7 @@ const theme = {
         mediumGrey: '#A9A9A9',
         darkGrey: '#808080',
         lightGreen: '#90EE90',
-        mediumGreen: '#3CB371',
+        mediumGreen: '#009900',
         darkGreen: '#006400',
         text: white,
         activityIndicator: activityIndicator,

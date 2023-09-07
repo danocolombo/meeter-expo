@@ -1,6 +1,6 @@
 {
   "name": "meeter",
-  "version": "1.0.19",
+  "version": "1.0.21",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "npx expo start -- -c",
@@ -63,6 +63,7 @@
     "react-native": "0.70.8",
     "react-native-currency-input": "^1.1.0",
     "react-native-dotenv": "^3.4.2",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-element-dropdown": "^2.4.0",
     "react-native-gesture-handler": "~2.8.0",
     "react-native-mask-input": "^1.2.2",

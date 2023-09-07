@@ -36,10 +36,17 @@ const teamSlice = createSlice({
             state.inactiveMembers = [];
             state.newMembers = [];
         },
+        clearTeamSlice: (state) => {
+            state.activeMembers = [];
+            state.inactiveMembers = [];
+            state.newMembers = [];
+            state.allMembers = [];
+        },
         logout: (state) => {
             state.activeMembers = [];
             state.inactiveMembers = [];
             state.newMembers = [];
+            state.allMembers = [];
         },
     },
     extraReducers: (builder) => {
@@ -278,6 +285,7 @@ export const {
     loadNewTeam,
     loadInactiveTeam,
     clearAllMembers,
+    clearTeamSlice,
     logout,
 } = teamSlice.actions;
 

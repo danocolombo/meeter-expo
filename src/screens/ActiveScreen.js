@@ -14,8 +14,6 @@ import {
     Modal,
     StatusBar,
 } from 'react-native';
-import { API, graphqlOperation } from 'aws-amplify';
-import { onCreateMeeting } from '../graphql/subscriptions';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Surface, useTheme, FAB } from 'react-native-paper';
@@ -23,13 +21,8 @@ import MeetingListCard from '../components/Meeting.List.Card';
 import CustomButton from '../components/CustomButton';
 import {
     getAllMeetings,
-    getActiveMeetings,
     deleteMeeting,
 } from '../features/meetings/meetingsThunks';
-import {
-    subscribeToMeetingCreation,
-    unsubscribeFromMeetingCreation,
-} from '../features/meetings/meetingsSubscriptions';
 import { dateDashMadePretty, printObject } from '../utils/helpers';
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
@@ -59,60 +52,25 @@ const ActiveScreen = () => {
     useFocusEffect(
         useCallback(() => {
             const fetchData = async () => {
-                console.log('NEW_FETCH');
                 setIsLoading(true);
                 try {
                     dispatch(
-                        getAllMeetings({ orgId: userProfile.activeOrg.id })
+                        getAllMeetings({
+                            orgId: userProfile.activeOrg.id,
+                            code: userProfile.activeOrg.code,
+                        })
                     )
                         .then((results) => {
-                            // printObject('AS:66-->results:\n', results);
-                            if (results?.payload?.length < 1) {
-                                throw new Error(
-                                    'AS:69-->No meetings identified'
+                            if (results?.payload?.status === '200') {
+                                // getAllMeetings was successful
+                                setDisplayMeetings(
+                                    results.payload.meetings.active
                                 );
-                            } else {
-                                console.log(
-                                    'AS:73-->meetings actives: ',
-                                    results?.payload?.meetings?.active?.length
-                                );
-                                console.log(
-                                    'AS:77-->meetings all: ',
-                                    results?.payload?.meetings?.all?.length
-                                );
-                                console.log(
-                                    'AS:81-->meetings historic: ',
-                                    results?.payload?.meetings?.historic?.length
-                                );
-                                // console.log('AS:76-->results:\n', results);
-
-                                dispatch(getActiveMeetings())
-                                    .then((activeResults) => {
-                                        if (
-                                            activeResults?.payload?.length < 1
-                                        ) {
-                                            // no active results identified.
-                                            throw new Error(
-                                                'AS:75-->activeResults resulted in 0.'
-                                            );
-                                        } else {
-                                            console.log(
-                                                'AS:76-->activeResults: ',
-                                                activeResults?.payload?.length
-                                            );
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        printObject(
-                                            'AS:72-->getActiveMeetings catch error:\n',
-                                            error
-                                        );
-                                    });
                             }
                         })
                         .catch((error) => {
                             printObject(
-                                'AS:76-->getAllMeetings catch error:\n',
+                                'AS:171-->getAllMeetings catch error:\n',
                                 error
                             );
                         })
@@ -129,29 +87,7 @@ const ActiveScreen = () => {
                 setDisplayMeetings(activeMeetings);
                 setIsLoading(false);
             };
-
             fetchData();
-            // const subscription = API.graphql(
-            //     graphqlOperation(onCreateMeeting)
-            // ).subscribe({
-            //     next: (data) => {
-            //         const meeting = data.value.data.onCreateMeeting;
-            //         // Do something with the newly created meeting data
-            //         console.log('New meeting:', meeting);
-            //     },
-            //     error: (error) => {
-            //         console.error('Subscription error:', error);
-            //     },
-            // });
-            // // Start the subscription when the component gains focus
-            // const orgId = userProfile.activeOrg.id;
-            // console.log('AS:77-->orgId:', orgId);
-            // const subscription = dispatch(subscribeToMeetingCreation(orgId));
-
-            // // Clean up the subscription when the component loses focus
-            // return () => {
-            //     dispatch(unsubscribeFromMeetingCreation(subscription));
-            // };
         }, [])
     );
     useEffect(() => {
@@ -162,7 +98,6 @@ const ActiveScreen = () => {
         navigation.navigate('MeetingNew');
     };
     const handleDeleteResponse = (id) => {
-        console.log('AST:64-->handleDeleteResponse(' + id + ')');
         const deleteMeeting = meetings.find((m) => m.id === id);
         if (deleteMeeting?.id) {
             setMeeting(deleteMeeting);

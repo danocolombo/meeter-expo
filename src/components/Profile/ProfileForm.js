@@ -1131,32 +1131,36 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                                             />
                                         </View>
                                     </View>
-                                    <View
-                                        style={
-                                            mtrStyles(mtrTheme)
-                                                .affButtonContainer
-                                        }
-                                    >
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                navigation.navigate(
-                                                    'Affiliation'
-                                                )
-                                            }
+                                    {profile.organizationDefaultUsersId ===
+                                        profile?.activeOrg?.id && (
+                                        <View
                                             style={
-                                                mtrStyles(mtrTheme).affButton
+                                                mtrStyles(mtrTheme)
+                                                    .affButtonContainer
                                             }
                                         >
-                                            <Text
+                                            <TouchableOpacity
+                                                onPress={() =>
+                                                    navigation.navigate(
+                                                        'Affiliation'
+                                                    )
+                                                }
                                                 style={
                                                     mtrStyles(mtrTheme)
-                                                        .affButtonText
+                                                        .affButton
                                                 }
                                             >
-                                                AFFILIATIONS
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
+                                                <Text
+                                                    style={
+                                                        mtrStyles(mtrTheme)
+                                                            .affButtonText
+                                                    }
+                                                >
+                                                    AFFILIATIONS
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
                                     <DateTimePickerModal
                                         isVisible={modalBirthDateVisible}
                                         mode='date'
@@ -1323,7 +1327,7 @@ const mtrStyles = (mtrTheme) =>
         },
         affButtonText: {
             fontSize: 14,
-            fontColor: 'white',
+            color: mtrTheme.colors.lightText,
             fontFamily: 'Roboto-Regular',
             textAlign: 'center',
             paddingHorizontal: 10,

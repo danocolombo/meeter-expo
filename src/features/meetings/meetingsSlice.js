@@ -108,14 +108,22 @@ export const meetingsSlice = createSlice({
             state.groups = [];
             return state;
         },
-
+        clearMeetingsSlice: (state) => {
+            state.meetings = [];
+            state.activeMeetings = [];
+            state.historicMeetings = [];
+            state.specificMeeting = {};
+            state.groups = [];
+            state.tmpMeeting = {};
+        },
         logout: (state) => {
             state.meetings = [];
             state.activeMeetings = [];
             state.historicMeetings = [];
+            state.specificMeeting = [];
             state.groups = [];
             state.tmpMeeting = {};
-            return state;
+            // return state;
         },
     },
     extraReducers: (builder) => {
@@ -124,10 +132,6 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(deleteMeeting.fulfilled, (state, action) => {
-                printObject(
-                    'MS:199-->FULFILLED:action.payload:\n',
-                    action.payload
-                );
                 const meetingIdToDelete = action.payload.id;
                 state.meetings = state.meetings.filter(
                     (mtg) => mtg.id !== meetingIdToDelete
@@ -146,14 +150,9 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(getSpecificMeeting.fulfilled, (state, action) => {
-                printObject(
-                    'MS:199-->FULFILLED:action.payload:\n',
-                    action.payload
-                );
                 const mtg = state.meetings.filter(
                     (m) => m.id === action.payload
                 );
-                printObject('MS:203==>mtg:\n', mtg);
                 state.specificMeeting = { ...mtg };
                 state.isLoading = false;
                 return state;
@@ -464,6 +463,7 @@ export const {
     addNewGroup,
     addActiveMeeting,
     getGroup,
+    clearMeetingsSlice,
     logout,
 } = meetingsSlice.actions;
 export default meetingsSlice.reducer;

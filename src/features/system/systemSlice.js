@@ -73,16 +73,7 @@ export const systemSlice = createSlice({
         },
 
         logout: (state) => {
-            state.meeter.appName = '';
-            state.meeter.region = '';
-            state.meeter.eventRegion = '';
-            state.meeter.stateProv = '';
-            state.meeter.affiliateTitle = '';
-            state.meeter.affiliationEntity = '';
-            state.meeter.userRole = '';
-            state.meeter.affiliation = '';
-            state.meeter.affiliate = {};
-            return state;
+            state.activeOrg = {};
         },
     },
     extraReducers: (builder) => {
@@ -121,6 +112,10 @@ export const systemSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { logout, updateAffiliation } = systemSlice.actions;
+export const {
+    logout,
+
+    updateAffiliation,
+} = systemSlice.actions;
 
 export default systemSlice.reducer;

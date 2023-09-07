@@ -70,7 +70,6 @@ const ProfileScreen = (props) => {
             </View>
         );
     }
-    // printObject('PS:98-->userProfile:\n', userProfile);
     // printObject('PS:99-->pData:\n', pData);
     return (
         <>

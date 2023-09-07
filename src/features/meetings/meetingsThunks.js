@@ -18,6 +18,7 @@ export const getAllMeetings = createAsyncThunk(
         try {
             // console.log('MT:20-->getAllMeetings called');
             const oId = inputs.orgId;
+            const code = inputs.code;
             const meetingList = await API.graphql({
                 query: queries.listMeetings,
                 variables: {
@@ -53,31 +54,35 @@ export const getAllMeetings = createAsyncThunk(
                   })
                 : [];
             const allTheMeetingsSorted = sortedMeetings;
+
             const today = new Date();
             today.setHours(0, 0, 0, 0); // Set time to midnight
-
+            const year = today.getFullYear(); // Get the year (e.g., 2023)
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Get the month (e.g., 09) and pad with 0 if needed
+            const day = String(today.getDate()).padStart(2, '0'); // Get the day (e.g., 24) and pad with 0 if needed
+            const target = `${code}#${year}#${month}#${day}`;
             const summary = {
                 all: [],
                 active: [],
                 historic: [],
             };
-
             allTheMeetingsSorted.forEach((meeting) => {
-                const meetingDate = new Date(meeting.date);
-
-                if (meetingDate >= today) {
+                if (meeting.mtgCompKey >= target) {
                     summary.active.push(meeting);
                 } else {
                     summary.historic.push(meeting);
                 }
-
                 summary.all.push(meeting);
             });
+            summary.active.sort((a, b) =>
+                a.mtgCompKey < b.mtgCompKey ? -1 : 1
+            );
+
+            // printObject('MT:109-->summary:\n', summary);
             const returnValue = {
                 status: '200',
                 meetings: summary,
             };
-
             return returnValue;
         } catch (error) {
             printObject('MT:29-->getAllMeetingsG', { status: 'fail' });
@@ -270,7 +275,7 @@ export const addMeeting = createAsyncThunk(
     'meetings/addMeeting',
     async (inputs, thunkAPI) => {
         try {
-            // printObject('MT:176-->inputs:\n', inputs);
+            printObject('MT:176-->inputs:\n', inputs);
             let mtg = {
                 ...inputs.meeting,
                 organizationMeetingsId: inputs.orgId,
@@ -284,7 +289,7 @@ export const addMeeting = createAsyncThunk(
                 query: mutations.createMeeting,
                 variables: { input: mtg },
             });
-            // printObject('MT:184-->results:\n', results);
+            printObject('MT:184-->results:\n', results);
             // Check if the result contains the expected data and return it
             if (results.data.createMeeting.id) {
                 return mtg;
@@ -448,7 +453,6 @@ export const deleteMeeting = createAsyncThunk(
             //* array with groupIds if
             //* there are groups
             //* -----------------------
-            printObject('MT:426-->inputs:\n', inputs);
             if (inputs.groups?.length > 0) {
                 console.log(`MT:428-->DELETING ${inputs.groups.length} groups`);
                 for (const g of inputs.groups) {
@@ -486,11 +490,10 @@ export const deleteMeeting = createAsyncThunk(
                 }
             } else {
                 console.log(
-                    'MT:454-->no groups to delete, while deleting meeting'
+                    'MT:454-->no groups to delete, while deleting meeting, all good to go.'
                 );
             }
 
-            console.log(`MT:457-->DELETING MEETING: ${inputs.id}`);
             const inputDeleteRequest = {
                 id: inputs.id,
             };

@@ -30,6 +30,7 @@ const TeamScreen = () => {
     useFocusEffect(
         useCallback(() => {
             // dispatch(getProfiles);
+            setIsLoading(true);
             dispatch(
                 getAffiliationsUsersByOrgId({ id: userProfile.activeOrg.id })
             )

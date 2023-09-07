@@ -130,7 +130,6 @@ export const deactivateMember = createAsyncThunk(
         }
     }
 );
-
 export const loadTeam = createAsyncThunk(
     'team/loadTeam',
     async (id, thunkAPI) => {

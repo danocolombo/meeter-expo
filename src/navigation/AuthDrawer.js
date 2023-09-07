@@ -36,6 +36,7 @@ const AuthDrawer = (navigation) => {
             graphqlOperation(onCreateMeeting)
         ).subscribe({
             next: (data) => {
+                printObject('AD:39-->onCreateMeeting__data:\n', data);
                 const meeting = data.value.data.onCreateMeeting;
                 console.log('New meeting:', meeting);
                 dispatch(addSubscriptionMeeting(meeting))

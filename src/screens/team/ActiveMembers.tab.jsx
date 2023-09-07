@@ -74,38 +74,34 @@ const ActiveMembers = () => {
     // }, []);
     const mtrStyles = (mtrTheme) =>
         StyleSheet.create({
-            surface: {
+            root: {
                 flex: 1,
                 backgroundColor: mtrTheme.colors.background,
             },
-            pageTitleContainer: {
+            screenTitleContainer: {
                 flexDirection: 'row',
                 justifyContent: 'center',
                 paddingVertical: 10,
             },
-            screenTitleContainer: {
-                paddingTop: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
-            },
+            // screenTitleContainer: {
+            //     paddingTop: 10,
+            //     justifyContent: 'center',
+            //     alignItems: 'center',
+            // },
             screenTitleText: {
                 fontSize: 30,
                 fontFamily: 'Roboto-Bold',
                 color: mtrTheme.colors.lightText,
             },
-            pageTitle: {
-                fontSize: 24,
-                fontWeight: '700',
+            surface: {
+                backgroundColor: 'white',
+                borderRadius: 10,
+                marginHorizontal: 10,
+                marginVertical: 5,
+                paddingBottom: 10,
             },
-            editButton: {
-                marginLeft: 'auto',
-                marginRight: 10,
-            },
-            editButtonText: {
-                fontSize: 14,
-                fontWeight: 'bold',
-                color: editFlag ? 'black' : 'white',
-                padding: 5,
+            listContainer: {
+                paddingHorizontal: 5,
             },
         });
     function addAffiliationHandler(settings) {}
@@ -156,19 +152,15 @@ const ActiveMembers = () => {
     }
     // printObject('AMT:154-->displayMembers:\n', displayMembers);
     return (
-        <Surface style={mtrStyles(mtrTheme).surface}>
-            <View style={{ flex: 1 }}>
-                <View style={mtrStyles(mtrTheme).pageTitleContainer}>
-                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
-                        Active Members
-                    </Text>
-                </View>
-                <View style={{ paddingHorizontal: 5, flex: 1 }}>
-                    {/* <View>
-                    <Text>ACTIVE MEMBERS</Text>
-                </View> */}
+        <View style={mtrStyles(mtrTheme).root}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    Active Members
+                </Text>
+            </View>
+            <View style={mtrStyles(mtrTheme).surface}>
+                <View style={mtrStyles(mtrTheme).listContainer}>
                     <FlatList
-                        style={{ flex: 1 }} // Allow the FlatList to expand within its container
                         data={displayMembers}
                         renderItem={({ item }) => (
                             <MemberCard
@@ -183,7 +175,7 @@ const ActiveMembers = () => {
                     />
                 </View>
             </View>
-        </Surface>
+        </View>
     );
 };
 

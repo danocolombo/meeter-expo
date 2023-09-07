@@ -11,6 +11,9 @@ import {
     saveUserProfile,
     loginUser,
     joinOrganization,
+    changeDefaultOrg,
+    updatePermissions,
+    changeOrg,
     errorTest,
 } from './userThunks';
 
@@ -24,9 +27,6 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        getUserProfile: (state) => {
-            return state.profile;
-        },
         clearUser: (state) => {
             state.profile = {};
             state.perms = [];
@@ -35,7 +35,6 @@ export const userSlice = createSlice({
         logout: (state) => {
             state.profile = {};
             state.perms = [];
-            return state;
         },
     },
     extraReducers: (builder) => {
@@ -103,12 +102,47 @@ export const userSlice = createSlice({
                 console.log('US:99 errorTest.rejected');
                 state.isLoading = false;
                 state.error = action.error.message; // Access the error message
+            })
+            .addCase(changeOrg.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(changeOrg.fulfilled, (state, action) => {
+                state.profile = action.payload.profile;
+                state.perms = action.payload.perms;
+                state.isLoading = false;
+                return state;
+            })
+            .addCase(changeOrg.rejected, (state, action) => {
+                state.isLoading = false;
+            })
+            .addCase(updatePermissions.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updatePermissions.fulfilled, (state, action) => {
+                state.perms = action.payload;
+                // printObject('US:126-->state:\n', state);
+                state.isLoading = false;
+                return state;
+            })
+            .addCase(updatePermissions.rejected, (state, action) => {
+                state.isLoading = false;
+            })
+            .addCase(changeDefaultOrg.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(changeDefaultOrg.fulfilled, (state, action) => {
+                state.profile = action.payload.userProfile;
+                state.perms = action.payload.perms;
+                state.isLoading = false;
+            })
+            .addCase(changeDefaultOrg.rejected, (state, action) => {
+                state.isLoading = false;
             });
     },
 });
 
 // Action creators are generated for each case reducer function
-export const { logout, clearUser, getUserProfile } = userSlice.actions;
+export const { logout, clearUser } = userSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

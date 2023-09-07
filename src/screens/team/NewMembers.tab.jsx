@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import NewMemberCard from '../../components/teams/NewMemberCard';
 import { useSelector, useDispatch } from 'react-redux';
@@ -32,46 +32,39 @@ const NewMembers = () => {
     }
     if (newMembers?.length < 1) {
         return (
-            <Surface style={mtrStyles(mtrTheme).surface}>
-                <View style={{ flex: 1, flexDirection: 'column' }}>
-                    <View style={mtrStyles(mtrTheme).pageTitleContainer}>
-                        <Text style={mtrStyles(mtrTheme).screenTitleText}>
-                            Inactive Members
+            <View style={mtrStyles(mtrTheme).rootContent}>
+                <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                        New User Requests
+                    </Text>
+                </View>
+                <View style={mtrStyles(mtrTheme).surface}>
+                    <View style={mtrStyles(mtrTheme).introTextContainer}>
+                        <Text style={mtrStyles(mtrTheme).introText}>
+                            None Pending
                         </Text>
                     </View>
-
-                    <View
-                        style={{ paddingVertical: 20, paddingHorizontal: 10 }}
-                    >
-                        <Text>There are no new membership requests.</Text>
-                    </View>
                 </View>
-            </Surface>
+            </View>
         );
     }
     return (
-        <Surface style={mtrStyles(mtrTheme).surface}>
-            <View style={{ flex: 1, flexDirection: 'column' }}>
-                <View style={mtrStyles(mtrTheme).pageTitleContainer}>
-                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
-                        New Membership Requests
-                    </Text>
-                </View>
-                <View>
-                    <Text
-                        style={{
-                            fontSize: 18,
-                            padding: 10,
-                            marginHorizontal: 10,
-                        }}
-                    >
+        <View style={mtrStyles(mtrTheme).rootContent}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    New User Requests
+                </Text>
+            </View>
+            <View style={mtrStyles(mtrTheme).surface}>
+                <View style={mtrStyles(mtrTheme).introTextContainer}>
+                    <Text style={mtrStyles(mtrTheme).introText}>
                         These are new membership requests. Pressing ACCEPT will
                         allow the user to be a guest in this project. If DECLINE
                         is selected the user will be placed in the Inactive
                         list.
                     </Text>
                 </View>
-                <View style={{ paddingHorizontal: 5 }}>
+                <View style={mtrStyles(mtrTheme).listContainer}>
                     <FlatList
                         data={newMembers}
                         renderItem={({ item }) => (
@@ -84,7 +77,7 @@ const NewMembers = () => {
                     />
                 </View>
             </View>
-        </Surface>
+        </View>
     );
 };
 
@@ -92,11 +85,11 @@ export default NewMembers;
 
 const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
-        surface: {
+        rootContent: {
             flex: 1,
             backgroundColor: mtrTheme.colors.background,
         },
-        pageTitleContainer: {
+        screenTitleContainer: {
             flexDirection: 'row',
             justifyContent: 'center',
             paddingVertical: 10,
@@ -106,17 +99,24 @@ const mtrStyles = (mtrTheme) =>
             fontFamily: 'Roboto-Bold',
             color: mtrTheme.colors.lightText,
         },
-        editContainer: {
-            flexDirection: 'row',
+        surface: {
+            backgroundColor: 'white',
+            borderRadius: 10,
+            marginHorizontal: 10,
+            marginVertical: 5,
+            paddingBottom: 10,
         },
-        editButton: {
-            marginLeft: 'auto',
-            marginRight: 10,
+        introTextContainer: {
+            paddingVertical: 10,
+            paddingHorizontal: 15,
         },
-        editButtonText: {
-            fontSize: 14,
-            fontWeight: 'bold',
-            color: 'white',
-            padding: 5,
+        introText: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 18,
+            textAlign: 'center',
+            letterSpacing: 0.3,
+        },
+        listContainer: {
+            paddingHorizontal: 5,
         },
     });

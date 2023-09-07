@@ -479,3 +479,139 @@ export const defineAndSaveUserProfile = createAsyncThunk(
         }
     }
 );
+export const changeOrg = createAsyncThunk(
+    'user/changeOrg',
+    async (inputs, thunkAPI) => {
+        //* ------------------------------------
+        //* inputs will be a new userProfile
+        //* ------------------------------------
+        const theProfile = inputs;
+        try {
+            //      set activeOrg based on profile defaultOrg and affiliations
+            let clientData = {};
+            if (theProfile?.defaultOrg?.id) {
+                clientData = theProfile.affiliations.items.filter(
+                    (a) => a.organization.id === theProfile.defaultOrg.id
+                );
+            }
+            let perms = [];
+            clientData.forEach((cd) => {
+                perms.push(cd.role);
+            });
+            let client = {};
+            let activeOrg = {};
+            //* affiliation found...
+            client = clientData[0];
+            activeOrg = {
+                id: client.organization.id,
+                code: client.organization.code,
+                name: client.organization.name,
+                heroMessage: client.organization.heroMessage,
+                role: client.role,
+                status: client.status,
+            };
+            const newProfile = { ...theProfile, activeOrg: activeOrg };
+            const results = { profile: newProfile, perms: perms };
+            // printObject('UT:64-->profile&perms:', results);
+
+            return results;
+        } catch (error) {
+            printObject('UT:202-->saveUserProfile ERROR', inputs);
+            printObject('UT:203-->error:\n', error);
+            // Rethrow the error to let createAsyncThunk handle it
+            throw new Error('UT:205-->Failed to saveUserProfile thunk');
+        }
+    }
+);
+export const changeDefaultOrg = createAsyncThunk(
+    'user/changeDefaultOrg',
+    async (inputs, thunkAPI) => {
+        const theProfile = inputs.profile;
+        const theOrg = inputs.orgId;
+
+        try {
+            // Await the GraphQL mutation result
+            const updateResults = await API.graphql({
+                query: mutations.updateUser,
+                variables: {
+                    input: {
+                        id: theProfile.id,
+                        organizationDefaultUsersId: theOrg,
+                        // Add any other fields you want to update here
+                    },
+                },
+            });
+
+            const updatedProfile = updateResults.data.updateUser;
+            let perms = [];
+            updatedProfile.affiliations.items.forEach((aff) => {
+                if (aff.organization.id === theOrg) {
+                    if (aff.status === 'active') {
+                        perms.push(aff.role);
+                    }
+                }
+            });
+
+            const inputValues = {
+                userProfile: updatedProfile,
+                perms: perms,
+            };
+
+            // Return the result
+            return inputValues;
+        } catch (error) {
+            console.error('UT:578-->changeDefaultOrg ERROR', inputs);
+            console.error('UT:579-->error:\n', error);
+
+            // Throw the error to let createAsyncThunk handle it as a rejected promise
+            throw error;
+        }
+    }
+);
+
+export const updatePermissions = createAsyncThunk(
+    'user/updatePermissions',
+    async (inputs, thunkAPI) => {
+        //* ------------------------------
+        //* expecting...
+        //* inputs.affiliations as []
+        //* inputs.orgid as string
+        //* ------------------------------
+        try {
+            printObject('UT:530-->inputs:\n', inputs);
+            const affiliations = inputs.affiliations;
+            const orgId = inputs.orgId;
+            let clientData = {};
+            clientData = affiliations.filter(
+                (a) => a.organization.id === orgId
+            );
+            let perms = [];
+            clientData.forEach((cd) => {
+                perms.push(cd.role);
+            });
+            printObject('UT:546-->perms:\n', perms);
+            return perms;
+        } catch (error) {
+            printObject('UT:541-->updatePermissions ERROR', inputs);
+            printObject('UT:542-->error:\n', error);
+            // Rethrow the error to let createAsyncThunk handle it
+            throw new Error('UT:544-->Failed to updatePermissions thunk');
+        }
+    }
+);
+export const getUserProfile = createAsyncThunk(
+    'user/getUserProfile',
+    async (_, { getState }) => {
+        const { profile } = getState().user;
+        return profile;
+    }
+);
+
+// Thunk to get the current perms from the state
+export const getPerms = createAsyncThunk(
+    'user/getPerms',
+    async (_, { getState }) => {
+        const { perms } = getState().user;
+        return perms;
+    }
+);

@@ -40,9 +40,15 @@ const groupsSlice = createSlice({
     reducers: {
         clearGroups: (state, action) => {
             state.groups = [];
+            state.defaultGroups = [];
+        },
+        clearGroupSlice: (state) => {
+            state.groups = [];
+            state.defaultGroups = [];
         },
         logout: (state) => {
             state.groups = [];
+            state.defaultGroups = [];
         },
     },
     extraReducers: (builder) => {
@@ -154,6 +160,6 @@ const groupsSlice = createSlice({
     },
 });
 
-export const { clearGroups, logout } = groupsSlice.actions;
+export const { clearGroups, clearGroupSlice, logout } = groupsSlice.actions;
 
 export default groupsSlice.reducer;

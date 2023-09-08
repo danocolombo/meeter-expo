@@ -114,7 +114,7 @@ const MeetingDetails = (props) => {
             });
         } else {
             navigation.setOptions({
-                title: meeter.appName,
+                title: meeter.appName || 'Meeter',
                 headerBackTitle: 'Back',
             });
         }

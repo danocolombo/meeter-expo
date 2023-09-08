@@ -12,10 +12,10 @@ const NewMembers = () => {
     // need orgId
     const newMembers = useSelector((state) => state.team.newMembers);
     function actionHandler({ action, userId, orgId, roleId }) {
-        console.log('action:', action);
-        console.log('userId:', userId);
-        console.log('orgId:', orgId);
-        console.log('roleId:', roleId);
+        // console.log('action:', action);
+        // console.log('userId:', userId);
+        // console.log('orgId:', orgId);
+        // console.log('roleId:', roleId);
 
         if (action === 'ACCEPT') {
             let acceptedMember = newMembers.find((m) => m.id === userId);
@@ -48,6 +48,7 @@ const NewMembers = () => {
             </View>
         );
     }
+    // printObject('NMT:51-->newMembers:\n', newMembers);
     return (
         <View style={mtrStyles(mtrTheme).rootContent}>
             <View style={mtrStyles(mtrTheme).screenTitleContainer}>

@@ -199,8 +199,15 @@ export const loadTeam = createAsyncThunk(
 
                     affiliatedUsers.forEach((user) => {
                         if (user.roles.length > 0) {
-                            summarizedTeam.active.push(user);
+                            //multiple roles, so they must be active
+                            if (user.roles.includes('new')) {
+                                summarizedTeam.new.push(user);
+                            } else {
+                                summarizedTeam.active.push(user);
+                            }
                         } else if (user.affiliations.length > 0) {
+                            //user only has one role, we should have
+                            //affiliation
                             const allAffiliationsActive =
                                 user.affiliations.every(
                                     (affiliation) =>
@@ -209,6 +216,15 @@ export const loadTeam = createAsyncThunk(
                             if (allAffiliationsActive) {
                                 summarizedTeam.active.push(user);
                             } else {
+                                // not an active user
+                                const allAffiliationsPending =
+                                    user.affiliations.every(
+                                        (affiliation) =>
+                                            affiliation.status === 'pending'
+                                    );
+                                if (allAffiliationsPending) {
+                                    summarizedTeam.new.push(user);
+                                }
                                 summarizedTeam.inactive.push(user);
                             }
                         } else {
@@ -248,7 +264,8 @@ export const loadTeam = createAsyncThunk(
 
                             if (
                                 info.status === 'active' ||
-                                info.status === 'inactive'
+                                info.status === 'inactive' ||
+                                info.status === 'pending'
                             ) {
                                 newUser.affiliations.push({
                                     id: info.id,
@@ -378,14 +395,14 @@ export const loadTeam = createAsyncThunk(
                     filter: { organizationAffiliationsId: { eq: id } },
                 })
             );
-            // printObject('TT:325-->teamInfo:\n', teamInfo);
+            //printObject('TT:325-->teamInfo:\n', teamInfo);
             //* -------------------------------
             //* 2. flip affiliations and users
             //* -------------------------------
             const affiliatedUsers = await affiliateUsers(
                 teamInfo.data.listAffiliations.items
             );
-            // printObject('TT:327-->affiliatedUsers:\n', affiliatedUsers);
+            printObject('TT:327-->affiliatedUsers:\n', affiliatedUsers);
             //* -------------------------------
             //* 3. summarize affiliatedUsers
             //* put them in summary object
@@ -393,10 +410,10 @@ export const loadTeam = createAsyncThunk(
             const organizedAffiliatedTeam = await organizeAffiliates(
                 affiliatedUsers
             );
-            // printObject(
-            //     'TT:372-->organizedAffiliatedTeam:\n',
-            //     organizedAffiliatedTeam
-            // );
+            printObject(
+                'TT:372-->organizedAffiliatedTeam:\n',
+                organizedAffiliatedTeam
+            );
             return { ...organizedAffiliatedTeam, all: affiliatedUsers };
             // make sure there are only members for this org
             const validatedTeamInfo = {
@@ -550,7 +567,7 @@ export const acceptMember = createAsyncThunk(
         //*  member: {id: "abc", firstName:...},
         //*  action: "acceptMember",
         //* }
-        const { member } = input;
+
         try {
             //* * * * * * * * * * * * * * * * * * *
             //* This function gets the member and
@@ -561,125 +578,59 @@ export const acceptMember = createAsyncThunk(
             //* 1. update aff role:"new" to "guest"
             //* 2. remove other roles
             //* * * * * * * * * * * * * * * * * * *
-
-            printObject('TT:398-->member:\n', member);
-            member.roles.forEach((r) => {
-                if (r.role === 'new') {
+            const { member } = input;
+            // printObject('TT:582-->member:\n', member);
+            member.affiliations.forEach((a) => {
+                if (a.role === 'new') {
                     //      update guest
                     try {
                         API.graphql({
                             query: mutations.updateAffiliation,
                             variables: {
-                                input: { id: r.id, role: 'guest' },
+                                input: {
+                                    id: a.id,
+                                    role: 'guest',
+                                    status: 'active',
+                                },
                             },
                         })
-                            .then(() => {
-                                printObject(
-                                    'TT:410-->affiliation updated: ',
-                                    r.id
-                                );
+                            .then((updateAffiliationResults) => {
+                                console.log(a.id + ' activated');
+                                // printObject(
+                                //     'TT:598-->updateResults:\n',
+                                //     updateAffiliationResults
+                                // );
+                                // printObject(
+                                //     'TT:599-->affiliation updated: ',
+                                //     a.id
+                                // );
                             })
                             .catch((err) => {
                                 printObject(
-                                    'TT:416-->error updating affiliation\n',
+                                    'TT:605-->error updating affiliation\n',
                                     err
                                 );
                             });
                     } catch (error) {
                         printObject(
-                            'TT:46-->catch failure to update affiliation:',
+                            'TT:611-->catch failure to update affiliation:',
                             error
                         );
-                    }
-                } else {
-                    //      delete role
-                    try {
-                        API.graphql({
-                            query: mutations.deleteAffiliation,
-                            variables: { input: { id: r.id } },
-                        })
-                            .then(() => {
-                                printObject(
-                                    'TT:59-->affiliation deleted: ',
-                                    r.id
-                                );
-                            })
-                            .catch((err) => {
-                                printObject(
-                                    'TT:65-->error deleting affiliation\n',
-                                    err
-                                );
-                                console.log('id:', r.id);
-                            });
-                    } catch (error) {
-                        printObject(
-                            'TT:71-->catch failure to delete affiliation:',
-                            error
-                        );
-                        console.log('id:', r.id);
                     }
                 }
             });
-            //      modify user to send to slice
-
-            const newRole = member.roles.find((r) => r.role === 'new');
-            const singleRole = {
-                id: newRole.id,
+            const affValue = {
+                id: member.affiliations[0].id,
                 role: 'guest',
                 status: 'active',
             };
-            printObject('TT:460-->singleRole:\n', singleRole);
-            //      3. member updated to send to slice
             const newMember = {
                 ...member,
-                roles: [singleRole],
+                affiliations: [affValue],
+                roles: ['guest'],
             };
             printObject('TT:470-->sliceInput:\n', newMember);
             return newMember;
-
-            // const keepRole = member.roles
-            //     .filter((r) => r.role === 'new')
-            //     .map((r) => ({ ...r, status: 'active' }));
-            // const modRoles = [
-            //     {
-            //         id: keepRole.id,
-            //         role: 'guest',
-            //         status: 'active',
-            //     },
-            // ];
-            // async function deleteAff(id) {
-            //     console.log('DELETE ID: ', id);
-            //     const deletedResults = await API.graphql({
-            //         query: mutations.deleteAffiliation,
-            //         variables: { input: { id: id } },
-            //     });
-            // }
-            // if (member.roles.length > 1) {
-            //     const deleteRoles = member.roles.filter(
-            //         (r) => r.role !== 'new'
-            //     );
-            //     deleteRoles.forEach((r) => {
-            //         printObject('DELETE THIS ROLE:\n', r);
-            //         deleteAff(r.id).then(() => console.log(r.id + 'deleted'));
-            //     });
-            //     return true;
-            // } else {
-            //     console.log('only 1 role');
-            // }
-            // //* --------------------------------------
-            // //* update guest aff
-            // //* --------------------------------------
-            // const updateResults = await API.graphql({
-            //     query: mutations.updateAffiliation,
-            //     variables: {
-            //         input: { id: keepRole.id, status: 'active' },
-            //     },
-            // });
-            // const sliceInput = {
-            //     ...member,
-            //     roles: modRoles,
-            // };
-            // return sliceInput;
         } catch (error) {
             console.log(error);
             throw new Error('Failed to acceptMember.');

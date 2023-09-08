@@ -42,14 +42,14 @@ const InactiveMembers = () => {
         );
     }
     return (
-        <Surface style={mtrStyles(mtrTheme).surface}>
-            <View style={{ flex: 1, flexDirection: 'column' }}>
-                <View style={mtrStyles(mtrTheme).pageTitleContainer}>
-                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
-                        Inactive Members
-                    </Text>
-                </View>
-                <View>
+        <View style={mtrStyles(mtrTheme).rootContent}>
+            <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                    Inactive Members
+                </Text>
+            </View>
+            <View style={mtrStyles(mtrTheme).surface}>
+                <View style={mtrStyles(mtrTheme).introTextContainer}>
                     <Text
                         style={{
                             fontSize: 18,
@@ -62,7 +62,7 @@ const InactiveMembers = () => {
                         on the ACTIVE tab.
                     </Text>
                 </View>
-                <View style={{ paddingHorizontal: 5 }}>
+                <View style={mtrStyles(mtrTheme).listContainer}>
                     <FlatList
                         data={inactiveMembers}
                         renderItem={({ item }) => (
@@ -75,7 +75,7 @@ const InactiveMembers = () => {
                     />
                 </View>
             </View>
-        </Surface>
+        </View>
     );
 };
 
@@ -83,11 +83,11 @@ export default InactiveMembers;
 
 const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
-        surface: {
+        rootContent: {
             flex: 1,
             backgroundColor: mtrTheme.colors.background,
         },
-        pageTitleContainer: {
+        screenTitleContainer: {
             flexDirection: 'row',
             justifyContent: 'center',
             paddingVertical: 10,
@@ -96,6 +96,31 @@ const mtrStyles = (mtrTheme) =>
             fontSize: 30,
             fontFamily: 'Roboto-Bold',
             color: mtrTheme.colors.lightText,
+        },
+        surface: {
+            backgroundColor: 'white',
+            borderRadius: 10,
+            marginHorizontal: 10,
+            marginVertical: 5,
+            paddingBottom: 10,
+        },
+        introTextContainer: {
+            paddingVertical: 10,
+            paddingHorizontal: 15,
+        },
+        introText: {
+            fontFamily: 'Roboto-Regular',
+            fontSize: 18,
+            textAlign: 'center',
+            letterSpacing: 0.3,
+        },
+        listContainer: {
+            paddingHorizontal: 5,
+        },
+        pageTitleContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            paddingVertical: 10,
         },
         pageTitle: {
             fontSize: 24,

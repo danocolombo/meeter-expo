@@ -177,7 +177,7 @@ const CustomDrawer = (props) => {
                 }}
             >
                 <TouchableOpacity
-                    onPress={() => {}}
+                    onPress={() => navigation.navigate('Legal')}
                     style={{ paddingVertical: 15 }}
                 >
                     <View

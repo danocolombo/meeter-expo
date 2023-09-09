@@ -24,6 +24,7 @@ import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import LegalScreen from '../screens/LegalScreen';
 import { useDispatch, useSelector } from 'react-redux';
 // import DeleteConfirmScreen from '../screens/DeleteConfirmScreen';
 // import DeleteGroupConfirmScreen from '../screens/DeleteGroupConfirmScreen';
@@ -165,7 +166,18 @@ function MeeterStack(props) {
                 name='Profile'
                 component={ProfileScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName || 'Meeter',
+                    headerStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+                    headerTintColor: 'white',
+                })}
+            />
+            <Stack.Screen
+                name='Legal'
+                component={LegalScreen}
+                options={({ navigation }) => ({
+                    title: meeter?.appName || 'Meeter',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },

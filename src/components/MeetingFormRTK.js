@@ -262,7 +262,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                         )}
                     </View>
                 </TouchableOpacity>
-                <View>
+                <View style={{ flex: 1 }}>
                     <TitleSection values={meeting} setValues={setMeeting} />
                 </View>
             </View>

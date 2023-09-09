@@ -106,6 +106,8 @@ const theme = {
         meetingHistoricCard: '#cccccc',
         groupActiveCard: '#CAEBF2',
         groupHistoricCard: '#cccccc',
+        screenTitleTextLight: '#CAEBF2',
+        screenTitleTextDark: '#1D5D9B',
     },
     fonts: {
         regular: 16,

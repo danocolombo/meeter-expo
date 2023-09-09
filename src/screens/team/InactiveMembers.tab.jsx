@@ -25,20 +25,20 @@ const InactiveMembers = () => {
     }
     if (inactiveMembers?.length < 1) {
         return (
-            <Surface style={mtrStyles(mtrTheme).surface}>
-                <View style={{ flex: 1, flexDirection: 'column' }}>
-                    <View style={mtrStyles(mtrTheme).pageTitleContainer}>
-                        <Text style={mtrStyles(mtrTheme).screenTitleText}>
-                            Inactive Members
+            <View style={mtrStyles(mtrTheme).rootContent}>
+                <View style={mtrStyles(mtrTheme).screenTitleContainer}>
+                    <Text style={mtrStyles(mtrTheme).screenTitleText}>
+                        Inactive Users
+                    </Text>
+                </View>
+                <View style={mtrStyles(mtrTheme).surface}>
+                    <View style={mtrStyles(mtrTheme).introTextContainer}>
+                        <Text style={mtrStyles(mtrTheme).introText}>
+                            No Inactive Users
                         </Text>
                     </View>
-                    <View
-                        style={{ paddingVertical: 20, paddingHorizontal: 10 }}
-                    >
-                        <Text>There are no inactive users identified.</Text>
-                    </View>
                 </View>
-            </Surface>
+            </View>
         );
     }
     return (

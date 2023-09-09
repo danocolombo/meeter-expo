@@ -115,7 +115,7 @@ const ActiveMembers = () => {
             <Surface style={mtrStyles(mtrTheme).screenSurface}>
                 <View style={mtrStyles(mtrTheme).screenHeader}>
                     <Text style={mtrStyles(mtrTheme).screenHeaderText}>
-                        Active Members
+                        Active Users
                     </Text>
                 </View>
                 <>

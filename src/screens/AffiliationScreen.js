@@ -82,21 +82,6 @@ const AffiliationScreen = (props) => {
     useFocusEffect(
         useCallback(() => {
             try {
-                // let numberOfUniqueCodes = new Set();
-
-                // userProfile.affiliations.items.forEach((item) => {
-                //     const organizationCode = item.organization.code;
-                //     console.log('Adding organization code:', organizationCode);
-                //     numberOfUniqueCodes.add(organizationCode);
-                // });
-                // const uniqueOrganizationCodes = [...numberOfUniqueCodes];
-                // console.log('Unique organization codes:', numberOfUniqueCodes);
-                // printObject(
-                //     'AF:75-->uniqueOrganizationCodes:\n',
-                //     uniqueOrganizationCodes
-                // );
-
-                // setAffCount(uniqueOrganizationCodes.length);
                 async function getAffList() {
                     if (userProfile?.affiliations?.items) {
                         if (userProfile?.affiliations.items.length > 1) {
@@ -168,15 +153,13 @@ const AffiliationScreen = (props) => {
                     }
                 }
                 getAffList();
-                affCodeInputRef.current.focus();
+                // affCodeInputRef.current.focus();
             } catch (error) {
                 console.log('HM:51-->unexpected error:\n', error);
             }
         }, [])
     );
-    const onAffiliationOpen = useCallback(() => {
-        setAffiliationOpen(false);
-    }, []);
+
     const handleSaveChange = () => {
         console.log('ddValue:', ddValue);
         dispatch
@@ -282,18 +265,7 @@ const AffiliationScreen = (props) => {
     const onDDOpen = useCallback(() => {
         // do whatever you want when it opens, maybe close other things?
     }, []);
-    const onChange = useCallback(() => {
-        // do whatever you want when it changes, maybe close other things?
-        setDDOpen(false);
-    }, []);
 
-    function showCurrentAffiliations() {
-        let affs = [];
-        userProfile.affiliations.items.forEach((a) => {
-            affs.push({ [a.organization.code]: a.id });
-        });
-        printObject('Affiliations\n', affs);
-    }
     const handleSaveDefaultOrg = async () => {
         //* -----------------------------------------
         //* user has selected a new default org. save
@@ -306,51 +278,7 @@ const AffiliationScreen = (props) => {
             setShowChangeModal(true);
         });
     };
-    const handleSaveChangeActive = async () => {
-        //* -----------------------------------------
-        //* user has selected a new org to switch to
-        //* -----------------------------------------
-        //      get the affiliation value of the guest
-        //      for the org picked
-        // printObject('AS:340-->userProfile:\n', userProfile);
-        const desiredObject = userProfile.affiliations.items.find((item) => {
-            return (
-                item.role === 'guest' &&
-                item.status === 'active' &&
-                item.organization.id === ddValue
-            );
-        });
-        // printObject('AS:347-->desiredObject:\n', desiredObject);
-        const updatedUserProfile = {
-            ...userProfile,
-            activeOrg: desiredObject,
-        };
-        // printObject('AS:350-->updatedUserProfile:\n', updatedUserProfile);
-        dispatch(saveUserProfile(updatedUserProfile)).then((profileResults) => {
-            //* --------------------------------
-            //* userProfile is changed, now clear
-            //* the slices
-            //* --------------------------------
-            // dispatch(unsubscribeFromMeetingCreation());
-            // printObject('AS:371-->profileResults:\n', profileResults);
-            const newProfile = profileResults?.payload?.userProfile;
-            dispatch(
-                updatePermissions({
-                    affiliations: newProfile.affiliations.items,
-                    orgId: ddValue,
-                })
-            ).then((updatePermsResults) => {
-                // printObject(
-                //     'AS:377-->updatePermsResults:\n',
-                //     updatePermsResults
-                // );
-                //dispatch(clearTeamSlice());
-                //dispatch(clearGroupSlice());
-                //dispatch(clearMeetingsSlice());
-                console.error('Organization Changed');
-            });
-        });
-    };
+
     const goToLogoutScreen = () => {
         navigation.reset({
             index: 0,
@@ -386,163 +314,146 @@ const AffiliationScreen = (props) => {
     // printObject('AS:248-->userProfile:\n', userProfile);
     return (
         <>
-            <SafeAreaView>
-                <ScrollView>
-                    <>
-                        <KeyboardAvoidingView behavior='padding'>
-                            <Modal
-                                visible={showChangeModal}
-                                animationStyle='slide'
+            <SafeAreaView style={mtrStyles(mtrTheme).surface}>
+                <>
+                    <KeyboardAvoidingView behavior='padding'>
+                        <Modal visible={showChangeModal} animationStyle='slide'>
+                            <Surface
+                                style={
+                                    mtrStyles(mtrTheme)
+                                        .modalConfirmationContainer
+                                }
                             >
-                                <Surface
+                                <View
                                     style={
-                                        mtrStyles(mtrTheme)
-                                            .modalConfirmationContainer
+                                        mtrStyles(mtrTheme).screenTitleContainer
+                                    }
+                                >
+                                    <Text
+                                        style={
+                                            mtrStyles(mtrTheme).screenTitleText
+                                        }
+                                    >
+                                        CONFIRMATION
+                                    </Text>
+                                </View>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme).confirmationSurface
                                     }
                                 >
                                     <View
                                         style={
                                             mtrStyles(mtrTheme)
-                                                .screenTitleContainer
+                                                .confirmationContainer
                                         }
                                     >
                                         <Text
                                             style={
                                                 mtrStyles(mtrTheme)
-                                                    .screenTitleText
+                                                    .confirmationText
                                             }
                                         >
-                                            CONFIRMATION
+                                            The affiliation change has been
+                                            made.
+                                        </Text>
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .confirmationText
+                                            }
+                                        >
+                                            You will now be logged out and when
+                                            you log in again you will be in that
+                                            organization.
                                         </Text>
                                     </View>
                                     <View
                                         style={
                                             mtrStyles(mtrTheme)
-                                                .confirmationSurface
+                                                .modalButtonContainer
                                         }
                                     >
-                                        <View
+                                        <TouchableOpacity
                                             style={
-                                                mtrStyles(mtrTheme)
-                                                    .confirmationContainer
+                                                mtrStyles(mtrTheme).modalButton
+                                            }
+                                            onPress={() =>
+                                                handleOrgChangeLogout()
                                             }
                                         >
                                             <Text
                                                 style={
                                                     mtrStyles(mtrTheme)
-                                                        .confirmationText
+                                                        .modalButtonText
                                                 }
                                             >
-                                                The affiliation change has been
-                                                made.
+                                                OK
                                             </Text>
-                                            <Text
-                                                style={
-                                                    mtrStyles(mtrTheme)
-                                                        .confirmationText
-                                                }
-                                            >
-                                                You will now be logged out and
-                                                when you log in again you will
-                                                be in that organization.
-                                            </Text>
-                                        </View>
-                                        <View
-                                            style={
-                                                mtrStyles(mtrTheme)
-                                                    .modalButtonContainer
-                                            }
-                                        >
-                                            <TouchableOpacity
-                                                style={
-                                                    mtrStyles(mtrTheme)
-                                                        .modalButton
-                                                }
-                                                onPress={() =>
-                                                    handleOrgChangeLogout()
-                                                }
-                                            >
-                                                <Text
-                                                    style={
-                                                        mtrStyles(mtrTheme)
-                                                            .modalButtonText
-                                                    }
-                                                >
-                                                    OK
-                                                </Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                        </TouchableOpacity>
                                     </View>
-                                </Surface>
-                            </Modal>
-                            <Modal
-                                visible={showDupModal}
-                                animationStyle='slide'
-                            >
-                                <Surface
-                                    style={mtrStyles(mtrTheme).modalContainer}
-                                >
-                                    <View style={{ marginTop: 30 }}>
-                                        <Text style={mtrTheme.screenTitle}>
-                                            NOTIFICATION
+                                </View>
+                            </Surface>
+                        </Modal>
+                        <Modal visible={showDupModal} animationStyle='slide'>
+                            <Surface style={mtrStyles(mtrTheme).modalContainer}>
+                                <View style={{ marginTop: 30 }}>
+                                    <Text style={mtrTheme.screenTitle}>
+                                        NOTIFICATION
+                                    </Text>
+                                </View>
+                                <View style={mtrStyles(mtrTheme).infoSurface}>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme).introContainer
+                                        }
+                                    >
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme).introText
+                                            }
+                                        >
+                                            You already have affiliation
+                                            requested. If you cannot change to
+                                            affiliation, please contact the
+                                            organization leader to check status.
                                         </Text>
                                     </View>
                                     <View
-                                        style={mtrStyles(mtrTheme).infoSurface}
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .modalButtonContainer
+                                        }
                                     >
-                                        <View
+                                        <TouchableOpacity
                                             style={
                                                 mtrStyles(mtrTheme)
-                                                    .introContainer
+                                                    .modalWarningButton
+                                            }
+                                            onPress={() =>
+                                                setShowDupModal(false)
                                             }
                                         >
                                             <Text
                                                 style={
                                                     mtrStyles(mtrTheme)
-                                                        .introText
+                                                        .modalWarningButtonText
                                                 }
                                             >
-                                                You already have affiliation
-                                                requested. If you cannot change
-                                                to affiliation, please contact
-                                                the organization leader to check
-                                                status.
+                                                OK
                                             </Text>
-                                        </View>
-                                        <View
-                                            style={
-                                                mtrStyles(mtrTheme)
-                                                    .modalButtonContainer
-                                            }
-                                        >
-                                            <TouchableOpacity
-                                                style={
-                                                    mtrStyles(mtrTheme)
-                                                        .modalWarningButton
-                                                }
-                                                onPress={() =>
-                                                    setShowDupModal(false)
-                                                }
-                                            >
-                                                <Text
-                                                    style={
-                                                        mtrStyles(mtrTheme)
-                                                            .modalWarningButtonText
-                                                    }
-                                                >
-                                                    OK
-                                                </Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                        </TouchableOpacity>
                                     </View>
-                                </Surface>
-                            </Modal>
-                            <>
-                                <View style={{ marginTop: 30 }}>
-                                    <Text style={mtrTheme.screenTitle}>
-                                        AFFILIATIONS
-                                    </Text>
                                 </View>
+                            </Surface>
+                        </Modal>
+                        <>
+                            <View style={{ marginTop: 30 }}>
+                                <Text style={mtrTheme.screenTitle}>
+                                    AFFILIATIONS
+                                </Text>
+                            </View>
+                            <View style={mtrStyles(mtrTheme).infoContainer}>
                                 <View style={mtrStyles(mtrTheme).infoSurface}>
                                     <View
                                         style={
@@ -690,7 +601,6 @@ const AffiliationScreen = (props) => {
                                                                 onOpen={
                                                                     onDDOpen
                                                                 }
-                                                                // onChangeValue={onChange}
                                                                 zIndex={3000}
                                                                 zIndexInverse={
                                                                     1000
@@ -837,32 +747,15 @@ const AffiliationScreen = (props) => {
                                             </TouchableOpacity>
                                         </View>
                                     </View>
-                                    <View style={mtrStyles(mtrTheme).infoRow}>
-                                        <TouchableOpacity
-                                            onPress={showCurrentAffiliations}
-                                            // Disable the button based on condition
-                                        >
-                                            <Text
-                                                style={
-                                                    mtrStyles(mtrTheme).infoText
-                                                }
-                                            >
-                                                INFO ({affCount})
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
                                 </View>
-
-                                {/* Use a light status bar on iOS to account for the black space above the modal */}
-                                <StatusBar
-                                    style={
-                                        Platform.OS === 'ios' ? 'light' : 'auto'
-                                    }
-                                />
-                            </>
-                        </KeyboardAvoidingView>
-                    </>
-                </ScrollView>
+                            </View>
+                            {/* Use a light status bar on iOS to account for the black space above the modal */}
+                            <StatusBar
+                                style={Platform.OS === 'ios' ? 'light' : 'auto'}
+                            />
+                        </>
+                    </KeyboardAvoidingView>
+                </>
             </SafeAreaView>
         </>
     );
@@ -885,6 +778,9 @@ const mtrStyles = (mtrTheme) =>
             fontSize: 30,
             fontFamily: 'Roboto-Bold',
             color: mtrTheme.colors.lightText,
+        },
+        infoContainer: {
+            alignItems: 'center',
         },
         infoSurface: {
             // flex: 1,
@@ -1000,9 +896,9 @@ const mtrStyles = (mtrTheme) =>
         },
         introText: {
             fontFamily: 'Roboto-Regular',
-            fontSize: 20,
+            fontSize: 18,
             color: mtrTheme.colors.darkText,
-            paddingVertical: 5,
+            paddingVertical: 2,
             textAlign: 'center',
         },
         pendingContainer: {

@@ -133,11 +133,32 @@ export const meetingsSlice = createSlice({
             })
             .addCase(deleteMeeting.fulfilled, (state, action) => {
                 const meetingIdToDelete = action.payload.id;
-                state.meetings = state.meetings.filter(
+
+                const updatedMeetings = state.meetings.filter(
                     (mtg) => mtg.id !== meetingIdToDelete
                 );
-                state.isLoading = false;
-                return state;
+                const updatedActiveMeetings = state.activeMeetings.filter(
+                    (mtg) => mtg.id !== meetingIdToDelete
+                );
+                updatedActiveMeetings.sort((a, b) => {
+                    // Extract the date portion of mtgCompKey and convert it to a Date object
+                    const dateA = new Date(a.mtgCompKey.split('#')[1]);
+                    const dateB = new Date(b.mtgCompKey.split('#')[1]);
+
+                    // Compare the dates
+                    return dateA - dateB;
+                });
+                const updateHistoricMeetings = state.historicMeetings.filter(
+                    (m) => m.id != meetingIdToDelete
+                );
+
+                return {
+                    ...state,
+                    meetings: updatedMeetings,
+                    activeMeetings: updatedActiveMeetings,
+                    historicMeetings: updateHistoricMeetings,
+                    isLoading: false,
+                };
             })
             .addCase(deleteMeeting.rejected, (state, action) => {
                 printObject(
@@ -263,17 +284,48 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(addMeeting.fulfilled, (state, action) => {
-                printObject(
-                    'MS:277-->addMeeting.FULFILLED:action.payload:\n',
-                    action.payload
+                const newMeeting = action.payload;
+
+                // Create a new array of meetings by spreading the existing state.meetings
+                const updatedMeetings = [...state.meetings, newMeeting];
+
+                // Define today for mtgCompKey...
+                const clientCode = newMeeting.mtgCompKey.slice(0, 3);
+                const currentDate = new Date();
+                const year = currentDate.getFullYear();
+                const month = String(currentDate.getMonth() + 1).padStart(
+                    2,
+                    '0'
+                ); // Adding 1 to month since it's 0-based
+                const day = String(currentDate.getDate()).padStart(2, '0');
+                const key = `${clientCode}#${year}#${month}#${day}`;
+                printObject('MS:302-->key:', key);
+                // Filter meetings based on mtgCompKey condition
+                const activeMeetings = updatedMeetings.filter(
+                    (m) => m.mtgCompKey >= key
                 );
-                state.meetings.push(action.payload);
-                // const updatedMeetings = [...state.meetings, action.payload];
-                // state.meetings = [...updatedMeetings];
-                // printObject('MS:287-->state.meetings:\n', state.meetings);
-                state.isLoading = false;
-                return state;
+                activeMeetings.sort((a, b) => {
+                    return a.mtgCompKey.localeCompare(b.mtgCompKey);
+                });
+                printObject('MS:307-->actives: ', activeMeetings.length);
+
+                const historicMeetings = updatedMeetings.filter(
+                    (m) => m.mtgCompKey < key
+                );
+                historicMeetings.sort((a, b) => {
+                    return a.mtgCompKey.localeCompare(b.mtgCompKey);
+                });
+                printObject('MS:313-->historic: ', historicMeetings.length);
+                // Update state with the new arrays
+                return {
+                    ...state,
+                    meetings: updatedMeetings,
+                    activeMeetings: activeMeetings,
+                    historicMeetings: historicMeetings,
+                    isLoading: false,
+                };
             })
+
             .addCase(addMeeting.rejected, (state, action) => {
                 printObject(
                     'MS:287-->REJECTED:action.payload:\n',
@@ -427,6 +479,32 @@ export const meetingsSlice = createSlice({
                                 return m;
                             }
                         });
+
+                        // how update if in active
+                        const newActiveList = state.activeMeetings.map((m) => {
+                            if (m.id === updatedMeeting.id) {
+                                return updatedMeeting;
+                            } else {
+                                return m;
+                            }
+                        });
+                        // how update if in historic
+                        const newHistoricList = state.historicMeetings.map(
+                            (m) => {
+                                if (m.id === updatedMeeting.id) {
+                                    return updatedMeeting;
+                                } else {
+                                    return m;
+                                }
+                            }
+                        );
+                        return {
+                            ...state,
+                            meetings: newMeetingList,
+                            activeMeetings: newActiveList,
+                            historicMeetings: newHistoricList,
+                            isLoading: false,
+                        };
                         state.meetings = [...newMeetingList];
                     } catch (error) {
                         printObject(

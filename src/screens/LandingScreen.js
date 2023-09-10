@@ -18,6 +18,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Auth } from 'aws-amplify';
 import { loginUser } from '../features/user/userThunks';
 import { loadDefaultGroups } from '../features/groups/groupsThunks';
+import { getAllMeetings } from '../features/meetings/meetingsThunks';
 //      ====================================
 //      FUNCTION START
 const LandingScreen = () => {
@@ -37,14 +38,33 @@ const LandingScreen = () => {
             title: meeter.appName,
         });
     }, [navigation, meeter]);
+    const getMeetings = async () => {
+        try {
+            setIsLoading(true);
+            console.log('LS:49-->id:', userProfile?.activeOrg?.id);
+            console.log('LS:50-->code:', userProfile?.activeOrg?.code);
+            await dispatch(
+                getAllMeetings({
+                    orgId: userProfile.activeOrg.id,
+                    code: userProfile.activeOrg.code,
+                })
+            );
+        } catch (error) {
+            printObject('LS:66-->getAllMeetings catch error:\n', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    useEffect(() => {
+        getMeetings()
+            .then(() => {
+                console.log('LS:61-->meetings loaded');
+            })
+            .catch(() => {
+                console.log('error loading meetings');
+            });
+    }, []);
 
-    useFocusEffect(
-        useCallback(() => {
-            if (userProfile?.activeOrg?.id) {
-                dispatch(loadDefaultGroups({ id: userProfile.activeOrg.id }));
-            }
-        }, [])
-    );
     useEffect(() => {
         // printObject('LS:48-->perms:\n', perms);
         // printObject('LS:44-->userProfile:\n', userProfile);
@@ -69,29 +89,7 @@ const LandingScreen = () => {
             }
         }
     }, [perms]);
-    // useEffect(() => {
-    //     // check if authenticated and no profile
-    //     if (!userProfile?.id) {
-    //         handleInfoRequest().then(() => console.log('systme ready'));
-    //     }
-    //     if (userProfile?.activeOrg?.status !== 'active') {
-    //         // console.log('LS:102-->NOT ACTIVE');
-    //         printObject('LS:68-->userProfile?:', userProfile);
-    //         setAccess(false);
-    //         setTeamApproved(false);
-    //     } else {
-    //         if (
-    //             perms.includes('manage') ||
-    //             perms.includes('meals') ||
-    //             perms.includes('groups') ||
-    //             perms.includes('director') ||
-    //             perms.includes('superuser')
-    //         ) {
-    //             setAccess(true);
-    //             setTeamApproved(true);
-    //         }
-    //     }
-    // }, []);
+
     const handleInfoRequest = async () => {
         // printObject('<LS:109></LS:109>-->systemInfo:\n', systemInfo);
         // printObject('LS:110-->teamInfo:\n', teamInfo);

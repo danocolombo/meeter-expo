@@ -29,23 +29,14 @@ const MealSection = ({ values, setValues }) => {
     }
     return (
         <>
-            <View
-                style={{
-                    borderWidth: 1,
-                    borderColor: 'yellow',
-                    borderRadius: 10,
-                    padding: 5,
-                    marginHorizontal: 10,
-                    marginVertical: 5,
-                }}
-            >
+            <View style={mtrStyles(mtrTheme).container}>
                 <View
                     style={{
                         alignItems: 'center',
                         marginTop: 0,
                     }}
                 >
-                    <Text style={mtrTheme.meetingEditInputLabel}>
+                    <Text style={mtrStyles(mtrTheme).sectionTitleText}>
                         Meal Information
                     </Text>
                 </View>
@@ -54,11 +45,13 @@ const MealSection = ({ values, setValues }) => {
                     <View>
                         <Input
                             label='Menu'
-                            labelStyle={mtrTheme.meetingEditInputLabel}
+                            labelStyle={mtrStyles(mtrTheme).inputLabel}
                             textInputConfig={{
-                                backgroundColor: 'white',
+                                backgroundColor: mtrTheme.colors.lightGrey,
                                 value: values.meal,
                                 paddingHorizontal: 1,
+                                borderColor: mtrTheme.colors.mediumObject,
+                                borderWidth: StyleSheet.hairlineWidth,
                                 fontSize: 24,
                                 color: 'black',
                                 marginHorizontal: 10,
@@ -78,10 +71,12 @@ const MealSection = ({ values, setValues }) => {
                     <View>
                         <Input
                             label='Contact'
-                            labelStyle={mtrTheme.meetingEditInputLabel}
+                            labelStyle={mtrStyles(mtrTheme).inputLabel}
                             textInputConfig={{
-                                backgroundColor: 'white',
+                                backgroundColor: mtrTheme.colors.lightGrey,
                                 value: values.mealContact,
+                                borderColor: mtrTheme.colors.mediumObject,
+                                borderWidth: StyleSheet.hairlineWidth,
                                 paddingHorizontal: 1,
                                 fontSize: 24,
                                 color: 'black',
@@ -98,31 +93,22 @@ const MealSection = ({ values, setValues }) => {
                         />
                     </View>
                 </View>
-                <View style={[styles.row, { paddingTop: 5 }]}>
-                    <View
-                        style={[
-                            mtrTheme.meetingEditNumberLabelContainer,
-                            { minWidth: '50%' },
-                        ]}
-                    >
-                        <Text style={mtrTheme.meetingEditMealNumberText}>
-                            Served:
+                <View style={mtrStyles(mtrTheme).row}>
+                    <View style={mtrStyles(mtrTheme).countLabelContainer}>
+                        <Text style={mtrStyles(mtrTheme).countLabelText}>
+                            People Served:
                         </Text>
                     </View>
-                    <View
-                        style={[
-                            mtrTheme.meetingEditMealNumberContainer,
-                            { minWidth: '50%' },
-                        ]}
-                    >
+                    <View style={mtrStyles(mtrTheme).numberContainer}>
                         <NumberInput
                             numberStyle={{
-                                color: 'white',
-                                borderColor: 'white',
+                                color: mtrTheme.colors.textDark,
+                                borderColor: mtrTheme.colors.mediumObject,
+                                // borderWidth: StyleSheet.hairlineWidth,
                             }}
                             graphicStyle={{
-                                color: 'white',
-                                borderColor: 'white',
+                                color: mtrTheme.colors.textDark,
+                                borderColor: mtrTheme.colors.mediumObject,
                             }}
                             value={values.mealCount}
                             onAction={inputChangedHandler.bind(
@@ -139,4 +125,46 @@ const MealSection = ({ values, setValues }) => {
 
 export default MealSection;
 
-const styles = StyleSheet.create({});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        row: {
+            //something
+        },
+        container: {
+            borderWidth: 1,
+            borderColor: mtrTheme.colors.background,
+            borderRadius: 10,
+            padding: 5,
+            marginHorizontal: 10,
+            marginVertical: 5,
+        },
+        sectionTitleText: {
+            fontFamily: 'Roboto-Regular',
+            color: mtrTheme.colors.textDark,
+            fontSize: 20,
+        },
+        inputLabel: {
+            fontFamily: 'Roboto-Regular',
+            color: mtrTheme.colors.textDark,
+            fontSize: 18,
+            marginLeft: 10,
+        },
+        meetingEditNumberLabelContainer: {
+            //what ever
+        },
+        numberContainer: {
+            //whatever
+        },
+        countLabelContainer: {
+            // flexDirection: 'column',
+            // justifyContent: 'center',
+            paddingTop: 5,
+            alignItems: 'center',
+        },
+        countLabelText: {
+            fontFamily: 'Roboto-Regular',
+            color: mtrTheme.colors.textDark,
+            fontSize: 18,
+            textAlign: 'center',
+        },
+    });

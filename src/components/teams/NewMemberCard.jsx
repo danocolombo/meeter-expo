@@ -17,9 +17,9 @@ function NewMemberCard({ member, action }) {
     }, []);
 
     const acceptHandler = (value) => {
+        // printObject('NMC:20-->member:\n', member);
         const guestRole = member.affiliations.find((r) => r.role === 'new');
         printObject('guestRole:\n', guestRole);
-        return;
         action({
             action: 'ACCEPT',
             userId: member.id,

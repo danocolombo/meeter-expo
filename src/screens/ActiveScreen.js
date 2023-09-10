@@ -29,10 +29,10 @@ const ActiveScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.profile);
-    const meetings = useSelector((state) => state.meetings.meetings);
+    // const meetings = useSelector((state) => state.meetings);
     const [meeting, setMeeting] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [displayMeetings, setDisplayMeetings] = useState([]);
+    const meetings = useSelector((state) => state.meetings.activeMeetings);
     const isFormDisplayedRef = useRef(false); // Track form display
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
     const getCurrentDateInUserTimezone = useCallback(() => {
@@ -49,50 +49,7 @@ const ActiveScreen = () => {
             title: meeter.appName,
         });
     }, [navigation, meeter]);
-    useFocusEffect(
-        useCallback(() => {
-            const fetchData = async () => {
-                setIsLoading(true);
-                try {
-                    dispatch(
-                        getAllMeetings({
-                            orgId: userProfile.activeOrg.id,
-                            code: userProfile.activeOrg.code,
-                        })
-                    )
-                        .then((results) => {
-                            if (results?.payload?.status === '200') {
-                                // getAllMeetings was successful
-                                setDisplayMeetings(
-                                    results.payload.meetings.active
-                                );
-                            }
-                        })
-                        .catch((error) => {
-                            printObject(
-                                'AS:171-->getAllMeetings catch error:\n',
-                                error
-                            );
-                        })
-                        .finally(() => {
-                            setIsLoading(false);
-                        });
-                } catch (error) {
-                    // Handle the error, e.g., display an error message
-                    console.log(
-                        'AS:92-->Error occurred while loading team:',
-                        error
-                    );
-                }
-                setDisplayMeetings(activeMeetings);
-                setIsLoading(false);
-            };
-            fetchData();
-        }, [])
-    );
-    useEffect(() => {
-        setDisplayMeetings(activeMeetings);
-    }, [meetings]);
+
     const handleNewRequest = () => {
         isFormDisplayedRef.current = true;
         navigation.navigate('MeetingNew');
@@ -132,36 +89,14 @@ const ActiveScreen = () => {
             </View>
         );
     }
+    printObject('AS:92-->meetings:\n', meetings);
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const currentDate = getCurrentDateInUserTimezone();
     const userTimezoneDate = new Date(
         currentDate.toLocaleString('en-US', { timeZone: userTimezone })
     );
     const currentTimeInUserTimezone = userTimezoneDate.getTime(); // Get current time in user timezone
-    const activeMeetings = meetings
-        .filter((m) => {
-            // Convert meetingDate to user timezone and compare with current time
-            const meetingDateInUserTimezone = new Date(
-                `${m.meetingDate}T00:00:00${userTimezone === 'UTC' ? 'Z' : ''}`
-            ).getTime();
-            return meetingDateInUserTimezone >= currentTimeInUserTimezone;
-        })
-        .sort((a, b) => {
-            // Sort by meetingDate in ascending order
-            const dateComparison =
-                new Date(a.meetingDate) - new Date(b.meetingDate);
-            if (dateComparison !== 0) {
-                return dateComparison;
-            }
-            // If meetingDate is the same, sort by meetingType in ascending order
-            const typeComparison = a.meetingType.localeCompare(b.meetingType);
-            if (typeComparison !== 0) {
-                return typeComparison;
-            }
-            // If meetingType is the same, sort by title in ascending order
-            return a.title.localeCompare(b.title);
-        });
-    // printObject('AST:136-->userProfile:\n', userProfile);
+    printObject('AS:99-->meetings:\n', meetings);
     return (
         <Surface style={mtrStyles(mtrTheme).surface}>
             <Modal visible={showDeleteConfirmModal} animationStyle='slide'>
@@ -245,7 +180,7 @@ const ActiveScreen = () => {
             </View>
 
             <FlatList
-                data={displayMeetings}
+                data={meetings}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <MeetingListCard

@@ -207,23 +207,32 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
                             )}
                     </View>
                     <View style={{ marginLeft: 'auto' }}>
-                        <Permissions
-                            permissions={permissions}
-                            editFlag={editFlag}
-                            togglePermission={permissionHandler}
-                        />
-                    </View>
-                </View>
-                {editFlag && (
-                    <View>
                         <Pressable
                             onPress={deactivateUser}
                             style={styles.editButton}
                         >
-                            <Text style={styles.editButtonText}>
-                                De-Activate
-                            </Text>
+                            <Text style={styles.editButtonText}>X</Text>
                         </Pressable>
+                    </View>
+                </View>
+                {editFlag && (
+                    <View style={{ alignItems: 'center' }}>
+                        <View
+                            style={{
+                                marginTop: 10,
+                                maxWidth: '90%',
+                                minWidth: '80%',
+                                alignItems: 'center',
+                                borderTopWidth: 1,
+                                borderTopColor: 'grey',
+                            }}
+                        >
+                            <Permissions
+                                permissions={permissions}
+                                editFlag={editFlag}
+                                togglePermission={permissionHandler}
+                            />
+                        </View>
                     </View>
                 )}
             </View>

@@ -114,7 +114,7 @@ const MeetingDetails = (props) => {
             });
         } else {
             navigation.setOptions({
-                title: meeter.appName,
+                title: meeter.appName || 'Meeter',
                 headerBackTitle: 'Back',
             });
         }
@@ -230,7 +230,7 @@ const MeetingDetails = (props) => {
                         </View>
                     )}
                 </View>
-                <View>
+                <View style={{ flex: 1 }}>
                     <View style={mtrStyles(mtrTheme).row1col2}>
                         {meeting?.meetingType !== 'Testimony' && (
                             <View style={mtrStyles(mtrTheme).textColumn}>
@@ -454,7 +454,7 @@ const mtrStyles = (mtrTheme) =>
         screenTitleText: {
             fontSize: 30,
             fontFamily: 'Roboto-Bold',
-            color: mtrTheme.colors.accent,
+            color: mtrTheme.colors.screenTitleTextLight,
         },
 
         activityIndicatorContainer: {
@@ -472,6 +472,7 @@ const mtrStyles = (mtrTheme) =>
             marginHorizontal: 10,
         },
         row1col2: {
+            // flex: 1,
             flexDirection: 'column',
             marginLeft: 5,
         },

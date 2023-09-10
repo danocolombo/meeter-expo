@@ -262,7 +262,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                         )}
                     </View>
                 </TouchableOpacity>
-                <View>
+                <View style={{ flex: 1 }}>
                     <TitleSection values={meeting} setValues={setMeeting} />
                 </View>
             </View>
@@ -299,9 +299,11 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                     label='Notes'
                     labelStyle={mtrStyles(mtrTheme).notesLabelText}
                     textInputConfig={{
-                        backgroundColor: mtrTheme.colors.lightGraphic,
+                        backgroundColor: mtrTheme.colors.lightGrey,
                         paddingHorizontal: 10,
                         fontSize: 20,
+                        borderColor: mtrTheme.colors.mediumObject,
+                        borderWidth: StyleSheet.hairlineWidth,
                         editable: authority,
                         color: mtrTheme.colors.darkText,
                         value: meeting.notes,
@@ -354,11 +356,12 @@ const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
         surface: {
             flex: 1,
+            backgroundColor: mtrTheme.colors.lightGraphic,
         },
         selectorWrapper: {
             flexDirection: 'row',
             borderWidth: 2,
-            borderColor: mtrTheme.colors.lightGraphic,
+            borderColor: mtrTheme.colors.darkGraphic,
             borderRadius: 5,
             marginVertical: 10,
             marginHorizontal: 10,
@@ -382,7 +385,7 @@ const mtrStyles = (mtrTheme) =>
             paddingBottom: 5,
         },
         donationLabel: {
-            color: mtrTheme.colors.lightText,
+            color: mtrTheme.colors.darkText,
             fontSize: 18,
             textAlign: 'right',
             paddingRight: 10,
@@ -390,7 +393,7 @@ const mtrStyles = (mtrTheme) =>
         notesLabelText: {
             fontFamily: 'Roboto-Regular',
             fontSize: 24,
-            color: mtrTheme.colors.lightText,
+            color: mtrTheme.colors.darkText,
             marginLeft: 20,
         },
         currencyInputContainer: {
@@ -402,9 +405,9 @@ const mtrStyles = (mtrTheme) =>
             borderWidth: 1,
             borderRadius: 6,
             width: 100,
-            backgroundColor: mtrTheme.colors.lightGraphic,
+            backgroundColor: mtrTheme.colors.lightGrey,
             marginHorizontal: 0,
-            borderColor: mtrTheme.colors.lightGraphic,
+            borderColor: mtrTheme.colors.darkGraphic,
             paddingHorizontal: 12,
             height: 45,
         },

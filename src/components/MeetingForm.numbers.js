@@ -31,7 +31,7 @@ const NumbersSection = ({ values, setValues }) => {
     if (ViewOnly) {
         return (
             <>
-                <View style={[styles.row, { marginVertical: 4 }]}>
+                <View style={[mtrStyles(mtrTheme).row, { marginVertical: 4 }]}>
                     <View
                         style={[
                             mtrTheme.meetingEditNumberLabelContainer2,
@@ -40,41 +40,49 @@ const NumbersSection = ({ values, setValues }) => {
                             },
                         ]}
                     >
-                        <Text style={mtrTheme.meetingEditMealNumberText}>
+                        <Text
+                            style={
+                                mtrStyles(mtrTheme).meetingEditMealNumberText
+                            }
+                        >
                             Attendance:
                         </Text>
                     </View>
                     <View
                         style={[
-                            mtrTheme.meetingEditMealNumberContainer,
+                            mtrStyles(mtrTheme).meetingEditMealNumberContainer,
                             {
                                 minWidth: '50%',
                             },
                         ]}
                     >
-                        <Text style={styles.numberText}>
+                        <Text style={mtrStyles(mtrTheme).numberText}>
                             {values.attendanceCount}
                         </Text>
                     </View>
                 </View>
-                <View style={[styles.row, { marginVertical: 0 }]}>
+                <View style={[mtrStyles(mtrTheme).row, { marginVertical: 0 }]}>
                     <View
                         style={[
-                            mtrTheme.meetingEditNumberLabelContainer,
+                            mtrStyles(mtrTheme).meetingEditNumberLabelContainer,
                             { minWidth: '50%' },
                         ]}
                     >
-                        <Text style={mtrTheme.meetingEditMealNumberText}>
+                        <Text
+                            style={
+                                mtrStyles(mtrTheme).meetingEditMealNumberText
+                            }
+                        >
                             Newcomers:
                         </Text>
                     </View>
                     <View
                         style={[
-                            mtrTheme.meetingEditMealNumberContainer,
+                            mtrStyles(mtrTheme).meetingEditMealNumberContainer,
                             { minWidth: '50%' },
                         ]}
                     >
-                        <Text style={styles.numberText}>
+                        <Text style={mtrStyles(mtrTheme).numberText}>
                             {values.newcomersCount}
                         </Text>
                     </View>
@@ -84,35 +92,21 @@ const NumbersSection = ({ values, setValues }) => {
     }
     return (
         <>
-            <View style={[styles.row, { marginVertical: 5 }]}>
-                <View
-                    style={[
-                        mtrTheme.meetingEditNumberLabelContainer2,
-                        {
-                            minWidth: '50%',
-                        },
-                    ]}
-                >
-                    <Text style={mtrTheme.meetingEditMealNumberText}>
+            <View style={[mtrStyles(mtrTheme).row, { marginVertical: 5 }]}>
+                <View style={mtrStyles(mtrTheme).labelContainer}>
+                    <Text style={mtrStyles(mtrTheme).labelText}>
                         Attendance:
                     </Text>
                 </View>
-                <View
-                    style={[
-                        mtrTheme.meetingEditMealNumberContainer,
-                        {
-                            minWidth: '50%',
-                        },
-                    ]}
-                >
+                <View style={mtrStyles(mtrTheme).numberContainer}>
                     <NumberInput
                         numberStyle={{
-                            color: 'white',
-                            borderColor: 'white',
+                            color: mtrTheme.colors.textDark,
+                            borderColor: mtrTheme.colors.mediumObject,
                         }}
                         graphicStyle={{
-                            color: 'white',
-                            borderColor: 'white',
+                            color: mtrTheme.colors.textDark,
+                            borderColor: mtrTheme.colors.mediumObject,
                         }}
                         value={values.attendanceCount}
                         onAction={inputChangedHandler.bind(
@@ -122,31 +116,21 @@ const NumbersSection = ({ values, setValues }) => {
                     />
                 </View>
             </View>
-            <View style={[styles.row, { marginTop: 0, marginBottom: 5 }]}>
-                <View
-                    style={[
-                        mtrTheme.meetingEditNumberLabelContainer,
-                        { minWidth: '50%' },
-                    ]}
-                >
-                    <Text style={mtrTheme.meetingEditMealNumberText}>
+            <View style={mtrStyles(mtrTheme).row}>
+                <View style={mtrStyles(mtrTheme).labelContainer}>
+                    <Text style={mtrStyles(mtrTheme).labelText}>
                         Newcomers:
                     </Text>
                 </View>
-                <View
-                    style={[
-                        mtrTheme.meetingEditMealNumberContainer,
-                        { minWidth: '50%' },
-                    ]}
-                >
+                <View style={mtrStyles(mtrTheme).numberContainer}>
                     <NumberInput
                         numberStyle={{
-                            color: 'white',
-                            borderColor: 'white',
+                            color: mtrTheme.colors.textDark,
+                            borderColor: mtrTheme.colors.mediumObject,
                         }}
                         graphicStyle={{
-                            color: 'white',
-                            borderColor: 'white',
+                            color: mtrTheme.colors.textDark,
+                            borderColor: mtrTheme.colors.mediumObject,
                         }}
                         value={values.newcomersCount}
                         onAction={inputChangedHandler.bind(
@@ -162,19 +146,45 @@ const NumbersSection = ({ values, setValues }) => {
 
 export default NumbersSection;
 
-const styles = StyleSheet.create({
-    row: {
-        flexDirection: 'row',
-
-        marginHorizontal: 50,
-        justifyContent: 'center',
-        alignContent: 'center',
-        alignItems: 'center',
-        marginHorizontal: 5,
-    },
-    numberText: {
-        color: 'white',
-        fontSize: 18,
-        paddingLeft: 20,
-    },
-});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        row: {
+            flexDirection: 'row',
+            marginHorizontal: 50,
+            justifyContent: 'center',
+            alignContent: 'center',
+            alignItems: 'center',
+            marginHorizontal: 5,
+        },
+        numberText: {
+            color: mtrTheme.colors.darkText,
+            fontSize: 18,
+            paddingLeft: 20,
+        },
+        meetingEditMealNumberText: {
+            fontFamily: 'Roboto-Regular',
+            color: mtrTheme.colors.textDark,
+            fontSize: 20,
+            textAlign: 'right',
+        },
+        meetingEditMealNumberContainer: {
+            // width: '55%',
+            // marginRight: 10,
+            paddingRight: 'auto',
+        },
+        meetingEditNumberLabelContainer: {
+            width: '45%',
+            paddingLeft: 'auto',
+        },
+        labelContainer: {
+            //whatever
+        },
+        labelText: {
+            //whatever
+            color: mtrTheme.colors.darkText,
+            fontSize: 18,
+        },
+        numberContainer: {
+            //whatever
+        },
+    });

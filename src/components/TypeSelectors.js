@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import TypeSelector from './ui/TypeSelector';
 const TypeSelectors = ({ pick, setPick }) => {
+    const mtrTheme = useTheme();
     const bUnselected = {
         paddingHorizontal: 8,
         // paddingVertical: 6,
         borderRadius: 4,
-        backgroundColor: 'orange',
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: mtrTheme.colors.darkObject,
+        backgroundColor: mtrTheme.colors.accent,
         alignSelf: 'flex-start',
         marginHorizontal: '1%',
         // marginBottom: 6,
@@ -19,12 +23,9 @@ const TypeSelectors = ({ pick, setPick }) => {
         color: 'blue',
         textAlign: 'center',
     };
-    const bSelected = {
-        backgroundColor: 'blue',
-        borderWidth: 0,
-    };
+
     const tSelected = {
-        color: 'white',
+        color: mtrTheme.colors.lightText,
     };
     return (
         <>

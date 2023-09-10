@@ -1,6 +1,6 @@
 {
   "name": "meeter",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "npx expo start -- -c",
@@ -61,6 +61,7 @@
     "react-dom": "18.1.0",
     "react-hook-form": "^7.39.5",
     "react-native": "0.70.8",
+    "react-native-collapsible": "^1.6.1",
     "react-native-currency-input": "^1.1.0",
     "react-native-dotenv": "^3.4.2",
     "react-native-dropdown-picker": "^5.4.6",

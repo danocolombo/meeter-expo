@@ -18,6 +18,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Auth } from 'aws-amplify';
 import { loginUser } from '../features/user/userThunks';
 import { loadDefaultGroups } from '../features/groups/groupsThunks';
+import { getAllMeetings } from '../features/meetings/meetingsThunks';
 //      ====================================
 //      FUNCTION START
 const LandingScreen = () => {
@@ -25,6 +26,7 @@ const LandingScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const [teamApproved, setTeamApproved] = useState(false);
+    const [guest, setGuest] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [access, setAccess] = useState(false);
     const userProfile = useSelector((state) => state.user.profile);
@@ -36,26 +38,36 @@ const LandingScreen = () => {
             title: meeter.appName,
         });
     }, [navigation, meeter]);
-
-    useFocusEffect(
-        useCallback(() => {
-            if (userProfile?.activeOrg?.id) {
-                dispatch(loadDefaultGroups({ id: userProfile.activeOrg.id }));
-            }
-            // if (
-            //     perms.includes('manage') ||
-            //     perms.includes('meals') ||
-            //     perms.includes('groups') ||
-            //     perms.includes('director') ||
-            //     perms.includes('superuser')
-            // ) {
-            //     setAccess(true);
-            // } else {
-            //     setAccess(false);
-            // }
-        }, [])
-    );
+    const getMeetings = async () => {
+        try {
+            setIsLoading(true);
+            console.log('LS:49-->id:', userProfile?.activeOrg?.id);
+            console.log('LS:50-->code:', userProfile?.activeOrg?.code);
+            await dispatch(
+                getAllMeetings({
+                    orgId: userProfile.activeOrg.id,
+                    code: userProfile.activeOrg.code,
+                })
+            );
+        } catch (error) {
+            printObject('LS:66-->getAllMeetings catch error:\n', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     useEffect(() => {
+        getMeetings()
+            .then(() => {
+                console.log('LS:61-->meetings loaded');
+            })
+            .catch(() => {
+                console.log('error loading meetings');
+            });
+    }, []);
+
+    useEffect(() => {
+        // printObject('LS:48-->perms:\n', perms);
+        // printObject('LS:44-->userProfile:\n', userProfile);
         if (
             perms.includes('manage') ||
             perms.includes('meals') ||
@@ -63,33 +75,21 @@ const LandingScreen = () => {
             perms.includes('director') ||
             perms.includes('superuser')
         ) {
-            setAccess(true);
-        } else {
-            setAccess(false);
-        }
-    }, [perms]);
-    useEffect(() => {
-        // check if authenticated and no profile
-        if (!userProfile?.id) {
-            handleInfoRequest().then(() => console.log('systme ready'));
-        }
-        if (userProfile?.activeOrg?.status !== 'active') {
-            // console.log('LS:102-->NOT ACTIVE');
-            setAccess(false);
-            setTeamApproved(false);
+            setTeamApproved(true);
         } else {
             if (
-                perms.includes('manage') ||
-                perms.includes('meals') ||
-                perms.includes('groups') ||
-                perms.includes('director') ||
-                perms.includes('superuser')
+                userProfile?.activeOrg?.code === 'mtr' &&
+                userProfile?.activeOrg.role === 'guest' &&
+                userProfile?.activeOrg.status === 'active'
             ) {
-                setAccess(true);
                 setTeamApproved(true);
+                setGuest(true);
+            } else {
+                setTeamApproved(false);
             }
         }
-    }, []);
+    }, [perms]);
+
     const handleInfoRequest = async () => {
         // printObject('<LS:109></LS:109>-->systemInfo:\n', systemInfo);
         // printObject('LS:110-->teamInfo:\n', teamInfo);
@@ -144,7 +144,7 @@ const LandingScreen = () => {
                         )}
                     </>
                 )}
-                {!access && (
+                {!teamApproved && (
                     <>
                         <View style={mtrStyles(mtrTheme).accessContainer}>
                             <Text style={mtrStyles(mtrTheme).accessText}>
@@ -152,6 +152,17 @@ const LandingScreen = () => {
                                 default affiliation. Please go to your profile
                                 and change your affiliation. Or contact this
                                 affiliation leader.
+                            </Text>
+                        </View>
+                    </>
+                )}
+                {guest && (
+                    <>
+                        <View style={mtrStyles(mtrTheme).accessContainer}>
+                            <Text style={mtrStyles(mtrTheme).accessText}>
+                                If you have a request/access code for an
+                                organization, go to your profile and enter the
+                                code.
                             </Text>
                         </View>
                     </>

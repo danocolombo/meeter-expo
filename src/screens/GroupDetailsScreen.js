@@ -325,7 +325,7 @@ const mtrStyles = (mtrTheme) =>
         screenTitleText: {
             fontSize: 30,
             fontFamily: 'Roboto-Bold',
-            color: mtrTheme.colors.accent,
+            color: mtrTheme.colors.screenTitleTextLight,
         },
         groupDetailsContainer: {
             backgroundColor: mtrTheme.colors.backgroundLight,

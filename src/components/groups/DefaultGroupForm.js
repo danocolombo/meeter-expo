@@ -189,7 +189,7 @@ const GroupForm = ({ group, handleUpdate, handleCancel }) => {
                                 <View>
                                     <CustomButton
                                         text='SAVE'
-                                        bgColor={mtrTheme.colors.success}
+                                        bgColor={mtrTheme.colors.mediumGreen}
                                         fgColor={mtrTheme.colors.lightText}
                                         type='STANDARD'
                                         enabled={

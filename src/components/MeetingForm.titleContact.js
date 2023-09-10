@@ -147,9 +147,11 @@ const TitleSection = ({ values, setValues }) => {
                                 mtrStyles(mtrTheme).meetingEditInputLabel
                             }
                             textInputConfig={{
-                                backgroundColor: mtrTheme.colors.lightGraphic,
+                                backgroundColor: mtrTheme.colors.lightGrey,
                                 value: values.title,
                                 paddingHorizontal: 1,
+                                borderColor: mtrTheme.colors.mediumObject,
+                                borderWidth: StyleSheet.hairlineWidth,
                                 fontSize: 24,
                                 color: mtrTheme.colors.darkText,
                                 editable:
@@ -173,8 +175,10 @@ const TitleSection = ({ values, setValues }) => {
                                 mtrStyles(mtrTheme).meetingEditInputLabel
                             }
                             textInputConfig={{
-                                backgroundColor: mtrTheme.colors.lightGraphic,
+                                backgroundColor: mtrTheme.colors.lightGrey,
                                 value: values.supportContact,
+                                borderColor: mtrTheme.colors.mediumObject,
+                                borderWidth: StyleSheet.hairlineWidth,
                                 paddingHorizontal: 1,
                                 fontSize: 24,
                                 color: mtrTheme.colors.darkText,
@@ -199,9 +203,11 @@ const TitleSection = ({ values, setValues }) => {
                                 mtrStyles(mtrTheme).meetingEditInputLabel
                             }
                             textInputConfig={{
-                                backgroundColor: mtrTheme.colors.lightGraphic,
+                                backgroundColor: mtrTheme.colors.lightGrey,
                                 value: values.title,
                                 paddingHorizontal: 1,
+                                borderColor: mtrTheme.colors.mediumObject,
+                                borderWidth: StyleSheet.hairlineWidth,
                                 fontSize: 24,
                                 editable:
                                     userProfile.activeOrg.role === 'manage'
@@ -230,8 +236,10 @@ const TitleSection = ({ values, setValues }) => {
                                 mtrStyles(mtrTheme).meetingEditInputLabel
                             }
                             textInputConfig={{
-                                backgroundColor: mtrTheme.colors.lightGraphic,
+                                backgroundColor: mtrTheme.colors.lightGrey,
                                 value: values.title,
+                                borderColor: mtrTheme.colors.mediumObject,
+                                borderWidth: StyleSheet.hairlineWidth,
                                 paddingHorizontal: 1,
                                 fontSize: 24,
                                 color: mtrTheme.colors.darkText,
@@ -252,8 +260,10 @@ const TitleSection = ({ values, setValues }) => {
                                 mtrStyles(mtrTheme).meetingEditInputLabel
                             }
                             textInputConfig={{
-                                backgroundColor: mtrTheme.colors.lightGraphic,
+                                backgroundColor: mtrTheme.colors.lightGrey,
                                 value: values.supportContact,
+                                borderColor: mtrTheme.colors.mediumObject,
+                                borderWidth: StyleSheet.hairlineWidth,
                                 paddingHorizontal: 1,
                                 fontSize: 24,
                                 color: mtrTheme.colors.darkText,
@@ -274,8 +284,10 @@ const TitleSection = ({ values, setValues }) => {
                     label='Music/Worship'
                     labelStyle={mtrStyles(mtrTheme).meetingEditInputLabel}
                     textInputConfig={{
-                        backgroundColor: mtrTheme.colors.lightText,
+                        backgroundColor: mtrTheme.colors.lightGrey,
                         value: values.worship,
+                        borderColor: mtrTheme.colors.mediumObject,
+                        borderWidth: StyleSheet.hairlineWidth,
                         paddingHorizontal: 1,
                         fontSize: 24,
                         color: mtrTheme.colors.darkText,
@@ -296,7 +308,7 @@ export default TitleSection;
 const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
         meetingEditInputLabel: {
-            color: mtrTheme.colors.lightText,
+            color: mtrTheme.colors.darkText,
             fontFamily: 'Roboto-Regular',
             paddingLeft: 10,
             fontSize: 20,
@@ -308,12 +320,12 @@ const mtrStyles = (mtrTheme) =>
             paddingLeft: 5,
         },
         title: {
-            color: 'white',
+            color: mtrTheme.colors.lightGrey,
             fontSize: 24,
             paddingVertical: 3,
         },
         subTitle: {
-            color: 'white',
+            color: mtrTheme.colors.lightGrey,
             fontSize: 20,
             paddingVertical: 3,
         },

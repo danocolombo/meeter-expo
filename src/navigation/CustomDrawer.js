@@ -92,7 +92,7 @@ const CustomDrawer = (props) => {
         //     .then((e) => {
         //         printObject('CD:48-->sysSignOut failure:', e);
         //     });
-        Auth.signOut();
+        // Auth.signOut();
         //} catch (error) {
         //    printObject('signUserOut error:', error);
         //}

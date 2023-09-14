@@ -28,6 +28,7 @@ import { printObject } from '../utils/helpers';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { MEETER_DEFAULTS } from '../constants/meeter';
 import { ScrollView } from 'react-native-gesture-handler';
+import Toast from 'react-native-root-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     joinOrganization,
@@ -50,6 +51,7 @@ const AffiliationScreen = (props) => {
     const [perms, setPerms] = useState(null);
     const joinOrgError = useSelector((state) => state.user.error);
     const meeter = useSelector((state) => state.system);
+    const [showChangeToast, setChangeToast] = useState(true);
     const [showChangeModal, setShowChangeModal] = useState(false);
     const [showDupModal, setShowDupModal] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
@@ -154,17 +156,102 @@ const AffiliationScreen = (props) => {
                 }
                 getAffList();
                 // affCodeInputRef.current.focus();
+                //set Toast timer...
+                const showTimeout = setTimeout(() => {
+                    setChangeToast(true);
+                }, 1000);
+
+                // Hide the toast after 5 seconds
+                const hideTimeout = setTimeout(() => {
+                    setChangeToast(false);
+                }, 1000);
+
+                // Clear the timeouts when the component unmounts
+                return () => {
+                    clearTimeout(showTimeout);
+                    clearTimeout(hideTimeout);
+                };
             } catch (error) {
                 console.log('HM:51-->unexpected error:\n', error);
             }
         }, [])
     );
 
-    const handleSaveChange = () => {
+    const handleSaveDefaultOrg = () => {
         console.log('ddValue:', ddValue);
-        dispatch
-            .changeDefaultOrg({ profile: userProfile, orgId: ddValue })
-            .then((changeResults) => {});
+        try {
+            setIsUpdating(true);
+            //create new activeOrg container
+            printObject('userProfile:\n', userProfile);
+            const activeOrg = userProfile.affiliations.items.find((a) => {
+                return a.organization.id === ddValue;
+            });
+            printObject('AS:170-->activeOrg:\n', activeOrg);
+            const newActiveOrg = {
+                id: ddValue,
+                code: activeOrg.organization.code,
+                name: activeOrg.organization.name,
+                heroMessage: activeOrg.organization.heroMessage,
+                role: 'guest',
+                status: 'active',
+            };
+            dispatch(
+                changeDefaultOrg({
+                    profile: userProfile,
+                    newActiveOrg: newActiveOrg,
+                })
+            ).then((results) => {
+                console.log(
+                    'userProfile?.activeOrg.id:',
+                    userProfile?.activeOrg.id
+                );
+                console.log(
+                    'userProfile?.activeOrg.code:',
+                    userProfile?.activeOrg.code
+                );
+                console.log(
+                    'results?.payload?.userProfile?.activeOrg.id:',
+                    results?.payload?.userProfile?.activeOrg.id
+                );
+                console.log(
+                    'results?.payload?.userProfile?.activeOrg.code:',
+                    results?.payload?.userProfile?.activeOrg.code
+                );
+                dispatch(
+                    getAllMeetings(
+                        results?.payload?.userProfile?.activeOrg.id,
+                        results?.payload?.userProfile?.activeOrg.code
+                    )
+                )
+                    .then((results) => {
+                        printObject(
+                            'AS:226-->getAllMeetings results\n',
+                            results
+                        );
+                        let toast = Toast.show('Affiliation changed', {
+                            duration: 2000,
+                        });
+                        setIsUpdating(false);
+                        return;
+                    })
+                    .catch((e) => {
+                        console.log('results error:\n', e);
+                    });
+            });
+            setIsUpdating(false);
+            return;
+        } catch (error) {
+            printObject(
+                'AS:171-->catch error trying to changeDefaultOrg',
+                error
+            );
+            setIsUpdating(false);
+            return;
+        }
+    };
+    const returnUser = () => {
+        // setShowChangeModal(false);
+        navigate.goBack();
     };
     const handleCodeChange = (text) => {
         // Regular expression that matches only alphabetical characters
@@ -238,63 +325,10 @@ const AffiliationScreen = (props) => {
             });
     };
 
-    const handleSaveClick = () => {
-        //* update the users default id
-        try {
-            const updateInfo = {
-                id: userProfile.id,
-                organizationDefaultUsersId: affiliationSelected,
-            };
-            API.graphql({
-                query: mutations.updateUser,
-                variables: { input: updateInfo },
-            })
-                .then((results) => {
-                    printObject('affiliation changed:\n', results);
-                    setShowChangeModal(true);
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.error(error);
-                });
-        } catch (error) {
-            console.log('AS:114-->unexpected error:\n', error);
-        }
-        setIsUpdating(false);
-    };
     const onDDOpen = useCallback(() => {
         // do whatever you want when it opens, maybe close other things?
     }, []);
 
-    const handleSaveDefaultOrg = async () => {
-        //* -----------------------------------------
-        //* user has selected a new default org. save
-        //* profile and have them logout.
-        //* -----------------------------------------
-        dispatch(
-            changeDefaultOrg({ profile: userProfile, orgId: ddValue })
-        ).then((changeResults) => {
-            //      changeDefaultOrg complete
-            setShowChangeModal(true);
-        });
-    };
-
-    const goToLogoutScreen = () => {
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'Logout' }],
-        });
-    };
-    const handleOrgChangeLogout = () => {
-        setLogout(true);
-        setShowChangeModal(false);
-        //now go logout
-    };
-    useEffect(() => {
-        if (logout) {
-            goToLogoutScreen();
-        }
-    }, [logout]);
     if (isUpdating) {
         return (
             <View
@@ -334,7 +368,7 @@ const AffiliationScreen = (props) => {
                                             mtrStyles(mtrTheme).screenTitleText
                                         }
                                     >
-                                        CONFIRMATION
+                                        SUCCESS
                                     </Text>
                                 </View>
                                 <View
@@ -354,18 +388,7 @@ const AffiliationScreen = (props) => {
                                                     .confirmationText
                                             }
                                         >
-                                            The affiliation change has been
-                                            made.
-                                        </Text>
-                                        <Text
-                                            style={
-                                                mtrStyles(mtrTheme)
-                                                    .confirmationText
-                                            }
-                                        >
-                                            You will now be logged out and when
-                                            you log in again you will be in that
-                                            organization.
+                                            The affiliation is now changed.
                                         </Text>
                                     </View>
                                     <View
@@ -378,9 +401,7 @@ const AffiliationScreen = (props) => {
                                             style={
                                                 mtrStyles(mtrTheme).modalButton
                                             }
-                                            onPress={() =>
-                                                handleOrgChangeLogout()
-                                            }
+                                            onPress={() => returnUser()}
                                         >
                                             <Text
                                                 style={
@@ -448,6 +469,17 @@ const AffiliationScreen = (props) => {
                             </Surface>
                         </Modal>
                         <>
+                            {/* <View>
+                                <Toast
+                                    visible={showChangeToast}
+                                    position={50}
+                                    shadow={false}
+                                    animation={false}
+                                    hideOnPress={true}
+                                >
+                                    <Text>Affiliation Changed</Text>
+                                </Toast>
+                            </View> */}
                             <View style={{ marginTop: 30 }}>
                                 <Text style={mtrTheme.screenTitle}>
                                     AFFILIATIONS
@@ -618,8 +650,8 @@ const AffiliationScreen = (props) => {
                                                         }}
                                                     >
                                                         <TouchableOpacity
-                                                            onPress={
-                                                                handleSaveDefaultOrg
+                                                            onPress={() =>
+                                                                handleSaveDefaultOrg()
                                                             }
                                                             style={[
                                                                 mtrStyles(
@@ -654,7 +686,7 @@ const AffiliationScreen = (props) => {
                                             >
                                                 <TouchableOpacity
                                                     onPress={() =>
-                                                        handleSaveClick()
+                                                        handleSaveChange()
                                                     }
                                                     style={
                                                         mtrStyles(mtrTheme)

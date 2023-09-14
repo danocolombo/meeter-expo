@@ -35,6 +35,7 @@ export const userSlice = createSlice({
         logout: (state) => {
             state.profile = {};
             state.perms = [];
+            return state;
         },
     },
     extraReducers: (builder) => {
@@ -59,16 +60,15 @@ export const userSlice = createSlice({
             })
             .addCase(loginUser.fulfilled, (state, action) => {
                 // Set a default state update for testing
-                // printObject(
-                //     'US:58-->loginUser.fulfilled_action.payload:\n',
-                //     action.payload
-                // );
-                state.profile = action.payload.profile;
-                state.perms = action.payload.perms;
-                state.isLoading = false;
-                return state;
-                // Log the payload data received
-                // console.log('Payload Data:', action.payload);
+
+                if (action?.payload?.profile?.id) {
+                    return {
+                        ...state,
+                        profile: action.payload.profile,
+                        perms: action.payload.perms,
+                        isLoading: false,
+                    };
+                }
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.isLoading = false;
@@ -131,9 +131,19 @@ export const userSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(changeDefaultOrg.fulfilled, (state, action) => {
-                state.profile = action.payload.userProfile;
-                state.perms = action.payload.perms;
-                state.isLoading = false;
+                printObject('US:136-->action.payload:\n', action.payload);
+                const profile = action.payload.userProfile;
+                const perms = action.payload.perms;
+                // return {
+                //     ...state,
+                //     isLoading: false,
+                // };
+                return {
+                    ...state,
+                    profile: profile,
+                    perms: perms,
+                    isLoading: false,
+                };
             })
             .addCase(changeDefaultOrg.rejected, (state, action) => {
                 state.isLoading = false;

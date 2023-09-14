@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { View, Text } from 'react-native';
 import { Auth } from 'aws-amplify';
 import { logout as groupsLogout } from '../../features/groups/groupsSlice';
-import { logout as userLogout } from '../../features/usersSlice';
+import { logout as userLogout } from '../../features/user/userSlice';
 import { logout as meetingsLogout } from '../../features/meetings/meetingsSlice';
 import { logout as teamLogout } from '../../features/team/teamSlice';
 import { logout as systemLogout } from '../../features/system/systemSlice';

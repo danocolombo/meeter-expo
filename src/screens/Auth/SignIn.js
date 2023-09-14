@@ -8,7 +8,7 @@ import {
     Alert,
 } from 'react-native';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Logo from '../../../assets/M-square.png';
 import CustomInput from '../../components/ui/CustomInput';
 import CustomButton from '../../components/ui/Auth/CustomButton';
@@ -22,6 +22,8 @@ import {
     defineAndSaveUserProfile,
     loginUser,
 } from '../../features/user/userThunks';
+import { logout } from '../../features/user/userSlice';
+import { getAllMeetings } from '../../features/meetings/meetingsThunks';
 //   FUNCTION START
 const SignInScreen = () => {
     const mtrTheme = useTheme();
@@ -35,7 +37,9 @@ const SignInScreen = () => {
         formState: { errors },
         watch,
     } = useForm();
-
+    useEffect(() => {
+        dispatch(logout());
+    }, []);
     console.log('Errors', errors);
     // need this to pass the username on to forgot password
     const user = watch('username');
@@ -48,7 +52,22 @@ const SignInScreen = () => {
         console.log('loading true');
         try {
             const response = await Auth.signIn(data.username, data.password);
-            dispatch(loginUser(response));
+            const signInData = {
+                signInUserSession: response.signInUserSession,
+            };
+
+            // Dispatch the loginUser action and get the promise
+            dispatch(loginUser(signInData)).then((loginResults) => {
+                // printObject('SI:60-->loginResults:\n', loginResults);
+                dispatch(
+                    getAllMeetings({
+                        orgId: loginResults.payload.profile.activeOrg.id,
+                        code: loginResults.payload.profile.activeOrg.code,
+                    })
+                ).then((results) => {
+                    printObject('SI:68-->getAllMeetings response:\n', results);
+                });
+            });
             console.log('done with loginUser dispatch');
         } catch (error) {
             switch (error.code) {
@@ -65,9 +84,9 @@ const SignInScreen = () => {
                     console.warn(error.message);
                     break;
             }
+        } finally {
+            setLoading(false); // Set loading to false after the try/catch block
         }
-
-        setLoading(false);
     };
 
     const onSignUpPressed = () => {

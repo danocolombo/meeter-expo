@@ -19,10 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Surface, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
 import CustomButton from '../components/CustomButton';
-import {
-    getAllMeetings,
-    deleteMeeting,
-} from '../features/meetings/meetingsThunks';
+import { deleteMeeting } from '../features/meetings/meetingsThunks';
 import { dateDashMadePretty, printObject } from '../utils/helpers';
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
@@ -35,14 +32,7 @@ const ActiveScreen = () => {
     const meetings = useSelector((state) => state.meetings.activeMeetings);
     const isFormDisplayedRef = useRef(false); // Track form display
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
-    const getCurrentDateInUserTimezone = useCallback(() => {
-        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const currentDate = new Date();
-        const userTimezoneDate = new Date(
-            currentDate.toLocaleString('en-US', { timeZone: userTimezone })
-        );
-        return userTimezoneDate.toISOString().split('T')[0];
-    }, []);
+
     const meeter = useSelector((state) => state.system.meeter);
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -89,14 +79,7 @@ const ActiveScreen = () => {
             </View>
         );
     }
-    printObject('AS:92-->meetings:\n', meetings);
-    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const currentDate = getCurrentDateInUserTimezone();
-    const userTimezoneDate = new Date(
-        currentDate.toLocaleString('en-US', { timeZone: userTimezone })
-    );
-    const currentTimeInUserTimezone = userTimezoneDate.getTime(); // Get current time in user timezone
-    printObject('AS:99-->meetings:\n', meetings);
+
     return (
         <Surface style={mtrStyles(mtrTheme).surface}>
             <Modal visible={showDeleteConfirmModal} animationStyle='slide'>

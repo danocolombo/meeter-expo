@@ -20,7 +20,6 @@ export const loginUser = createAsyncThunk(
                 query: queries.usersBySub,
                 variables: { sub: sub },
             });
-
             if (gqlProfileData?.data?.usersBySub?.items[0]?.id) {
                 // console.log('IF---- where we belong');
                 const gqlProfile = gqlProfileData.data.usersBySub.items[0];
@@ -61,7 +60,6 @@ export const loginUser = createAsyncThunk(
                 }
                 const newProfile = { ...gqlProfile, activeOrg: activeOrg };
                 const results = { profile: newProfile, perms: perms };
-                // printObject('UT:64-->profile&perms:', results);
 
                 return results;
             } else {
@@ -219,12 +217,10 @@ export const joinOrganization = createAsyncThunk(
         try {
             //      userProfile required
             if (!inputs?.userProfile?.id) {
-                console.log('UT:220-->userProfile is required');
                 throw new Error('01: userProfile required');
             }
             //      newCode required
             if (!inputs?.newCode) {
-                console.log('UT:224-->newCode is required');
                 throw new Error('02: code required');
             }
 
@@ -252,7 +248,6 @@ export const joinOrganization = createAsyncThunk(
             );
             let requestedOrg = {};
             if (orgResponse.data.listOrganizations.items.length > 0) {
-                console.log('UT:254-->newCode is valid');
                 requestedOrg = orgResponse.data.listOrganizations.items[0];
             } else {
                 printObject('UT:258-->newCode is not valid:', inputs.newCode);
@@ -309,7 +304,6 @@ export const joinOrganization = createAsyncThunk(
             printObject('UT:302-->updatedUserProfile:\n', updatedUserProfile);
             return { userProfile: updatedUserProfile };
         } catch (error) {
-            console.log('UT:286:thunk catch hit');
             printObject('UT:297-->error:\n', error);
             if (error.message.startsWith('01:')) {
                 throw error; // Re-throw the specific error with code '01'
@@ -329,7 +323,6 @@ export const joinOrganization = createAsyncThunk(
 export const errorTest = createAsyncThunk(
     'user/errorTest',
     async (inputs, thunkAPI) => {
-        console.log('UT:333-->errorTest start');
         // Simulating that code is duplicate
         const throwError = true;
         if (throwError) {
@@ -353,7 +346,6 @@ export const errorTest = createAsyncThunk(
         }
     }
 );
-
 export const saveUserProfile = createAsyncThunk(
     'user/saveUserProfile',
     async (inputs, thunkAPI) => {
@@ -435,7 +427,6 @@ export const defineAndSaveUserProfile = createAsyncThunk(
                 // printObject('AC:68-->activeOrg:\n', activeOrg);
                 // updatedProfile = { ...gqlProfile };
             } else {
-                console.log('UT:383-->ELSE---HELP');
                 //todo: what does it look like when new user and no profile?
                 //todo------------------------------------------------------
                 activeOrg = {
@@ -527,8 +518,8 @@ export const changeDefaultOrg = createAsyncThunk(
     'user/changeDefaultOrg',
     async (inputs, thunkAPI) => {
         const theProfile = inputs.profile;
-        const theOrg = inputs.orgId;
-
+        const newActiveOrg = inputs.newActiveOrg;
+        printObject('UT:522--inputs:\n', inputs);
         try {
             // Await the GraphQL mutation result
             const updateResults = await API.graphql({
@@ -536,16 +527,21 @@ export const changeDefaultOrg = createAsyncThunk(
                 variables: {
                     input: {
                         id: theProfile.id,
-                        organizationDefaultUsersId: theOrg,
+                        organizationDefaultUsersId: newActiveOrg.id,
                         // Add any other fields you want to update here
                     },
                 },
             });
 
-            const updatedProfile = updateResults.data.updateUser;
+            const updatedProfile = {
+                ...updateResults.data.updateUser,
+                activeOrg: newActiveOrg,
+            };
+            // add activeOrg to profile
+
             let perms = [];
             updatedProfile.affiliations.items.forEach((aff) => {
-                if (aff.organization.id === theOrg) {
+                if (aff.organization.id === newActiveOrg.id) {
                     if (aff.status === 'active') {
                         perms.push(aff.role);
                     }
@@ -568,7 +564,6 @@ export const changeDefaultOrg = createAsyncThunk(
         }
     }
 );
-
 export const updatePermissions = createAsyncThunk(
     'user/updatePermissions',
     async (inputs, thunkAPI) => {
@@ -606,8 +601,6 @@ export const getUserProfile = createAsyncThunk(
         return profile;
     }
 );
-
-// Thunk to get the current perms from the state
 export const getPerms = createAsyncThunk(
     'user/getPerms',
     async (_, { getState }) => {

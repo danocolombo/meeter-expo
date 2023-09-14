@@ -27,47 +27,68 @@ const LandingScreen = () => {
     const dispatch = useDispatch();
     const [teamApproved, setTeamApproved] = useState(false);
     const [guest, setGuest] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const isLoading = useSelector((state) => state.user.isLoading);
     const [access, setAccess] = useState(false);
     const userProfile = useSelector((state) => state.user.profile);
     const meeting = useSelector((state) => state.system);
     const perms = useSelector((state) => state.user.perms);
     const meeter = useSelector((state) => state.system.meeter);
+    const [isUserAuthenticated, setIsUserAuthenticated] = useState(undefined);
     useLayoutEffect(() => {
         navigation.setOptions({
             title: meeter.appName,
         });
     }, [navigation, meeter]);
+    useFocusEffect(
+        useCallback(() => {
+            try {
+                async function checkUser() {
+                    const authUser = await Auth.currentAuthenticatedUser({
+                        bypassCache: true,
+                    });
+                    if (authUser?.attributes?.sub) {
+                        setIsUserAuthenticated(authUser);
+                    } else {
+                        setIsUserAuthenticated(null);
+                    }
+                }
+                checkUser();
+            } catch (e) {
+                setIsUserAuthenticated(null);
+            }
+        }, [])
+    );
     const getMeetings = async () => {
         try {
-            setIsLoading(true);
-            console.log('LS:49-->id:', userProfile?.activeOrg?.id);
-            console.log('LS:50-->code:', userProfile?.activeOrg?.code);
-            await dispatch(
+            // setIsLoading(true);
+            printObject('LS:41-->userProfile:\n', userProfile);
+            dispatch(
                 getAllMeetings({
                     orgId: userProfile.activeOrg.id,
                     code: userProfile.activeOrg.code,
                 })
             );
         } catch (error) {
-            printObject('LS:66-->getAllMeetings catch error:\n', error);
+            printObject('LS:51-->getAllMeetings catch error:\n', error);
         } finally {
-            setIsLoading(false);
+            // setIsLoading(false);
         }
     };
-    useEffect(() => {
-        getMeetings()
-            .then(() => {
-                console.log('LS:61-->meetings loaded');
-            })
-            .catch(() => {
-                console.log('error loading meetings');
-            });
-    }, []);
+    // useEffect(() => {
+    //     printObject('LS:58-->userProfile:\n', userProfile);
+    //     if (!userProfile?.activeOrg?.id) {
+    //         navigation.navigate('ExitSystem');
+    //     }
+    //     getMeetings()
+    //         .then(() => {
+    //             // console.log('LS:62-->meetings loaded');
+    //         })
+    //         .catch(() => {
+    //             console.log('error loading meetings');
+    //         });
+    // }, []);
 
     useEffect(() => {
-        // printObject('LS:48-->perms:\n', perms);
-        // printObject('LS:44-->userProfile:\n', userProfile);
         if (
             perms.includes('manage') ||
             perms.includes('meals') ||
@@ -90,19 +111,15 @@ const LandingScreen = () => {
         }
     }, [perms]);
 
-    const handleInfoRequest = async () => {
-        // printObject('<LS:109></LS:109>-->systemInfo:\n', systemInfo);
-        // printObject('LS:110-->teamInfo:\n', teamInfo);
-        // printObject('LS:111-->userProfile:\n', userProfile);
-        try {
-            const cau = await Auth.currentAuthenticatedUser();
-            // printObject('LS:114-->Auth.currentAuthenticatedUser\n', cau);
-            dispatch(loginUser(cau));
-        } catch (error) {
-            console.log('no authenticated user');
-            Auth.signOut();
-        }
-    };
+    // const handleInfoRequest = async () => {
+    //     try {
+    //         const cau = await Auth.currentAuthenticatedUser();
+    //         dispatch(loginUser(cau));
+    //     } catch (error) {
+    //         console.log('no authenticated user');
+    //         Auth.signOut();
+    //     }
+    // };
 
     if (isLoading) {
         return (
@@ -114,10 +131,23 @@ const LandingScreen = () => {
             </View>
         );
     }
-    // printObject('LS:131-->systemRedux:\n', sysRedux);
-    // printObject('LS:138-->systemInfo:\n', systemInfo);
-    // printObject('LS:139-->teamInfo:\n', teamInfo);
-    // printObject('LS:140-->userProfile:\n', userProfile);
+    if (!isLoading && isUserAuthenticated) {
+        // at this point we expect the user to be defined with....
+        // printObject('LS:132-->userProfile:\n', userProfile);
+        if (!userProfile?.id) {
+            // console.log('LS:138 no user profile');
+            Auth.signOut()
+                .then(() => {
+                    // User has been successfully logged out
+                    console.log('User has been logged out');
+                })
+                .catch((error) => {
+                    // Handle any errors that occurred during logout
+                    console.error('Error logging out:', error);
+                });
+        }
+    }
+
     return (
         <>
             <StatusBar style='light' />

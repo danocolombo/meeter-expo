@@ -32,7 +32,7 @@ import DGModalScreen from '../components/modals/DefaultGroup.modal';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub, Cache } from 'aws-amplify';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
-import { clearUser } from '../features/user/userSlice';
+import { logout } from '../features/user/userSlice';
 import { printObject } from '../utils/helpers';
 const Stack = createNativeStackNavigator();
 function MeeterStack(props) {
@@ -196,7 +196,7 @@ function MeeterStack(props) {
                 })}
             />
             <Stack.Screen
-                name='Logout'
+                name='ExitSystem'
                 component={MeeterSignOut}
                 options={({ navigation }) => ({
                     title: meeter?.appName || 'YIKES',
@@ -250,7 +250,7 @@ function Navigation() {
                 checkUser();
             } else if (data.payload.event === 'signOut') {
                 Cache.clear();
-                clearUser();
+                // dispatch(clearUser());
                 printObject('NAV:221-->signOut() received', '');
 
                 setIsUserAuthenticated(false);

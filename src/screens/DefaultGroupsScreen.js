@@ -82,7 +82,7 @@ const DefaultGroupsScreen = () => {
             <View style={mtrStyles(mtrTheme).buttonContainer}>
                 <CustomButton
                     text='ADD DEFAULT GROUP'
-                    bgColor={mtrTheme.colors.success}
+                    bgColor={mtrTheme.colors.mediumGreen}
                     fgColor={mtrTheme.colors.lightText}
                     type='PRIMARY'
                     enabled='true'

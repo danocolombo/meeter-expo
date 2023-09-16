@@ -262,7 +262,7 @@ function Navigation() {
             printObject('NAV:241-->hub listener catch:\n', error);
         }
 
-        //make suree to unsubscribe....
+        //make sure to unsubscribe....
         return () => Hub.remove('auth', listener);
     }, []);
 

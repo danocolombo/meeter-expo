@@ -39,7 +39,7 @@ import {
 } from '../features/user/userThunks';
 import { clearAllMembers, clearTeamSlice } from '../features/team/teamSlice';
 import { clearGroupSlice } from '../features/groups/groupsSlice';
-import { clearMeetingsSlice } from '../features/meetings/meetingsSlice';
+import { getAllMeetings } from '../features/meetings/meetingsThunks';
 import { unsubscribeFromMeetingCreation } from '../features/meetings/meetingsSubscriptions';
 const AffiliationScreen = (props) => {
     const navigate = useNavigation();
@@ -182,11 +182,9 @@ const AffiliationScreen = (props) => {
         try {
             setIsUpdating(true);
             //create new activeOrg container
-            printObject('userProfile:\n', userProfile);
             const activeOrg = userProfile.affiliations.items.find((a) => {
                 return a.organization.id === ddValue;
             });
-            printObject('AS:170-->activeOrg:\n', activeOrg);
             const newActiveOrg = {
                 id: ddValue,
                 code: activeOrg.organization.code,
@@ -201,33 +199,16 @@ const AffiliationScreen = (props) => {
                     newActiveOrg: newActiveOrg,
                 })
             ).then((results) => {
-                console.log(
-                    'userProfile?.activeOrg.id:',
-                    userProfile?.activeOrg.id
-                );
-                console.log(
-                    'userProfile?.activeOrg.code:',
-                    userProfile?.activeOrg.code
-                );
-                console.log(
-                    'results?.payload?.userProfile?.activeOrg.id:',
-                    results?.payload?.userProfile?.activeOrg.id
-                );
-                console.log(
-                    'results?.payload?.userProfile?.activeOrg.code:',
-                    results?.payload?.userProfile?.activeOrg.code
-                );
+                const i = results?.payload?.userProfile?.activeOrg.id;
+                const c = results?.payload?.userProfile?.activeOrg.code;
+
                 dispatch(
-                    getAllMeetings(
-                        results?.payload?.userProfile?.activeOrg.id,
-                        results?.payload?.userProfile?.activeOrg.code
-                    )
+                    getAllMeetings({
+                        orgId: i,
+                        code: c,
+                    })
                 )
                     .then((results) => {
-                        printObject(
-                            'AS:226-->getAllMeetings results\n',
-                            results
-                        );
                         let toast = Toast.show('Affiliation changed', {
                             duration: 2000,
                         });
@@ -235,6 +216,7 @@ const AffiliationScreen = (props) => {
                         return;
                     })
                     .catch((e) => {
+                        console.log('ERROR getAllMeetings call/catch');
                         console.log('results error:\n', e);
                     });
             });
@@ -307,7 +289,7 @@ const AffiliationScreen = (props) => {
                     console.error(errorMsg);
                 } else {
                     // printObject(
-                    //     'AS:149-->AffiliactionScreen::handleNewCode not rejected\n',
+                    //     'AS:149-->AffiliationScreen::handleNewCode not rejected\n',
                     //     null
                     // );
                     console.error('Request submitted.');

@@ -131,11 +131,14 @@ const groupsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(createDefaultGroup.fulfilled, (state, action) => {
-                // printObject('TS:43-->action.payload:\n', action.payload);
+                printObject('GS:134-->action.payload:\n', action.payload);
                 const updatedDefaultGroups = state.defaultGroups.push(
                     action.payload
                 );
-                state.defaultGroups = sortGroups(updatedDefaultGroups);
+                if (updatedDefaultGroups) {
+                    state.defaultGroups = sortGroups(updatedDefaultGroups);
+                }
+
                 state.isLoading = false;
                 // state.defaultGroups = action.payload;
             })

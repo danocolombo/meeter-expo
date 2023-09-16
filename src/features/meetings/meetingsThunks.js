@@ -16,7 +16,6 @@ export const getAllMeetings = createAsyncThunk(
     'meetings/getAllMeetings',
     async (inputs, thunkAPI) => {
         try {
-            // console.log('MT:20-->getAllMeetings called');
             const oId = inputs.orgId;
             const code = inputs.code;
             const meetingList = await API.graphql({
@@ -467,7 +466,7 @@ export const deleteMeeting = createAsyncThunk(
                             variables: { input: inputRequest },
                         });
                         printObject(
-                            'MT:464-->deleteGroupResposne:\n',
+                            'MT:464-->deleteGroupResponse:\n',
                             deleteGroupResponse
                         );
                         if (!deleteGroupResponse?.data?.deleteGroup?.id) {

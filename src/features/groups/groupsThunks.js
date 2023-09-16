@@ -49,26 +49,35 @@ export const createDefaultGroup = createAsyncThunk(
     'groups/createDefaultGroup',
     async (inputs, thunkAPI) => {
         try {
-            const newId = createAWSUniqueID();
+            printObject('GT:52-->inputs:\n', inputs);
+
+            async function getId() {
+                const id = await createAWSUniqueID(); // Wait for the ID to be generated
+                return id;
+            }
+
+            const newId = await getId();
             const newGroup = {
                 ...inputs.group,
                 id: newId,
             };
-            API.graphql({
+
+            const results = await API.graphql({
                 query: mutations.createDefaultGroup,
                 variables: { input: newGroup },
-            })
-                .then((results) => {
-                    return newGroup;
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.error(error);
-                    throw new Error('GT:67-->Failed to create default group');
-                });
+            });
+
+            printObject('GT:63-->results:\n', results);
+            const resultantGroup = results.data.createDefaultGroup;
+            delete resultantGroup.organization;
+            delete resultantGroup.createdAt;
+            delete resultantGroup.updatedAt;
+            return resultantGroup;
         } catch (error) {
-            printObject('GT:70-->createDefaultGroup', inputs.group);
-            throw new Error('GT:71-->Failed to create default group');
+            console.log('GT:67-->Failed to create default group');
+            console.log(error);
+            console.error(error);
+            throw new Error('GT:67-->Failed to create default group');
         }
     }
 );

@@ -21,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import {
     defineAndSaveUserProfile,
     loginUser,
+    saveUserProfile,
 } from '../../features/user/userThunks';
 import { logout } from '../../features/user/userSlice';
 import { getAllMeetings } from '../../features/meetings/meetingsThunks';
@@ -58,15 +59,22 @@ const SignInScreen = () => {
 
             // Dispatch the loginUser action and get the promise
             dispatch(loginUser(signInData)).then((loginResults) => {
-                // printObject('SI:60-->loginResults:\n', loginResults);
-                dispatch(
-                    getAllMeetings({
-                        orgId: loginResults.payload.profile.activeOrg.id,
-                        code: loginResults.payload.profile.activeOrg.code,
-                    })
-                ).then((results) => {
-                    printObject('SI:68-->getAllMeetings response:\n', results);
-                });
+                printObject('SI:61-->profile:\n', loginResults.payload.profile);
+                dispatch(saveUserProfile(loginResults.payload.profile)).then(
+                    () => {
+                        dispatch(
+                            getAllMeetings({
+                                orgId: loginResults.payload.profile.activeOrg
+                                    .id,
+                                code: loginResults.payload.profile.activeOrg
+                                    .code,
+                            })
+                        ).then((results) => {
+                            // printObject('SI:68-->getAllMeetings response:\n', results);
+                            console.log('SI:69-->back with results...');
+                        });
+                    }
+                );
             });
             console.log('done with loginUser dispatch');
         } catch (error) {

@@ -28,6 +28,7 @@ const LandingScreen = () => {
     const [teamApproved, setTeamApproved] = useState(false);
     const [guest, setGuest] = useState(false);
     const isLoading = useSelector((state) => state.user.isLoading);
+    // const [localLoading, setLocalLoading] = useState(false);
     const [access, setAccess] = useState(false);
     const userProfile = useSelector((state) => state.user.profile);
     const meeting = useSelector((state) => state.system);
@@ -61,7 +62,7 @@ const LandingScreen = () => {
     const getMeetings = async () => {
         try {
             // setIsLoading(true);
-            printObject('LS:41-->userProfile:\n', userProfile);
+            // printObject('LS:41-->userProfile:\n', userProfile);
             dispatch(
                 getAllMeetings({
                     orgId: userProfile.activeOrg.id,
@@ -74,19 +75,6 @@ const LandingScreen = () => {
             // setIsLoading(false);
         }
     };
-    // useEffect(() => {
-    //     printObject('LS:58-->userProfile:\n', userProfile);
-    //     if (!userProfile?.activeOrg?.id) {
-    //         navigation.navigate('ExitSystem');
-    //     }
-    //     getMeetings()
-    //         .then(() => {
-    //             // console.log('LS:62-->meetings loaded');
-    //         })
-    //         .catch(() => {
-    //             console.log('error loading meetings');
-    //         });
-    // }, []);
 
     useEffect(() => {
         if (
@@ -110,16 +98,6 @@ const LandingScreen = () => {
             }
         }
     }, [perms]);
-
-    // const handleInfoRequest = async () => {
-    //     try {
-    //         const cau = await Auth.currentAuthenticatedUser();
-    //         dispatch(loginUser(cau));
-    //     } catch (error) {
-    //         console.log('no authenticated user');
-    //         Auth.signOut();
-    //     }
-    // };
 
     if (isLoading) {
         return (
@@ -174,7 +152,7 @@ const LandingScreen = () => {
                         )}
                     </>
                 )}
-                {!teamApproved && (
+                {!teamApproved && isUserAuthenticated && (
                     <>
                         <View style={mtrStyles(mtrTheme).accessContainer}>
                             <Text style={mtrStyles(mtrTheme).accessText}>

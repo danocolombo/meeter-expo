@@ -152,7 +152,7 @@ const LandingScreen = () => {
                         )}
                     </>
                 )}
-                {!teamApproved && isUserAuthenticated && (
+                {!teamApproved && isUserAuthenticated && userProfile?.id && (
                     <>
                         <View style={mtrStyles(mtrTheme).accessContainer}>
                             <Text style={mtrStyles(mtrTheme).accessText}>
@@ -164,7 +164,7 @@ const LandingScreen = () => {
                         </View>
                     </>
                 )}
-                {guest && (
+                {guest && isUserAuthenticated && (
                     <>
                         <View style={mtrStyles(mtrTheme).accessContainer}>
                             <Text style={mtrStyles(mtrTheme).accessText}>

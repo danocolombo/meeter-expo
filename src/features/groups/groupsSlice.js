@@ -131,7 +131,6 @@ const groupsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(createDefaultGroup.fulfilled, (state, action) => {
-                printObject('GS:134-->action.payload:\n', action.payload);
                 const updatedDefaultGroups = state.defaultGroups.push(
                     action.payload
                 );

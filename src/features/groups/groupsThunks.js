@@ -49,8 +49,6 @@ export const createDefaultGroup = createAsyncThunk(
     'groups/createDefaultGroup',
     async (inputs, thunkAPI) => {
         try {
-            printObject('GT:52-->inputs:\n', inputs);
-
             async function getId() {
                 const id = await createAWSUniqueID(); // Wait for the ID to be generated
                 return id;

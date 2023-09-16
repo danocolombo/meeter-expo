@@ -20,9 +20,23 @@ const DefaultGroupsScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.profile);
+    const perms = useSelector((state) => state.user.perms);
     const defaultGroups = useSelector((state) => state.groups.defaultGroups);
     const [displayGroups, setDisplayGroups] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    useFocusEffect(
+        useCallback(() => {
+            try {
+                if (perms.includes('manage') || perms.includes('groups')) {
+                    dispatch(
+                        loadDefaultGroups({ id: userProfile.activeOrg.id })
+                    );
+                }
+            } catch (e) {
+                console.log('DGS:31-->catch error');
+            }
+        }, [])
+    );
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');

@@ -30,15 +30,10 @@ export default function DGModalScreen(props) {
             organizationDefaultGroupsId: userProfile.activeOrg.id,
         };
         const inputGroup = { ...values, ...groupDef };
-        printObject('DGM:33-->inputGroup:\n', inputGroup);
         if (values.id === null) {
-            dispatch(createDefaultGroup({ group: inputGroup }))
-                .then((results) => {
-                    printObject('DGM:37-->back from createDefaultGroup');
-                })
-                .then(() => {
-                    navigation.goBack();
-                });
+            dispatch(createDefaultGroup({ group: inputGroup })).then(() => {
+                navigation.goBack();
+            });
         } else {
             dispatch(updateDefaultGroup({ group: inputGroup }));
             navigation.goBack();

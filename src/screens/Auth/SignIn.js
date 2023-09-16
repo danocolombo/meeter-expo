@@ -57,25 +57,26 @@ const SignInScreen = () => {
                 signInUserSession: response.signInUserSession,
             };
 
-            // Dispatch the loginUser action and get the promise
-            dispatch(loginUser(signInData)).then((loginResults) => {
-                printObject('SI:61-->profile:\n', loginResults.payload.profile);
-                dispatch(saveUserProfile(loginResults.payload.profile)).then(
-                    () => {
-                        dispatch(
-                            getAllMeetings({
-                                orgId: loginResults.payload.profile.activeOrg
-                                    .id,
-                                code: loginResults.payload.profile.activeOrg
-                                    .code,
-                            })
-                        ).then((results) => {
-                            // printObject('SI:68-->getAllMeetings response:\n', results);
-                            console.log('SI:69-->back with results...');
-                        });
-                    }
+            try {
+                const loginResults = await dispatch(loginUser(signInData));
+
+                const SUResults = await dispatch(
+                    saveUserProfile(loginResults.payload.profile)
                 );
-            });
+                const getAllMeetingsResults = await dispatch(
+                    getAllMeetings({
+                        orgId: loginResults.payload.profile.activeOrg.id,
+                        code: loginResults.payload.profile.activeOrg.code,
+                    })
+                );
+
+                // You can now work with getAllMeetingsResults here if needed.
+            } catch (error) {
+                // Handle errors here.
+                console.error(error);
+                throw new Error('Error occurred during sign-in');
+            }
+
             console.log('done with loginUser dispatch');
         } catch (error) {
             switch (error.code) {

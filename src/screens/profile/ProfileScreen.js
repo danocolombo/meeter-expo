@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Surface, useTheme, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import CustomButton from '../../components/ui/CustomButton';
 import ProfileForm from '../../components/Profile/ProfileForm';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,10 +28,21 @@ const ProfileScreen = (props) => {
     const mtrTheme = useTheme();
     const meeter = useSelector((state) => state.system);
     const userProfile = useSelector((state) => state.user.profile);
+    const perms = useSelector((state) => state.user.perms);
     const [showMessage, setShowMessage] = useState(false);
-    const [showPermissions, setShowPermissions] = useState(true);
+    const [showPermissions, setShowPermissions] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    //-------------------------------------
+    // define icons to use on permissions
+    //-------------------------------------
 
+    const iconMappings = {
+        manage: 'cloudsmith',
+        meals: 'utensils',
+        groups: 'users',
+        guest: 'creative-commons-by',
+        superuser: 'user-secret',
+    };
     const mtrStyles = (mtrTheme) =>
         StyleSheet.create({
             activityIndicatorContainer: {
@@ -110,7 +121,8 @@ const ProfileScreen = (props) => {
             </View>
         );
     }
-    // printObject('PS:99-->pData:\n', pData);
+    printObject('PS:99-->perms:\n', perms);
+    console.log('PS:115->perms:', perms);
     return (
         <>
             <StatusBar style='light' />
@@ -137,11 +149,48 @@ const ProfileScreen = (props) => {
             <Modal visible={showPermissions} animationStyle='slide'>
                 <Surface style={mtrStyles(mtrTheme).modalSurface}>
                     <View>
-                        <Text style={mtrStyles(mtrTheme).modalTitle}>
+                        <Text style={mtrStyles(mtrTheme).screenTitle}>
                             Your Permissions
                         </Text>
                     </View>
-
+                    <View>
+                        <View style={{ paddingTop: 10 }}>
+                            {perms.map((permission, index) => (
+                                <View
+                                    key={index}
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            width: 40,
+                                            alignItems: 'center',
+                                            paddingVertical: 5,
+                                        }}
+                                    >
+                                        <FontAwesome5
+                                            name={iconMappings[permission]} // Use the icon mapping based on the permission
+                                            size={24}
+                                            color='white'
+                                        />
+                                    </View>
+                                    <View>
+                                        <Text
+                                            style={{
+                                                color: 'white',
+                                                fontSize: 18,
+                                            }}
+                                        >
+                                            {' '}
+                                            {permission}
+                                        </Text>
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+                    </View>
                     <View style={mtrStyles(mtrTheme).modalButtonContainer}>
                         <View style={mtrStyles(mtrTheme).modalButtonWrapper}>
                             <CustomButton

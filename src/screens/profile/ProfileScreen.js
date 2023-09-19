@@ -96,7 +96,6 @@ const ProfileScreen = (props) => {
 
     const handleUpdate = (values) => {
         dispatch(saveUserProfile(values));
-        printObject('PS:45-->form submit values:\n', values);
         setIsSaving(true);
         updateProfileData(values)
             .then(() => {

@@ -311,7 +311,6 @@ export const updateMeeting = createAsyncThunk(
     'meetings/updateMeeting',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:341-->updateMeeting__inputs:\n', inputs);
             //* * * * * * * * * * * * * * * * * * * *
             //* update the meeting in graphql
             //* * * * * * * * * * * * * * * * * * * *

@@ -224,7 +224,6 @@ const AffiliationScreen = (props) => {
                         return results;
                     })
                     .then((results) => {
-                        printObject('AS:226==>toast results:\n', results);
                         let toast = Toast.show('Affiliation changed', {
                             duration: 2000,
                         });

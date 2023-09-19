@@ -24,7 +24,6 @@ export const getAffiliationsForTeam = async (teamId) => {
         return null;
     }
     const affs = gqlResponse.data.listAffiliations.items;
-    printObject('A.P:21-->affs:\n', affs);
 
     let allUsers = [];
     affs.forEach((a) => {
@@ -101,7 +100,6 @@ export const getAffiliationsForTeam = async (teamId) => {
     //* combine
     const team = rawNewUsers.concat(rawOldUsers);
 
-    printObject('A.P:98-->team:', team);
     return team;
 };
 export const addNewAffiliationForUser = async (newValues) => {
@@ -114,13 +112,11 @@ export const addNewAffiliationForUser = async (newValues) => {
             status: newValues.status,
             userAffiliationsId: newValues.userId,
         };
-        printObject('AP:131-->insertInfo:\n', insertInfo);
         const results = await API.graphql({
             query: mutations.createAffiliation,
             variables: { input: insertInfo },
         });
-        console.log('AP:122-->affiliation inserted');
-        printObject('AP:123-->results:\n', results);
+
         const returnValue = {
             status: 200,
             results: results,

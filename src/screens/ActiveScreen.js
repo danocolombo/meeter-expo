@@ -19,18 +19,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Surface, useTheme, FAB } from 'react-native-paper';
 import MeetingListCard from '../components/Meeting.List.Card';
 import CustomButton from '../components/CustomButton';
-import { deleteMeeting } from '../features/meetings/meetingsThunks';
+import {
+    deleteMeeting,
+    getActiveMeetings,
+    getAllMeetings,
+} from '../features/meetings/meetingsThunks';
 import { dateDashMadePretty, printObject } from '../utils/helpers';
 const ActiveScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const userProfile = useSelector((state) => state.user.profile);
     const perms = useSelector((state) => state.user.perms);
-    // const meetings = useSelector((state) => state.meetings);
+    const isLoading = useSelector((state) => state.meetings.isLoading);
     const [meeting, setMeeting] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const meetings = useSelector((state) => state.meetings.activeMeetings);
+    const meetings = useSelector((state) => state.meetings.meetings);
+    const [displayMeetings, setDisplayMeetings] = useState([]);
     const isFormDisplayedRef = useRef(false); // Track form display
     const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
 
@@ -41,6 +44,17 @@ const ActiveScreen = () => {
         });
     }, [navigation, meeter]);
 
+    useEffect(() => {
+        try {
+            async function getActives() {
+                const allMeetingInfo = await dispatch(getActiveMeetings());
+                setDisplayMeetings(allMeetingInfo.payload);
+            }
+            getActives();
+        } catch (error) {
+            console.log('HM:51-->unexpected error:\n', error);
+        }
+    }, [meetings]);
     const handleNewRequest = () => {
         isFormDisplayedRef.current = true;
         navigation.navigate('MeetingNew');
@@ -164,7 +178,8 @@ const ActiveScreen = () => {
             </View>
 
             <FlatList
-                data={meetings}
+                key={Math.random()} // Add a random key to force re-render
+                data={displayMeetings}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <MeetingListCard

@@ -189,10 +189,6 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(getAllMeetings.fulfilled, (state, action) => {
-                // printObject(
-                //     'MS:227-->getAllMeetings.FULFILLED:action.payload:\n',
-                //     action.payload
-                // );
                 try {
                     if (action.payload.status === '200') {
                         const newMeetings = [...action.payload.meetings.all];

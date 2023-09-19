@@ -39,6 +39,7 @@ import {
 } from '../features/user/userThunks';
 import { clearAllMembers, clearTeamSlice } from '../features/team/teamSlice';
 import { clearGroupSlice } from '../features/groups/groupsSlice';
+import { loadDefaultGroups } from '../features/groups/groupsThunks';
 import { getAllMeetings } from '../features/meetings/meetingsThunks';
 import { unsubscribeFromMeetingCreation } from '../features/meetings/meetingsSubscriptions';
 const AffiliationScreen = (props) => {
@@ -48,7 +49,7 @@ const AffiliationScreen = (props) => {
     const dispatch = useDispatch();
     const affCodeInputRef = useRef(null);
     const userProfile = useSelector((state) => state.user.profile);
-    const [perms, setPerms] = useState(null);
+    const [perms, setPerms] = useSelector((state) => state.user.perms);
     const joinOrgError = useSelector((state) => state.user.error);
     const meeter = useSelector((state) => state.system);
     const [showChangeToast, setChangeToast] = useState(true);
@@ -209,6 +210,21 @@ const AffiliationScreen = (props) => {
                     })
                 )
                     .then((results) => {
+                        //* NEED TO LOAD DEFAULT GROUPS PROPERLY
+                        dispatch(loadDefaultGroups({ id: i }))
+                            .then(() => {
+                                console.log('loadDefaultOrgs complete');
+                            })
+                            .catch((e) => {
+                                console.log(
+                                    'AS:220-->Error loadingDefaultOrgs'
+                                );
+                                printObject('AS:221-->error:\n', e);
+                            });
+                        return results;
+                    })
+                    .then((results) => {
+                        printObject('AS:226==>toast results:\n', results);
                         let toast = Toast.show('Affiliation changed', {
                             duration: 2000,
                         });

@@ -120,8 +120,12 @@ const groupsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(loadDefaultGroups.fulfilled, (state, action) => {
-                state.defaultGroups = sortGroups(action.payload);
-                state.isLoading = false;
+                const groups = sortGroups(action.payload);
+                return {
+                    ...state,
+                    defaultGroups: groups,
+                    isLoading: false,
+                };
             })
             .addCase(loadDefaultGroups.rejected, (state, action) => {
                 console.log(action);

@@ -12,6 +12,7 @@ import { printObject } from '../utils/helpers';
 import {
     loadDefaultGroups,
     deleteDefaultGroup,
+    getDefaultGroupsFromDB,
 } from '../features/groups/groupsThunks';
 import { NativeScreen } from 'react-native-screens';
 
@@ -21,31 +22,77 @@ const DefaultGroupsScreen = () => {
     const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.profile);
     const perms = useSelector((state) => state.user.perms);
+    const savedDefaultGroups = useSelector(
+        (state) => state.groups.defaultGroups
+    );
     const defaultGroups = useSelector((state) => state.groups.defaultGroups);
     const [displayGroups, setDisplayGroups] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     useFocusEffect(
         useCallback(() => {
             try {
-                if (perms.includes('manage') || perms.includes('groups')) {
-                    dispatch(
+                printObject('DGS:30=>userProfile: ', userProfile);
+                printObject('DGS:31=>perms: ', perms);
+                // printObject(
+                //     'DGS:33-->savedDefaultGroups:\n',
+                //     savedDefaultGroups
+                // );
+                // setDisplayGroups(savedDefaultGroups);
+
+                // Use async/await here
+                async function fetchData() {
+                    const loadedInfo = await dispatch(
                         loadDefaultGroups({ id: userProfile.activeOrg.id })
                     );
+                    setDisplayGroups(loadedInfo.payload);
                 }
+                fetchData();
+
+                // Continue with your logic here
+                // ...
             } catch (e) {
-                console.log('DGS:31-->catch error');
+                console.log('DGS:50-->catch error');
             }
         }, [])
     );
+    useEffect(() => {
+        setDisplayGroups(defaultGroups);
+    }, [defaultGroups]);
+    // useEffect(() => {
+    //     try {
+    //         printObject('DGS:30=>userProfile: ', userProfile);
+    //         printObject('DGS:31=>perms: ', perms);
+    //         // printObject(
+    //         //     'DGS:33-->savedDefaultGroups:\n',
+    //         //     savedDefaultGroups
+    //         // );
+    //         // setDisplayGroups(savedDefaultGroups);
+
+    //         // Use async/await here
+    //         async function fetchData() {
+    //             const loadedInfo = await dispatch(
+    //                 loadDefaultGroups({ id: userProfile.activeOrg.id })
+    //             );
+    //             setDisplayGroups(loadedInfo.payload);
+    //         }
+    //         fetchData();
+
+    //         // Continue with your logic here
+    //         // ...
+    //     } catch (e) {
+    //         console.log('DGS:50-->catch error');
+    //     }
+    // }, []);
+
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
         }
     }
 
-    useEffect(() => {
-        setDisplayGroups(defaultGroups);
-    }, [defaultGroups]);
+    // useEffect(() => {
+    //     setDisplayGroups(defaultGroups);
+    // }, [defaultGroups]);
 
     const handleDeleteRequest = (value) => {
         dispatch(deleteDefaultGroup({ groupId: value }));

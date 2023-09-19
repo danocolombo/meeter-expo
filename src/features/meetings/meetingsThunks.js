@@ -89,49 +89,6 @@ export const getAllMeetings = createAsyncThunk(
         }
     }
 );
-export const getAllMeetingsOLD = createAsyncThunk(
-    'meetings/getAllMeetings',
-    async (inputs, thunkAPI) => {
-        // console.log('MT:22-->inputs:', inputs);
-        try {
-            console.log('MT:55-->getAllMeetings thunk disabled...');
-            return [];
-            // let obj = {
-            //     operation: 'getMeetingsOnAfterDate',
-            //     payload: {
-            //         clientId: inputs.code,
-            //         date: '2023-01-01',
-            //         direction: 'DESC',
-            //     },
-            // };
-            // // printObject('MT:30-->obj:\n', obj);
-            // let body = JSON.stringify(obj);
-            // let api2use = process.env.AWS_API_ENDPOINT + '/meetings';
-            // // console.log('about to axios');
-            // // const { data } = await axios.post(api2use, body, config);
-            // let returnValue = {};
-            // await axios
-            //     .post(api2use, body, config)
-            //     .then((response) => {
-            //         printObject('MT:37-->response:\n', response.data);
-            //         returnValue = { ...response.data };
-            //         return;
-            //     })
-            //     .catch((error) => {
-            //         printObject(
-            //             'MT:41-->error getMeetingsOnAfterDate:\n',
-            //             error
-            //         );
-            //         throw new Error('MT:42-->Failed to getMeetingsOnAfterDate');
-            //     });
-            // return returnValue;
-        } catch (error) {
-            printObject('MT:45-->getAllMeetings', { status: fail });
-            throw new Error('MT:46-->Failed to getAllMeetings');
-        }
-        return [];
-    }
-);
 export const getActiveMeetings = createAsyncThunk(
     'meetings/getActiveMeetings',
     async (input, { getState, rejectWithValue }) => {
@@ -211,6 +168,23 @@ export const getMeetingById = createAsyncThunk(
         } catch (error) {
             // Handle errors and optionally return a rejected promise with an error message
             return rejectWithValue('Failed to fetch active meetings');
+        }
+    }
+);
+export const getDefaultGroupsFromDB = createAsyncThunk(
+    'meetings/getDefaultGroupsFromDB',
+    async (input, { getState, rejectWithValue }) => {
+        try {
+            console.log('getDefaultGroupsFromDB hit');
+            return {
+                status: 200,
+                payload: {
+                    message: 'GOOD',
+                },
+            };
+        } catch (error) {
+            // Handle errors and optionally return a rejected promise with an error message
+            return rejectWithValue('Failed to fetch default meetings');
         }
     }
 );

@@ -121,8 +121,6 @@ const ProfileScreen = (props) => {
             </View>
         );
     }
-    printObject('PS:99-->perms:\n', perms);
-    console.log('PS:115->perms:', perms);
     return (
         <>
             <StatusBar style='light' />

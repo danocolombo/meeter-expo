@@ -193,3 +193,20 @@ export const getGroupsForMeeting = createAsyncThunk(
         }
     }
 );
+export const getDefaultGroupsFromDB = createAsyncThunk(
+    'meetings/getDefaultGroupsFromDB',
+    async (input, { getState, rejectWithValue }) => {
+        try {
+            console.log('getDefaultGroupsFromDB hit: ', input);
+            return {
+                status: 200,
+                payload: {
+                    message: 'GOOD',
+                },
+            };
+        } catch (error) {
+            // Handle errors and optionally return a rejected promise with an error message
+            return rejectWithValue('Failed to fetch default meetings');
+        }
+    }
+);

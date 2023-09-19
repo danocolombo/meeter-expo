@@ -26,6 +26,7 @@ const ActiveScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.profile);
+    const perms = useSelector((state) => state.user.perms);
     // const meetings = useSelector((state) => state.meetings);
     const [meeting, setMeeting] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -147,7 +148,7 @@ const ActiveScreen = () => {
                         Active Meetings
                     </Text>
                 </View>
-                {userProfile?.activeOrg?.role === 'manage' && (
+                {perms.includes('manage') && (
                     <FAB
                         icon='calendar-plus'
                         style={mtrStyles(mtrTheme).FAB}

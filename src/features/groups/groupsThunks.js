@@ -49,26 +49,33 @@ export const createDefaultGroup = createAsyncThunk(
     'groups/createDefaultGroup',
     async (inputs, thunkAPI) => {
         try {
-            const newId = createAWSUniqueID();
+            async function getId() {
+                const id = await createAWSUniqueID(); // Wait for the ID to be generated
+                return id;
+            }
+
+            const newId = await getId();
             const newGroup = {
                 ...inputs.group,
                 id: newId,
             };
-            API.graphql({
+
+            const results = await API.graphql({
                 query: mutations.createDefaultGroup,
                 variables: { input: newGroup },
-            })
-                .then((results) => {
-                    return newGroup;
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.error(error);
-                    throw new Error('GT:67-->Failed to create default group');
-                });
+            });
+
+            printObject('GT:63-->results:\n', results);
+            const resultantGroup = results.data.createDefaultGroup;
+            delete resultantGroup.organization;
+            delete resultantGroup.createdAt;
+            delete resultantGroup.updatedAt;
+            return resultantGroup;
         } catch (error) {
-            printObject('GT:70-->createDefaultGroup', inputs.group);
-            throw new Error('GT:71-->Failed to create default group');
+            console.log('GT:67-->Failed to create default group');
+            console.log(error);
+            console.error(error);
+            throw new Error('GT:67-->Failed to create default group');
         }
     }
 );
@@ -183,6 +190,23 @@ export const getGroupsForMeeting = createAsyncThunk(
         } catch (error) {
             console.log(error);
             throw new Error('GT:20-->Failed to get groups');
+        }
+    }
+);
+export const getDefaultGroupsFromDB = createAsyncThunk(
+    'meetings/getDefaultGroupsFromDB',
+    async (input, { getState, rejectWithValue }) => {
+        try {
+            console.log('getDefaultGroupsFromDB hit: ', input);
+            return {
+                status: 200,
+                payload: {
+                    message: 'GOOD',
+                },
+            };
+        } catch (error) {
+            // Handle errors and optionally return a rejected promise with an error message
+            return rejectWithValue('Failed to fetch default meetings');
         }
     }
 );

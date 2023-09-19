@@ -49,10 +49,9 @@ const TitleSection = ({ values, setValues }) => {
                                     paddingHorizontal: 1,
                                     fontSize: 24,
                                     color: mtrTheme.colors.darkText,
-                                    editable:
-                                        userProfile.activeOrg.role === 'manage'
-                                            ? true
-                                            : false,
+                                    editable: newPerms.includes('manage')
+                                        ? true
+                                        : false,
                                     marginHorizontal: 10,
                                     placeholder: 'Lesson Title',
                                     fontWeight: '300',
@@ -102,10 +101,9 @@ const TitleSection = ({ values, setValues }) => {
                                     value: values.title,
                                     paddingHorizontal: 1,
                                     fontSize: 24,
-                                    editable:
-                                        userProfile.activeOrg.role === 'manage'
-                                            ? true
-                                            : false,
+                                    editable: newPerms.includes('manage')
+                                        ? true
+                                        : false,
                                     color: mtrTheme.colors.darkText,
                                     marginHorizontal: 10,
                                     autoCapitalize: 'words',
@@ -154,10 +152,9 @@ const TitleSection = ({ values, setValues }) => {
                                 borderWidth: StyleSheet.hairlineWidth,
                                 fontSize: 24,
                                 color: mtrTheme.colors.darkText,
-                                editable:
-                                    userProfile.activeOrg.role === 'manage'
-                                        ? true
-                                        : false,
+                                editable: newPerms.includes('manage')
+                                    ? true
+                                    : false,
                                 marginHorizontal: 10,
                                 placeholder: 'Lesson Title',
                                 fontWeight: '300',
@@ -209,10 +206,9 @@ const TitleSection = ({ values, setValues }) => {
                                 borderColor: mtrTheme.colors.mediumObject,
                                 borderWidth: StyleSheet.hairlineWidth,
                                 fontSize: 24,
-                                editable:
-                                    userProfile.activeOrg.role === 'manage'
-                                        ? true
-                                        : false,
+                                editable: newPerms.includes('manage')
+                                    ? true
+                                    : false,
                                 color: mtrTheme.colors.darkText,
                                 marginHorizontal: 10,
                                 autoCapitalize: 'words',

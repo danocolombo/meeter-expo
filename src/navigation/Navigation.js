@@ -20,6 +20,7 @@ import TeamMemberScreen from '../screens/TeamMemberScreen'; // import MeetingDel
 import MeetingDetailsEditScreen from '../screens/MeetingDetailsEditScreen';
 import MeetingNewScreen from '../screens/MeetingNewScreen';
 import AffiliationScreen from '../screens/AffiliationScreen';
+import UserPermsScreen from '../screens/profile/UserPermsScreen';
 import GroupDetailsScreen from '../screens/GroupDetailsScreen';
 import GroupDetailsEditScreen from '../screens/GroupDetailsEditScreen';
 import GroupNewScreen from '../screens/GroupNewScreen';
@@ -32,7 +33,7 @@ import DGModalScreen from '../components/modals/DefaultGroup.modal';
 import AuthDrawer from './AuthDrawer';
 import { Auth, Hub, Cache } from 'aws-amplify';
 import MeeterSignOut from '../screens/Auth/MeeterSignOut';
-import { clearUser } from '../features/user/userSlice';
+import { logout } from '../features/user/userSlice';
 import { printObject } from '../utils/helpers';
 const Stack = createNativeStackNavigator();
 function MeeterStack(props) {
@@ -64,7 +65,7 @@ function MeeterStack(props) {
                     name='DGModal'
                     component={DGModalScreen}
                     options={({ navigation }) => ({
-                        title: meeter?.appName || 'YIKES',
+                        title: meeter?.appName || 'Meeter',
                         headerStyle: {
                             backgroundColor: mtrTheme.colors.background,
                         },
@@ -76,7 +77,18 @@ function MeeterStack(props) {
                 name='MeetingEdit'
                 component={MeetingDetailsEditScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName,
+                    title: meeter?.appName || 'Meeter',
+                    headerStyle: {
+                        backgroundColor: mtrTheme.colors.background,
+                    },
+                    headerTintColor: 'white',
+                })}
+            />
+            <Stack.Screen
+                name='UserPerms'
+                component={UserPermsScreen}
+                options={({ navigation }) => ({
+                    title: meeter?.appName | 'Meeter',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -87,7 +99,7 @@ function MeeterStack(props) {
                 name='MeetingNew'
                 component={MeetingNewScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName || 'Meeter',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -98,7 +110,7 @@ function MeeterStack(props) {
                 name='GroupNew'
                 component={GroupNewScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName || 'Meeter',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -110,7 +122,7 @@ function MeeterStack(props) {
                 name='GroupDetails'
                 component={GroupDetailsScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName || 'Meeter',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -122,7 +134,7 @@ function MeeterStack(props) {
                 name='GroupEdit'
                 component={GroupDetailsEditScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName || 'Meeter',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -133,7 +145,7 @@ function MeeterStack(props) {
                 name='TeamMember'
                 component={TeamMemberScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName || 'Meeter',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -188,7 +200,7 @@ function MeeterStack(props) {
                 name='Affiliation'
                 component={AffiliationScreen}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName || 'Meeter',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -196,10 +208,10 @@ function MeeterStack(props) {
                 })}
             />
             <Stack.Screen
-                name='Logout'
+                name='ExitSystem'
                 component={MeeterSignOut}
                 options={({ navigation }) => ({
-                    title: meeter?.appName || 'YIKES',
+                    title: meeter?.appName || 'Meeter',
                     headerStyle: {
                         backgroundColor: mtrTheme.colors.background,
                     },
@@ -250,7 +262,7 @@ function Navigation() {
                 checkUser();
             } else if (data.payload.event === 'signOut') {
                 Cache.clear();
-                clearUser();
+                // dispatch(clearUser());
                 printObject('NAV:221-->signOut() received', '');
 
                 setIsUserAuthenticated(false);
@@ -262,7 +274,7 @@ function Navigation() {
             printObject('NAV:241-->hub listener catch:\n', error);
         }
 
-        //make suree to unsubscribe....
+        //make sure to unsubscribe....
         return () => Hub.remove('auth', listener);
     }, []);
 

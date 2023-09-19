@@ -52,8 +52,8 @@ const GroupNewScreen = ({ route }) => {
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const { height, width } = useWindowDimensions();
-    const groups = useSelector((state) => state.meetings.groups);
-    const user = useSelector((state) => state.users.currentUser);
+    // const groups = useSelector((state) => state.meetings.groups);
+    // const user = useSelector((state) => state.users.profile);
     const meeter = useSelector((state) => state.system);
     const [modalDeleteConfirmVisible, setModalDeleteConfirmVisible] =
         useState(false);
@@ -316,7 +316,7 @@ const GroupNewScreen = ({ route }) => {
             <View style={mtrStyles(mtrTheme).buttonContainer}>
                 <CustomButton
                     text='SAVE'
-                    bgColor={mtrTheme.colors.success}
+                    bgColor={mtrTheme.colors.mediumGreen}
                     fgColor={mtrTheme.colors.lightText}
                     type='PRIMARY'
                     enabled={isTitleValid && isLocationValid}

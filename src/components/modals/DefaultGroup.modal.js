@@ -31,8 +31,9 @@ export default function DGModalScreen(props) {
         };
         const inputGroup = { ...values, ...groupDef };
         if (values.id === null) {
-            dispatch(createDefaultGroup({ group: inputGroup }));
-            navigation.goBack();
+            dispatch(createDefaultGroup({ group: inputGroup })).then(() => {
+                navigation.goBack();
+            });
         } else {
             dispatch(updateDefaultGroup({ group: inputGroup }));
             navigation.goBack();

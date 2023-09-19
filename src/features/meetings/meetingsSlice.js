@@ -195,17 +195,25 @@ export const meetingsSlice = createSlice({
                 // );
                 try {
                     if (action.payload.status === '200') {
-                        state.meetings = [...action.payload.meetings.all];
-                        state.activeMeetings = [
-                            ...action.payload.meetings.active,
-                        ];
-                        state.historicMeetings = [
+                        const newMeetings = [...action.payload.meetings.all];
+                        const newActives = [...action.payload.meetings.active];
+                        const newHistorics = [
                             ...action.payload.meetings.historic,
                         ];
+                        return {
+                            ...state,
+                            meetings: newMeetings,
+                            activeMeetings: newActives,
+                            historicMeetings: newHistorics,
+                            isLoading: false,
+                        };
                     } else {
-                        state.meetings = [];
-                        state.activeMeetings = [];
-                        state.historicMeetings = [];
+                        return {
+                            meetings: [],
+                            activeMeetings: [],
+                            historicMeetings: [],
+                            isLoading: false,
+                        };
                     }
                 } catch (error) {
                     printObject('MS:230-->error getting all meetings\n', error);
@@ -325,7 +333,6 @@ export const meetingsSlice = createSlice({
                     isLoading: false,
                 };
             })
-
             .addCase(addMeeting.rejected, (state, action) => {
                 printObject(
                     'MS:287-->REJECTED:action.payload:\n',

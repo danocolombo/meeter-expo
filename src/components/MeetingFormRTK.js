@@ -168,7 +168,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
     };
 
     const handleTypeChange = (value) => {
-        if (userProfile.activeOrg.role !== 'manage') {
+        if (!newPerms.includes('manage')) {
             return;
         }
         let titleVal = false;
@@ -234,7 +234,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
             <View style={mtrStyles(mtrTheme).row}>
                 <TouchableOpacity
                     onPress={() =>
-                        userProfile.activeOrg.role === 'manage'
+                        newPerms.includes('manage')
                             ? setModalMeetingDateVisible(true)
                             : null
                     }

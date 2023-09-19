@@ -22,11 +22,10 @@ import { Dropdown } from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API, graphqlOperation } from 'aws-amplify';
-import * as mutations from '../jerichoQL/mutations';
-import * as queries from '../jerichoQL/queries';
-import { printObject } from '../utils/helpers';
+
+import { printObject } from '../../utils/helpers';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { MEETER_DEFAULTS } from '../constants/meeter';
+import { MEETER_DEFAULTS } from '../../constants/meeter';
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-root-toast';
 import { useDispatch, useSelector } from 'react-redux';
@@ -36,20 +35,19 @@ import {
     updatePermissions,
     changeDefaultOrg,
     errorTest,
-} from '../features/user/userThunks';
-import { clearAllMembers, clearTeamSlice } from '../features/team/teamSlice';
-import { clearGroupSlice } from '../features/groups/groupsSlice';
-import { loadDefaultGroups } from '../features/groups/groupsThunks';
-import { getAllMeetings } from '../features/meetings/meetingsThunks';
-import { unsubscribeFromMeetingCreation } from '../features/meetings/meetingsSubscriptions';
-const AffiliationScreen = (props) => {
+} from '../../features/user/userThunks';
+import { clearAllMembers, clearTeamSlice } from '../../features/team/teamSlice';
+import { clearGroupSlice } from '../../features/groups/groupsSlice';
+import { getAllMeetings } from '../../features/meetings/meetingsThunks';
+import { unsubscribeFromMeetingCreation } from '../../features/meetings/meetingsSubscriptions';
+const UserPermsScreen = (props) => {
     const navigate = useNavigation();
     const navigation = useNavigation();
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
     const affCodeInputRef = useRef(null);
     const userProfile = useSelector((state) => state.user.profile);
-    const [perms, setPerms] = useSelector((state) => state.user.perms);
+    const [perms, setPerms] = useState(null);
     const joinOrgError = useSelector((state) => state.user.error);
     const meeter = useSelector((state) => state.system);
     const [showChangeToast, setChangeToast] = useState(true);
@@ -210,21 +208,6 @@ const AffiliationScreen = (props) => {
                     })
                 )
                     .then((results) => {
-                        //* NEED TO LOAD DEFAULT GROUPS PROPERLY
-                        dispatch(loadDefaultGroups({ id: i }))
-                            .then(() => {
-                                console.log('loadDefaultOrgs complete');
-                            })
-                            .catch((e) => {
-                                console.log(
-                                    'AS:220-->Error loadingDefaultOrgs'
-                                );
-                                printObject('AS:221-->error:\n', e);
-                            });
-                        return results;
-                    })
-                    .then((results) => {
-                        printObject('AS:226==>toast results:\n', results);
                         let toast = Toast.show('Affiliation changed', {
                             duration: 2000,
                         });
@@ -987,42 +970,6 @@ const mtrStyles = (mtrTheme) =>
             height: 50,
             // width: '100%',
         },
-        // dropDownWrapper: {
-        //     // flexDirection: 'row',
-        //     // backgroundColor: 'lightgrey',
-        //     fontFamily: 'Roboto-Regular',
-        //     fontSize: 20,
-        //     // width: '80%',
-        //     justifyContent: 'center',
-        // },
-
-        // dropdownWas: {
-        //     height: 40,
-        //     borderColor: 'gray',
-        //     color: 'black',
-        //     fontWeight: 500,
-        //     fontSize: 30,
-        //     backgroundColor: 'lightgrey',
-        //     marginVertical: 1,
-        //     minWidth: '80%',
-        //     maxWidth: '80%',
-        //     borderWidth: 0.5,
-        //     borderRadius: 1,
-        //     // paddingHorizontal: 2,
-        //     paddingVertical: 0,
-        // },
-
-        // placeholderStyles: {
-        //     color: 'grey',
-        // },
-        // dropdownAffiliation: {
-        //     marginHorizontal: 10,
-        //     width: '50%',
-        //     marginBottom: 15,
-        // },
-        // dropdownPlaceholderStyles: {
-        //     color: 'grey',
-        // },
 
         placeholderStyle: {
             backgroundColor: 'lightgrey',
@@ -1106,4 +1053,4 @@ const mtrStyles = (mtrTheme) =>
             color: mtrTheme.colors.mediumText,
         },
     });
-export default AffiliationScreen;
+export default UserPermsScreen;

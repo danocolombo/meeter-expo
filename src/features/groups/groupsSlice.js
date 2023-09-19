@@ -120,8 +120,12 @@ const groupsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(loadDefaultGroups.fulfilled, (state, action) => {
-                state.defaultGroups = sortGroups(action.payload);
-                state.isLoading = false;
+                const groups = sortGroups(action.payload);
+                return {
+                    ...state,
+                    defaultGroups: groups,
+                    isLoading: false,
+                };
             })
             .addCase(loadDefaultGroups.rejected, (state, action) => {
                 console.log(action);
@@ -131,11 +135,13 @@ const groupsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(createDefaultGroup.fulfilled, (state, action) => {
-                // printObject('TS:43-->action.payload:\n', action.payload);
                 const updatedDefaultGroups = state.defaultGroups.push(
                     action.payload
                 );
-                state.defaultGroups = sortGroups(updatedDefaultGroups);
+                if (updatedDefaultGroups) {
+                    state.defaultGroups = sortGroups(updatedDefaultGroups);
+                }
+
                 state.isLoading = false;
                 // state.defaultGroups = action.payload;
             })

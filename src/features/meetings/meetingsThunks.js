@@ -502,7 +502,7 @@ export const addSubscriptionMeeting = createAsyncThunk(
                 delete mtg.__typename;
                 delete mtg.groups;
                 delete mtg.updatedAt;
-                printObject('MT:530-->newSubscription');
+                printObject('MT:530-->newSubscription', mtg);
                 return mtg;
             } else {
                 // If data.createGroup.id is missing, handle the error

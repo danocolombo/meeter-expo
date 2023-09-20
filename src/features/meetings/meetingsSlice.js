@@ -18,6 +18,7 @@ import {
     addGroup,
     updateGroup,
     deleteMeeting,
+    addSubscriptionMeeting,
 } from './meetingsThunks';
 const initialState = {
     meetings: [],
@@ -84,18 +85,19 @@ export const meetingsSlice = createSlice({
             );
             return grp;
         },
-        addSubscribeMeeting: (state, action) => {
-            const newMeeting = action.payload;
-            const updatedMeetings = [...state.meetings, ...newMeeting];
-            printObject('MS:89-->updatedMeetings:\n', updatedMeetings);
-            state.meetings = updatedMeetings;
-            return state;
-        },
-        addSubscriptionMeeting: (state, action) => {
-            state.meetings.push(action.payload);
-            state.isLoading = false;
-            return state;
-        },
+        // addSubscriptionMeeting: (state, action) => {
+        //     printObject('MS:88==>action.payload:\n', action.payload);
+        //     // const newMeeting = action.payload;
+        //     // const updatedMeetings = [...state.meetings, ...newMeeting];
+        //     // printObject('MS:89-->updatedMeetings:\n', updatedMeetings);
+        //     // state.meetings = updatedMeetings;
+        //     return state;
+        // },
+        // addSubscriptionMeeting: (state, action) => {
+        //     state.meetings.push(action.payload);
+        //     state.isLoading = false;
+        //     return state;
+        // },
         deleteGroup: (state, action) => {
             const smaller = state.groups.filter(
                 (m) => m.groupId !== action.payload.groupId
@@ -189,10 +191,6 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(getAllMeetings.fulfilled, (state, action) => {
-                // printObject(
-                //     'MS:227-->getAllMeetings.FULFILLED:action.payload:\n',
-                //     action.payload
-                // );
                 try {
                     if (action.payload.status === '200') {
                         const newMeetings = [...action.payload.meetings.all];
@@ -530,13 +528,30 @@ export const meetingsSlice = createSlice({
                     action.payload
                 );
                 state.isLoading = false;
+            })
+            .addCase(addSubscriptionMeeting.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(addSubscriptionMeeting.fulfilled, (state, action) => {
+                printObject(
+                    'MS:537-->addSubscriptionMeeting.FULFILLED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
+                return state;
+            })
+            .addCase(addSubscriptionMeeting.rejected, (state, action) => {
+                printObject(
+                    'MS:545-->addSubscriptionMeeting.REJECTED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
             });
     },
 });
 
 // Action creators are generated for each case reducer function
 export const {
-    addSubscribeMeeting,
     loadHistoricMeetings,
     loadMeetings,
     getMeetings,

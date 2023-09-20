@@ -13,6 +13,7 @@ import {
     loadDefaultGroups,
     deleteDefaultGroup,
     getDefaultGroupsFromDB,
+    getDefaultGroups,
 } from '../features/groups/groupsThunks';
 import { NativeScreen } from 'react-native-screens';
 
@@ -20,79 +21,34 @@ const DefaultGroupsScreen = () => {
     const mtrTheme = useTheme();
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const userProfile = useSelector((state) => state.user.profile);
-    const perms = useSelector((state) => state.user.perms);
-    const savedDefaultGroups = useSelector(
-        (state) => state.groups.defaultGroups
-    );
+
     const defaultGroups = useSelector((state) => state.groups.defaultGroups);
     const [displayGroups, setDisplayGroups] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    useFocusEffect(
-        useCallback(() => {
-            try {
-                printObject('DGS:30=>userProfile: ', userProfile);
-                printObject('DGS:31=>perms: ', perms);
-                // printObject(
-                //     'DGS:33-->savedDefaultGroups:\n',
-                //     savedDefaultGroups
-                // );
-                // setDisplayGroups(savedDefaultGroups);
-
-                // Use async/await here
-                async function fetchData() {
-                    const loadedInfo = await dispatch(
-                        loadDefaultGroups({ id: userProfile.activeOrg.id })
-                    );
-                    setDisplayGroups(loadedInfo.payload);
-                }
-                fetchData();
-
-                // Continue with your logic here
-                // ...
-            } catch (e) {
-                console.log('DGS:50-->catch error');
-            }
-        }, [])
-    );
     useEffect(() => {
-        setDisplayGroups(defaultGroups);
+        try {
+            setIsLoading(true);
+            // Use async/await here
+            async function fetchData() {
+                const loadedInfo = await dispatch(getDefaultGroups());
+                if (loadedInfo?.payload?.status === 200) {
+                    setDisplayGroups(loadedInfo.payload.payload.defaultGroups);
+                } else {
+                    setDisplayGroups([]);
+                }
+            }
+            fetchData();
+            setIsLoading(false);
+        } catch (e) {
+            console.log('DGS:50-->catch error');
+        }
     }, [defaultGroups]);
-    // useEffect(() => {
-    //     try {
-    //         printObject('DGS:30=>userProfile: ', userProfile);
-    //         printObject('DGS:31=>perms: ', perms);
-    //         // printObject(
-    //         //     'DGS:33-->savedDefaultGroups:\n',
-    //         //     savedDefaultGroups
-    //         // );
-    //         // setDisplayGroups(savedDefaultGroups);
-
-    //         // Use async/await here
-    //         async function fetchData() {
-    //             const loadedInfo = await dispatch(
-    //                 loadDefaultGroups({ id: userProfile.activeOrg.id })
-    //             );
-    //             setDisplayGroups(loadedInfo.payload);
-    //         }
-    //         fetchData();
-
-    //         // Continue with your logic here
-    //         // ...
-    //     } catch (e) {
-    //         console.log('DGS:50-->catch error');
-    //     }
-    // }, []);
 
     function onAppStateChange(status) {
         if (Platform.OS !== 'web') {
             focusManager.setFocused(status === 'active');
         }
     }
-
-    // useEffect(() => {
-    //     setDisplayGroups(defaultGroups);
-    // }, [defaultGroups]);
 
     const handleDeleteRequest = (value) => {
         dispatch(deleteDefaultGroup({ groupId: value }));
@@ -127,6 +83,7 @@ const DefaultGroupsScreen = () => {
                 <>
                     {displayGroups && (
                         <FlatList
+                            key={Math.random()} // Add a random key to force re-render
                             data={displayGroups}
                             keyExtractor={(item) => item.id}
                             renderItem={({ item }) => (

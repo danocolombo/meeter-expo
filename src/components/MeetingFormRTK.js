@@ -65,6 +65,9 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                 setDateValue(meetingDate);
             } else {
                 const daDate = new Date();
+                printObject('MFRTK:68-->daDate:\n', daDate);
+                const yyyymmmdd_dash = daDate.toISOString().slice(0, 10);
+                printObject('MFRTK:70-->yyyymmmdd_dash:\n', yyyymmmdd_dash);
                 setDateValue(daDate.toISOString().slice(0, 10)); // Passing the date in 'YYYY-MM-DD' format
             }
 
@@ -161,9 +164,8 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
 
     const onMeetingDateConfirm = (data) => {
         const selectedDate = data || new Date(); // Use current date if data is null
-        const utcDate = new Date(selectedDate);
-        setDateValue(utcDate);
-        FormatEventDate(utcDate);
+        setDateValue(selectedDate);
+        FormatEventDate(selectedDate);
         setModalMeetingDateVisible(false);
     };
 

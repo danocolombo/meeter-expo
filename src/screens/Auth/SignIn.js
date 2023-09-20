@@ -25,6 +25,7 @@ import {
 } from '../../features/user/userThunks';
 import { logout } from '../../features/user/userSlice';
 import { getAllMeetings } from '../../features/meetings/meetingsThunks';
+import { loadDefaultGroups } from '../../features/groups/groupsThunks';
 //   FUNCTION START
 const SignInScreen = () => {
     const mtrTheme = useTheme();
@@ -62,6 +63,12 @@ const SignInScreen = () => {
 
                 const SUResults = await dispatch(
                     saveUserProfile(loginResults.payload.profile)
+                );
+
+                const defGroupsResults = await dispatch(
+                    loadDefaultGroups({
+                        id: loginResults.payload.profile.activeOrg.id,
+                    })
                 );
                 const getAllMeetingsResults = await dispatch(
                     getAllMeetings({

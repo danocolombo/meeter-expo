@@ -11,7 +11,6 @@ import {
     getSpecificMeeting,
     getAllMeetings,
     updateMeeting,
-    getActiveMeetings,
     addDefaultGroups,
     deleteGroupFromMeeting,
     addMeeting,

@@ -532,13 +532,37 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(addSubscriptionMeeting.fulfilled, (state, action) => {
-                printObject(
-                    'MS:537-->addSubscriptionMeeting.FULFILLED:action.payload:\n',
-                    action.payload
+                const meetingToInsert = action.payload;
+
+                if (!meetingToInsert.id) {
+                    console.error('Meeting payload is missing an ID.');
+                    return {
+                        ...state,
+                        isLoading: false,
+                        error: 'Meeting payload is missing an ID.',
+                    };
+                }
+
+                const existingIndex = state.meetings.findIndex(
+                    (item) => item.id === meetingToInsert.id
                 );
-                state.isLoading = false;
-                return state;
+
+                if (existingIndex === -1) {
+                    return {
+                        ...state,
+                        meetings: [...state.meetings, meetingToInsert],
+                        isLoading: false,
+                        error: null, // Reset the error flag if no error occurred
+                    };
+                } else {
+                    return {
+                        ...state,
+                        isLoading: false,
+                        error: null, // Reset the error flag if no error occurred
+                    };
+                }
             })
+
             .addCase(addSubscriptionMeeting.rejected, (state, action) => {
                 printObject(
                     'MS:545-->addSubscriptionMeeting.REJECTED:action.payload:\n',

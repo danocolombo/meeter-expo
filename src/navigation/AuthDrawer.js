@@ -21,6 +21,10 @@ const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 import { onCreateMeeting } from '../graphql/subscriptions';
 import { addSubscriptionMeeting } from '../features/meetings/meetingsThunks';
+import {
+    setupSubscriptions,
+    unsubscribeAll,
+} from '../subscriptions/AuthDrawerSubscriptions';
 const AuthDrawer = (navigation) => {
     const mtrTheme = useTheme();
     const dispatch = useDispatch();
@@ -31,35 +35,42 @@ const AuthDrawer = (navigation) => {
     const meeter = useSelector((state) => state.system);
 
     //* subscription to new meetings
+    // useEffect(() => {
+    //     const subscription = API.graphql(
+    //         graphqlOperation(onCreateMeeting)
+    //     ).subscribe({
+    //         next: (data) => {
+    //             const meeting = data.value.data.onCreateMeeting;
+    //             console.log('New meeting:', meeting);
+    //             dispatch(addSubscriptionMeeting(meeting))
+    //                 .then((results) => {
+    //                     console.log('back from dispatch');
+    //                     printObject('AD:44-->results:\n', results);
+    //                 })
+    //                 .catch((error) => {
+    //                     console.log('error from dispatch');
+    //                     printObject('AD:48-->error:\n', error);
+    //                 });
+    //             // Dispatch a Redux action or update state as needed
+    //         },
+    //         error: (error) => {
+    //             console.error('Subscription error:', error);
+    //         },
+    //     });
+
+    //     // Clean up the subscription when the component unmounts
+    //     return () => {
+    //         subscription.unsubscribe();
+    //     };
+    // }, []); // Empty dependency array to ensure the effect runs only once
     useEffect(() => {
-        const subscription = API.graphql(
-            graphqlOperation(onCreateMeeting)
-        ).subscribe({
-            next: (data) => {
-                const meeting = data.value.data.onCreateMeeting;
-                console.log('New meeting:', meeting);
-                dispatch(addSubscriptionMeeting(meeting))
-                    .then((results) => {
-                        console.log('back from dispatch');
-                        printObject('AD:44-->results:\n', results);
-                    })
-                    .catch((error) => {
-                        console.log('error from dispatch');
-                        printObject('AD:48-->error:\n', error);
-                    });
-                // Dispatch a Redux action or update state as needed
-            },
-            error: (error) => {
-                console.error('Subscription error:', error);
-            },
-        });
+        setupSubscriptions(dispatch);
 
-        // Clean up the subscription when the component unmounts
+        // Clean up all subscriptions when the component unmounts
         return () => {
-            subscription.unsubscribe();
+            unsubscribeAll();
         };
-    }, []); // Empty dependency array to ensure the effect runs only once
-
+    }, []);
     // console.log('AD: affiliations:', user)
     let manager = false;
     let patron = false;

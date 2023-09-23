@@ -33,7 +33,7 @@ export function setupSubscriptions(dispatch, activeOrgId) {
                 })
                 .catch((error) => {
                     console.log('error from dispatch');
-                    printObject('AD:29-->error:\n', error);
+                    printObject('ADS:36-->error:\n', error);
                 });
         },
         error: (error) => {
@@ -47,7 +47,7 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         graphqlOperation(onDeleteMeeting)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:46-->data:\n', data);
+            printObject('ADS:50-->SUB received data:\n', data);
             const meeting = data.value.data.onDeleteMeeting;
             dispatch(
                 subscriptionDeleteMeeting({
@@ -55,15 +55,18 @@ export function setupSubscriptions(dispatch, activeOrgId) {
                 })
             )
                 .then((results) => {
-                    printObject('AD:51-->meeting deleted:\n', results);
+                    printObject(
+                        'ADS:58-->subscriptionDeleteMeeting complete:\n',
+                        results
+                    );
                 })
                 .catch((error) => {
                     console.log('error from dispatch');
-                    printObject('AD:54-->error:\n', error);
+                    printObject('ADS:62-->error:\n', error);
                 });
         },
         error: (error) => {
-            console.error('ADS:60-->meetingDeleteSubscription  error:', error);
+            console.error('ADS:66-->meetingDeleteSubscription  error:', error);
         },
     });
     activeSubscriptions.push(meetingDeleteSubscription);

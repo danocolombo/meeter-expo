@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from 'react-native-paper';
-import MeetingForm from '../components/MeetingFormRTK';
+import MeetingForm from '../components/MeetingForm';
 import { addMeeting } from '../features/meetings/meetingsThunks';
 import { createAWSUniqueID, printObject } from '../utils/helpers';
 //   FUNCTION START
@@ -54,7 +54,7 @@ const mtrStyles = (mtrTheme) =>
             backgroundColor: mtrTheme.colors.background,
         },
         screenTitleContainer: {
-            paddingTop: 10,
+            paddingTop: 0,
             justifyContent: 'center',
             alignItems: 'center',
         },

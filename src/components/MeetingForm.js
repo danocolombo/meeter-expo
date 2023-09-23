@@ -311,11 +311,6 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
     return (
         <SafeAreaView style={mtrStyles(mtrTheme).surface}>
             <KeyboardAvoidingView style={mtrStyles(mtrTheme).keyboardAvoiding}>
-                <View>
-                    <Text style={{ fontSize: 8, fontColor: 'white' }}>
-                        CLEAN
-                    </Text>
-                </View>
                 <View style={mtrStyles(mtrTheme).selectorWrapper}>
                     <TypeSelectors
                         pick={meeting.meetingType}
@@ -442,13 +437,14 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                 </View>
                 {isSavable && (
                     <View style={mtrStyles(mtrTheme).buttonContainer}>
-                        <Button
-                            mode='contained'
-                            onPress={handleFormSubmit}
-                            style={{ backgroundColor: 'green', color: 'white' }}
-                        >
-                            <Text style={{ color: 'white' }}>SAVE</Text>
-                        </Button>
+                        <CustomButton
+                            text='SAVE'
+                            bgColor={mtrTheme.colors.mediumGreen}
+                            fgColor={mtrTheme.colors.lightText}
+                            type='PRIMARY'
+                            enabled={true}
+                            onPress={() => handleFormSubmit()}
+                        />
                     </View>
                 )}
             </KeyboardAvoidingView>

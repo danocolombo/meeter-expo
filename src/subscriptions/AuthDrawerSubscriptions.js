@@ -1,6 +1,7 @@
 import { API, graphqlOperation } from 'aws-amplify';
 import { useSelector } from 'react-redux';
-import { onCreateMeeting, onDeleteMeeting } from '../graphql/subscriptions';
+import { onCreateMeeting } from '../graphql/subscriptions';
+import { onDeleteMeeting } from '../jerichoQL/subscriptions';
 import {
     subscriptionCreateMeeting,
     subscriptionDeleteMeeting,
@@ -43,10 +44,11 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         graphqlOperation(onDeleteMeeting)
     ).subscribe({
         next: (data) => {
+            printObject('ADS:46-->data:\n', data);
             const meeting = data.value.data.onDeleteMeeting;
             dispatch(
                 subscriptionDeleteMeeting({
-                    meeting: meeting,
+                    id: meeting.id,
                 })
             )
                 .then((results) => {

@@ -531,7 +531,7 @@ export const subscriptionDeleteMeeting = createAsyncThunk(
             //* required field is "__typename": "Meeting"
             //*===========================================
             printObject('MT:533-->input:\n', input);
-            return { id: 'abc-124' };
+            return { id: input.id };
             // const meeting = input.meeting;
             // const activeOrgId = input.activeOrgId;
             // if (meeting?.__typename === 'Meeting') {

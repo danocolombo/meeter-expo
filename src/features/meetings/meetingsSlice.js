@@ -581,18 +581,30 @@ export const meetingsSlice = createSlice({
             })
             .addCase(subscriptionDeleteMeeting.fulfilled, (state, action) => {
                 printObject('MS:537-->idToDelete:\n', action.payload.id);
-                printObject('MS:538-->activeOrgId: ', activeOrgId);
-                if (!meetingToInsert.id) {
-                    console.error('Meeting payload is missing an ID.');
+                if (!action?.payload?.id) {
+                    console.error(
+                        'Delete Meeting Subscription payload is missing an ID.'
+                    );
                     return {
                         ...state,
                         isLoading: false,
-                        error: 'Meeting payload is missing an ID.',
+                        error: 'Delete Meeting Subscription payload is missing an ID.',
                     };
                 }
-
+                const updatedMeetings = state.meetings.filter(
+                    (m) => m.id !== action.payload.id
+                );
+                const updatedActiveMeetings = state.activeMeetings.filter(
+                    (m) => m.id !== action.payload.id
+                );
+                const updatedHistoricMeetings = state.historicMeetings.filter(
+                    (m) => m.id !== action.payload.id
+                );
                 return {
                     ...state,
+                    meetings: updatedMeetings,
+                    activeMeetings: updatedActiveMeetings,
+                    historicMeetings: updatedHistoricMeetings,
                     isLoading: false,
                     error: null, // Reset the error flag if no error occurred
                 };

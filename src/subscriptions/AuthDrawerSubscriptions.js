@@ -26,7 +26,10 @@ export function setupSubscriptions(dispatch, activeOrgId) {
                 })
             )
                 .then((results) => {
-                    printObject('AD:25-->meeting added:\n', results);
+                    printObject(
+                        'ADS:25-->subscriptionCreateMeeting successful:\n',
+                        results
+                    );
                 })
                 .catch((error) => {
                     console.log('error from dispatch');

@@ -285,7 +285,6 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
     };
     const handleFormSubmit = () => {
         // need to create updated mtgCompKey from date
-        console.log('hit');
         const dateParts = dateValue.toISOString().slice(0, 10).split('-');
         const newKey =
             userProfile?.activeOrg?.code?.toLowerCase() +
@@ -303,7 +302,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
             attendanceCount: parseInt(meeting.attendanceCount),
             newcomersCount: parseInt(meeting.newcomersCount),
         };
-        printObject('MFRTK:220-->newValues:\n', newValues);
+        printObject('MF:305-->adding newValues:\n', newValues);
         handleSubmit(newValues);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);

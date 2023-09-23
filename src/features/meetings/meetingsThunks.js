@@ -248,7 +248,7 @@ export const addMeeting = createAsyncThunk(
     'meetings/addMeeting',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:176-->inputs:\n', inputs);
+            printObject('MT:251-->adding meeting inputs:\n', inputs);
             let mtg = {
                 ...inputs.meeting,
                 organizationMeetingsId: inputs.orgId,
@@ -262,7 +262,7 @@ export const addMeeting = createAsyncThunk(
                 query: mutations.createMeeting,
                 variables: { input: mtg },
             });
-            printObject('MT:184-->results:\n', results);
+            printObject('MT:265-->createMeeting results:\n', results);
             // Check if the result contains the expected data and return it
             if (results.data.createMeeting.id) {
                 return mtg;
@@ -271,8 +271,8 @@ export const addMeeting = createAsyncThunk(
                 throw new Error('MT:264-->Failed to create meeting');
             }
         } catch (error) {
-            printObject('MT:267-->addMeeting thunk try failure.\n', error);
-            throw new Error('MT:268-->Failed to create meeting');
+            printObject('MT:274-->addMeeting thunk try failure.\n', error);
+            throw new Error('MT:275-->Failed to create meeting');
         }
     }
 );

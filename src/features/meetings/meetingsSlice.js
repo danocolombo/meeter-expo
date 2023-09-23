@@ -293,7 +293,7 @@ export const meetingsSlice = createSlice({
                 ); // Adding 1 to month since it's 0-based
                 const day = String(currentDate.getDate()).padStart(2, '0');
                 const key = `${clientCode}#${year}#${month}#${day}`;
-                printObject('MS:302-->key:', key);
+                printObject('MS:296-->key:', key);
                 // Filter meetings based on mtgCompKey condition
                 const activeMeetings = updatedMeetings.filter(
                     (m) => m.mtgCompKey >= key
@@ -523,7 +523,10 @@ export const meetingsSlice = createSlice({
             .addCase(subscriptionCreateMeeting.fulfilled, (state, action) => {
                 const meetingToInsert = action.payload.meeting;
                 const activeOrgId = action.payload.activeOrgId;
-                printObject('MS:537-->meetingToInsert:\n', meetingToInsert);
+                printObject(
+                    'MS:537-->SUBSCRIPTION--meetingToInsert:\n',
+                    meetingToInsert
+                );
                 if (!meetingToInsert.id) {
                     console.error('Meeting payload is missing an ID.');
                     return {
@@ -561,7 +564,7 @@ export const meetingsSlice = createSlice({
                         };
                     }
                 } else {
-                    console.log('MS:561-->else return');
+                    console.log('MS:561-->skipping insert, SUB already exists');
                     return {
                         ...state,
                         isLoading: false,

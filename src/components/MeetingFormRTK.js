@@ -96,7 +96,9 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
 
             switch (meeting.meetingType) {
                 case 'Testimony':
-                    setIsSavable(titleVal);
+                    if (contactVal) {
+                        setIsSavable(true);
+                    }
                     break;
                 case 'Special':
                     if (titleVal && contactVal) {
@@ -200,6 +202,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
     };
     const handleFormSubmit = () => {
         // need to create updated mtgCompKey from date
+        console.log('hit');
         const dateParts = dateValue.toISOString().slice(0, 10).split('-');
         const newKey =
             userProfile?.activeOrg?.code?.toLowerCase() +
@@ -217,6 +220,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
             attendanceCount: parseInt(meeting.attendanceCount),
             newcomersCount: parseInt(meeting.newcomersCount),
         };
+        printObject('MFRTK:220-->newValues:\n', newValues);
         handleSubmit(newValues);
     };
 
@@ -346,8 +350,8 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                     bgColor={mtrTheme.colors.mediumGreen}
                     fgColor={mtrTheme.colors.lightText}
                     type='PRIMARY'
-                    enabled={isSavable}
-                    onPress={handleFormSubmit}
+                    enabled={true}
+                    onPress={() => handleFormSubmit()}
                 />
             </View>
         </KeyboardAvoidingView>

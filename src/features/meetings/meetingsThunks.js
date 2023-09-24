@@ -94,7 +94,7 @@ export const getActiveMeetings = createAsyncThunk(
     async (input, { getState, rejectWithValue }) => {
         try {
             var d = new Date();
-            const today = d.toISOString().slice(0, 10);
+            const today = d?.toISOString().slice(0, 10);
             const state = getState();
             const filteredMeetings = state.meetings.meetings.filter(
                 (m) => m.meetingDate >= today
@@ -124,7 +124,7 @@ export const getHistoricMeetings = createAsyncThunk(
     async (input, { getState, rejectWithValue }) => {
         try {
             var d = new Date();
-            const today = d.toISOString().slice(0, 10);
+            const today = d?.toISOString().slice(0, 10);
             const state = getState();
             // printObject('MT:51-->sample:\n', state.allMeetings[0]);
             const filteredMeetings = state.meetings.meetings.filter(

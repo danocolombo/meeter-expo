@@ -44,7 +44,7 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
             setDateValue(new Date());
         }
     }, []);
-    const formattedDate = dateValue.toLocaleDateString('en-US', {
+    const formattedDate = dateValue?.toLocaleDateString('en-US', {
         timeZone: userTimeZone,
     });
 

@@ -37,12 +37,53 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
     const hit = useSelector((state) =>
         state.meetings.meetings.find((m) => m.id === meetingId)
     );
-    const [meeting, setMeeting] = useState({});
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(currentDate.getDate()).padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day}`;
+    const [meeting, setMeeting] = useState({
+        id: meetingId,
+        announcementContact: '',
+        attendanceCount: 0,
+        avContact: '',
+        cafeContact: '',
+        cafeCount: 0,
+        childrenContact: '',
+        childrenCount: 0,
+        cleanupContact: '',
+        closingContact: '',
+        donations: 0,
+        facilitatorContact: '',
+        greeterContact1: '',
+        greeterContact2: '',
+        meal: '',
+        mealContact: '',
+        mealCount: 0,
+        meetingDate: formattedDate,
+        meetingType: 'Lesson',
+        mtgCompKey: '',
+        newcomersCount: 0,
+        notes: '',
+        nurseryContact: '',
+        nurseryCount: 0,
+        organizationMeetingsId: null,
+        resourceContact: '',
+        securityContact: '',
+        setupContact: '',
+        supportContact: '',
+        title: '',
+        transportationContact: '',
+        worship: '',
+        youthContact: '',
+        youthCount: 0,
+    });
     const [modalMeetingDateVisible, setModalMeetingDateVisible] =
         useState(false);
     const authority = newPerms.includes('manage') || false;
     const localTimezoneOffsetInMinutes = new Date().getTimezoneOffset();
-    const [dateValue, setDateValue] = useState();
+    const [dateValue, setDateValue] = useState(null);
     const [isSavable, setIsSavable] = useState(false);
     const mtrStyles = (mtrTheme) =>
         StyleSheet.create({
@@ -68,7 +109,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                 borderWidth: 2,
                 borderColor: mtrTheme.colors.darkGraphic,
                 borderRadius: 5,
-                marginVertical: 10,
+                marginVertical: 5,
                 marginHorizontal: 10,
             },
             row: {
@@ -134,27 +175,39 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                 currentDate.getTime() - localTimezoneOffsetInMinutes * 60 * 1000
             ); // Convert to local timezone
 
-            const newMeetingDate = localCurrentDate.toISOString().slice(0, 10);
+            const newMeetingDate = localCurrentDate?.toISOString().slice(0, 10);
             setDateValue(localCurrentDate); // Set the default date to local timezone
 
             const newMeeting = {
                 ...newMeetingTemplate,
                 meetingDate: newMeetingDate,
             };
-            setMeeting(newMeeting);
+            setMeeting({
+                ...meeting,
+                meetingDate: newMeeting,
+            });
         } else {
             if (hit?.meetingDate) {
                 const meetingDate = new Date(hit.meetingDate);
                 setDateValue(meetingDate);
+                setMeeting({
+                    ...hit,
+                    meetingDate: meetingDate.toISOString().slice(0, 10),
+                });
             } else {
                 const daDate = new Date();
+                setDateValue(daDate);
                 printObject('MFRTK:68-->daDate:\n', daDate);
-                const yyyymmmdd_dash = daDate.toISOString().slice(0, 10);
+                const yyyymmmdd_dash = daDate?.toISOString().slice(0, 10);
                 printObject('MFRTK:70-->yyyymmmdd_dash:\n', yyyymmmdd_dash);
-                setDateValue(daDate.toISOString().slice(0, 10)); // Passing the date in 'YYYY-MM-DD' format
+                setMeeting({
+                    ...hit,
+                    meetingDate: daDate?.toISOString().slice(0, 10),
+                });
+                // setDateValue(daDate.toISOString().slice(0, 10)); // Passing the date in 'YYYY-MM-DD' format
             }
 
-            setMeeting(hit);
+            // setMeeting(hit);
         }
     }, []);
 
@@ -167,19 +220,18 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
             //* **************************************
             let titleVal = false;
             let contactVal = false;
-            if (meeting?.title !== 'undefined' && meeting?.title?.length > 2) {
+            if (meeting?.title !== 'undefined' && meeting?.title?.length > 1) {
                 titleVal = true;
             }
             if (
                 meeting?.supportContact !== 'undefined' &&
-                meeting?.supportContact?.length > 2
+                meeting?.supportContact?.length > 1
             ) {
                 contactVal = true;
             }
-
             switch (meeting.meetingType) {
                 case 'Testimony':
-                    if (contactVal) {
+                    if (titleVal) {
                         setIsSavable(true);
                     }
                     break;
@@ -201,25 +253,11 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
     }, [meeting]); // Add meeting dependency to this useEffect to handle changes in the meeting object
 
     function inputChangedHandler(inputIdentifier, enteredValue) {
+        // THIS IS ONLY USED FOR DONATIONS AND NOTES
         setMeeting((curInputValues) => {
             // console.log('inputIdentifier:', inputIdentifier);
-
-            if (inputIdentifier === 'title') {
-                if (enteredValue.length < 3) {
-                    setIsTitleValid(false);
-                } else {
-                    setIsTitleValid(true);
-                }
-            }
             if (inputIdentifier === 'donations') {
                 // console.log('MFRTK:203-->donations:', enteredValue);
-            }
-            if (inputIdentifier === 'supportContact') {
-                if (enteredValue.length < 1) {
-                    setIsSupportContactValid(false);
-                } else {
-                    setIsSupportContactValid(true);
-                }
             }
 
             return {
@@ -285,7 +323,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
     };
     const handleFormSubmit = () => {
         // need to create updated mtgCompKey from date
-        const dateParts = dateValue.toISOString().slice(0, 10).split('-');
+        const dateParts = dateValue?.toISOString().slice(0, 10).split('-');
         const newKey =
             userProfile?.activeOrg?.code?.toLowerCase() +
             '#' +
@@ -296,7 +334,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
             dateParts[2];
         const newValues = {
             ...meeting,
-            meetingDate: dateValue.toISOString().slice(0, 10),
+            meetingDate: dateValue?.toISOString().slice(0, 10),
             mtgCompKey: newKey,
             mealCount: parseInt(meeting.mealCount),
             attendanceCount: parseInt(meeting.attendanceCount),
@@ -325,7 +363,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                         }
                     >
                         <View style={mtrStyles(mtrTheme).dateContainer}>
-                            {Platform.OS === 'ios' &&
+                            {Platform?.OS === 'ios' &&
                                 dateValue?.toISOString() && (
                                     <View
                                         style={

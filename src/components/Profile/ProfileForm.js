@@ -64,7 +64,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const [birthDay, setBirthday] = useState(
         profile?.birthday
             ? new Date(profile.birthday)
-            : today.toISOString().slice(0, 10)
+            : today?.toISOString().slice(0, 10)
     );
     const mtrTheme = useTheme();
     const { width, height } = useWindowDimensions();

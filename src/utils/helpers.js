@@ -26,7 +26,7 @@ export function dateIsBeforeToday(testDate) {
     let tMonth = parseInt(target[1]);
     let tDay = parseInt(target[2]);
 
-    var todayDate = new Date().toISOString().slice(0, 10);
+    var todayDate = new Date()?.toISOString().slice(0, 10);
     let standard = todayDate.toString().split('-');
     let sYear = parseInt(standard[0]);
     let sMonth = parseInt(standard[1]);
@@ -213,7 +213,7 @@ export async function asc_sort_raw(a, b) {
     return a.eventDate - b.eventDate;
 }
 export function getFormattedDate(date) {
-    return date.toISOString().slice(0, 10);
+    return date?.toISOString().slice(0, 10);
 }
 export function dateNumToJSDate(dateNum) {
     // YYYYMMDD to JSDate

@@ -154,7 +154,7 @@ const MeetingDetails = (props) => {
         setIsLoading(false);
     };
     //if (data) {
-    const formattedDate = dateValue.toLocaleDateString('en-US', {
+    const formattedDate = dateValue?.toLocaleDateString('en-US', {
         timeZone: userTimeZone,
     });
 

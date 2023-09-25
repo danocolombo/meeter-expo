@@ -1735,45 +1735,6 @@ export const onUpdateMeeting = /* GraphQL */ `
                 id
                 name
                 code
-                location {
-                    id
-                    street
-                    city
-                    stateProv
-                    postalCode
-                    createdAt
-                    updatedAt
-                    __typename
-                }
-                affiliations {
-                    nextToken
-                    __typename
-                }
-                defaultUsers {
-                    nextToken
-                    __typename
-                }
-                heroMessage
-                meetings {
-                    nextToken
-                    __typename
-                }
-                groups {
-                    nextToken
-                    __typename
-                }
-                defaultGroups {
-                    nextToken
-                    __typename
-                }
-                managers {
-                    nextToken
-                    __typename
-                }
-                createdAt
-                updatedAt
-                locationOrganizationsId
-                __typename
             }
             groups {
                 items {
@@ -1786,14 +1747,9 @@ export const onUpdateMeeting = /* GraphQL */ `
                     facilitator
                     cofacilitator
                     notes
-                    createdAt
-                    updatedAt
                     organizationGroupsId
                     meetingGroupsId
-                    __typename
                 }
-                nextToken
-                __typename
             }
             announcementsContact
             attendanceCount
@@ -1824,10 +1780,7 @@ export const onUpdateMeeting = /* GraphQL */ `
             worship
             youthContact
             youthCount
-            createdAt
-            updatedAt
             organizationMeetingsId
-            __typename
         }
     }
 `;
@@ -1850,101 +1803,11 @@ export const onCreateGroup = /* GraphQL */ `
             id
             meeting {
                 id
-                meetingDate
-                title
-                meetingType
-                mtgCompKey
-                organization {
-                    id
-                    name
-                    code
-                    heroMessage
-                    createdAt
-                    updatedAt
-                    locationOrganizationsId
-                    __typename
-                }
-                groups {
-                    nextToken
-                    __typename
-                }
-                announcementsContact
-                attendanceCount
-                avContact
-                cafeContact
-                cafeCount
-                childrenContact
-                childrenCount
-                cleanupContact
-                closingContact
-                donations
-                facilitatorContact
-                greeterContact1
-                greeterContact2
-                meal
-                mealContact
-                mealCount
-                newcomersCount
-                notes
-                nurseryContact
-                nurseryCount
-                resourceContact
-                securityContact
-                setupContact
-                supportContact
-                transportationContact
-                transportationCount
-                worship
-                youthContact
-                youthCount
-                createdAt
-                updatedAt
-                organizationMeetingsId
-                __typename
             }
             organization {
                 id
                 name
                 code
-                location {
-                    id
-                    street
-                    city
-                    stateProv
-                    postalCode
-                    createdAt
-                    updatedAt
-                    __typename
-                }
-                affiliations {
-                    nextToken
-                    __typename
-                }
-                defaultUsers {
-                    nextToken
-                    __typename
-                }
-                heroMessage
-                meetings {
-                    nextToken
-                    __typename
-                }
-                groups {
-                    nextToken
-                    __typename
-                }
-                defaultGroups {
-                    nextToken
-                    __typename
-                }
-                managers {
-                    nextToken
-                    __typename
-                }
-                createdAt
-                updatedAt
-                locationOrganizationsId
-                __typename
             }
             grpCompKey
             title
@@ -1954,11 +1817,8 @@ export const onCreateGroup = /* GraphQL */ `
             facilitator
             cofacilitator
             notes
-            createdAt
-            updatedAt
             organizationGroupsId
             meetingGroupsId
-            __typename
         }
     }
 `;

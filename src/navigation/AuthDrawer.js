@@ -19,7 +19,6 @@ import HeroMessageScreen from '../screens/HeroMessage';
 import { printObject } from '../utils/helpers';
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
-import { onCreateMeeting } from '../graphql/subscriptions';
 import {
     setupSubscriptions,
     unsubscribeAll,

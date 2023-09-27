@@ -198,11 +198,12 @@ export const addDefaultGroups = createAsyncThunk(
 
             const createGroupPromises = inputs.defaultGroups.map(async (dg) => {
                 const newId = createAWSUniqueID();
+                const derivedGrpCompKey = `${inputs.meeting.mtgCompKey}#${inputs.meeting.id}`;
                 const inputInfo = {
                     ...dg,
                     id: newId,
                     attendance: 0,
-                    grpCompKey: inputs.meeting.mtgCompKey,
+                    grpCompKey: derivedGrpCompKey,
                     meetingGroupsId: inputs.meeting.id,
                     organizationGroupsId: inputs.orgId,
                 };

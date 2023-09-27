@@ -203,6 +203,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                 // Convert the UTC date to your local time zone (e.g., 'America/New_York')
                 const localDate = moment(utcDateString).tz('America/New_York');
                 setDateValue(localDate);
+                setMeeting(hit);
             } else {
                 //* we have a meeting, but no meetingDate
                 printObject('MF:235-->hit:\n', hit);
@@ -335,11 +336,9 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
         if (newValues.id === null) {
             delete newValues.id;
         }
-        printObject('MF:305-->adding newValues:\n', newValues);
         handleSubmit(newValues);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
-    printObject('MF:347-->dateValue:\n', dateValue);
     return (
         <SafeAreaView style={mtrStyles(mtrTheme).surface}>
             <KeyboardAvoidingView style={mtrStyles(mtrTheme).keyboardAvoiding}>

@@ -253,7 +253,7 @@ export const addMeeting = createAsyncThunk(
                 ...inputs.meeting,
                 organizationMeetingsId: inputs.orgId,
             };
-            // printObject('MT:178-->mtg:\n', mtg);
+            printObject('MT:256-->mtg:\n', mtg);
             // delete mtg.meetingId;
             // delete mtg.clientId;
 
@@ -268,7 +268,7 @@ export const addMeeting = createAsyncThunk(
                 return mtg;
             } else {
                 // If data.createGroup.id is missing, handle the error
-                throw new Error('MT:264-->Failed to create meeting');
+                throw new Error('MT:271-->Failed to create meeting');
             }
         } catch (error) {
             printObject('MT:274-->addMeeting thunk try failure.\n', error);

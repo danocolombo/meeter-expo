@@ -26,6 +26,7 @@ import { printObject } from '../utils/helpers';
 import TypeSelectors from './TypeSelectors';
 import TitleSection from './MeetingForm.titleContact';
 import NumbersSection from './MeetingForm.numbers';
+import moment from 'moment-timezone'; // Import moment-timezone
 
 //   FUNCTION START
 //   ==============
@@ -169,7 +170,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
     useEffect(() => {
         // printObject('MFRTK:81-->hit:\n', hit);
         if (!hit?.id) {
-            // console.log('MFRTK:83-->meeting defined from template');
+            console.log('MFRTK:83-->meeting defined from template');
             const currentDate = new Date(); // Get the current date
             const localCurrentDate = new Date(
                 currentDate.getTime() - localTimezoneOffsetInMinutes * 60 * 1000
@@ -177,33 +178,80 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
 
             const newMeetingDate = localCurrentDate?.toISOString().slice(0, 10);
             setDateValue(localCurrentDate); // Set the default date to local timezone
-
+            printObject('MF:180-->currentDate:\n', currentDate);
+            printObject('MF:181-->newMeetingDate:\n', newMeetingDate);
+            printObject('MF:182-->localCurrentDate:\n', localCurrentDate);
+            console.log(
+                'MF:184-->typeof newMeetingDate:',
+                typeof newMeetingDate
+            );
             const newMeeting = {
                 ...newMeetingTemplate,
                 meetingDate: newMeetingDate,
             };
             setMeeting({
                 ...meeting,
-                meetingDate: newMeeting,
+                meetingDate: newMeetingDate,
             });
         } else {
             if (hit?.meetingDate) {
-                const meetingDate = new Date(hit.meetingDate);
-                setDateValue(meetingDate);
-                setMeeting({
-                    ...hit,
-                    meetingDate: meetingDate.toISOString().slice(0, 10),
-                });
+                // const meetingDate = new Date(hit.meetingDate);
+                // setDateValue(meetingDate);
+                // setMeeting({
+                //     ...hit,
+                //     meetingDate: meetingDate.toISOString().slice(0, 10),
+                // });
+                // const currentDate = moment().tz('America/New_York'); // Use the desired time zone
+                // const formattedDate = currentDate.format('YYYY-MM-DD');
+
+                // setDateValue(formattedDate);
+                // Parse the mDate string with the desired timezone (e.g., 'America/New_York')
+                printObject(
+                    'MF:209-->EXISTING hit.meetingDate:',
+                    hit.meetingDate
+                );
+                // value of hit.meetingDate is a string of "2023-09-30"
+                // const currentDate = new Date(hit.meetingDate);
+
+                // const localCurrentDate = new Date(
+                //     currentDate.getTime() -
+                //         localTimezoneOffsetInMinutes * 60 * 1000
+                // ); // Convert to local timezone
+                const moment = require('moment-timezone');
+
+                // Assuming hit.meetingDate is in UTC format like "2023-09-30"
+                const utcDateString = hit.meetingDate;
+
+                // Convert the UTC date to your local time zone (e.g., 'America/New_York')
+                const localDate = moment(utcDateString).tz('America/New_York');
+
+                console.log('Local Date:', localDate.toDate());
+                setDateValue(localDate);
+
+                // const parsedDate = moment.tz(
+                //     hit.meetingDate,
+                //     'YYYY-MM-DD',
+                //     'America/New_York'
+                // );
+
+                // // Format the parsed date for display
+                // const formattedDate = parsedDate.format('YYYY-MM-DD');
+                // printObject('MF:230-->formattedDate:', formattedDate);
+                // console.log('MF:231 typeof: ', typeof formattedDate);
+                // setDateValue(formattedDate);
             } else {
-                const daDate = new Date();
-                setDateValue(daDate);
-                printObject('MFRTK:68-->daDate:\n', daDate);
-                const yyyymmmdd_dash = daDate?.toISOString().slice(0, 10);
-                printObject('MFRTK:70-->yyyymmmdd_dash:\n', yyyymmmdd_dash);
-                setMeeting({
-                    ...hit,
-                    meetingDate: daDate?.toISOString().slice(0, 10),
-                });
+                //* we have a meeting, but no meetingDate
+                printObject('MF:235-->hit:\n', hit);
+                // const daDate = new Date();
+                // setDateValue(daDate);
+                // printObject('MF:218-->daDate:\n', daDate);
+                // const yyyymmmdd_dash = daDate?.toISOString().slice(0, 10);
+                // printObject('MF:220-->yyyymmmdd_dash:\n', yyyymmmdd_dash);
+                // console.log('MF:224-->typeof: ', typeof daDate);
+                // setMeeting({
+                //     ...hit,
+                //     meetingDate: daDate?.toISOString().slice(0, 10),
+                // });
                 // setDateValue(daDate.toISOString().slice(0, 10)); // Passing the date in 'YYYY-MM-DD' format
             }
 
@@ -344,7 +392,7 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
         handleSubmit(newValues);
     };
     const onMeetingDateCancel = () => setModalMeetingDateVisible(false);
-
+    printObject('MF:347-->dateValue:\n', dateValue);
     return (
         <SafeAreaView style={mtrStyles(mtrTheme).surface}>
             <KeyboardAvoidingView style={mtrStyles(mtrTheme).keyboardAvoiding}>
@@ -363,20 +411,18 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                         }
                     >
                         <View style={mtrStyles(mtrTheme).dateContainer}>
-                            {Platform?.OS === 'ios' &&
-                                dateValue?.toISOString() && (
-                                    <View
-                                        style={
-                                            mtrStyles(mtrTheme).dateWrapperIOS
-                                        }
-                                    >
-                                        <DateBall
-                                            date={`${
-                                                dateValue?.getUTCMonth() + 1
-                                            }/${dateValue?.getUTCDate()}/${dateValue?.getUTCFullYear()}`}
-                                        />
-                                    </View>
-                                )}
+                            {Platform?.OS === 'ios' && dateValue && (
+                                <View
+                                    style={mtrStyles(mtrTheme).dateWrapperIOS}
+                                >
+                                    {/* <DateBall
+                                        date={`${
+                                            dateValue?.getUTCMonth() + 1
+                                        }/${dateValue?.getUTCDate()}/${dateValue?.getUTCFullYear()}`}
+                                    /> */}
+                                    <DateBall date={dateValue} />
+                                </View>
+                            )}
                             {Platform.OS === 'android' && (
                                 <View
                                     style={
@@ -460,9 +506,13 @@ const MeetingForm = ({ meetingId, handleSubmit }) => {
                     <DateTimePickerModal
                         isVisible={modalMeetingDateVisible}
                         mode='date'
-                        date={dateValue || new Date()} // Pass null or the current date as the initial date if dateValue is not set yet
+                        date={
+                            dateValue
+                                ? moment(dateValue, 'YYYY-MM-DD').toDate()
+                                : new Date()
+                        } // Set the initial date value
                         display='inline'
-                        timeZoneOffsetInMinutes={localTimezoneOffsetInMinutes}
+                        // timeZoneOffsetInMinutes={localTimezoneOffsetInMinutes}
                         dayTextStyle={mtrStyles(mtrTheme).calendarText}
                         dateTextStyle={mtrStyles(mtrTheme).calendarText}
                         textColor={mtrStyles(mtrTheme).calendarText}

@@ -414,6 +414,8 @@ export const loadTeam = createAsyncThunk(
                 'TT:372-->organizedAffiliatedTeam:\n',
                 organizedAffiliatedTeam
             );
+            console.log('TT:417-->id: ', id);
+
             return { ...organizedAffiliatedTeam, all: affiliatedUsers };
             // make sure there are only members for this org
             const validatedTeamInfo = {

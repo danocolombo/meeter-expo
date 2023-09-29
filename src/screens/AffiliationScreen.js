@@ -42,6 +42,7 @@ import { clearGroupSlice } from '../features/groups/groupsSlice';
 import { loadDefaultGroups } from '../features/groups/groupsThunks';
 import { getAllMeetings } from '../features/meetings/meetingsThunks';
 import { unsubscribeFromMeetingCreation } from '../features/meetings/meetingsSubscriptions';
+import { loadTeam } from '../features/team/teamThunks';
 const AffiliationScreen = (props) => {
     const navigate = useNavigation();
     const navigation = useNavigation();
@@ -222,6 +223,18 @@ const AffiliationScreen = (props) => {
                                 printObject('AS:221-->error:\n', e);
                             });
                         return results;
+                    })
+                    .then((results) => {
+                        //* clear the team values and load appropriate values
+                        dispatch(loadTeam(i))
+                            .then((results) => {
+                                console.log('AS:231-->loadTeam success.');
+                                printObject('AS:232-->results:\n', results);
+                            })
+                            .catch((error) => {
+                                console.log('AS:235-->error calling loadTeam');
+                                printObject('AS:236-->error:\n', error);
+                            });
                     })
                     .then((results) => {
                         let toast = Toast.show('Affiliation changed', {

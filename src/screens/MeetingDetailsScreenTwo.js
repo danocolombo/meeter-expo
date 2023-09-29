@@ -372,6 +372,7 @@ const MeetingDetails = (props) => {
                 </View>
             </View>
             <FlatList
+                key={Math.random()} // Add a random key to force re-render
                 data={memoizedMeetingGroups}
                 keyExtractor={(item) => item.id}
                 persistentScrollbar={true}

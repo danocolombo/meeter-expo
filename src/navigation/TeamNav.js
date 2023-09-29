@@ -38,41 +38,42 @@ const TeamConfig = () => {
                 ],
             }}
         >
-            <BottomTab.Screen
-                name='NewMembers'
-                id='NEW'
-                component={NewMembers}
-                options={{
-                    title: appName,
-                    id: 'NEW_MEMBERS',
-                    // tabBarStyle: { backgroundColor: 'blue' },
-                    tabBarLabel: ({ focused, color, fontSize }) => (
-                        <Text
-                            style={{
-                                color: newCountLabel > 0 ? 'red' : 'black',
-                                backgroundColor:
-                                    newCountLabel > 0 ? 'yellow' : 'white',
-                                fontSize: 14,
-                                fontWeight: '500',
-                                fontFamily: 'Roboto-Regular',
-                            }}
-                        >
-                            New Requests ({newCountLabel})
-                        </Text>
-                    ),
-                    tabBarActiveBackgroundColor:
-                        newCountLabel > 0 ? 'yellow' : 'green',
-                    // tabBarInactiveBackgroundColor: 'lightgrey',
-
-                    tabBarIcon: ({ focused, color, size }) => (
-                        <Entypo
-                            name='new'
-                            size={30}
-                            color={newCountLabel > 0 ? 'black' : 'white'}
-                        />
-                    ),
-                }}
-            />
+            {newCountLabel != 0 ? (
+                <BottomTab.Screen
+                    name='NewMembers'
+                    id='NEW'
+                    component={NewMembers}
+                    options={{
+                        title: appName,
+                        id: 'NEW_MEMBERS',
+                        // tabBarStyle: { backgroundColor: 'blue' },
+                        tabBarLabel: ({ focused, color, fontSize }) => (
+                            <Text
+                                style={{
+                                    color: newCountLabel > 0 ? 'red' : 'white',
+                                    backgroundColor:
+                                        newCountLabel > 0 ? 'yellow' : 'green',
+                                    fontSize: 14,
+                                    fontWeight: '500',
+                                    fontFamily: 'Roboto-Regular',
+                                }}
+                            >
+                                New Requests ({newCountLabel})
+                            </Text>
+                        ),
+                        tabBarActiveBackgroundColor:
+                            newCountLabel > 0 ? 'yellow' : 'green',
+                        // tabBarInactiveBackgroundColor: 'lightgrey',
+                        tabBarIcon: ({ focused, color, size }) => (
+                            <Entypo
+                                name='new'
+                                size={30}
+                                color={newCountLabel > 0 ? 'black' : 'white'}
+                            />
+                        ),
+                    }}
+                />
+            ) : null}
 
             <BottomTab.Screen
                 name='ActiveMembers'

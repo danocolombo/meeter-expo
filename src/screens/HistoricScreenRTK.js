@@ -59,6 +59,7 @@ const HistoricScreen = (props) => {
                     <>
                         {displayMeetings && (
                             <FlatList
+                                key={Math.random()} // Add a random key to force re-render
                                 data={displayMeetings}
                                 keyExtractor={(item) => item.id}
                                 renderItem={({ item }) => (

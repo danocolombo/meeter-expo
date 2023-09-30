@@ -36,7 +36,7 @@ const ActiveMembers = () => {
                 try {
                     dispatch(loadTeam(userProfile?.activeOrg?.id))
                         .then((results) => {
-                            printObject('AMT:41-->results:\n', results);
+                            // printObject('AMT:41-->results:\n', results);
                             setDisplayMembers(results.payload.active);
                             const totals = {
                                 active: results.payload.active.length,
@@ -108,7 +108,7 @@ const ActiveMembers = () => {
         // console.log('AMT:107-->id:', id);
         const member = displayMembers.find((m) => m.id === id);
         setDetailedMember(member);
-        printObject('AMT:110-->detailedMember:\n', member);
+        // printObject('AMT:110-->detailedMember:\n', member);
         setShowDetailsModal(true);
     }
 
@@ -120,7 +120,7 @@ const ActiveMembers = () => {
             </View>
         );
     }
-    printObject('AMT:123-->detailedMember:\n', detailedMember);
+    // printObject('AMT:123-->detailedMember:\n', detailedMember);
     return (
         <>
             <Surface style={mtrStyles(mtrTheme).screenSurface}>

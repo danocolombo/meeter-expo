@@ -1,10 +1,35 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { useTheme, Surface } from 'react-native-paper';
+import { StyleSheet, Text, View, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { useTheme, Surface, FAB } from 'react-native-paper';
 import CustomButton from '../../components/CustomButton';
+import { Storage } from 'aws-amplify';
 import { printObject } from '../../utils/helpers';
 const DetailModal = ({ detailedMember, onClick }) => {
     const mtrTheme = useTheme();
+    const meeter = useSelector((state) => state.system.meeter);
+    const [cameraImage, setCameraImage] = useState(null);
+    const [profilePic, setProfilePic] = useState(null);
+    const profilePicture = useRef(null);
+    useEffect(() => {
+        let picRef;
+
+        if (detailedMember.picture) {
+            picRef = detailedMember.picture;
+        } else {
+            //picRef = meeter.defaultProfilePicture;
+            picRef = meeter.defaultProfilePicture;
+        }
+        console.log('picRef:', picRef);
+        Storage.get(picRef, {
+            level: 'public',
+        }).then((hardPic) => {
+            setProfilePic(hardPic);
+            // printObject('PF:132-->Storage.get', hardPic);
+            profilePicture.current = hardPic;
+        });
+    }, []);
+
     return (
         <View style={mtrStyles(mtrTheme).modal}>
             <View style={mtrStyles(mtrTheme).modalSurfaceContainer}>
@@ -13,18 +38,39 @@ const DetailModal = ({ detailedMember, onClick }) => {
                         {detailedMember?.firstName} {detailedMember?.lastName}
                     </Text>
                     <View style={mtrStyles(mtrTheme).modalDataWrapper}>
-                        <View style={mtrStyles(mtrTheme).modalRow}>
-                            <View style={mtrStyles(mtrTheme).modalRowCenter}>
+                        {detailedMember?.picture && (
+                            <View style={mtrStyles(mtrTheme).modalRow}>
                                 <View
-                                    style={{
-                                        backgroundColor: 'grey',
-                                        height: 80,
-                                        width: 80,
-                                        borderRadius: 40,
-                                    }}
-                                ></View>
+                                    style={mtrStyles(mtrTheme).modalRowCenter}
+                                >
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme)
+                                                .profileImageFrame
+                                        }
+                                    >
+                                        <View
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .profileImageWrapper
+                                            }
+                                        >
+                                            <Image
+                                                source={{
+                                                    uri: cameraImage
+                                                        ? cameraImage
+                                                        : profilePic,
+                                                }}
+                                                style={
+                                                    mtrStyles(mtrTheme)
+                                                        .profileImage
+                                                }
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
-                        </View>
+                        )}
                         <View style={mtrStyles(mtrTheme).modalRow}>
                             <View style={mtrStyles(mtrTheme).modalColumnHalf}>
                                 <Text
@@ -233,8 +279,8 @@ const mtrStyles = (mtrTheme) =>
         modalDataWrapper: {
             // marginHorizontal: 20,
             // flex: 1,
-            borderColor: 'blue',
-            borderWidth: 1,
+            // borderColor: 'blue',
+            // borderWidth: 1,
         },
         modalMemberName: {
             fontFamily: 'NanumGothic-ExtraBold',
@@ -278,6 +324,24 @@ const mtrStyles = (mtrTheme) =>
             fontFamily: 'NanumGothic-Regular',
             textAlign: 'left',
             paddingRight: 2,
+        },
+        profileImageFrame: {
+            borderWidth: 1,
+            borderColor: 'lightgrey',
+            backgroundColor: mtrTheme.colors.background,
+            padding: 3,
+            borderRadius: 999,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        profileImageWrapper: {
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        profileImage: {
+            height: 80,
+            aspectRatio: 1,
+            borderRadius: 40,
         },
         addressContainer: {
             marginTop: 5,

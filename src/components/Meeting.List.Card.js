@@ -198,7 +198,11 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
                                                 </TouchableOpacity>
 
                                                 {tooltipVisible && (
-                                                    <Tooltip content='Tooltip Content'>
+                                                    <Tooltip
+                                                        content={
+                                                            meeting?.worship
+                                                        }
+                                                    >
                                                         <View
                                                             style={
                                                                 mtrStyles(

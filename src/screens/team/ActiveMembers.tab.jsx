@@ -19,6 +19,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import { printObject } from '../../utils/helpers';
 import MemberCard from '../../components/teams/MemberCard';
+import DetailModal from './DetailModal';
 const ActiveMembers = () => {
     const mtrTheme = useTheme();
     const userProfile = useSelector((state) => state.user.profile);
@@ -120,7 +121,7 @@ const ActiveMembers = () => {
             </View>
         );
     }
-    // printObject('AMT:154-->displayMembers:\n', displayMembers);
+    printObject('AMT:123-->detailedMember:\n', detailedMember);
     return (
         <>
             <Surface style={mtrStyles(mtrTheme).screenSurface}>
@@ -129,157 +130,13 @@ const ActiveMembers = () => {
                         Active Users
                     </Text>
                 </View>
-                <Modal visible={showDetailsModal} animationStyle='slide'>
-                    <View style={mtrStyles(mtrTheme).modal}>
-                        <View style={mtrStyles(mtrTheme).modalSurfaceContainer}>
-                            <Surface style={mtrStyles(mtrTheme).modalSurface}>
-                                <View
-                                    style={mtrStyles(mtrTheme).modalDataWrapper}
-                                >
-                                    <Text
-                                        style={
-                                            mtrStyles(mtrTheme).modalMemberName
-                                        }
-                                    >
-                                        {detailedMember?.firstName}{' '}
-                                        {detailedMember?.lastName}
-                                    </Text>
-                                </View>
-                                <View
-                                    style={mtrStyles(mtrTheme).modalDataWrapper}
-                                >
-                                    <View style={mtrStyles(mtrTheme).modalRow}>
-                                        <View
-                                            style={
-                                                mtrStyles(mtrTheme)
-                                                    .modalColumnHalf
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    mtrStyles(mtrTheme)
-                                                        .modalDetailsLabel
-                                                }
-                                            >
-                                                Username:
-                                            </Text>
-                                        </View>
-                                        <View
-                                            style={
-                                                mtrStyles(mtrTheme)
-                                                    .modalColumnHalf
-                                            }
-                                        >
-                                            <Text>
-                                                {detailedMember?.username}
-                                            </Text>
-                                        </View>
-                                    </View>
-
-                                    <View style={mtrStyles(mtrTheme).modalRow}>
-                                        <View
-                                            style={
-                                                mtrStyles(mtrTheme)
-                                                    .modalRowCenter
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    mtrStyles(mtrTheme)
-                                                        .modalSmallText
-                                                }
-                                            >
-                                                sub: {detailedMember?.sub}
-                                            </Text>
-                                        </View>
-                                    </View>
-
-                                    <View style={mtrStyles(mtrTheme).modalRow}>
-                                        <View
-                                            style={
-                                                mtrStyles(mtrTheme)
-                                                    .modalRowCenter
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    mtrStyles(mtrTheme)
-                                                        .modalSmallText
-                                                }
-                                            >
-                                                id: {detailedMember?.id}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <View style={mtrStyles(mtrTheme).modalRow}>
-                                        <View
-                                            style={
-                                                mtrStyles(mtrTheme)
-                                                    .modalRowCenter
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    mtrStyles(mtrTheme)
-                                                        .modalSmallText
-                                                }
-                                            >
-                                                phone: {detailedMember?.phone}
-                                            </Text>
-                                        </View>
-                                    </View>
-
-                                    <View style={mtrStyles(mtrTheme).modalRow}>
-                                        <View
-                                            style={
-                                                mtrStyles(mtrTheme)
-                                                    .modalRowCenter
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    mtrStyles(mtrTheme)
-                                                        .modalDetailsLabel
-                                                }
-                                            >
-                                                Phone:
-                                            </Text>
-
-                                            <Text>{detailedMember?.phone}</Text>
-                                        </View>
-                                    </View>
-                                </View>
-
-                                <View style={mtrStyles(mtrTheme).noteContainer}>
-                                    <Text style={mtrStyles(mtrTheme).noteText}>
-                                        NOTE: All groups for the meeting will be
-                                        deleted as well.
-                                    </Text>
-                                </View>
-                                <View
-                                    style={mtrStyles(mtrTheme).buttonContainer}
-                                >
-                                    <View
-                                        style={
-                                            mtrStyles(mtrTheme).buttonWrapper
-                                        }
-                                    >
-                                        <CustomButton
-                                            text='OK'
-                                            bgColor={
-                                                mtrTheme.colors.mediumGreen
-                                            }
-                                            fgColor={mtrTheme.colors.lightText}
-                                            onPress={() =>
-                                                setShowDetailsModal(false)
-                                            }
-                                        />
-                                    </View>
-                                </View>
-                            </Surface>
-                        </View>
-                    </View>
+                <Modal visible={showDetailsModal} animationType='slide'>
+                    <DetailModal
+                        detailedMember={detailedMember}
+                        onClick={() => setShowDetailsModal(false)}
+                    />
                 </Modal>
+
                 <>
                     <FlatList
                         key={Math.random()} // Add a random key to force re-render

@@ -157,9 +157,17 @@ const DetailModal = ({ detailedMember, onClick }) => {
                                 </View>
                             </View>
                         </View>
+                        {detailedMember?.affiliations ? (
+                            <View>
+                                <Text>Permissions</Text>
+                            </View>
+                        ) : null}
                         {detailedMember?.affiliations
-                            ? detailedMember.affiliations.map((a) => (
-                                  <View style={mtrStyles(mtrTheme).modalRow}>
+                            ? detailedMember.affiliations.map((a, index) => (
+                                  <View
+                                      key={index}
+                                      style={mtrStyles(mtrTheme).modalRow}
+                                  >
                                       <View
                                           style={
                                               mtrStyles(mtrTheme).modalRowCenter
@@ -170,16 +178,10 @@ const DetailModal = ({ detailedMember, onClick }) => {
                                                   mtrStyles(mtrTheme).modalRow
                                               }
                                           >
-                                              <Text
-                                                  style={
-                                                      mtrStyles(mtrTheme)
-                                                          .modalDetailsLabel
-                                                  }
-                                              >
-                                                  Organization:
+                                              <Text>
+                                                  {a?.role}
+                                                  {index > 0 ? ',' : null}
                                               </Text>
-
-                                              <Text>{a?.role}</Text>
                                           </View>
                                       </View>
                                   </View>

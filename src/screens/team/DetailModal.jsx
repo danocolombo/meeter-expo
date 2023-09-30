@@ -9,12 +9,9 @@ const DetailModal = ({ detailedMember, onClick }) => {
         <View style={mtrStyles(mtrTheme).modal}>
             <View style={mtrStyles(mtrTheme).modalSurfaceContainer}>
                 <Surface style={mtrStyles(mtrTheme).modalSurface}>
-                    <View style={mtrStyles(mtrTheme).modalDataWrapper}>
-                        <Text style={mtrStyles(mtrTheme).modalMemberName}>
-                            {detailedMember?.firstName}{' '}
-                            {detailedMember?.lastName}
-                        </Text>
-                    </View>
+                    <Text style={mtrStyles(mtrTheme).modalMemberName}>
+                        {detailedMember?.firstName} {detailedMember?.lastName}
+                    </Text>
                     <View style={mtrStyles(mtrTheme).modalDataWrapper}>
                         <View style={mtrStyles(mtrTheme).modalRow}>
                             <View style={mtrStyles(mtrTheme).modalRowCenter}>
@@ -75,56 +72,88 @@ const DetailModal = ({ detailedMember, onClick }) => {
                                 </View>
                             </View>
                         </View>
-                        <View
-                            style={[
-                                mtrStyles(mtrTheme).modalRow,
-                                {
-                                    borderWidth: 1,
-                                    borderColor: 'green',
-                                },
-                            ]}
-                        >
-                            <View style={mtrStyles(mtrTheme).modalRowCenter}>
-                                <View style={mtrStyles(mtrTheme).modalRow}>
-                                    <Text
+                        {detailedMember.location && (
+                            <>
+                                <View
+                                    style={mtrStyles(mtrTheme).addressContainer}
+                                >
+                                    <View
                                         style={
-                                            mtrStyles(mtrTheme)
-                                                .modalDetailsLabel
+                                            mtrStyles(mtrTheme).modalRowCenter
                                         }
                                     >
-                                        Address
-                                    </Text>
+                                        <View
+                                            style={mtrStyles(mtrTheme).modalRow}
+                                        >
+                                            <Text
+                                                style={
+                                                    mtrStyles(mtrTheme)
+                                                        .modalDetailsLabel
+                                                }
+                                            >
+                                                Address
+                                            </Text>
+                                        </View>
+                                    </View>
                                 </View>
-                            </View>
-                        </View>
-                        <View style={mtrStyles(mtrTheme).modalRow}>
-                            <View style={mtrStyles(mtrTheme).modalRowCenter}>
-                                <Text
-                                    style={mtrStyles(mtrTheme).modalSmallText}
-                                >
-                                    {detailedMember?.location?.street}
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={mtrStyles(mtrTheme).modalRow}>
-                            <View style={mtrStyles(mtrTheme).modalRowCenter}>
-                                <Text
-                                    style={mtrStyles(mtrTheme).modalSmallText}
-                                >
-                                    {detailedMember?.location?.city}
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={mtrStyles(mtrTheme).modalRow}>
-                            <View style={mtrStyles(mtrTheme).modalRowCenter}>
-                                <Text
-                                    style={mtrStyles(mtrTheme).modalSmallText}
-                                >
-                                    {detailedMember?.location?.stateProv},{' '}
-                                    {detailedMember?.location?.postalCode}
-                                </Text>
-                            </View>
-                        </View>
+                                <View style={mtrStyles(mtrTheme).modalRow}>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme).modalRowCenter
+                                        }
+                                    >
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .modalSmallText
+                                            }
+                                        >
+                                            {detailedMember?.location?.street}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <View style={mtrStyles(mtrTheme).modalRow}>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme).modalRowCenter
+                                        }
+                                    >
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .modalSmallText
+                                            }
+                                        >
+                                            {detailedMember?.location?.city}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <View style={mtrStyles(mtrTheme).modalRow}>
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme).modalRowCenter
+                                        }
+                                    >
+                                        <Text
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .modalSmallText
+                                            }
+                                        >
+                                            {
+                                                detailedMember?.location
+                                                    ?.stateProv
+                                            }
+                                            ,{' '}
+                                            {
+                                                detailedMember?.location
+                                                    ?.postalCode
+                                            }
+                                        </Text>
+                                    </View>
+                                </View>
+                            </>
+                        )}
                         <View style={mtrStyles(mtrTheme).modalRow}>
                             <View style={mtrStyles(mtrTheme).modalRowCenter}>
                                 <View style={mtrStyles(mtrTheme).modalRow}>
@@ -157,36 +186,6 @@ const DetailModal = ({ detailedMember, onClick }) => {
                                 </View>
                             </View>
                         </View>
-                        {detailedMember?.affiliations ? (
-                            <View>
-                                <Text>Permissions</Text>
-                            </View>
-                        ) : null}
-                        {detailedMember?.affiliations
-                            ? detailedMember.affiliations.map((a, index) => (
-                                  <View
-                                      key={index}
-                                      style={mtrStyles(mtrTheme).modalRow}
-                                  >
-                                      <View
-                                          style={
-                                              mtrStyles(mtrTheme).modalRowCenter
-                                          }
-                                      >
-                                          <View
-                                              style={
-                                                  mtrStyles(mtrTheme).modalRow
-                                              }
-                                          >
-                                              <Text>
-                                                  {a?.role}
-                                                  {index > 0 ? ',' : null}
-                                              </Text>
-                                          </View>
-                                      </View>
-                                  </View>
-                              ))
-                            : null}
                     </View>
                     <View style={mtrStyles(mtrTheme).modalRow}>
                         <View style={mtrStyles(mtrTheme).modalRowCenter}>
@@ -204,12 +203,6 @@ const DetailModal = ({ detailedMember, onClick }) => {
                         </View>
                     </View>
 
-                    <View style={mtrStyles(mtrTheme).noteContainer}>
-                        <Text style={mtrStyles(mtrTheme).noteText}>
-                            NOTE: All groups for the meeting will be deleted as
-                            well.
-                        </Text>
-                    </View>
                     <View style={mtrStyles(mtrTheme).buttonContainer}>
                         <View style={mtrStyles(mtrTheme).buttonWrapper}>
                             <CustomButton
@@ -248,11 +241,13 @@ const mtrStyles = (mtrTheme) =>
             fontSize: 24,
             color: mtrTheme.colors.background,
             textAlign: 'center',
+            marginVertical: 5,
             paddingTop: 0,
         },
         modalSurfaceContainer: {
             alignItems: 'center',
             marginTop: 15,
+            width: '100%',
         },
         modalSurface: {
             backgroundColor: mtrTheme.colors.lightGraphic,
@@ -283,5 +278,8 @@ const mtrStyles = (mtrTheme) =>
             fontFamily: 'NanumGothic-Regular',
             textAlign: 'left',
             paddingRight: 2,
+        },
+        addressContainer: {
+            marginTop: 5,
         },
     });

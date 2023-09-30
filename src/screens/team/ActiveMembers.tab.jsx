@@ -16,7 +16,6 @@ import {
 } from '../../features/team/teamThunks';
 import { useTheme, Surface } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
-import CustomButton from '../../components/CustomButton';
 import { printObject } from '../../utils/helpers';
 import MemberCard from '../../components/teams/MemberCard';
 import DetailModal from './DetailModal';
@@ -177,59 +176,5 @@ const mtrStyles = (mtrTheme) =>
             fontSize: 30,
             fontFamily: 'Roboto-Bold',
             color: mtrTheme.colors.lightText,
-        },
-        modal: {
-            flex: 1,
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: mtrTheme.colors.background,
-        },
-        modalDataWrapper: {
-            // marginHorizontal: 20,
-            // flex: 1,
-            borderColor: 'blue',
-            borderWidth: 1,
-        },
-        modalMemberName: {
-            fontFamily: 'Roboto-Bold',
-            fontSize: 24,
-            fontWeight: '700',
-            color: mtrTheme.colors.background,
-            textAlign: 'center',
-            paddingTop: 0,
-        },
-        modalSurfaceContainer: {
-            alignItems: 'center',
-            marginTop: 15,
-        },
-        modalSurface: {
-            backgroundColor: mtrTheme.colors.lightGraphic,
-            width: '90%',
-            borderRadius: 10,
-            padding: 20,
-        },
-        modalRow: {
-            flexDirection: 'row',
-        },
-        modalRowCenter: {
-            flex: 1,
-            alignItems: 'center',
-        },
-        modalColumnHalf: {
-            flex: 0.5,
-        },
-        modalSmallText: {
-            fontFamily: 'Roboto-Thin',
-        },
-        modalDetailsLabel: {
-            fontFamily: 'Roboto-Bold',
-            textAlign: 'right',
-            paddingRight: 2,
-        },
-        modalDetailsData: {
-            fontFamily: 'Roboto-Regular',
-            textAlign: 'left',
-            paddingRight: 2,
         },
     });

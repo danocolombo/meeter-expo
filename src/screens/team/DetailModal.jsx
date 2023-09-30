@@ -221,21 +221,6 @@ export default DetailModal;
 
 const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
-        screenSurface: {
-            flex: 1,
-            backgroundColor: mtrTheme.colors.background,
-        },
-        screenHeader: {
-            marginTop: 10,
-            marginBottom: 5,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        screenHeaderText: {
-            fontSize: 30,
-            fontFamily: 'Roboto-Bold',
-            color: mtrTheme.colors.lightText,
-        },
         modal: {
             flex: 1,
             flexDirection: 'column',
@@ -250,9 +235,8 @@ const mtrStyles = (mtrTheme) =>
             borderWidth: 1,
         },
         modalMemberName: {
-            fontFamily: 'Roboto-Bold',
+            fontFamily: 'NanumGothic-ExtraBold',
             fontSize: 24,
-            fontWeight: '700',
             color: mtrTheme.colors.background,
             textAlign: 'center',
             paddingTop: 0,
@@ -278,15 +262,16 @@ const mtrStyles = (mtrTheme) =>
             flex: 0.5,
         },
         modalSmallText: {
-            fontFamily: 'Roboto-Thin',
+            fontFamily: 'NanumGothic-Regular',
+            fontSize: 12,
         },
         modalDetailsLabel: {
-            fontFamily: 'Roboto-Bold',
+            fontFamily: 'NanumGothic-Bold',
             textAlign: 'right',
             paddingRight: 2,
         },
         modalDetailsData: {
-            fontFamily: 'Roboto-Regular',
+            fontFamily: 'NanumGothic-Regular',
             textAlign: 'left',
             paddingRight: 2,
         },

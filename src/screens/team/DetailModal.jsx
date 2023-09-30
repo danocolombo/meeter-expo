@@ -17,6 +17,18 @@ const DetailModal = ({ detailedMember, onClick }) => {
                     </View>
                     <View style={mtrStyles(mtrTheme).modalDataWrapper}>
                         <View style={mtrStyles(mtrTheme).modalRow}>
+                            <View style={mtrStyles(mtrTheme).modalRowCenter}>
+                                <View
+                                    style={{
+                                        backgroundColor: 'grey',
+                                        height: 80,
+                                        width: 80,
+                                        borderRadius: 40,
+                                    }}
+                                ></View>
+                            </View>
+                        </View>
+                        <View style={mtrStyles(mtrTheme).modalRow}>
                             <View style={mtrStyles(mtrTheme).modalColumnHalf}>
                                 <Text
                                     style={
@@ -28,26 +40,6 @@ const DetailModal = ({ detailedMember, onClick }) => {
                             </View>
                             <View style={mtrStyles(mtrTheme).modalColumnHalf}>
                                 <Text>{detailedMember?.username}</Text>
-                            </View>
-                        </View>
-
-                        <View style={mtrStyles(mtrTheme).modalRow}>
-                            <View style={mtrStyles(mtrTheme).modalRowCenter}>
-                                <Text
-                                    style={mtrStyles(mtrTheme).modalSmallText}
-                                >
-                                    sub: {detailedMember?.sub}
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={mtrStyles(mtrTheme).modalRow}>
-                            <View style={mtrStyles(mtrTheme).modalRowCenter}>
-                                <Text
-                                    style={mtrStyles(mtrTheme).modalSmallText}
-                                >
-                                    id: {detailedMember?.id}
-                                </Text>
                             </View>
                         </View>
 
@@ -193,6 +185,21 @@ const DetailModal = ({ detailedMember, onClick }) => {
                                   </View>
                               ))
                             : null}
+                    </View>
+                    <View style={mtrStyles(mtrTheme).modalRow}>
+                        <View style={mtrStyles(mtrTheme).modalRowCenter}>
+                            <Text style={mtrStyles(mtrTheme).modalSmallText}>
+                                sub: {detailedMember?.sub}
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={mtrStyles(mtrTheme).modalRow}>
+                        <View style={mtrStyles(mtrTheme).modalRowCenter}>
+                            <Text style={mtrStyles(mtrTheme).modalSmallText}>
+                                id: {detailedMember?.id}
+                            </Text>
+                        </View>
                     </View>
 
                     <View style={mtrStyles(mtrTheme).noteContainer}>

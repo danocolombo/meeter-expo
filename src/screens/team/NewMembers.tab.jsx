@@ -67,6 +67,7 @@ const NewMembers = () => {
                 </View>
                 <View style={mtrStyles(mtrTheme).listContainer}>
                     <FlatList
+                        key={Math.random()} // Add a random key to force re-render
                         data={newMembers}
                         renderItem={({ item }) => (
                             <NewMemberCard

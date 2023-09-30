@@ -13,9 +13,6 @@ const TitleSection = ({ values, setValues }) => {
     );
     const ViewOnly = !newPerms.includes('manage');
     function inputChangedHandler(inputIdentifier, enteredValue) {
-        // console.log('INPUT CHANGE HANDLER CLICKED');
-        // console.log('inputIdentifier:', inputIdentifier);
-        // console.log('enteredValue:', enteredValue);
         setValues((curInputValues) => {
             if (inputIdentifier === 'title') {
                 if (enteredValue.length < 3) {

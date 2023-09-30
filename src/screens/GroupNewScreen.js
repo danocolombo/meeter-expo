@@ -65,7 +65,9 @@ const GroupNewScreen = ({ route }) => {
         '#' +
         meeting?.meetingDate?.slice(5, 7) +
         '#' +
-        meeting?.meetingDate?.slice(8, 10);
+        meeting?.meetingDate?.slice(8, 10) +
+        '#' +
+        meeting?.id;
     const [values, setValues] = useState({
         meetingId: meetingId,
         id: '0',

@@ -13,7 +13,7 @@ const Tooltip = ({ children, content }) => {
             <TouchableOpacity onPress={toggleTooltip}>
                 {children}
             </TouchableOpacity>
-            {isTooltipVisible && (
+            {/* {isTooltipVisible && (
                 <View style={mtrStyles(mtrTheme).tooltipContainer}>
                     <View style={mtrStyles(mtrTheme).tooltip}>
                         <Text style={mtrStyles(mtrTheme).tooltipText}>
@@ -21,7 +21,7 @@ const Tooltip = ({ children, content }) => {
                         </Text>
                     </View>
                 </View>
-            )}
+            )} */}
         </View>
     );
 };

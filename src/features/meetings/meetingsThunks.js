@@ -94,7 +94,7 @@ export const getActiveMeetings = createAsyncThunk(
     async (input, { getState, rejectWithValue }) => {
         try {
             var d = new Date();
-            const today = d.toISOString().slice(0, 10);
+            const today = d?.toISOString().slice(0, 10);
             const state = getState();
             const filteredMeetings = state.meetings.meetings.filter(
                 (m) => m.meetingDate >= today
@@ -124,7 +124,7 @@ export const getHistoricMeetings = createAsyncThunk(
     async (input, { getState, rejectWithValue }) => {
         try {
             var d = new Date();
-            const today = d.toISOString().slice(0, 10);
+            const today = d?.toISOString().slice(0, 10);
             const state = getState();
             // printObject('MT:51-->sample:\n', state.allMeetings[0]);
             const filteredMeetings = state.meetings.meetings.filter(
@@ -198,11 +198,12 @@ export const addDefaultGroups = createAsyncThunk(
 
             const createGroupPromises = inputs.defaultGroups.map(async (dg) => {
                 const newId = createAWSUniqueID();
+                const derivedGrpCompKey = `${inputs.meeting.mtgCompKey}#${inputs.meeting.id}`;
                 const inputInfo = {
                     ...dg,
                     id: newId,
                     attendance: 0,
-                    grpCompKey: inputs.meeting.mtgCompKey,
+                    grpCompKey: derivedGrpCompKey,
                     meetingGroupsId: inputs.meeting.id,
                     organizationGroupsId: inputs.orgId,
                 };
@@ -248,12 +249,12 @@ export const addMeeting = createAsyncThunk(
     'meetings/addMeeting',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:176-->inputs:\n', inputs);
+            printObject('MT:251-->adding meeting inputs:\n', inputs);
             let mtg = {
                 ...inputs.meeting,
                 organizationMeetingsId: inputs.orgId,
             };
-            // printObject('MT:178-->mtg:\n', mtg);
+            printObject('MT:256-->mtg:\n', mtg);
             // delete mtg.meetingId;
             // delete mtg.clientId;
 
@@ -262,17 +263,17 @@ export const addMeeting = createAsyncThunk(
                 query: mutations.createMeeting,
                 variables: { input: mtg },
             });
-            printObject('MT:184-->results:\n', results);
+            printObject('MT:265-->createMeeting results:\n', results);
             // Check if the result contains the expected data and return it
             if (results.data.createMeeting.id) {
                 return mtg;
             } else {
                 // If data.createGroup.id is missing, handle the error
-                throw new Error('MT:264-->Failed to create meeting');
+                throw new Error('MT:271-->Failed to create meeting');
             }
         } catch (error) {
-            printObject('MT:267-->addMeeting thunk try failure.\n', error);
-            throw new Error('MT:268-->Failed to create meeting');
+            printObject('MT:274-->addMeeting thunk try failure.\n', error);
+            throw new Error('MT:275-->Failed to create meeting');
         }
     }
 );
@@ -344,7 +345,7 @@ export const addGroup = createAsyncThunk(
     'meetings/addGroup',
     async (inputs, thunkAPI) => {
         try {
-            // printObject('MT:351-->inputs:\n', inputs);
+            printObject('MT:351-->inputs:\n', inputs);
             const newId = createAWSUniqueID();
             // printObject('MT:196-->addGroup__inputs:\n', inputs);
             let inputInfo = {
@@ -489,31 +490,71 @@ export const deleteMeeting = createAsyncThunk(
         }
     }
 );
-export const addSubscriptionMeeting = createAsyncThunk(
-    'meetings/addSubscriptionMeeting',
+export const subscriptionCreateMeeting = createAsyncThunk(
+    'meetings/subscriptionCreateMeeting',
     async (input, thunkAPI) => {
         try {
             //*===========================================
             //* subscription input will be json object
             //* required field is "__typename": "Meeting"
             //*===========================================
-            if (input?.__typename === 'Meeting') {
-                const mtg = input;
+            const meeting = input.meeting;
+            const activeOrgId = input.activeOrgId;
+            if (meeting?.__typename === 'Meeting') {
+                const mtg = meeting;
                 delete mtg.__typename;
                 delete mtg.groups;
                 delete mtg.updatedAt;
-                printObject('MT:530-->newSubscription', mtg);
-                return mtg;
+                delete mtg.createdAt;
+                // printObject('MT:530-->newSubscription', mtg);
+                return {
+                    meeting: mtg,
+                    activeOrgId: activeOrgId,
+                };
             } else {
-                // If data.createGroup.id is missing, handle the error
-                throw new Error('MT:264-->Failed to create meeting');
+                throw new Error('MT:515-->Failed to create meeting');
             }
         } catch (error) {
             printObject(
-                'MT:477-->addSubscriptionMeeting thunk try failure.\n',
+                'MT:519-->subscriptionCreateMeeting thunk try failure.\n',
                 error
             );
-            throw new Error('MT:478-->Failed to deleteMeeting');
+            throw new Error('MT:522-->Failed to createMeeting');
+        }
+    }
+);
+export const subscriptionDeleteMeeting = createAsyncThunk(
+    'meetings/subscriptionDeleteMeeting',
+    async (input, thunkAPI) => {
+        try {
+            //*===========================================
+            //* subscription input will be json object
+            //* required field is "__typename": "Meeting"
+            //*===========================================
+            printObject('MT:533-->input:\n', input);
+            return { id: input.id };
+            // const meeting = input.meeting;
+            // const activeOrgId = input.activeOrgId;
+            // if (meeting?.__typename === 'Meeting') {
+            //     const mtg = meeting;
+            //     delete mtg.__typename;
+            //     delete mtg.groups;
+            //     delete mtg.updatedAt;
+            //     delete mtg.createdAt;
+            //     // printObject('MT:530-->newSubscription', mtg);
+            //     return {
+            //         meeting: mtg,
+            //         activeOrgId: activeOrgId,
+            //     };
+            // } else {
+            //     throw new Error('MT:515-->Failed to delete meeting');
+            // }
+        } catch (error) {
+            printObject(
+                'MT:553-->subscriptionDeleteMeeting thunk try failure.\n',
+                error
+            );
+            throw new Error('MT:556-->Failed to deleteMeeting');
         }
     }
 );

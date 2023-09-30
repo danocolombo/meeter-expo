@@ -44,7 +44,7 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
             setDateValue(new Date());
         }
     }, []);
-    const formattedDate = dateValue.toLocaleDateString('en-US', {
+    const formattedDate = dateValue?.toLocaleDateString('en-US', {
         timeZone: userTimeZone,
     });
 
@@ -198,7 +198,11 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
                                                 </TouchableOpacity>
 
                                                 {tooltipVisible && (
-                                                    <Tooltip content='Tooltip Content'>
+                                                    <Tooltip
+                                                        content={
+                                                            meeting?.worship
+                                                        }
+                                                    >
                                                         <View
                                                             style={
                                                                 mtrStyles(

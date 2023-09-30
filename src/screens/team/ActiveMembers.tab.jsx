@@ -2,6 +2,8 @@ import {
     StyleSheet,
     Text,
     View,
+    Modal,
+    StatusBar,
     FlatList,
     ActivityIndicator,
 } from 'react-native';
@@ -16,13 +18,15 @@ import { useTheme, Surface } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { printObject } from '../../utils/helpers';
 import MemberCard from '../../components/teams/MemberCard';
+import DetailModal from './DetailModal';
 const ActiveMembers = () => {
     const mtrTheme = useTheme();
     const userProfile = useSelector((state) => state.user.profile);
     const dispatch = useDispatch();
     const [displayMembers, setDisplayMembers] = useState([]);
+    const [detailedMember, setDetailedMember] = useState(null);
     const [isLocallyLoading, setIsLocallyLoading] = useState(false);
-
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [editFlag, setEditFlag] = useState(true);
     useFocusEffect(
         useCallback(() => {
@@ -32,7 +36,7 @@ const ActiveMembers = () => {
                 try {
                     dispatch(loadTeam(userProfile?.activeOrg?.id))
                         .then((results) => {
-                            printObject('AMT:41-->results:\n', results);
+                            // printObject('AMT:41-->results:\n', results);
                             setDisplayMembers(results.payload.active);
                             const totals = {
                                 active: results.payload.active.length,
@@ -100,6 +104,13 @@ const ActiveMembers = () => {
         settings.orgId = userProfile.activeOrg.id;
         dispatch(updateActiveMember(settings));
     }
+    function memberDetailsHandler(id) {
+        // console.log('AMT:107-->id:', id);
+        const member = displayMembers.find((m) => m.id === id);
+        setDetailedMember(member);
+        // printObject('AMT:110-->detailedMember:\n', member);
+        setShowDetailsModal(true);
+    }
 
     if (isLocallyLoading) {
         console.log('HERE-2');
@@ -109,7 +120,7 @@ const ActiveMembers = () => {
             </View>
         );
     }
-    // printObject('AMT:154-->displayMembers:\n', displayMembers);
+    // printObject('AMT:123-->detailedMember:\n', detailedMember);
     return (
         <>
             <Surface style={mtrStyles(mtrTheme).screenSurface}>
@@ -118,8 +129,16 @@ const ActiveMembers = () => {
                         Active Users
                     </Text>
                 </View>
+                <Modal visible={showDetailsModal} animationType='slide'>
+                    <DetailModal
+                        detailedMember={detailedMember}
+                        onClick={() => setShowDetailsModal(false)}
+                    />
+                </Modal>
+
                 <>
                     <FlatList
+                        key={Math.random()} // Add a random key to force re-render
                         data={displayMembers}
                         renderItem={({ item }) => (
                             <MemberCard
@@ -127,11 +146,13 @@ const ActiveMembers = () => {
                                 editFlag={editFlag}
                                 deactivate={deactivateHandler}
                                 addAffiliation={addAffiliationHandler}
+                                onDetailRequest={memberDetailsHandler}
                                 updatePermission={updatePermissionHandler}
                             />
                         )}
                         keyExtractor={(item) => item.id}
                     />
+                    <StatusBar style='auto' />
                 </>
             </Surface>
         </>

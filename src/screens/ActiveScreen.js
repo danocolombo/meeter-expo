@@ -134,7 +134,7 @@ const ActiveScreen = () => {
                                 <View style={mtrStyles(mtrTheme).buttonWrapper}>
                                     <CustomButton
                                         text='No, CANCEL'
-                                        bgColor={mtrTheme.colors.success}
+                                        bgColor={mtrTheme.colors.mediumGreen}
                                         fgColor={mtrTheme.colors.lightText}
                                         onPress={() =>
                                             setShowDeleteConfirmModal(false)

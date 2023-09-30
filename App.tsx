@@ -33,6 +33,9 @@ function App() {
         'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
         'Roboto-Thin': require('./assets/fonts/Roboto-Thin.ttf'),
         'Roboto-ThinItalic': require('./assets/fonts/Roboto-ThinItalic.ttf'),
+        'NanumGothic-Regular': require('./assets/fonts/NanumGothic-Regular.ttf'),
+        'NanumGothic-Bold': require('./assets/fonts/NanumGothic-Bold.ttf'),
+        'NanumGothic-ExtraBold': require('./assets/fonts/NanumGothic-ExtraBold.ttf'),
     });
     useEffect(() => {
         async function prepare() {

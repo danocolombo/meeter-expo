@@ -11,7 +11,7 @@ import {
     KeyboardAvoidingView,
     ScrollView,
 } from 'react-native';
-import MeetingForm from '../components/MeetingFormRTK';
+import MeetingForm from '../components/MeetingForm';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     updateMeeting,

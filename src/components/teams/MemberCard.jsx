@@ -11,7 +11,13 @@ import Permissions from './Permissions';
 import { updateTeamMemberPermissions } from '../../jerichoQL/providers/team.provider';
 import { printObject, transformPatePhone } from '../../utils/helpers';
 
-function MemberCard({ member, editFlag, deactivate, updatePermission }) {
+function MemberCard({
+    member,
+    editFlag,
+    deactivate,
+    updatePermission,
+    onDetailRequest,
+}) {
     // printObject('MC:9-->member:\n', member);
     const [response, setResponse] = useState('<>');
     const [permissions, setPermissions] = useState(null);
@@ -138,6 +144,7 @@ function MemberCard({ member, editFlag, deactivate, updatePermission }) {
     };
     const handleMemberPress = () => {
         printObject('MC:159-->member:\n', member);
+        onDetailRequest(member.id);
     };
     // printObject('MC:34-->member:\n', member);
     // printObject('MC:35-->permissions:\n', permissions);

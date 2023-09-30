@@ -154,7 +154,7 @@ const MeetingDetails = (props) => {
         setIsLoading(false);
     };
     //if (data) {
-    const formattedDate = dateValue.toLocaleDateString('en-US', {
+    const formattedDate = dateValue?.toLocaleDateString('en-US', {
         timeZone: userTimeZone,
     });
 
@@ -372,6 +372,7 @@ const MeetingDetails = (props) => {
                 </View>
             </View>
             <FlatList
+                key={Math.random()} // Add a random key to force re-render
                 data={memoizedMeetingGroups}
                 keyExtractor={(item) => item.id}
                 persistentScrollbar={true}

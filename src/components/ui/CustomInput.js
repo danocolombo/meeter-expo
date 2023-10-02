@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import React from 'react';
 import { Controller } from 'react-hook-form';
-
+import { useTheme } from 'react-native-paper';
 const CustomInput = ({
     control,
     name,
@@ -13,6 +13,7 @@ const CustomInput = ({
     keyboardType = 'default',
     secureTextEntry,
 }) => {
+    const mtrTheme = useTheme();
     return (
         <Controller
             control={control}
@@ -32,7 +33,7 @@ const CustomInput = ({
                         <TextInput
                             value={value}
                             placeholder={placeholder}
-                            placeholderTextColor='blue' // Set placeholderTextColor here
+                            placeholderTextColor={mtrTheme.colors.textLight} // Set placeholderTextColor here
                             onChangeText={onChange}
                             autoCapitalize={autoCapitalize}
                             autoCorrect={autoCorrect}

@@ -14,9 +14,11 @@ import {
     useWindowDimensions,
     KeyboardAvoidingView,
     SafeAreaView,
+    ActivityIndicator,
     TouchableOpacity,
     Modal,
     ScrollView,
+    StatusBar,
     Linking,
 } from 'react-native';
 import { Storage } from 'aws-amplify';
@@ -57,6 +59,8 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     const today = new Date();
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const [showProfileSaved, setShowProfileSaved] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [savingProfile, setSavingProfile] = useState(false);
     const [isStateFocus, setIsStateFocus] = useState(false);
     const [isShirtFocus, setIsShirtFocus] = useState(false);
@@ -375,6 +379,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
         }
     };
     const handleFormSubmit = async () => {
+        setIsLoading(true);
         if (savingProfile) return;
         setSavingProfile(true);
         // printObject('PF:310-->handleFormSubmit start', null);
@@ -468,21 +473,21 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
             phoneToPass = '';
         }
         // printObject('PF:475-->profile:\n', profile);
-        // console.log('street:', values?.street);
-        // console.log('city:', values?.city);
-        // console.log('stateProv:', values?.stateProv);
-        // console.log('postalCode:', values?.postalCode);
         if (
             values?.street ||
             values?.city ||
             values?.stateProv ||
             values?.postalCode
         ) {
-            profile.location = {
+            const newLocation = {
                 street: values?.street || null,
                 city: values?.city || null,
                 stateProv: values?.stateProv || null,
                 postalCode: values?.postalCode || null,
+            };
+            profile = {
+                ...profile,
+                location: newLocation,
             };
         } else {
             // no address info provided.
@@ -506,7 +511,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
 
         // console.log('PF:491-->old name', oldProfilePictureName);
         // console.log('PF:492-->new name:', pictureToSave);
-        printObject('PF:493-->resultantProfile:\n', resultantProfile);
+        // printObject('PF:493-->resultantProfile:\n', resultantProfile);
         //      ========================
         //      save the form to graphql
         //      ========================
@@ -526,6 +531,8 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                 );
             });
         //handleUpdate(resultantProfile);
+        setShowProfileSaved(true);
+        setIsLoading(false);
         setSavingProfile(false);
     };
 
@@ -571,11 +578,86 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
     // printObject('birthDay:\n', birthDay);
     // console.log('type of values.birthday:', typeof values.birthday);
     // printObject('values.birthday:\n', values.birthday);
+    if (isLoading) {
+        return (
+            <View style={mtrStyles(mtrTheme).activityIndicatorContainer}>
+                <ActivityIndicator
+                    color={mtrStyles(mtrTheme).activityIndicator}
+                    size={80}
+                />
+            </View>
+        );
+    }
     return (
         <SafeAreaView>
             <ScrollView>
                 <>
                     <KeyboardAvoidingView behavior='padding'>
+                        <Modal
+                            visible={showProfileSaved}
+                            animationStyle='slide'
+                        >
+                            <View style={mtrStyles(mtrTheme).modal}>
+                                <View
+                                    style={
+                                        mtrStyles(mtrTheme)
+                                            .modalSurfaceContainer
+                                    }
+                                >
+                                    <Surface
+                                        style={mtrStyles(mtrTheme).modalSurface}
+                                    >
+                                        <View
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .warningContainer
+                                            }
+                                        >
+                                            <Text
+                                                style={
+                                                    mtrStyles(mtrTheme)
+                                                        .modalHeaderText
+                                                }
+                                            >
+                                                Profile Saved
+                                            </Text>
+                                        </View>
+
+                                        <View
+                                            style={
+                                                mtrStyles(mtrTheme)
+                                                    .buttonContainer
+                                            }
+                                        >
+                                            <View
+                                                style={
+                                                    mtrStyles(mtrTheme)
+                                                        .buttonWrapper
+                                                }
+                                            >
+                                                <CustomButton
+                                                    text='OK'
+                                                    bgColor={
+                                                        mtrTheme.colors
+                                                            .mediumGreen
+                                                    }
+                                                    fgColor={
+                                                        mtrTheme.colors
+                                                            .lightText
+                                                    }
+                                                    onPress={() =>
+                                                        setShowProfileSaved(
+                                                            false
+                                                        )
+                                                    }
+                                                />
+                                            </View>
+                                        </View>
+                                    </Surface>
+                                </View>
+                                <StatusBar style='auto' />
+                            </View>
+                        </Modal>
                         <Modal visible={showCameraModal} animationStyle='slide'>
                             <Surface
                                 style={mtrStyles(mtrTheme).cameraContainer}
@@ -1208,6 +1290,43 @@ const mtrStyles = (mtrTheme) =>
         errorText: {
             color: 'red',
             fontWeight: '700',
+        },
+        activityIndicatorContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        activityIndicator: {
+            color: mtrTheme.colors.lightGraphic,
+        },
+        modal: {
+            flex: 1,
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: mtrTheme.colors.background,
+        },
+        modalHeaderContainer: {
+            backgroundColor: mtrTheme.colors.background,
+        },
+        modalHeaderText: {
+            fontFamily: 'Roboto-Bold',
+            fontSize: 28,
+            fontWeight: '700',
+            color: mtrTheme.colors.mediumGrey,
+            textAlign: 'center',
+            paddingTop: 10,
+        },
+        modalSurfaceContainer: {
+            alignItems: 'center',
+            width: '80%',
+            marginTop: 15,
+        },
+        modalSurface: {
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            width: '90%',
+            borderRadius: 10,
+            padding: 20,
         },
         buttonContainer: {
             marginTop: 20,

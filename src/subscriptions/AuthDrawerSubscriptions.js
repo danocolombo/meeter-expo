@@ -1,18 +1,21 @@
 import { API, graphqlOperation } from 'aws-amplify';
 import { useSelector } from 'react-redux';
-import { onCreateMeeting } from '../graphql/subscriptions';
+// import { onCreateMeeting } from '../graphql/subscriptions';
 import {
     onDeleteMeeting,
+    onUpdateMeeting,
+    onCreateMeeting,
     onCreateGroup,
     onDeleteGroup,
-    onUpdateMeeting,
+    onUpdateGroup,
 } from '../jerichoQL/subscriptions';
 import {
     subscriptionCreateMeeting,
     subscriptionDeleteMeeting,
+    subscriptionUpdateMeeting,
     subscriptionCreateGroup,
     subscriptionDeleteGroup,
-    subscriptionUpdateMeeting,
+    subscriptionUpdateGroup,
 } from '../features/meetings/meetingsThunks';
 
 import { printObject } from '../utils/helpers';
@@ -51,11 +54,34 @@ export function setupSubscriptions(dispatch, activeOrgId) {
             );
         },
     });
+    const meetingUpdateSubscription = API.graphql(
+        graphqlOperation(onUpdateMeeting)
+    ).subscribe({
+        next: (data) => {
+            printObject(
+                'ADS:62-->SUB meetingUpdateSubscription received data:\n',
+                data
+            );
+            const meeting = data.value.data.onUpdateMeeting;
+            if (meeting.organizationMeetingsId !== activeOrgId) {
+                console.log('ADS:67-->meetingUpdateSubscription ignored.');
+                return;
+            }
+            console.log('ADS:70-->meetingUpdateSubscription handled');
+            return;
+        },
+        error: (error) => {
+            console.error(
+                'ADS:76-->meetingUpdateSubscription Subscription error:',
+                error
+            );
+        },
+    });
     const meetingDeleteSubscription = API.graphql(
         graphqlOperation(onDeleteMeeting)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:50-->SUB received data:\n', data);
+            printObject('ADS:85-->SUB received data:\n', data);
             const meeting = data.value.data.onDeleteMeeting;
             dispatch(
                 subscriptionDeleteMeeting({
@@ -64,13 +90,13 @@ export function setupSubscriptions(dispatch, activeOrgId) {
             )
                 .then((results) => {
                     printObject(
-                        'ADS:58-->subscriptionDeleteMeeting complete:\n',
+                        'ADS:94-->subscriptionDeleteMeeting complete:\n',
                         results
                     );
                 })
                 .catch((error) => {
                     console.log('error from dispatch');
-                    printObject('ADS:62-->error:\n', error);
+                    printObject('ADS:100-->error:\n', error);
                 });
         },
         error: (error) => {
@@ -81,9 +107,9 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         graphqlOperation(onCreateGroup)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:76-->current activeOrgId:', activeOrgId);
+            printObject('ADS:111-->current activeOrgId:', activeOrgId);
             printObject(
-                'ADS:77-->groupCreateSub...data.value.data.onCreateGroup\n',
+                'ADS:113-->groupCreateSub...data.value.data.onCreateGroup\n',
                 data.value.data.onCreateGroup
             );
             if (data.value.data.onCreateGroup.organization.id !== activeOrgId) {
@@ -91,104 +117,72 @@ export function setupSubscriptions(dispatch, activeOrgId) {
                 return;
             }
             console.log('groupCreateSubscription handled...');
-            // const meeting = data.value.data.onCreateGroup;
-            // dispatch(
-            //     subscriptionCreateMeeting({
-            //         meeting: meeting,
-            //         activeOrgId: activeOrgId,
-            //     })
-            // )
-            //     .then((results) => {
-            //         printObject(
-            //             'ADS:25-->subscriptionCreateMeeting successful:\n',
-            //             results
-            //         );
-            //     })
-            //     .catch((error) => {
-            //         console.log('error from dispatch');
-            //         printObject('ADS:36-->error:\n', error);
-            //     });
         },
         error: (error) => {
-            console.error('ADS:98-->onCreateGroup Subscription error:', error);
+            console.error('ADS:124-->onCreateGroup Subscription error:', error);
+        },
+    });
+    const groupUpdateSubscription = API.graphql(
+        graphqlOperation(onUpdateGroup)
+    ).subscribe({
+        next: (data) => {
+            // printObject('ADS:131-->SUB received data:\n', data);
+            const group = data?.value?.data?.onUpdateGroup;
+            // console.log('ADS:131-->__typename:', group?.__typename);
+            // console.log(
+            //     'ADS:132-->organizationGroupsId:',
+            //     group?.organizationGroupsId
+            // );
+            // console.log('ADS:136-->activeOrgId:', activeOrgId);
+            if (
+                group?.__typename === 'Group' &&
+                group?.organizationGroupsId === activeOrgId
+            ) {
+                //need to clean up object before sending to slice
+                console.log('dispatchin..');
+                dispatch(subscriptionUpdateGroup(group))
+                    .then((results) => {
+                        printObject(
+                            'ADS:139-->subscriptionUpdateGroup successful:\n',
+                            results
+                        );
+                    })
+                    .catch((error) => {
+                        console.log('error from dispatch');
+                        printObject('ADS:145-->error:\n', error);
+                    });
+            } else {
+                console.log('ADS:155-->updateGroup not ours');
+            }
+            return;
+        },
+        error: (error) => {
+            console.error('ADS:161-->groupUpdateSubscription  error:', error);
         },
     });
     const groupDeleteSubscription = API.graphql(
         graphqlOperation(onDeleteGroup)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:114-->SUB received data:\n', data);
+            printObject('ADS:145-->SUB received data:\n', data);
             const group = data?.value?.data?.onDeleteGroup;
             if (!group || group?.organizationGroupsId !== activeOrgId) {
-                console.log('ADS:117-->groupDeleteSubscription ignored');
+                console.log('ADS:148-->groupDeleteSubscription ignored');
                 return;
             }
-            console.log('ADS:120-->groupDeleteSubscription handled');
+            console.log('ADS:151-->groupDeleteSubscription handled');
             return;
-            // dispatch(
-            //     subscriptionDeleteGroup({
-            //         id: group.id,
-            //         meetingId: group.meetingGroupsId
-            //     })
-            // )
-            //     .then((results) => {
-            //         printObject(
-            //             'ADS:124-->subscriptionDeleteGroup complete:\n',
-            //             results
-            //         );
-            //     })
-            //     .catch((error) => {
-            //         console.log('error from dispatch');
-            //         printObject('ADS:130-->error:\n', error);
-            //     });
         },
         error: (error) => {
-            console.error('ADS:66-->meetingDeleteSubscription  error:', error);
+            console.error('ADS:156-->groupDeleteSubscription  error:', error);
         },
     });
-    const meetingUpdateSubscription = API.graphql(
-        graphqlOperation(onUpdateMeeting)
-    ).subscribe({
-        next: (data) => {
-            printObject(
-                'ADS:152-->SUB meetingUpdateSubscription received data:\n',
-                data
-            );
-            const meeting = data.value.data.onUpdateMeeting;
-            if (meeting.organizationMeetingsId !== activeOrgId) {
-                console.log('ADS:159-->meetingUpdateSubscription ignored.');
-                return;
-            }
-            console.log('ADS:162-->meetingUpdateSubscription handled');
-            return;
-            // dispatch(
-            //     subscriptionCreateMeeting({
-            //         meeting: meeting,
-            //         activeOrgId: activeOrgId,
-            //     })
-            // )
-            //     .then((results) => {
-            //         printObject(
-            //             'ADS:25-->subscriptionCreateMeeting successful:\n',
-            //             results
-            //         );
-            //     })
-            //     .catch((error) => {
-            //         console.log('error from dispatch');
-            //         printObject('ADS:36-->error:\n', error);
-            //     });
-        },
-        error: (error) => {
-            console.error(
-                'ADS:34-->onCreateMeeting Subscription error:',
-                error
-            );
-        },
-    });
-    activeSubscriptions.push(meetingDeleteSubscription);
     activeSubscriptions.push(meetingCreateSubscription);
-    activeSubscriptions.push(groupCreateSubscription);
     activeSubscriptions.push(meetingUpdateSubscription);
+    activeSubscriptions.push(meetingDeleteSubscription);
+    activeSubscriptions.push(groupCreateSubscription);
+    activeSubscriptions.push(groupUpdateSubscription);
+    activeSubscriptions.push(groupDeleteSubscription);
 }
 
 export function unsubscribeAll() {

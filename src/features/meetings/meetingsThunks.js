@@ -6,6 +6,7 @@ import * as gQueries from '../../graphql/queries';
 import * as mutations from '../../jerichoQL/mutations';
 import * as gMutations from '../../graphql/mutations';
 import { createAWSUniqueID, printObject } from '../../utils/helpers';
+import groupsSlice from '../groups/groupsSlice';
 export const getSpecificMeeting = createAsyncThunk(
     'meetings/getSpecificMeeting',
     async (id, thunkAPI) => {
@@ -555,6 +556,93 @@ export const subscriptionDeleteMeeting = createAsyncThunk(
                 error
             );
             throw new Error('MT:556-->Failed to deleteMeeting');
+        }
+    }
+);
+export const subscriptionUpdateMeeting = createAsyncThunk(
+    'meetings/subscriptionUpdateMeeting',
+    async (input, thunkAPI) => {
+        try {
+            //*===========================================
+            //* subscription input will be json object
+            //* required field is "__typename": "Meeting"
+            //*===========================================
+            printObject('MT:569-->input:\n', input);
+            return { id: input.id };
+        } catch (error) {
+            printObject(
+                'MT:574-->subscriptionUpdateMeeting thunk try failure.\n',
+                error
+            );
+            throw new Error('MT:577-->Failed to subscriptionUpdateMeeting');
+        }
+    }
+);
+export const subscriptionCreateGroup = createAsyncThunk(
+    'meetings/subscriptionCreateGroup',
+    async (input, thunkAPI) => {
+        try {
+            //*===========================================
+            //* subscription input will be json object
+            //* required field is "__typename": "Meeting"
+            //*===========================================
+            printObject('MT:589-->input:\n', input);
+            return { id: input.id };
+        } catch (error) {
+            printObject(
+                'MT:594-->subscriptionCreateGroup thunk try failure.\n',
+                error
+            );
+            throw new Error('MT:597-->Failed to subscriptionCreateGroup');
+        }
+    }
+);
+export const subscriptionUpdateGroup = createAsyncThunk(
+    'meetings/subscriptionUpdateGroup',
+    async (input, thunkAPI) => {
+        try {
+            //*===========================================
+            //* subscription input will be json object
+            //* required field is "__typename": "Meeting"
+            //*===========================================
+            const theGroup = input;
+            const mId = theGroup.meetingGroupsId;
+            const oId = theGroup.organizationGroupsId;
+            delete theGroup?.meeting;
+            delete theGroup?.organization;
+            delete theGroup?.createdAt;
+            delete theGroup?.updatedAt;
+            delete theGroup?.__typename;
+
+            const updatedGroup = {
+                ...theGroup,
+            };
+
+            return updatedGroup;
+        } catch (error) {
+            printObject(
+                'MT:614-->subscriptionUpdateGroup thunk try failure.\n',
+                error
+            );
+            throw new Error('MT:617-->Failed to subscriptionUpdateGroup');
+        }
+    }
+);
+export const subscriptionDeleteGroup = createAsyncThunk(
+    'meetings/subscriptionDeleteGroup',
+    async (input, thunkAPI) => {
+        try {
+            //*===========================================
+            //* subscription input will be json object
+            //* required field is "__typename": "Meeting"
+            //*===========================================
+            return { id: input.id };
+        } catch (error) {
+            printObject(
+                'MT:634-->subscriptionDeleteGroup thunk try failure.\n',
+                error
+            );
+            throw new Error('MT:637-->Failed to subscriptionDeleteGroup');
         }
     }
 );

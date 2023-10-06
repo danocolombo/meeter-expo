@@ -586,10 +586,60 @@ export const meetingsSlice = createSlice({
             .addCase(subscriptionUpdateMeeting.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(subscriptionUpdateMeeting.fulfilled, (state, action) => {
-                printObject('MS:590-->idToUpdae:\n', action.payload.id);
-                return state;
-            })
+            .addCase(
+                subscriptionUpdateMeeting.fulfilled,
+                async (state, action) => {
+                    try {
+                        printObject(
+                            'MS:593-->state.activeMeetings:\n',
+                            state.activeMeetings
+                        );
+                        printObject('MS:594-->newMeeting:\n', action.payload);
+                        const newMeeting = action.payload;
+
+                        // Define the mapping operations as asynchronous functions
+                        const updatedMeetings = state.activeMeetings.map(
+                            (meeting) => {
+                                if (meeting.id === newMeeting.id) {
+                                    // If the IDs match, merge the existing meeting with newMeeting
+                                    return {
+                                        ...meeting,
+                                        ...newMeeting,
+                                    };
+                                }
+                                // If the IDs don't match, return the original meeting
+                                return meeting;
+                            }
+                        );
+
+                        // Use Promise.all to await all mapping operations
+                        // const updatedMeetings = await Promise.all(
+                        //     state.meetings.map(updateMeeting)
+                        // );
+                        // const activeMeetings = await Promise.all(
+                        //     state.activeMeetings.map(updateMeeting)
+                        // );
+                        // const historicMeetings = await Promise.all(
+                        //     state.historicMeetings.map(updateMeeting)
+                        // );
+
+                        return {
+                            ...state,
+                            activeMeetings: updatedMeetings,
+                            isLoading: false,
+                        };
+                    } catch (error) {
+                        // Handle any potential errors here, log them, or perform necessary actions.
+                        console.error(
+                            'Error in subscriptionUpdateMeeting.fulfilled:',
+                            error
+                        );
+                        // You can choose to re-throw the error if needed, depending on your error handling strategy.
+                        // throw error;
+                    }
+                }
+            )
+
             .addCase(subscriptionUpdateMeeting.rejected, (state, action) => {
                 printObject(
                     'MS:595-->subscriptionUpdateMeeting.REJECTED:action.payload:\n',
@@ -618,9 +668,55 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(subscriptionCreateGroup.fulfilled, (state, action) => {
-                printObject('MS:618->idToCreate:\n', action.payload.id);
+                const grp = { ...action.payload };
+
+                // Find the meeting in state.meetings that matches the provided meetingGroupsId
+                const mtg = state.meetings.find(
+                    (m) => m.id === action.payload.meetingGroupsId
+                );
+                if (mtg) {
+                    // If the meeting is found, create a new array of groups and add the newGroup to it
+                    const newGroups = [...mtg?.groups?.items, action.payload];
+                    //* sort groups by gender, title, location
+                    newGroups.sort((a, b) => {
+                        // First, compare by gender
+                        const genderCompare = a.gender.localeCompare(b.gender);
+
+                        // If genders are different, return the gender comparison result
+                        if (genderCompare !== 0) {
+                            return genderCompare;
+                        }
+
+                        // If genders are the same, compare by title
+                        const titleCompare = a.title.localeCompare(b.title);
+
+                        // If titles are different, return the title comparison result
+                        if (titleCompare !== 0) {
+                            return titleCompare;
+                        }
+
+                        // If titles are the same, compare by location
+                        return a.location.localeCompare(b.location);
+                    });
+
+                    const groupItems = { items: newGroups };
+                    // Create a new meeting object with updated groups array
+                    const updatedMtg = {
+                        ...mtg,
+                        groups: groupItems,
+                    };
+                    // Create a new array of meetings with the updated meeting object
+                    const newMeetingList = state.meetings.map((m) =>
+                        m.id === updatedMtg.id ? updatedMtg : m
+                    );
+
+                    // Update the state with the new meetings list
+                    state.meetings = newMeetingList;
+                }
+                state.isLoading = false;
                 return state;
             })
+
             .addCase(subscriptionCreateGroup.rejected, (state, action) => {
                 printObject(
                     'MS:623-->subscriptionCreateGroup.REJECTED:action.payload:\n',
@@ -629,7 +725,6 @@ export const meetingsSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(subscriptionUpdateGroup.pending, (state) => {
-                console.log('MS:632-->subscriptionUpdateGroup pending');
                 state.isLoading = true;
             })
             .addCase(subscriptionUpdateGroup.fulfilled, (state, action) => {

@@ -58,16 +58,34 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         graphqlOperation(onUpdateMeeting)
     ).subscribe({
         next: (data) => {
-            printObject(
-                'ADS:62-->SUB meetingUpdateSubscription received data:\n',
-                data
-            );
-            const meeting = data.value.data.onUpdateMeeting;
-            if (meeting.organizationMeetingsId !== activeOrgId) {
-                console.log('ADS:67-->meetingUpdateSubscription ignored.');
-                return;
+            try {
+                const meeting = data?.value?.data?.onUpdateMeeting;
+                printObject('ADS:62-->meeting:\n', meeting);
+                if (meeting?.organizationMeetingsId === activeOrgId) {
+                    //need to clean up object before sending to slice
+
+                    dispatch(subscriptionUpdateMeeting(meeting))
+                        .then((results) => {
+                            printObject(
+                                'ADS:70-->subscriptionUpdateMeeting successful:\n',
+                                results
+                            );
+                        })
+                        .catch((error) => {
+                            console.log(
+                                'error from subscriptionUpdateMeeting dispatch'
+                            );
+                            printObject('ADS:76-->error:\n', error);
+                        });
+                } else {
+                    console.log('ADS:81-->updateMeeting not ours');
+                }
+            } catch (error) {
+                printObject(
+                    'ADS:80-->error dispatching subscriptionUpdateMeeting:\n',
+                    error
+                );
             }
-            console.log('ADS:70-->meetingUpdateSubscription handled');
             return;
         },
         error: (error) => {
@@ -107,16 +125,24 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         graphqlOperation(onCreateGroup)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:111-->current activeOrgId:', activeOrgId);
-            printObject(
-                'ADS:113-->groupCreateSub...data.value.data.onCreateGroup\n',
-                data.value.data.onCreateGroup
-            );
-            if (data.value.data.onCreateGroup.organization.id !== activeOrgId) {
-                console.log('groupCreateSubscription ignored');
-                return;
+            const group = data?.value?.data?.onCreateGroup;
+            if (group?.organizationGroupsId === activeOrgId) {
+                console.log('beforeDispatch');
+                dispatch(subscriptionCreateGroup(group))
+                    .then((results) => {
+                        //
+                        console.log('new group added successfully');
+                    })
+                    .catch((error) => {
+                        console.log(
+                            'error from subscriptionCreateGroup dispatch'
+                        );
+                        printObject('ADS:145-->error:\n', error);
+                    });
+            } else {
+                console.log('ADS:155-->subscriptionCreateGroup not ours');
             }
-            console.log('groupCreateSubscription handled...');
+            return;
         },
         error: (error) => {
             console.error('ADS:124-->onCreateGroup Subscription error:', error);
@@ -128,18 +154,11 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         next: (data) => {
             // printObject('ADS:131-->SUB received data:\n', data);
             const group = data?.value?.data?.onUpdateGroup;
-            // console.log('ADS:131-->__typename:', group?.__typename);
-            // console.log(
-            //     'ADS:132-->organizationGroupsId:',
-            //     group?.organizationGroupsId
-            // );
-            // console.log('ADS:136-->activeOrgId:', activeOrgId);
             if (
                 group?.__typename === 'Group' &&
                 group?.organizationGroupsId === activeOrgId
             ) {
                 //need to clean up object before sending to slice
-                console.log('dispatchin..');
                 dispatch(subscriptionUpdateGroup(group))
                     .then((results) => {
                         printObject(

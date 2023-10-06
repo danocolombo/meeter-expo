@@ -567,8 +567,9 @@ export const subscriptionUpdateMeeting = createAsyncThunk(
             //* subscription input will be json object
             //* required field is "__typename": "Meeting"
             //*===========================================
-            printObject('MT:569-->input:\n', input);
-            return { id: input.id };
+            const theMeeting = input;
+            delete theMeeting.organization.name;
+            return theMeeting;
         } catch (error) {
             printObject(
                 'MT:574-->subscriptionUpdateMeeting thunk try failure.\n',
@@ -586,8 +587,13 @@ export const subscriptionCreateGroup = createAsyncThunk(
             //* subscription input will be json object
             //* required field is "__typename": "Meeting"
             //*===========================================
-            printObject('MT:589-->input:\n', input);
-            return { id: input.id };
+            const theGroup = input;
+            const theGroupWithoutMeetingAndOrganization = {
+                ...theGroup,
+                meeting: undefined,
+                organization: undefined,
+            };
+            return theGroupWithoutMeetingAndOrganization;
         } catch (error) {
             printObject(
                 'MT:594-->subscriptionCreateGroup thunk try failure.\n',
@@ -606,6 +612,7 @@ export const subscriptionUpdateGroup = createAsyncThunk(
             //* required field is "__typename": "Meeting"
             //*===========================================
             const theGroup = input;
+            printObject('MT:615-->theGroup:\n', theGroup);
             const mId = theGroup.meetingGroupsId;
             const oId = theGroup.organizationGroupsId;
             delete theGroup?.meeting;

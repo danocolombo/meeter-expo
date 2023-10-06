@@ -1,13 +1,13 @@
 import { API, graphqlOperation } from 'aws-amplify';
 import { useSelector } from 'react-redux';
-// import { onCreateMeeting } from '../graphql/subscriptions';
+// import {  } from '../graphql/subscriptions';
 import {
     onDeleteMeeting,
     onUpdateMeeting,
     onCreateMeeting,
     onCreateGroup,
-    onDeleteGroup,
     onUpdateGroup,
+    onDeleteGroup,
 } from '../jerichoQL/subscriptions';
 import {
     subscriptionCreateMeeting,
@@ -183,17 +183,32 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         graphqlOperation(onDeleteGroup)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:145-->SUB received data:\n', data);
+            //* ========================================
+            // subscription deletes will only provide the
+            // __type and the id. So we cannot check the
+            // org. send the delete request to thunk and
+            // it will be parsed.
+            //* ========================================
             const group = data?.value?.data?.onDeleteGroup;
-            if (!group || group?.organizationGroupsId !== activeOrgId) {
-                console.log('ADS:148-->groupDeleteSubscription ignored');
-                return;
+            if (group?.__typename === 'Group') {
+                dispatch(subscriptionDeleteGroup({ groupId: group.id }))
+                    .then((results) => {
+                        //
+                        console.log('group deleted successfully');
+                    })
+                    .catch((error) => {
+                        console.log(
+                            'error from subscriptionDeleteGroup dispatch'
+                        );
+                        printObject('ADS:203-->error:\n', error);
+                    });
+            } else {
+                console.log('ADS:206-->subscriptionDeleteGroup not ours');
             }
-            console.log('ADS:151-->groupDeleteSubscription handled');
             return;
         },
         error: (error) => {
-            console.error('ADS:156-->groupDeleteSubscription  error:', error);
+            console.error('ADS:211-->subscriptionDeleteGroup  error:', error);
         },
     });
     activeSubscriptions.push(meetingCreateSubscription);

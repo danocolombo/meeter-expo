@@ -837,7 +837,34 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(subscriptionDeleteGroup.fulfilled, (state, action) => {
-                printObject('MS:646->idToDelete:\n', action.payload.id);
+                //* * * * * * * * * * * * * * * * * * * * *
+                //*  remove the group from the meeting
+                //* * * * * * * * * * * * * * * * * * * * *
+                const existingMeetings = state.meetings;
+
+                const updatedMeetings = existingMeetings.map((meeting) => {
+                    // Check if this is the meeting where the group needs to be removed
+                    if (meeting.id === action.payload.meetingId) {
+                        // Filter out the group with the specified groupId
+                        const updatedGroups = meeting.groups.items.filter(
+                            (group) => group.id !== action.payload.groupId
+                        );
+
+                        // Return a new meeting object with the updated groups
+                        return {
+                            ...meeting,
+                            groups: {
+                                items: updatedGroups,
+                            },
+                        };
+                    }
+
+                    // If it's not the meeting to be updated, return it as is
+                    return meeting;
+                });
+
+                state.meetings = updatedMeetings;
+                state.isLoading = false;
                 return state;
             })
             .addCase(subscriptionDeleteGroup.rejected, (state, action) => {

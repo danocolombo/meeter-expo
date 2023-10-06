@@ -584,10 +584,11 @@ export const subscriptionCreateGroup = createAsyncThunk(
     async (input, thunkAPI) => {
         try {
             //*===========================================
-            //* subscription input will be json object
-            //* required field is "__typename": "Meeting"
+            //* NOTE: subscriptions do not update GQL
+            //* only update the REDUX state
             //*===========================================
             const theGroup = input;
+            //* remove the meeting and organization items
             const theGroupWithoutMeetingAndOrganization = {
                 ...theGroup,
                 meeting: undefined,
@@ -608,13 +609,11 @@ export const subscriptionUpdateGroup = createAsyncThunk(
     async (input, thunkAPI) => {
         try {
             //*===========================================
-            //* subscription input will be json object
-            //* required field is "__typename": "Meeting"
+            //* NOTE: subscriptions do not update GQL
+            //* only update the REDUX state
             //*===========================================
             const theGroup = input;
-            printObject('MT:615-->theGroup:\n', theGroup);
-            const mId = theGroup.meetingGroupsId;
-            const oId = theGroup.organizationGroupsId;
+            //* clean up group object
             delete theGroup?.meeting;
             delete theGroup?.organization;
             delete theGroup?.createdAt;
@@ -640,10 +639,33 @@ export const subscriptionDeleteGroup = createAsyncThunk(
     async (input, thunkAPI) => {
         try {
             //*===========================================
-            //* subscription input will be json object
-            //* required field is "__typename": "Meeting"
+            //* NOTE: subscriptions do not update GQL
+            //* only update the REDUX state.
+            //* GRAPHQL delete subscriptions only provide
+            //* the id. So will need to check if the id
+            //* is even used in this affiliation.
             //*===========================================
-            return { id: input.id };
+            const state = thunkAPI.getState();
+            //get all the current meetings
+            const meetings = state.meetings.meetings;
+            let meetingIdFound = null;
+
+            for (const meeting of meetings) {
+                for (const groupItem of meeting.groups.items) {
+                    if (groupItem.id === input.groupId) {
+                        meetingIdFound = meeting.id;
+                        break; // Exit the inner loop once the group is found
+                    }
+                }
+                if (meetingIdFound) {
+                    break; // Exit the outer loop if the group is found
+                }
+            }
+            if (meetingIdFound) {
+                return { meetingId: meetingIdFound, groupId: input.groupId };
+            } else {
+                throw new Error('MT:657-->subscriptionDeleteGroup ignored');
+            }
         } catch (error) {
             printObject(
                 'MT:634-->subscriptionDeleteGroup thunk try failure.\n',

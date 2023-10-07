@@ -10,14 +10,13 @@ import {
     onDeleteGroup,
 } from '../jerichoQL/subscriptions';
 import {
-    subscriptionCreateMeeting,
     subscriptionDeleteMeeting,
     subscriptionUpdateMeeting,
     subscriptionCreateGroup,
     subscriptionDeleteGroup,
     subscriptionUpdateGroup,
 } from '../features/meetings/meetingsThunks';
-
+import { addANewMeeting } from '../features/meetings/meetingsSlice';
 import { printObject } from '../utils/helpers';
 
 // Define a list to store active subscriptions
@@ -30,22 +29,15 @@ export function setupSubscriptions(dispatch, activeOrgId) {
     ).subscribe({
         next: (data) => {
             const meeting = data.value.data.onCreateMeeting;
-            dispatch(
-                subscriptionCreateMeeting({
-                    meeting: meeting,
-                    activeOrgId: activeOrgId,
-                })
-            )
-                .then((results) => {
-                    printObject(
-                        'ADS:25-->subscriptionCreateMeeting successful:\n',
-                        results
-                    );
-                })
-                .catch((error) => {
-                    console.log('error from dispatch');
-                    printObject('ADS:36-->error:\n', error);
-                });
+            if (meeting?.organizationMeetingsId === activeOrgId) {
+                delete meeting?.createdAt;
+                delete meeting?.updatedAt;
+                delete meeting?.__typename;
+                delete meeting?.groups?.nextToken;
+                delete meeting?.groups?.__typename;
+                dispatch(addANewMeeting(meeting));
+            }
+            return;
         },
         error: (error) => {
             console.error(

@@ -16,7 +16,10 @@ import {
     subscriptionDeleteGroup,
     subscriptionUpdateGroup,
 } from '../features/meetings/meetingsThunks';
-import { addANewMeeting } from '../features/meetings/meetingsSlice';
+import {
+    addANewMeeting,
+    updateAMeeting,
+} from '../features/meetings/meetingsSlice';
 import { printObject } from '../utils/helpers';
 
 // Define a list to store active subscriptions
@@ -52,23 +55,9 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         next: (data) => {
             try {
                 const meeting = data?.value?.data?.onUpdateMeeting;
-                printObject('ADS:62-->meeting:\n', meeting);
                 if (meeting?.organizationMeetingsId === activeOrgId) {
                     //need to clean up object before sending to slice
-
-                    dispatch(subscriptionUpdateMeeting(meeting))
-                        .then((results) => {
-                            printObject(
-                                'ADS:70-->subscriptionUpdateMeeting successful:\n',
-                                results
-                            );
-                        })
-                        .catch((error) => {
-                            console.log(
-                                'error from subscriptionUpdateMeeting dispatch'
-                            );
-                            printObject('ADS:76-->error:\n', error);
-                        });
+                    dispatch(updateAMeeting(meeting));
                 } else {
                     console.log('ADS:81-->updateMeeting not ours');
                 }

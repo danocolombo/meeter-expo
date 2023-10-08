@@ -6,7 +6,7 @@ import {
     Modal,
     StatusBar,
 } from 'react-native';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Surface, useTheme, ActivityIndicator, FAB } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -43,6 +43,24 @@ const HistoricScreen = (props) => {
                 });
         }, [])
     );
+    useEffect(() => {
+        setIsLoading(true);
+        dispatch(getHistoricMeetings())
+            .then((action) => {
+                const results = action.payload;
+                if (results.length > 0) {
+                    setDisplayMeetings(results);
+                } else {
+                    setDisplayMeetings([]);
+                }
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                setIsLoading(false);
+            });
+    }, [meetings]);
+
     const handleNewRequest = () => {
         isFormDisplayedRef.current = true;
         navigation.navigate('MeetingNew');

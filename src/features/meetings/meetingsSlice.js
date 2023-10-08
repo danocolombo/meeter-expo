@@ -47,7 +47,6 @@ export const meetingsSlice = createSlice({
             state.tmpMeeting = newTmp;
             return state;
         },
-
         loadMeetings: (state, action) => {
             state.meetings = action.payload;
             return state;
@@ -122,6 +121,17 @@ export const meetingsSlice = createSlice({
             }
             return state;
         },
+        deleteAMeeting: (state, action) => {
+            const existingMeetings = state.meetings;
+            const updatedMeetings = existingMeetings.filter((m) => {
+                if (m.id !== action.payload.id) {
+                    return m;
+                }
+            });
+            state.meetings = updatedMeetings;
+            state.isLoading = false;
+            return state;
+        },
         deleteGroup: (state, action) => {
             const smaller = state.groups.filter(
                 (m) => m.groupId !== action.payload.groupId
@@ -129,7 +139,6 @@ export const meetingsSlice = createSlice({
             state.groups = smaller;
             return state;
         },
-
         clearGroups: (state) => {
             state.groups = [];
             return state;
@@ -329,7 +338,7 @@ export const meetingsSlice = createSlice({
                 ); // Adding 1 to month since it's 0-based
                 const day = String(currentDate.getDate()).padStart(2, '0');
                 const key = `${clientCode}#${year}#${month}#${day}`;
-                printObject('MS:296-->key:', key);
+                // printObject('MS:296-->key:', key);
                 // Filter meetings based on mtgCompKey condition
                 // const activeMeetings = updatedMeetings.filter(
                 //     (m) => m.mtgCompKey >= key
@@ -569,6 +578,14 @@ export const meetingsSlice = createSlice({
                     '<MS:604></MS:604>-->idToDelete:\n',
                     action.payload.id
                 );
+                const existingMeetings = state.meetings;
+                const updatedMeetings = existingMeetings.map((m) => {
+                    if (m.id !== action.payload.id) {
+                        return m;
+                    }
+                });
+                state.meetings = updatedMeetings;
+                state.isLoading = false;
                 return state;
             })
             .addCase(subscriptionDeleteMeeting.rejected, (state, action) => {
@@ -589,43 +606,49 @@ export const meetingsSlice = createSlice({
                     (m) => m.id === action.payload.meetingGroupsId
                 );
                 if (mtg) {
-                    // If the meeting is found, create a new array of groups and add the newGroup to it
-                    const newGroups = [...mtg?.groups?.items, action.payload];
-                    //* sort groups by gender, title, location
-                    newGroups.sort((a, b) => {
-                        // First, compare by gender
-                        const genderCompare = a.gender.localeCompare(b.gender);
+                    //* if meeting found, only add if does not exist
+                    if (!mtg.groups.items.find((g) => g.id === grp.id)) {
+                        const newGroups = [
+                            ...mtg?.groups?.items,
+                            action.payload,
+                        ];
+                        //* sort groups by gender, title, location
+                        newGroups.sort((a, b) => {
+                            // First, compare by gender
+                            const genderCompare = a.gender.localeCompare(
+                                b.gender
+                            );
 
-                        // If genders are different, return the gender comparison result
-                        if (genderCompare !== 0) {
-                            return genderCompare;
-                        }
+                            // If genders are different, return the gender comparison result
+                            if (genderCompare !== 0) {
+                                return genderCompare;
+                            }
 
-                        // If genders are the same, compare by title
-                        const titleCompare = a.title.localeCompare(b.title);
+                            // If genders are the same, compare by title
+                            const titleCompare = a.title.localeCompare(b.title);
 
-                        // If titles are different, return the title comparison result
-                        if (titleCompare !== 0) {
-                            return titleCompare;
-                        }
+                            // If titles are different, return the title comparison result
+                            if (titleCompare !== 0) {
+                                return titleCompare;
+                            }
 
-                        // If titles are the same, compare by location
-                        return a.location.localeCompare(b.location);
-                    });
+                            // If titles are the same, compare by location
+                            return a.location.localeCompare(b.location);
+                        });
+                        const groupItems = { items: newGroups };
+                        // Create a new meeting object with updated groups array
+                        const updatedMtg = {
+                            ...mtg,
+                            groups: groupItems,
+                        };
+                        // Create a new array of meetings with the updated meeting object
+                        const newMeetingList = state.meetings.map((m) =>
+                            m.id === updatedMtg.id ? updatedMtg : m
+                        );
 
-                    const groupItems = { items: newGroups };
-                    // Create a new meeting object with updated groups array
-                    const updatedMtg = {
-                        ...mtg,
-                        groups: groupItems,
-                    };
-                    // Create a new array of meetings with the updated meeting object
-                    const newMeetingList = state.meetings.map((m) =>
-                        m.id === updatedMtg.id ? updatedMtg : m
-                    );
-
-                    // Update the state with the new meetings list
-                    state.meetings = newMeetingList;
+                        // Update the state with the new meetings list
+                        state.meetings = newMeetingList;
+                    }
                 }
                 state.isLoading = false;
                 return state;
@@ -804,6 +827,7 @@ export const {
     addNewGroup,
     addActiveMeeting,
     addANewMeeting,
+    deleteAMeeting,
     getGroup,
     updateAMeeting,
     clearMeetingsSlice,

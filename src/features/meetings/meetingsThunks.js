@@ -250,12 +250,12 @@ export const addMeeting = createAsyncThunk(
     'meetings/addMeeting',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:251-->adding meeting inputs:\n', inputs);
+            // printObject('MT:251-->adding meeting inputs:\n', inputs);
             let mtg = {
                 ...inputs.meeting,
                 organizationMeetingsId: inputs.orgId,
             };
-            printObject('MT:256-->mtg:\n', mtg);
+            // printObject('MT:256-->mtg:\n', mtg);
             // delete mtg.meetingId;
             // delete mtg.clientId;
 
@@ -264,7 +264,7 @@ export const addMeeting = createAsyncThunk(
                 query: mutations.createMeeting,
                 variables: { input: mtg },
             });
-            printObject('MT:265-->createMeeting results:\n', results);
+            // printObject('MT:265-->createMeeting results:\n', results);
             // Check if the result contains the expected data and return it
             if (results.data.createMeeting.id) {
                 return mtg;
@@ -346,7 +346,7 @@ export const addGroup = createAsyncThunk(
     'meetings/addGroup',
     async (inputs, thunkAPI) => {
         try {
-            printObject('MT:351-->inputs:\n', inputs);
+            // printObject('MT:351-->inputs:\n', inputs);
             const newId = createAWSUniqueID();
             // printObject('MT:196-->addGroup__inputs:\n', inputs);
             let inputInfo = {
@@ -584,8 +584,8 @@ export const subscriptionCreateGroup = createAsyncThunk(
     async (input, thunkAPI) => {
         try {
             //*===========================================
-            //* NOTE: subscriptions do not update GQL
-            //* only update the REDUX state
+            //* NOTE: only add group if id does not exist
+            //* in meeting.groups.index array
             //*===========================================
             const theGroup = input;
             //* remove the meeting and organization items

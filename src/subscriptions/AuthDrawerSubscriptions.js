@@ -18,6 +18,7 @@ import {
 } from '../features/meetings/meetingsThunks';
 import {
     addANewMeeting,
+    deleteAMeeting,
     updateAMeeting,
 } from '../features/meetings/meetingsSlice';
 import { printObject } from '../utils/helpers';
@@ -80,23 +81,19 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         graphqlOperation(onDeleteMeeting)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:85-->SUB received data:\n', data);
-            const meeting = data.value.data.onDeleteMeeting;
-            dispatch(
-                subscriptionDeleteMeeting({
-                    id: meeting.id,
-                })
-            )
-                .then((results) => {
-                    printObject(
-                        'ADS:94-->subscriptionDeleteMeeting complete:\n',
-                        results
-                    );
-                })
-                .catch((error) => {
-                    console.log('error from dispatch');
-                    printObject('ADS:100-->error:\n', error);
-                });
+            try {
+                // printObject('ADS:85-->SUB received data:\n', data);
+                const meeting = data.value.data.onDeleteMeeting;
+                console.log('deleteAMeeting:', meeting.id);
+                dispatch(
+                    deleteAMeeting({
+                        id: meeting.id,
+                    })
+                );
+                console.log('meetingDeleteSubscription successful');
+            } catch (error) {
+                console.log('meetingDeleteSubscription failed');
+            }
         },
         error: (error) => {
             console.error('ADS:66-->meetingDeleteSubscription  error:', error);
@@ -108,7 +105,7 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         next: (data) => {
             const group = data?.value?.data?.onCreateGroup;
             if (group?.organizationGroupsId === activeOrgId) {
-                console.log('beforeDispatch');
+                // console.log('beforeDispatch');
                 dispatch(subscriptionCreateGroup(group))
                     .then((results) => {
                         //
@@ -118,10 +115,10 @@ export function setupSubscriptions(dispatch, activeOrgId) {
                         console.log(
                             'error from subscriptionCreateGroup dispatch'
                         );
-                        printObject('ADS:145-->error:\n', error);
+                        printObject('ADS:118-->error:\n', error);
                     });
             } else {
-                console.log('ADS:155-->subscriptionCreateGroup not ours');
+                console.log('ADS:121-->subscriptionCreateGroup not ours');
             }
             return;
         },
@@ -142,13 +139,10 @@ export function setupSubscriptions(dispatch, activeOrgId) {
                 //need to clean up object before sending to slice
                 dispatch(subscriptionUpdateGroup(group))
                     .then((results) => {
-                        printObject(
-                            'ADS:139-->subscriptionUpdateGroup successful:\n',
-                            results
-                        );
+                        console.log('groupUpdated');
                     })
                     .catch((error) => {
-                        console.log('error from dispatch');
+                        console.log('error from subscriptionUpdateGroup');
                         printObject('ADS:145-->error:\n', error);
                     });
             } else {

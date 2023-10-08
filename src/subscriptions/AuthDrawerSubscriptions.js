@@ -10,8 +10,6 @@ import {
     onDeleteGroup,
 } from '../jerichoQL/subscriptions';
 import {
-    subscriptionDeleteMeeting,
-    subscriptionUpdateMeeting,
     subscriptionCreateGroup,
     subscriptionDeleteGroup,
     subscriptionUpdateGroup,

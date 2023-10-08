@@ -431,19 +431,14 @@ export const deleteMeeting = createAsyncThunk(
                 console.log(`MT:428-->DELETING ${inputs.groups.length} groups`);
                 for (const g of inputs.groups) {
                     try {
-                        console.log(`id: ${g}`);
                         const inputRequest = {
                             id: g,
                         };
-                        printObject('MT:459-->inputRequest:\n', inputRequest);
                         const deleteGroupResponse = await API.graphql({
                             query: mutations.deleteGroup,
                             variables: { input: inputRequest },
                         });
-                        printObject(
-                            'MT:464-->deleteGroupResponse:\n',
-                            deleteGroupResponse
-                        );
+
                         if (!deleteGroupResponse?.data?.deleteGroup?.id) {
                             console.log(
                                 `MT:442-->Failed to delete group with id: ${g.id}`

@@ -172,20 +172,6 @@ export const meetingsSlice = createSlice({
                 const updatedMeetings = state.meetings.filter(
                     (mtg) => mtg.id !== meetingIdToDelete
                 );
-                // const updatedActiveMeetings = state.activeMeetings.filter(
-                //     (mtg) => mtg.id !== meetingIdToDelete
-                // );
-                // updatedActiveMeetings.sort((a, b) => {
-                //     // Extract the date portion of mtgCompKey and convert it to a Date object
-                //     const dateA = new Date(a.mtgCompKey.split('#')[1]);
-                //     const dateB = new Date(b.mtgCompKey.split('#')[1]);
-
-                //     // Compare the dates
-                //     return dateA - dateB;
-                // });
-                // const updateHistoricMeetings = state.historicMeetings.filter(
-                //     (m) => m.id != meetingIdToDelete
-                // );
 
                 return {
                     ...state,
@@ -315,58 +301,6 @@ export const meetingsSlice = createSlice({
             .addCase(addGroup.rejected, (state, action) => {
                 printObject(
                     '<MS:267></MS:267>-->REJECTED:action.payload:\n',
-                    action.payload
-                );
-                state.isLoading = false;
-            })
-            .addCase(addMeeting.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(addMeeting.fulfilled, (state, action) => {
-                const newMeeting = action.payload;
-
-                // Create a new array of meetings by spreading the existing state.meetings
-                const updatedMeetings = [...state.meetings, newMeeting];
-
-                // Define today for mtgCompKey...
-                const clientCode = newMeeting.mtgCompKey.slice(0, 3);
-                const currentDate = new Date();
-                const year = currentDate.getFullYear();
-                const month = String(currentDate.getMonth() + 1).padStart(
-                    2,
-                    '0'
-                ); // Adding 1 to month since it's 0-based
-                const day = String(currentDate.getDate()).padStart(2, '0');
-                const key = `${clientCode}#${year}#${month}#${day}`;
-                // printObject('MS:296-->key:', key);
-                // Filter meetings based on mtgCompKey condition
-                // const activeMeetings = updatedMeetings.filter(
-                //     (m) => m.mtgCompKey >= key
-                // );
-                // activeMeetings.sort((a, b) => {
-                //     return a.mtgCompKey.localeCompare(b.mtgCompKey);
-                // });
-                // printObject('MS:307-->actives: ', activeMeetings.length);
-
-                // const historicMeetings = updatedMeetings.filter(
-                //     (m) => m.mtgCompKey < key
-                // );
-                // historicMeetings.sort((a, b) => {
-                //     return a.mtgCompKey.localeCompare(b.mtgCompKey);
-                // });
-                // printObject('MS:313-->historic: ', historicMeetings.length);
-                // Update state with the new arrays
-                return {
-                    ...state,
-                    meetings: updatedMeetings,
-                    // activeMeetings: activeMeetings,
-                    // historicMeetings: historicMeetings,
-                    isLoading: false,
-                };
-            })
-            .addCase(addMeeting.rejected, (state, action) => {
-                printObject(
-                    'MS:287-->REJECTED:action.payload:\n',
                     action.payload
                 );
                 state.isLoading = false;
@@ -695,71 +629,10 @@ export const meetingsSlice = createSlice({
                     }
                     return meeting; // Return unchanged meetings
                 });
-                //=====================================
-                // find the activeMeeting and update the group
-                //=====================================
-                // const activeMeetings = state.activeMeetings.map((meeting) => {
-                //     if (meeting.id === newGroup.meetingGroupsId) {
-                //         // Find and update the group within the meeting's 'groups' array
-                //         const updatedGroups = meeting.groups.items.map(
-                //             (group) => {
-                //                 if (group.id === newGroup.id) {
-                //                     // Update the group information with newGroup values
-                //                     return {
-                //                         ...group,
-                //                         ...newGroup,
-                //                     };
-                //                 }
-                //                 return group; // Return unchanged groups
-                //             }
-                //         );
 
-                //         // Update the 'groups' property of the meeting
-                //         return {
-                //             ...meeting,
-                //             groups: {
-                //                 items: updatedGroups,
-                //             },
-                //         };
-                //     }
-                //     return meeting; // Return unchanged meetings
-                // });
-                // //=====================================
-                // // find the activeMeeting and update the group
-                // //=====================================
-                // const historicMeetings = state.historicMeetings.map(
-                //     (meeting) => {
-                //         if (meeting.id === newGroup.meetingGroupsId) {
-                //             // Find and update the group within the meeting's 'groups' array
-                //             const updatedGroups = meeting.groups.items.map(
-                //                 (group) => {
-                //                     if (group.id === newGroup.id) {
-                //                         // Update the group information with newGroup values
-                //                         return {
-                //                             ...group,
-                //                             ...newGroup,
-                //                         };
-                //                     }
-                //                     return group; // Return unchanged groups
-                //                 }
-                //             );
-
-                //             // Update the 'groups' property of the meeting
-                //             return {
-                //                 ...meeting,
-                //                 groups: {
-                //                     items: updatedGroups,
-                //                 },
-                //             };
-                //         }
-                //         return meeting; // Return unchanged meetings
-                //     }
-                // );
                 return {
                     ...state,
                     meetings: updatedMeetings,
-                    // activeMeetings: activeMeetings,
-                    // historicMeetings: historicMeetings,
                     isLoading: false,
                 };
             })

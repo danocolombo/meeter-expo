@@ -1,20 +1,24 @@
 import { API, graphqlOperation } from 'aws-amplify';
 import { useSelector } from 'react-redux';
-import { onCreateMeeting } from '../graphql/subscriptions';
+// import {  } from '../graphql/subscriptions';
 import {
     onDeleteMeeting,
-    onCreateGroup,
-    onDeleteGroup,
     onUpdateMeeting,
+    onCreateMeeting,
+    onCreateGroup,
+    onUpdateGroup,
+    onDeleteGroup,
 } from '../jerichoQL/subscriptions';
 import {
-    subscriptionCreateMeeting,
-    subscriptionDeleteMeeting,
     subscriptionCreateGroup,
     subscriptionDeleteGroup,
-    subscriptionUpdateMeeting,
+    subscriptionUpdateGroup,
 } from '../features/meetings/meetingsThunks';
-
+import {
+    addANewMeeting,
+    deleteAMeeting,
+    updateAMeeting,
+} from '../features/meetings/meetingsSlice';
 import { printObject } from '../utils/helpers';
 
 // Define a list to store active subscriptions
@@ -27,22 +31,15 @@ export function setupSubscriptions(dispatch, activeOrgId) {
     ).subscribe({
         next: (data) => {
             const meeting = data.value.data.onCreateMeeting;
-            dispatch(
-                subscriptionCreateMeeting({
-                    meeting: meeting,
-                    activeOrgId: activeOrgId,
-                })
-            )
-                .then((results) => {
-                    printObject(
-                        'ADS:25-->subscriptionCreateMeeting successful:\n',
-                        results
-                    );
-                })
-                .catch((error) => {
-                    console.log('error from dispatch');
-                    printObject('ADS:36-->error:\n', error);
-                });
+            if (meeting?.organizationMeetingsId === activeOrgId) {
+                delete meeting?.createdAt;
+                delete meeting?.updatedAt;
+                delete meeting?.__typename;
+                delete meeting?.groups?.nextToken;
+                delete meeting?.groups?.__typename;
+                dispatch(addANewMeeting(meeting));
+            }
+            return;
         },
         error: (error) => {
             console.error(
@@ -51,27 +48,50 @@ export function setupSubscriptions(dispatch, activeOrgId) {
             );
         },
     });
+    const meetingUpdateSubscription = API.graphql(
+        graphqlOperation(onUpdateMeeting)
+    ).subscribe({
+        next: (data) => {
+            try {
+                const meeting = data?.value?.data?.onUpdateMeeting;
+                if (meeting?.organizationMeetingsId === activeOrgId) {
+                    //need to clean up object before sending to slice
+                    dispatch(updateAMeeting(meeting));
+                } else {
+                    console.log('ADS:81-->updateMeeting not ours');
+                }
+            } catch (error) {
+                printObject(
+                    'ADS:80-->error dispatching subscriptionUpdateMeeting:\n',
+                    error
+                );
+            }
+            return;
+        },
+        error: (error) => {
+            console.error(
+                'ADS:76-->meetingUpdateSubscription Subscription error:',
+                error
+            );
+        },
+    });
     const meetingDeleteSubscription = API.graphql(
         graphqlOperation(onDeleteMeeting)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:50-->SUB received data:\n', data);
-            const meeting = data.value.data.onDeleteMeeting;
-            dispatch(
-                subscriptionDeleteMeeting({
-                    id: meeting.id,
-                })
-            )
-                .then((results) => {
-                    printObject(
-                        'ADS:58-->subscriptionDeleteMeeting complete:\n',
-                        results
-                    );
-                })
-                .catch((error) => {
-                    console.log('error from dispatch');
-                    printObject('ADS:62-->error:\n', error);
-                });
+            try {
+                // printObject('ADS:85-->SUB received data:\n', data);
+                const meeting = data.value.data.onDeleteMeeting;
+                console.log('deleteAMeeting:', meeting.id);
+                dispatch(
+                    deleteAMeeting({
+                        id: meeting.id,
+                    })
+                );
+                console.log('meetingDeleteSubscription successful');
+            } catch (error) {
+                console.log('meetingDeleteSubscription failed');
+            }
         },
         error: (error) => {
             console.error('ADS:66-->meetingDeleteSubscription  error:', error);
@@ -81,114 +101,95 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         graphqlOperation(onCreateGroup)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:76-->current activeOrgId:', activeOrgId);
-            printObject(
-                'ADS:77-->groupCreateSub...data.value.data.onCreateGroup\n',
-                data.value.data.onCreateGroup
-            );
-            if (data.value.data.onCreateGroup.organization.id !== activeOrgId) {
-                console.log('groupCreateSubscription ignored');
-                return;
+            const group = data?.value?.data?.onCreateGroup;
+            if (group?.organizationGroupsId === activeOrgId) {
+                // console.log('beforeDispatch');
+                dispatch(subscriptionCreateGroup(group))
+                    .then((results) => {
+                        //
+                        console.log('new group added successfully');
+                    })
+                    .catch((error) => {
+                        console.log(
+                            'error from subscriptionCreateGroup dispatch'
+                        );
+                        printObject('ADS:118-->error:\n', error);
+                    });
+            } else {
+                console.log('ADS:121-->subscriptionCreateGroup not ours');
             }
-            console.log('groupCreateSubscription handled...');
-            // const meeting = data.value.data.onCreateGroup;
-            // dispatch(
-            //     subscriptionCreateMeeting({
-            //         meeting: meeting,
-            //         activeOrgId: activeOrgId,
-            //     })
-            // )
-            //     .then((results) => {
-            //         printObject(
-            //             'ADS:25-->subscriptionCreateMeeting successful:\n',
-            //             results
-            //         );
-            //     })
-            //     .catch((error) => {
-            //         console.log('error from dispatch');
-            //         printObject('ADS:36-->error:\n', error);
-            //     });
+            return;
         },
         error: (error) => {
-            console.error('ADS:98-->onCreateGroup Subscription error:', error);
+            console.error('ADS:124-->onCreateGroup Subscription error:', error);
+        },
+    });
+    const groupUpdateSubscription = API.graphql(
+        graphqlOperation(onUpdateGroup)
+    ).subscribe({
+        next: (data) => {
+            // printObject('ADS:131-->SUB received data:\n', data);
+            const group = data?.value?.data?.onUpdateGroup;
+            if (
+                group?.__typename === 'Group' &&
+                group?.organizationGroupsId === activeOrgId
+            ) {
+                //need to clean up object before sending to slice
+                dispatch(subscriptionUpdateGroup(group))
+                    .then((results) => {
+                        console.log('groupUpdated');
+                    })
+                    .catch((error) => {
+                        console.log('error from subscriptionUpdateGroup');
+                        printObject('ADS:145-->error:\n', error);
+                    });
+            } else {
+                console.log('ADS:155-->updateGroup not ours');
+            }
+            return;
+        },
+        error: (error) => {
+            console.error('ADS:161-->groupUpdateSubscription  error:', error);
         },
     });
     const groupDeleteSubscription = API.graphql(
         graphqlOperation(onDeleteGroup)
     ).subscribe({
         next: (data) => {
-            printObject('ADS:114-->SUB received data:\n', data);
+            //* ========================================
+            // subscription deletes will only provide the
+            // __type and the id. So we cannot check the
+            // org. send the delete request to thunk and
+            // it will be parsed.
+            //* ========================================
             const group = data?.value?.data?.onDeleteGroup;
-            if (!group || group?.organizationGroupsId !== activeOrgId) {
-                console.log('ADS:117-->groupDeleteSubscription ignored');
-                return;
+            if (group?.__typename === 'Group') {
+                dispatch(subscriptionDeleteGroup({ groupId: group.id }))
+                    .then((results) => {
+                        //
+                        console.log('group deleted successfully');
+                    })
+                    .catch((error) => {
+                        console.log(
+                            'error from subscriptionDeleteGroup dispatch'
+                        );
+                        printObject('ADS:203-->error:\n', error);
+                    });
+            } else {
+                console.log('ADS:206-->subscriptionDeleteGroup not ours');
             }
-            console.log('ADS:120-->groupDeleteSubscription handled');
             return;
-            // dispatch(
-            //     subscriptionDeleteGroup({
-            //         id: group.id,
-            //         meetingId: group.meetingGroupsId
-            //     })
-            // )
-            //     .then((results) => {
-            //         printObject(
-            //             'ADS:124-->subscriptionDeleteGroup complete:\n',
-            //             results
-            //         );
-            //     })
-            //     .catch((error) => {
-            //         console.log('error from dispatch');
-            //         printObject('ADS:130-->error:\n', error);
-            //     });
         },
         error: (error) => {
-            console.error('ADS:66-->meetingDeleteSubscription  error:', error);
+            console.error('ADS:211-->subscriptionDeleteGroup  error:', error);
         },
     });
-    const meetingUpdateSubscription = API.graphql(
-        graphqlOperation(onUpdateMeeting)
-    ).subscribe({
-        next: (data) => {
-            printObject(
-                'ADS:152-->SUB meetingUpdateSubscription received data:\n',
-                data
-            );
-            const meeting = data.value.data.onUpdateMeeting;
-            if (meeting.organizationMeetingsId !== activeOrgId) {
-                console.log('ADS:159-->meetingUpdateSubscription ignored.');
-                return;
-            }
-            console.log('ADS:162-->meetingUpdateSubscription handled');
-            return;
-            // dispatch(
-            //     subscriptionCreateMeeting({
-            //         meeting: meeting,
-            //         activeOrgId: activeOrgId,
-            //     })
-            // )
-            //     .then((results) => {
-            //         printObject(
-            //             'ADS:25-->subscriptionCreateMeeting successful:\n',
-            //             results
-            //         );
-            //     })
-            //     .catch((error) => {
-            //         console.log('error from dispatch');
-            //         printObject('ADS:36-->error:\n', error);
-            //     });
-        },
-        error: (error) => {
-            console.error(
-                'ADS:34-->onCreateMeeting Subscription error:',
-                error
-            );
-        },
-    });
-    activeSubscriptions.push(meetingDeleteSubscription);
     activeSubscriptions.push(meetingCreateSubscription);
-    activeSubscriptions.push(groupCreateSubscription);
     activeSubscriptions.push(meetingUpdateSubscription);
+    activeSubscriptions.push(meetingDeleteSubscription);
+    activeSubscriptions.push(groupCreateSubscription);
+    activeSubscriptions.push(groupUpdateSubscription);
+    activeSubscriptions.push(groupDeleteSubscription);
 }
 
 export function unsubscribeAll() {

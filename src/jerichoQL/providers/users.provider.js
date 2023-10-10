@@ -148,7 +148,7 @@ export const updateProfile = async (userProfile) => {
     } catch (error) {
         printObject('UP:176-->userUpdateResults failure...', error);
     }
-    console.warn('Profile Updated');
+    // console.warn('Profile Updated');
     return contextProfile;
 };
 

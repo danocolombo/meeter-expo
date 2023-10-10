@@ -210,6 +210,7 @@ const MeetingDetails = (props) => {
             </View>
         );
     }
+    // printObject('MDST:213-->meetig', meeting);
     return (
         <Surface style={mtrStyles(mtrTheme).surface}>
             <View style={mtrStyles(mtrTheme).screenTitleContainer}>

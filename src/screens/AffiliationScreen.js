@@ -229,7 +229,6 @@ const AffiliationScreen = (props) => {
                         dispatch(loadTeam(i))
                             .then((results) => {
                                 console.log('AS:231-->loadTeam success.');
-                                printObject('AS:232-->results:\n', results);
                             })
                             .catch((error) => {
                                 console.log('AS:235-->error calling loadTeam');

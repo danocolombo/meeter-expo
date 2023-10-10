@@ -1837,46 +1837,9 @@ export const onUpdateGroup = /* GraphQL */ `
                     name
                     code
                     heroMessage
-                    createdAt
-                    updatedAt
                     locationOrganizationsId
                     __typename
                 }
-                groups {
-                    nextToken
-                    __typename
-                }
-                announcementsContact
-                attendanceCount
-                avContact
-                cafeContact
-                cafeCount
-                childrenContact
-                childrenCount
-                cleanupContact
-                closingContact
-                donations
-                facilitatorContact
-                greeterContact1
-                greeterContact2
-                meal
-                mealContact
-                mealCount
-                newcomersCount
-                notes
-                nurseryContact
-                nurseryCount
-                resourceContact
-                securityContact
-                setupContact
-                supportContact
-                transportationContact
-                transportationCount
-                worship
-                youthContact
-                youthCount
-                createdAt
-                updatedAt
                 organizationMeetingsId
                 __typename
             }
@@ -1884,45 +1847,6 @@ export const onUpdateGroup = /* GraphQL */ `
                 id
                 name
                 code
-                location {
-                    id
-                    street
-                    city
-                    stateProv
-                    postalCode
-                    createdAt
-                    updatedAt
-                    __typename
-                }
-                affiliations {
-                    nextToken
-                    __typename
-                }
-                defaultUsers {
-                    nextToken
-                    __typename
-                }
-                heroMessage
-                meetings {
-                    nextToken
-                    __typename
-                }
-                groups {
-                    nextToken
-                    __typename
-                }
-                defaultGroups {
-                    nextToken
-                    __typename
-                }
-                managers {
-                    nextToken
-                    __typename
-                }
-                createdAt
-                updatedAt
-                locationOrganizationsId
-                __typename
             }
             grpCompKey
             title
@@ -1944,116 +1868,6 @@ export const onDeleteGroup = /* GraphQL */ `
     subscription OnDeleteGroup($filter: ModelSubscriptionGroupFilterInput) {
         onDeleteGroup(filter: $filter) {
             id
-            meeting {
-                id
-                meetingDate
-                title
-                meetingType
-                mtgCompKey
-                organization {
-                    id
-                    name
-                    code
-                    heroMessage
-                    createdAt
-                    updatedAt
-                    locationOrganizationsId
-                    __typename
-                }
-                groups {
-                    nextToken
-                    __typename
-                }
-                announcementsContact
-                attendanceCount
-                avContact
-                cafeContact
-                cafeCount
-                childrenContact
-                childrenCount
-                cleanupContact
-                closingContact
-                donations
-                facilitatorContact
-                greeterContact1
-                greeterContact2
-                meal
-                mealContact
-                mealCount
-                newcomersCount
-                notes
-                nurseryContact
-                nurseryCount
-                resourceContact
-                securityContact
-                setupContact
-                supportContact
-                transportationContact
-                transportationCount
-                worship
-                youthContact
-                youthCount
-                createdAt
-                updatedAt
-                organizationMeetingsId
-                __typename
-            }
-            organization {
-                id
-                name
-                code
-                location {
-                    id
-                    street
-                    city
-                    stateProv
-                    postalCode
-                    createdAt
-                    updatedAt
-                    __typename
-                }
-                affiliations {
-                    nextToken
-                    __typename
-                }
-                defaultUsers {
-                    nextToken
-                    __typename
-                }
-                heroMessage
-                meetings {
-                    nextToken
-                    __typename
-                }
-                groups {
-                    nextToken
-                    __typename
-                }
-                defaultGroups {
-                    nextToken
-                    __typename
-                }
-                managers {
-                    nextToken
-                    __typename
-                }
-                createdAt
-                updatedAt
-                locationOrganizationsId
-                __typename
-            }
-            grpCompKey
-            title
-            location
-            gender
-            attendance
-            facilitator
-            cofacilitator
-            notes
-            createdAt
-            updatedAt
-            organizationGroupsId
-            meetingGroupsId
             __typename
         }
     }

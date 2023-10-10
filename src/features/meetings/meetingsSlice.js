@@ -17,13 +17,16 @@ import {
     addGroup,
     updateGroup,
     deleteMeeting,
-    subscriptionCreateMeeting,
+    subscriptionUpdateMeeting,
     subscriptionDeleteMeeting,
+    subscriptionCreateGroup,
+    subscriptionUpdateGroup,
+    subscriptionDeleteGroup,
 } from './meetingsThunks';
 const initialState = {
     meetings: [],
-    activeMeetings: [],
-    historicMeetings: [],
+    // activeMeetings: [],
+    // historicMeetings: [],
     specificMeeting: {},
     groups: [],
     tmpMeeting: {},
@@ -44,7 +47,6 @@ export const meetingsSlice = createSlice({
             state.tmpMeeting = newTmp;
             return state;
         },
-
         loadMeetings: (state, action) => {
             state.meetings = action.payload;
             return state;
@@ -85,7 +87,51 @@ export const meetingsSlice = createSlice({
             );
             return grp;
         },
+        updateAMeeting: (state, action) => {
+            //* * * * * * * * * * * * * * * * * * * * *
+            //* this should get a meeting that
+            //* needs to be replaced in state.meetings
+            //* * * * * * * * * * * * * * * * * * * * *
+            if (action.payload) {
+                try {
+                    const updatedMeeting = { ...action.payload };
+                    const newMeetingList = state.meetings.map((m) => {
+                        if (m.id === updatedMeeting.id) {
+                            return updatedMeeting;
+                        } else {
+                            return m;
+                        }
+                    });
+                    state.meetings = newMeetingList;
+                    state.isLoading = false;
+                    return state;
+                } catch (error) {
+                    printObject('MS:345-->error updating meeting:\n', error);
+                }
+            }
 
+            state.isLoading = false;
+            return state;
+        },
+        addANewMeeting: (state, action) => {
+            // if the meeting does not exist, add it.
+            if (!state.meetings.find((m) => m.id === action.payload.id)) {
+                const newMeetings = [...state.meetings, action.payload];
+                state.meetings = newMeetings;
+            }
+            return state;
+        },
+        deleteAMeeting: (state, action) => {
+            const existingMeetings = state.meetings;
+            const updatedMeetings = existingMeetings.filter((m) => {
+                if (m.id !== action.payload.id) {
+                    return m;
+                }
+            });
+            state.meetings = updatedMeetings;
+            state.isLoading = false;
+            return state;
+        },
         deleteGroup: (state, action) => {
             const smaller = state.groups.filter(
                 (m) => m.groupId !== action.payload.groupId
@@ -93,23 +139,22 @@ export const meetingsSlice = createSlice({
             state.groups = smaller;
             return state;
         },
-
         clearGroups: (state) => {
             state.groups = [];
             return state;
         },
         clearMeetingsSlice: (state) => {
             state.meetings = [];
-            state.activeMeetings = [];
-            state.historicMeetings = [];
+            // state.activeMeetings = [];
+            // state.historicMeetings = [];
             state.specificMeeting = {};
             state.groups = [];
             state.tmpMeeting = {};
         },
         logout: (state) => {
             state.meetings = [];
-            state.activeMeetings = [];
-            state.historicMeetings = [];
+            // state.activeMeetings = [];
+            // state.historicMeetings = [];
             state.specificMeeting = [];
             state.groups = [];
             state.tmpMeeting = {};
@@ -127,26 +172,12 @@ export const meetingsSlice = createSlice({
                 const updatedMeetings = state.meetings.filter(
                     (mtg) => mtg.id !== meetingIdToDelete
                 );
-                const updatedActiveMeetings = state.activeMeetings.filter(
-                    (mtg) => mtg.id !== meetingIdToDelete
-                );
-                updatedActiveMeetings.sort((a, b) => {
-                    // Extract the date portion of mtgCompKey and convert it to a Date object
-                    const dateA = new Date(a.mtgCompKey.split('#')[1]);
-                    const dateB = new Date(b.mtgCompKey.split('#')[1]);
-
-                    // Compare the dates
-                    return dateA - dateB;
-                });
-                const updateHistoricMeetings = state.historicMeetings.filter(
-                    (m) => m.id != meetingIdToDelete
-                );
 
                 return {
                     ...state,
                     meetings: updatedMeetings,
-                    activeMeetings: updatedActiveMeetings,
-                    historicMeetings: updateHistoricMeetings,
+                    // activeMeetings: updatedActiveMeetings,
+                    // historicMeetings: updateHistoricMeetings,
                     isLoading: false,
                 };
             })
@@ -189,15 +220,15 @@ export const meetingsSlice = createSlice({
                         return {
                             ...state,
                             meetings: newMeetings,
-                            activeMeetings: newActives,
-                            historicMeetings: newHistorics,
+                            // activeMeetings: newActives,
+                            // historicMeetings: newHistorics,
                             isLoading: false,
                         };
                     } else {
                         return {
                             meetings: [],
-                            activeMeetings: [],
-                            historicMeetings: [],
+                            // activeMeetings: [],
+                            // historicMeetings: [],
                             isLoading: false,
                         };
                     }
@@ -270,58 +301,6 @@ export const meetingsSlice = createSlice({
             .addCase(addGroup.rejected, (state, action) => {
                 printObject(
                     '<MS:267></MS:267>-->REJECTED:action.payload:\n',
-                    action.payload
-                );
-                state.isLoading = false;
-            })
-            .addCase(addMeeting.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(addMeeting.fulfilled, (state, action) => {
-                const newMeeting = action.payload;
-
-                // Create a new array of meetings by spreading the existing state.meetings
-                const updatedMeetings = [...state.meetings, newMeeting];
-
-                // Define today for mtgCompKey...
-                const clientCode = newMeeting.mtgCompKey.slice(0, 3);
-                const currentDate = new Date();
-                const year = currentDate.getFullYear();
-                const month = String(currentDate.getMonth() + 1).padStart(
-                    2,
-                    '0'
-                ); // Adding 1 to month since it's 0-based
-                const day = String(currentDate.getDate()).padStart(2, '0');
-                const key = `${clientCode}#${year}#${month}#${day}`;
-                printObject('MS:296-->key:', key);
-                // Filter meetings based on mtgCompKey condition
-                const activeMeetings = updatedMeetings.filter(
-                    (m) => m.mtgCompKey >= key
-                );
-                activeMeetings.sort((a, b) => {
-                    return a.mtgCompKey.localeCompare(b.mtgCompKey);
-                });
-                printObject('MS:307-->actives: ', activeMeetings.length);
-
-                const historicMeetings = updatedMeetings.filter(
-                    (m) => m.mtgCompKey < key
-                );
-                historicMeetings.sort((a, b) => {
-                    return a.mtgCompKey.localeCompare(b.mtgCompKey);
-                });
-                printObject('MS:313-->historic: ', historicMeetings.length);
-                // Update state with the new arrays
-                return {
-                    ...state,
-                    meetings: updatedMeetings,
-                    activeMeetings: activeMeetings,
-                    historicMeetings: historicMeetings,
-                    isLoading: false,
-                };
-            })
-            .addCase(addMeeting.rejected, (state, action) => {
-                printObject(
-                    'MS:287-->REJECTED:action.payload:\n',
                     action.payload
                 );
                 state.isLoading = false;
@@ -453,63 +432,7 @@ export const meetingsSlice = createSlice({
             .addCase(updateMeeting.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(updateMeeting.fulfilled, (state, action) => {
-                // printObject(
-                //     'MS:326-->updateMeeting.FULFILLED:action.payload:\n',
-                //     action.payload
-                // );
-                //* * * * * * * * * * * * * * * * * * * * *
-                //* this should get a meeting that
-                //* needs to be replaced in state.meetings
-                //* * * * * * * * * * * * * * * * * * * * *
-                if (action.payload) {
-                    try {
-                        const updatedMeeting = { ...action.payload };
-                        const newMeetingList = state.meetings.map((m) => {
-                            if (m.id === updatedMeeting.id) {
-                                return updatedMeeting;
-                            } else {
-                                return m;
-                            }
-                        });
-
-                        // how update if in active
-                        const newActiveList = state.activeMeetings.map((m) => {
-                            if (m.id === updatedMeeting.id) {
-                                return updatedMeeting;
-                            } else {
-                                return m;
-                            }
-                        });
-                        // how update if in historic
-                        const newHistoricList = state.historicMeetings.map(
-                            (m) => {
-                                if (m.id === updatedMeeting.id) {
-                                    return updatedMeeting;
-                                } else {
-                                    return m;
-                                }
-                            }
-                        );
-                        return {
-                            ...state,
-                            meetings: newMeetingList,
-                            activeMeetings: newActiveList,
-                            historicMeetings: newHistoricList,
-                            isLoading: false,
-                        };
-                        state.meetings = [...newMeetingList];
-                    } catch (error) {
-                        printObject(
-                            'MS:345-->error updating meeting:\n',
-                            error
-                        );
-                    }
-                }
-
-                state.isLoading = false;
-                return state;
-            })
+            .addCase(updateMeeting.fulfilled, (state, action) => {})
             .addCase(updateMeeting.rejected, (state, action) => {
                 printObject(
                     'MS:336-->REJECTED:action.payload:\n',
@@ -517,64 +440,66 @@ export const meetingsSlice = createSlice({
                 );
                 state.isLoading = false;
             })
-            .addCase(subscriptionCreateMeeting.pending, (state) => {
+            .addCase(subscriptionUpdateMeeting.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(subscriptionCreateMeeting.fulfilled, (state, action) => {
-                const meetingToInsert = action.payload.meeting;
-                const activeOrgId = action.payload.activeOrgId;
-                printObject(
-                    'MS:537-->SUBSCRIPTION--meetingToInsert:\n',
-                    meetingToInsert
-                );
-                if (!meetingToInsert.id) {
-                    console.error('Meeting payload is missing an ID.');
-                    return {
-                        ...state,
-                        isLoading: false,
-                        error: 'Meeting payload is missing an ID.',
-                    };
-                }
+            .addCase(
+                subscriptionUpdateMeeting.fulfilled,
+                async (state, action) => {
+                    try {
+                        // printObject(
+                        //     'MS:593-->state.activeMeetings:\n',
+                        //     state.activeMeetings
+                        // );
+                        printObject('MS:594-->newMeeting:\n', action.payload);
+                        const newMeeting = action.payload;
 
-                const existingIndex = state.meetings.findIndex(
-                    (item) => item.id === meetingToInsert.id
-                );
+                        // Define the mapping operations as asynchronous functions
+                        // const updatedMeetings = state.activeMeetings.map(
+                        //     (meeting) => {
+                        //         if (meeting.id === newMeeting.id) {
+                        //             // If the IDs match, merge the existing meeting with newMeeting
+                        //             return {
+                        //                 ...meeting,
+                        //                 ...newMeeting,
+                        //             };
+                        //         }
+                        //         // If the IDs don't match, return the original meeting
+                        //         return meeting;
+                        //     }
+                        // );
 
-                if (existingIndex === -1) {
-                    //check if the meeting.organizationMeetingsId is userProfile.activeOrd.id
-                    if (
-                        meetingToInsert.organizationMeetingsId === activeOrgId
-                    ) {
-                        console.log(
-                            'MS:546-->meetingToInsert.organizationMeetingsId: ',
-                            meetingToInsert.organizationMeetingsId
+                        // Use Promise.all to await all mapping operations
+                        // const updatedMeetings = await Promise.all(
+                        //     state.meetings.map(updateMeeting)
+                        // );
+                        // const activeMeetings = await Promise.all(
+                        //     state.activeMeetings.map(updateMeeting)
+                        // );
+                        // const historicMeetings = await Promise.all(
+                        //     state.historicMeetings.map(updateMeeting)
+                        // );
+
+                        return {
+                            ...state,
+                            // activeMeetings: updatedMeetings,
+                            isLoading: false,
+                        };
+                    } catch (error) {
+                        // Handle any potential errors here, log them, or perform necessary actions.
+                        console.error(
+                            'Error in subscriptionUpdateMeeting.fulfilled:',
+                            error
                         );
-                        console.log('MS:547-->activeOrgId: ', activeOrgId);
-                        return {
-                            ...state,
-                            meetings: [...state.meetings, meetingToInsert],
-                            isLoading: false,
-                            error: null, // Reset the error flag if no error occurred
-                        };
-                    } else {
-                        return {
-                            ...state,
-                            isLoading: false,
-                            message: 'not our meeting',
-                        };
+                        // You can choose to re-throw the error if needed, depending on your error handling strategy.
+                        // throw error;
                     }
-                } else {
-                    console.log('MS:561-->skipping insert, SUB already exists');
-                    return {
-                        ...state,
-                        isLoading: false,
-                        error: null, // Reset the error flag if no error occurred
-                    };
                 }
-            })
-            .addCase(subscriptionCreateMeeting.rejected, (state, action) => {
+            )
+
+            .addCase(subscriptionUpdateMeeting.rejected, (state, action) => {
                 printObject(
-                    'MS:545-->addSubscriptionMeeting.REJECTED:action.payload:\n',
+                    'MS:595-->subscriptionUpdateMeeting.REJECTED:action.payload:\n',
                     action.payload
                 );
                 state.isLoading = false;
@@ -583,38 +508,178 @@ export const meetingsSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(subscriptionDeleteMeeting.fulfilled, (state, action) => {
-                printObject('MS:537-->idToDelete:\n', action.payload.id);
-                if (!action?.payload?.id) {
-                    console.error(
-                        'Delete Meeting Subscription payload is missing an ID.'
-                    );
-                    return {
-                        ...state,
-                        isLoading: false,
-                        error: 'Delete Meeting Subscription payload is missing an ID.',
-                    };
-                }
-                const updatedMeetings = state.meetings.filter(
-                    (m) => m.id !== action.payload.id
+                printObject(
+                    '<MS:604></MS:604>-->idToDelete:\n',
+                    action.payload.id
                 );
-                const updatedActiveMeetings = state.activeMeetings.filter(
-                    (m) => m.id !== action.payload.id
-                );
-                const updatedHistoricMeetings = state.historicMeetings.filter(
-                    (m) => m.id !== action.payload.id
-                );
-                return {
-                    ...state,
-                    meetings: updatedMeetings,
-                    activeMeetings: updatedActiveMeetings,
-                    historicMeetings: updatedHistoricMeetings,
-                    isLoading: false,
-                    error: null, // Reset the error flag if no error occurred
-                };
+                const existingMeetings = state.meetings;
+                const updatedMeetings = existingMeetings.map((m) => {
+                    if (m.id !== action.payload.id) {
+                        return m;
+                    }
+                });
+                state.meetings = updatedMeetings;
+                state.isLoading = false;
+                return state;
             })
             .addCase(subscriptionDeleteMeeting.rejected, (state, action) => {
                 printObject(
-                    'MS:597-->subscriptionDeleteMeeting.REJECTED:action.payload:\n',
+                    'MS:609-->subscriptionDeleteMeeting.REJECTED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
+            })
+            .addCase(subscriptionCreateGroup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(subscriptionCreateGroup.fulfilled, (state, action) => {
+                const grp = { ...action.payload };
+
+                // Find the meeting in state.meetings that matches the provided meetingGroupsId
+                const mtg = state.meetings.find(
+                    (m) => m.id === action.payload.meetingGroupsId
+                );
+                if (mtg) {
+                    //* if meeting found, only add if does not exist
+                    if (!mtg.groups.items.find((g) => g.id === grp.id)) {
+                        const newGroups = [
+                            ...mtg?.groups?.items,
+                            action.payload,
+                        ];
+                        //* sort groups by gender, title, location
+                        newGroups.sort((a, b) => {
+                            // First, compare by gender
+                            const genderCompare = a.gender.localeCompare(
+                                b.gender
+                            );
+
+                            // If genders are different, return the gender comparison result
+                            if (genderCompare !== 0) {
+                                return genderCompare;
+                            }
+
+                            // If genders are the same, compare by title
+                            const titleCompare = a.title.localeCompare(b.title);
+
+                            // If titles are different, return the title comparison result
+                            if (titleCompare !== 0) {
+                                return titleCompare;
+                            }
+
+                            // If titles are the same, compare by location
+                            return a.location.localeCompare(b.location);
+                        });
+                        const groupItems = { items: newGroups };
+                        // Create a new meeting object with updated groups array
+                        const updatedMtg = {
+                            ...mtg,
+                            groups: groupItems,
+                        };
+                        // Create a new array of meetings with the updated meeting object
+                        const newMeetingList = state.meetings.map((m) =>
+                            m.id === updatedMtg.id ? updatedMtg : m
+                        );
+
+                        // Update the state with the new meetings list
+                        state.meetings = newMeetingList;
+                    }
+                }
+                state.isLoading = false;
+                return state;
+            })
+
+            .addCase(subscriptionCreateGroup.rejected, (state, action) => {
+                printObject(
+                    'MS:623-->subscriptionCreateGroup.REJECTED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
+            })
+            .addCase(subscriptionUpdateGroup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(subscriptionUpdateGroup.fulfilled, (state, action) => {
+                const newGroup = action.payload;
+                //=====================================
+                // find the meeting and update the group
+                //=====================================
+                const updatedMeetings = state.meetings.map((meeting) => {
+                    if (meeting.id === newGroup.meetingGroupsId) {
+                        // Find and update the group within the meeting's 'groups' array
+                        const updatedGroups = meeting.groups.items.map(
+                            (group) => {
+                                if (group.id === newGroup.id) {
+                                    // Update the group information with newGroup values
+                                    return {
+                                        ...group,
+                                        ...newGroup,
+                                    };
+                                }
+                                return group; // Return unchanged groups
+                            }
+                        );
+
+                        // Update the 'groups' property of the meeting
+                        return {
+                            ...meeting,
+                            groups: {
+                                items: updatedGroups,
+                            },
+                        };
+                    }
+                    return meeting; // Return unchanged meetings
+                });
+
+                return {
+                    ...state,
+                    meetings: updatedMeetings,
+                    isLoading: false,
+                };
+            })
+            .addCase(subscriptionUpdateGroup.rejected, (state, action) => {
+                printObject(
+                    'MS:642 ->subscriptionUpdateGroup.REJECTED:action.payload:\n',
+                    action.payload
+                );
+                state.isLoading = false;
+            })
+            .addCase(subscriptionDeleteGroup.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(subscriptionDeleteGroup.fulfilled, (state, action) => {
+                //* * * * * * * * * * * * * * * * * * * * *
+                //*  remove the group from the meeting
+                //* * * * * * * * * * * * * * * * * * * * *
+                const existingMeetings = state.meetings;
+
+                const updatedMeetings = existingMeetings.map((meeting) => {
+                    // Check if this is the meeting where the group needs to be removed
+                    if (meeting.id === action.payload.meetingId) {
+                        // Filter out the group with the specified groupId
+                        const updatedGroups = meeting.groups.items.filter(
+                            (group) => group.id !== action.payload.groupId
+                        );
+
+                        // Return a new meeting object with the updated groups
+                        return {
+                            ...meeting,
+                            groups: {
+                                items: updatedGroups,
+                            },
+                        };
+                    }
+
+                    // If it's not the meeting to be updated, return it as is
+                    return meeting;
+                });
+
+                state.meetings = updatedMeetings;
+                state.isLoading = false;
+                return state;
+            })
+            .addCase(subscriptionDeleteGroup.rejected, (state, action) => {
+                printObject(
+                    'MS:651 ->subscriptionDeleteGroup.REJECTED:action.payload:\n',
                     action.payload
                 );
                 state.isLoading = false;
@@ -634,7 +699,10 @@ export const {
     clearGroups,
     addNewGroup,
     addActiveMeeting,
+    addANewMeeting,
+    deleteAMeeting,
     getGroup,
+    updateAMeeting,
     clearMeetingsSlice,
     logout,
 } = meetingsSlice.actions;

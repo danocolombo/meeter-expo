@@ -3,7 +3,9 @@ import {
     Text,
     Image,
     ScrollView,
+    Modal,
     StyleSheet,
+    StatusBar,
     useWindowDimensions,
     Alert,
 } from 'react-native';
@@ -15,7 +17,7 @@ import CustomButton from '../../components/ui/Auth/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { ActivityIndicator, useTheme, Surface } from 'react-native-paper';
 import { printObject } from '../../utils/helpers';
 import { useDispatch } from 'react-redux';
 import {
@@ -30,6 +32,8 @@ import { loadDefaultGroups } from '../../features/groups/groupsThunks';
 const SignInScreen = () => {
     const mtrTheme = useTheme();
     const [loading, setLoading] = useState(false);
+    const [showLoginError, setShowLoginError] = useState(false);
+    const [loginError, setLoginError] = useState(null);
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const [loggedInUser, setLoggedInUser] = useState(null);
@@ -80,7 +84,8 @@ const SignInScreen = () => {
                 // You can now work with getAllMeetingsResults here if needed.
             } catch (error) {
                 // Handle errors here.
-                console.error(error);
+                setLoginError(error);
+                setShowLoginError(true);
                 throw new Error('Error occurred during sign-in');
             }
 
@@ -88,16 +93,20 @@ const SignInScreen = () => {
         } catch (error) {
             switch (error.code) {
                 case 'UserNotFoundException':
-                    console.warn(error.message);
+                    setLoginError(error.message);
+                    setShowLoginError(true);
                     break;
                 case 'PasswordResetRequiredException':
-                    console.warn(error.message);
+                    setLoginError(error.message);
+                    setShowLoginError(true);
                     break;
                 case 'NotAuthorizedException':
-                    console.warn(error.message);
+                    setLoginError(error.message);
+                    setShowLoginError(true);
                     break;
                 default:
-                    console.warn(error.message);
+                    setLoginError(error.message);
+                    setShowLoginError(true);
                     break;
             }
         } finally {
@@ -133,7 +142,51 @@ const SignInScreen = () => {
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.root}>
+            <View style={mtrStyles(mtrTheme).root}>
+                <Modal visible={showLoginError} animationStyle='slide'>
+                    <View style={mtrStyles(mtrTheme).modal}>
+                        <View style={mtrStyles(mtrTheme).modalHeaderContainer}>
+                            <Text style={mtrStyles(mtrTheme).modalHeaderText}>
+                                Login Error
+                            </Text>
+                        </View>
+                        <View style={mtrStyles(mtrTheme).modalSurfaceContainer}>
+                            <Surface style={mtrStyles(mtrTheme).modalSurface}>
+                                <View
+                                    style={mtrStyles(mtrTheme).warningContainer}
+                                >
+                                    <Text
+                                        style={mtrStyles(mtrTheme).warningText}
+                                    >
+                                        {loginError}
+                                    </Text>
+                                </View>
+
+                                <View
+                                    style={mtrStyles(mtrTheme).buttonContainer}
+                                >
+                                    <View
+                                        style={
+                                            mtrStyles(mtrTheme).buttonWrapper
+                                        }
+                                    >
+                                        <CustomButton
+                                            text='OK'
+                                            bgColor={
+                                                mtrTheme.colors.mediumGreen
+                                            }
+                                            fgColor={mtrTheme.colors.lightText}
+                                            onPress={() =>
+                                                setShowLoginError(false)
+                                            }
+                                        />
+                                    </View>
+                                </View>
+                            </Surface>
+                        </View>
+                        <StatusBar style='auto' />
+                    </View>
+                </Modal>
                 {/* <Image
                     source={Logo}
                     // styles={[styles.logo, { height: height * 0.1 }]}
@@ -141,7 +194,7 @@ const SignInScreen = () => {
                 /> */}
                 {/* <Image style={styles.tinyLogo} source={Logo} /> */}
                 <View style={{ alignItems: 'center', marginTop: 30 }}>
-                    <Image style={styles.logo} source={Logo} />
+                    <Image style={mtrStyles(mtrTheme).logo} source={Logo} />
                 </View>
                 <View style={{ alignItems: 'center' }}>
                     <Text
@@ -209,21 +262,124 @@ const SignInScreen = () => {
 };
 
 export default SignInScreen;
-const styles = StyleSheet.create({
-    root: {
-        // flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginTop: 40,
-        // width: '100%',
-        marginHorizontal: 20,
-    },
-    logo: {
-        width: 240,
-        height: 124,
-    },
-    tinyLogo: {
-        width: 225,
-        height: 225,
-    },
-});
+const mtrStyles = (mtrTheme) =>
+    StyleSheet.create({
+        root: {
+            // flex: 1,
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: 40,
+            // width: '100%',
+            marginHorizontal: 20,
+        },
+        logo: {
+            width: 240,
+            height: 124,
+        },
+        tinyLogo: {
+            width: 225,
+            height: 225,
+        },
+        surface: {
+            flex: 1,
+            backgroundColor: mtrTheme.colors.background,
+        },
+        activityIndicatorContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        activityIndicator: {
+            color: mtrTheme.colors.lightGraphic,
+        },
+        screenTitleContainer: {
+            paddingTop: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        screenTitleText: {
+            fontSize: 30,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.lightText,
+        },
+        subtitleContainer: {},
+        subtitleText: {
+            fontFamily: 'Roboto-Medium',
+            fontSize: 16,
+            fontWeight: '500',
+            color: mtrTheme.colors.accent,
+            textAlign: 'center',
+            paddingBottom: 5,
+        },
+        modal: {
+            flex: 1,
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: mtrTheme.colors.background,
+        },
+        modalHeaderContainer: {
+            backgroundColor: mtrTheme.colors.background,
+        },
+        modalHeaderText: {
+            fontFamily: 'Roboto-Bold',
+            fontSize: 28,
+            fontWeight: '700',
+            color: mtrTheme.colors.lightText,
+            textAlign: 'center',
+            paddingTop: 10,
+        },
+        modalSurfaceContainer: {
+            alignItems: 'center',
+            marginTop: 15,
+        },
+        modalSurface: {
+            backgroundColor: mtrTheme.colors.lightGraphic,
+            width: '90%',
+            borderRadius: 10,
+            padding: 20,
+        },
+        warningContainer: {
+            padding: 10,
+        },
+        warningText: {
+            fontSize: 20,
+            textAlign: 'center',
+            fontFamily: 'Roboto-Regular',
+        },
+        dateContainer: { marginTop: 20 },
+        dateText: {
+            fontSize: 24,
+            fontFamily: 'Roboto-Bold',
+            textAlign: 'center',
+        },
+        meetingInfoContainer: {},
+        meetingInfoText: {
+            fontSize: 18,
+            fontFamily: 'Roboto-Medium',
+            textAlign: 'center',
+        },
+        noteContainer: {
+            marginHorizontal: 20,
+        },
+        noteText: {
+            paddingTop: 20,
+            fontSize: 16,
+            fontFamily: 'Roboto-Bold',
+            color: mtrTheme.colors.critical,
+            textTransform: 'uppercase',
+            textAlign: 'center',
+        },
+        buttonContainer: {
+            marginVertical: 10,
+        },
+        buttonWrapper: {},
+        FAB: {
+            position: 'absolute',
+            margin: 10,
+
+            right: 0,
+            bottom: -30,
+            backgroundColor: 'green',
+        },
+    });

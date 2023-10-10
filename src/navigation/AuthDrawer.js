@@ -32,9 +32,7 @@ const AuthDrawer = (navigation) => {
 
     useEffect(() => {
         if (userProfile) {
-            printObject('AD:69-->userProfile:\n', userProfile);
             const id = userProfile?.activeOrg?.id;
-            console.log('AD:69-->id:', id);
             setupSubscriptions(dispatch, id);
         }
         return () => {

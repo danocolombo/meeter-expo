@@ -27,6 +27,11 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
+        addNewAffiliation: (state, action) => {
+            const theProfile = state.profile;
+            // printObject('US:32->theProfile:\n', theProfile);
+            return state;
+        },
         clearUser: (state) => {
             state.profile = {};
             state.perms = [];
@@ -152,7 +157,7 @@ export const userSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { logout, clearUser } = userSlice.actions;
+export const { addNewAffiliation, logout, clearUser } = userSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

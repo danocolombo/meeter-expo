@@ -1,19 +1,8 @@
-// import 'react-native-gesture-handler';
-
-// import { registerRootComponent } from 'expo';
-
-// import App from './App';
-// registerRootComponent(App);
-
-import 'react-native-gesture-handler';
 import { registerRootComponent } from 'expo';
-import { RootSiblingParent } from 'react-native-root-siblings'; // Import RootSiblingParent
+
 import App from './App';
 
-const AppWithRootSibling = () => (
-    <RootSiblingParent>
-        <App />
-    </RootSiblingParent>
-);
-
-registerRootComponent(AppWithRootSibling); // Register the wrapped App component
+// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
+// It also ensures that whether you load the app in Expo Go or in a native build,
+// the environment is set up appropriately
+registerRootComponent(App);

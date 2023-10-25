@@ -260,11 +260,12 @@ export const addMeeting = createAsyncThunk(
             // delete mtg.clientId;
 
             // Use await with the GraphQL call to get the results
+            // printObject('MT:263-->graphql inputs:\n', inputs);
             const results = await API.graphql({
                 query: mutations.createMeeting,
                 variables: { input: mtg },
             });
-            // printObject('MT:265-->createMeeting results:\n', results);
+            // printObject('MT:268-->createMeeting results:\n', results);
             // Check if the result contains the expected data and return it
             if (results.data.createMeeting.id) {
                 return mtg;

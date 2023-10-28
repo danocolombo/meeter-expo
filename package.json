@@ -77,7 +77,9 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.9",
     "react-redux": "^8.0.5",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "expo-auth-session": "~3.8.0",
+    "expo-random": "~13.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

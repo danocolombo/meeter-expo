@@ -18,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
 import { ActivityIndicator, useTheme, Surface } from 'react-native-paper';
+import * as Google from 'expo-auth-session/providers/google';
 import { printObject } from '../../utils/helpers';
 import { useDispatch } from 'react-redux';
 import {
@@ -32,11 +33,53 @@ import { loadDefaultGroups } from '../../features/groups/groupsThunks';
 const SignInScreen = () => {
     const mtrTheme = useTheme();
     const [loading, setLoading] = useState(false);
+    const [userInfo, setUserInfo] = useState(null);
+    const [token, setToken] = useState('');
     const [showLoginError, setShowLoginError] = useState(false);
     const [loginError, setLoginError] = useState(null);
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const [loggedInUser, setLoggedInUser] = useState(null);
+    const googleIosClientId = process.env.GOOGLE_IOS_CLIENT_ID;
+    // const googleAndroidClientId = process.env.GOOGLE_ANDROID_CLIENT_ID;
+    // const googleWebClientId = process.env.GOOGLE_WEB_CLIENT_ID;
+    // const googleWebClientSecret = process.env.GOOGLE_WEB_CLIENT_SECRET;
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        iosClientId: googleIosClientId,
+    });
+    // androidClientId: googleAndroidClientId,
+    // webClientId: googleWebClientId,
+    // googleWebClientSecret: googleWebClientSecret,
+    useEffect(() => {
+        handleEffect();
+    }, [response, token]);
+
+    async function handleEffect() {
+        if (response?.type === 'success') {
+            await getUserInfo(response.authentication.accessToken);
+        }
+    }
+    const getUserInfo = async (token) => {
+        if (!token) return;
+        try {
+            const response = await fetch(
+                'https://www.googleapis.com/userinfo/v2/me',
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            const user = await response.json();
+            dispatch(saveGoogleUser(user));
+            setUserInfo(user);
+            if (user) {
+                console.log(JSON.stringify(user, null, 2));
+            }
+        } catch (error) {
+            // Add your own error handler here
+            console.error('getUserInfo catch:\n', error);
+        }
+    };
     const {
         control,
         handleSubmit,
@@ -122,6 +165,28 @@ const SignInScreen = () => {
     };
     const onCodeConfirm = () => {
         navigation.navigate('ConfirmEmail');
+    };
+
+    const onGooglePress = async () => {
+        setLoading(true);
+        const googleSignInResult = await promptAsync();
+
+        if (googleSignInResult) {
+            if (googleSignInResult.type === 'success') {
+                // Handle Google Sign-In success
+                await getUserInfo(
+                    googleSignInResult?.authentication?.accessToken
+                );
+            } else if (googleSignInResult.type === 'error') {
+                // Handle Google Sign-In error
+                console.log('Google Sign-In error:', googleSignInResult.error);
+            }
+        } else {
+            // Handle the case where googleSignInResult is null
+            console.log('Google Sign-In result is null');
+        }
+
+        setLoading(false);
     };
     if (loading) {
         return (
@@ -240,6 +305,12 @@ const SignInScreen = () => {
                 <CustomButton
                     text='Forgot Password'
                     onPress={forgotPasswordPressed}
+                    type='TERTIARY'
+                    vPadding={10}
+                />
+                <CustomButton
+                    text='Login with Google'
+                    onPress={onGooglePress}
                     type='TERTIARY'
                     vPadding={10}
                 />

@@ -33,6 +33,13 @@ module.exports = ({ config }) => {
             infoPlist: {
                 UIBackgroundModes: ['location', 'fetch'],
                 NSCameraUsageDescription: 'for your profile picture',
+                CFBundleURLTypes: [
+                    {
+                        CFBundleURLSchemes: [
+                            'com.googleusercontent.apps.605186051214-oenfqlm3p2qbdfl5fi1vdfapjlmpmh5o',
+                        ],
+                    },
+                ],
             },
             config: {},
         },

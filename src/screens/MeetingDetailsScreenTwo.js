@@ -29,6 +29,7 @@ import {
     addDefaultGroups,
     deleteGroupFromMeeting,
 } from '../features/meetings/meetingsThunks';
+import { ScrollView } from 'react-native-gesture-handler';
 
 //   FUNCTION START
 //   ==============
@@ -424,7 +425,6 @@ const MeetingDetails = (props) => {
                     </View>
                 }
                 showsVerticalScrollIndicator={true}
-                indicatorStyle={mtrTheme.colors.lightGraphic}
             />
             {authority && showDefaultsButton && (
                 <View style={mtrStyles(mtrTheme).defaultGroupsButtonContainer}>
@@ -448,6 +448,7 @@ const mtrStyles = (mtrTheme) =>
     StyleSheet.create({
         surface: {
             flex: 1,
+            backgroundColor: mtrTheme.colors.background,
         },
         screenTitleContainer: {
             justifyContent: 'center',
@@ -466,6 +467,7 @@ const mtrStyles = (mtrTheme) =>
         },
         activityIndicator: {
             color: mtrTheme.colors.lightGraphic,
+            // color: 'white',
         },
         firstRow: {
             flexDirection: 'row',

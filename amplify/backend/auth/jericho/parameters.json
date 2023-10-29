@@ -3,10 +3,7 @@
   "resourceName": "jericho",
   "serviceType": "imported",
   "region": "us-east-1",
-  "authProvidersUserPool": [],
   "requiredAttributes": [
-    "given_name",
-    "family_name",
     "email"
   ],
   "passwordPolicyMinLength": 8,
@@ -16,9 +13,11 @@
     "Requires Numbers",
     "Requires Symbols"
   ],
-  "mfaConfiguration": "OFF",
+  "mfaConfiguration": "OPTIONAL",
   "autoVerifiedAttributes": [
     "email"
   ],
-  "mfaTypes": []
+  "mfaTypes": [
+    "TOTP"
+  ]
 }

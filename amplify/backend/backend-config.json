@@ -19,11 +19,11 @@
   },
   "auth": {
     "jericho": {
-      "customAuth": false,
-      "dependsOn": [],
-      "providerPlugin": "awscloudformation",
       "service": "Cognito",
-      "serviceType": "imported"
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
     }
   },
   "parameters": {

@@ -9,16 +9,16 @@ const accentColor = '#F4D160';
 const activityIndicator = '#293462';
 const alternateColor = '#D61C4E';
 const errorTextBox = '#F08080';
-const historyTileColor = '#fff';
+const historyTileColor = '#ffffff';
 const darkColor = '#000';
-const lightColor = '#fff';
-const darkText = '#000';
-const lightText = '#fff';
-const mediumText = '#999';
+const lightColor = '#ffffff';
+const darkText = '#000000';
+const lightText = '#ffffff';
+const mediumText = '#999999';
 const yellow = '#F0DE36';
 const red = '#D61C4E';
 const green = '#00ff00';
-const white = '#fff';
+const white = '#ffffff';
 
 const theme = {
     ...DefaultTheme,
@@ -40,7 +40,7 @@ const theme = {
         secondaryText: white,
         //background color for pages, such as lists
         background: primaryBackground,
-        backgroundMedium: '#999',
+        backgroundMedium: '#999999',
         backgroundLight: white,
         backgroundAlternate1: '#75C2F6',
         // background color for elements containing content, such as cards
@@ -74,7 +74,7 @@ const theme = {
         navActive: red,
         navInactive: '#8c8c8c',
         darkText: darkText,
-        black: '#000',
+        black: '#000000',
         lightText: lightText,
         mediumText: mediumText,
         darkText: darkText,
@@ -83,18 +83,18 @@ const theme = {
         darkGraphic: darkText,
         editScreenHeader: '#293462',
         selected: '#293462',
-        selectedText: '#000',
+        selectedText: '#000000',
         unSelected: '#8c8c8c',
         unSelectedText: white,
         navBarInactiveBackground: '#293462',
         navBarInactiveText: '#CAEBF2',
         navBarActiveBackground: '#CAEBF2',
-        navBarActiveText: '#000',
+        navBarActiveText: '#000000',
         navDrawerActiveBackground: '#D61C4E',
         musicIcon: '#578CFE',
         navDrawerActiveTint: white,
         navDrawerInactiveBackground: white,
-        navDrawerInactiveTint: '#999',
+        navDrawerInactiveTint: '#999999',
         lightBlue: '#578CFE',
         buttonTextLight: white,
         buttonTextDark: primaryBackground,

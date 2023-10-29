@@ -11,6 +11,7 @@ module.exports = ({ config }) => {
         orientation: 'portrait',
         icon: './assets/icon.png',
         userInterfaceStyle: 'light',
+
         splash: {
             image: './assets/splash.png',
             resizeMode: 'contain',
@@ -33,13 +34,13 @@ module.exports = ({ config }) => {
             infoPlist: {
                 UIBackgroundModes: ['location', 'fetch'],
                 NSCameraUsageDescription: 'for your profile picture',
-                CFBundleURLTypes: [
-                    {
-                        CFBundleURLSchemes: [
-                            'com.googleusercontent.apps.605186051214-oenfqlm3p2qbdfl5fi1vdfapjlmpmh5o',
-                        ],
-                    },
-                ],
+                // CFBundleURLTypes: [
+                //     {
+                //         CFBundleURLSchemes: [
+                //             'com.googleusercontent.apps.605186051214-oenfqlm3p2qbdfl5fi1vdfapjlmpmh5o',
+                //         ],
+                //     },
+                // ],
             },
             config: {},
         },

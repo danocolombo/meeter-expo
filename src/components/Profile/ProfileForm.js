@@ -56,6 +56,7 @@ import { saveUserProfile } from '../../features/user/userThunks';
 //   FUNCTION START
 //   ===============
 const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
+    printObject('PF:59-->profile:\n', profile);
     const today = new Date();
     const navigation = useNavigation();
     const dispatch = useDispatch();
@@ -422,7 +423,8 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
                 }
             } catch (error) {
                 // printObject('PF:346-->error saving S3:\n', error);
-                Alert.alert('Could not save image. Please try later.');
+                printObject('PF:425-->error:\n', error);
+                Console.warn('Could not save image. Please try later.');
                 pictureToSave = profile?.picture;
             }
         } else {
@@ -511,7 +513,7 @@ const ProfileForm = ({ handleUpdate, handleCancel, profile }) => {
 
         // console.log('PF:491-->old name', oldProfilePictureName);
         // console.log('PF:492-->new name:', pictureToSave);
-        // printObject('PF:493-->resultantProfile:\n', resultantProfile);
+        // printObject('PF:516-->resultantProfile:\n', resultantProfile);
         //      ========================
         //      save the form to graphql
         //      ========================

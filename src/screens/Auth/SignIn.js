@@ -44,42 +44,42 @@ const SignInScreen = () => {
     // const googleAndroidClientId = process.env.GOOGLE_ANDROID_CLIENT_ID;
     // const googleWebClientId = process.env.GOOGLE_WEB_CLIENT_ID;
     // const googleWebClientSecret = process.env.GOOGLE_WEB_CLIENT_SECRET;
-    const [request, response, promptAsync] = Google.useAuthRequest({
-        iosClientId: googleIosClientId,
-    });
+    // const [request, response, promptAsync] = Google.useAuthRequest({
+    //     iosClientId: googleIosClientId,
+    // });
     // androidClientId: googleAndroidClientId,
     // webClientId: googleWebClientId,
     // googleWebClientSecret: googleWebClientSecret,
-    useEffect(() => {
-        handleEffect();
-    }, [response, token]);
+    // useEffect(() => {
+    //     handleEffect();
+    // }, [response, token]);
 
     async function handleEffect() {
         if (response?.type === 'success') {
             await getUserInfo(response.authentication.accessToken);
         }
     }
-    const getUserInfo = async (token) => {
-        if (!token) return;
-        try {
-            const response = await fetch(
-                'https://www.googleapis.com/userinfo/v2/me',
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+    // const getUserInfo = async (token) => {
+    //     if (!token) return;
+    //     try {
+    //         const response = await fetch(
+    //             'https://www.googleapis.com/userinfo/v2/me',
+    //             {
+    //                 headers: { Authorization: `Bearer ${token}` },
+    //             }
+    //         );
 
-            const user = await response.json();
-            dispatch(saveGoogleUser(user));
-            setUserInfo(user);
-            if (user) {
-                console.log(JSON.stringify(user, null, 2));
-            }
-        } catch (error) {
-            // Add your own error handler here
-            console.error('getUserInfo catch:\n', error);
-        }
-    };
+    //         const user = await response.json();
+    //         dispatch(saveGoogleUser(user));
+    //         setUserInfo(user);
+    //         if (user) {
+    //             console.log(JSON.stringify(user, null, 2));
+    //         }
+    //     } catch (error) {
+    //         // Add your own error handler here
+    //         console.error('getUserInfo catch:\n', error);
+    //     }
+    // };
     const {
         control,
         handleSubmit,
@@ -101,10 +101,11 @@ const SignInScreen = () => {
         console.log('loading true');
         try {
             const response = await Auth.signIn(data.username, data.password);
+            printObject('si:106-->response:\n', response);
             const signInData = {
                 signInUserSession: response.signInUserSession,
             };
-
+            printObject('SI:107-->signInData:\n', signInData);
             try {
                 const loginResults = await dispatch(loginUser(signInData));
 
@@ -134,6 +135,7 @@ const SignInScreen = () => {
 
             console.log('done with loginUser dispatch');
         } catch (error) {
+            printObject('SI:137-->error:\n', error);
             switch (error.code) {
                 case 'UserNotFoundException':
                     setLoginError(error.message);
@@ -167,27 +169,27 @@ const SignInScreen = () => {
         navigation.navigate('ConfirmEmail');
     };
 
-    const onGooglePress = async () => {
-        setLoading(true);
-        const googleSignInResult = await promptAsync();
+    // const onGooglePress = async () => {
+    //     setLoading(true);
+    //     const googleSignInResult = await promptAsync();
 
-        if (googleSignInResult) {
-            if (googleSignInResult.type === 'success') {
-                // Handle Google Sign-In success
-                await getUserInfo(
-                    googleSignInResult?.authentication?.accessToken
-                );
-            } else if (googleSignInResult.type === 'error') {
-                // Handle Google Sign-In error
-                console.log('Google Sign-In error:', googleSignInResult.error);
-            }
-        } else {
-            // Handle the case where googleSignInResult is null
-            console.log('Google Sign-In result is null');
-        }
+    //     if (googleSignInResult) {
+    //         if (googleSignInResult.type === 'success') {
+    //             // Handle Google Sign-In success
+    //             await getUserInfo(
+    //                 googleSignInResult?.authentication?.accessToken
+    //             );
+    //         } else if (googleSignInResult.type === 'error') {
+    //             // Handle Google Sign-In error
+    //             console.log('Google Sign-In error:', googleSignInResult.error);
+    //         }
+    //     } else {
+    //         // Handle the case where googleSignInResult is null
+    //         console.log('Google Sign-In result is null');
+    //     }
 
-        setLoading(false);
-    };
+    //     setLoading(false);
+    // };
     if (loading) {
         return (
             <View
@@ -308,12 +310,12 @@ const SignInScreen = () => {
                     type='TERTIARY'
                     vPadding={10}
                 />
-                <CustomButton
+                {/* <CustomButton
                     text='Login with Google'
                     onPress={onGooglePress}
                     type='TERTIARY'
                     vPadding={10}
-                />
+                /> */}
                 {/* <SocialSignInButtons /> */}
                 <CustomButton
                     text="Don't have an account? Create one"

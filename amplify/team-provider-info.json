@@ -14,10 +14,10 @@
     "categories": {
       "auth": {
         "jericho": {
-          "userPoolId": "us-east-1_LecNXt66q",
-          "userPoolName": "Meeter",
-          "webClientId": "3tn2h8s0mv2d342i1ovkr6qrd5",
-          "nativeClientId": "3tn2h8s0mv2d342i1ovkr6qrd5",
+          "userPoolId": "us-east-1_XM4WXQ6lj",
+          "userPoolName": "Meeter2",
+          "webClientId": "6fe26lh1hpvpvs73uk5qt50g57",
+          "nativeClientId": "6fe26lh1hpvpvs73uk5qt50g57",
           "identityPoolId": "us-east-1:5568f877-2766-4ea3-a9a6-442df0d29980",
           "identityPoolName": "Meeter",
           "allowUnauthenticatedIdentities": true,
@@ -25,7 +25,9 @@
           "authRoleName": "Cognito_MeeterAuth_Role",
           "unauthRoleArn": "arn:aws:iam::226036691416:role/Cognito_MeeterUnauth_Role",
           "unauthRoleName": "Cognito_MeeterUnauth_Role"
-        }
+        },
+        "jericho213fe4cd": {},
+        "jerichob1388018": {}
       },
       "storage": {
         "jerichos3": {}

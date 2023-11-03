@@ -30,7 +30,11 @@
         "jerichob1388018": {}
       },
       "storage": {
-        "jerichos3": {}
+        "jerichos3": {},
+        "jerichoe5de6882": {
+          "bucketName": "jerichosystems3files170250-staging",
+          "region": "us-east-1"
+        }
       },
       "api": {
         "jericho": {}

@@ -114,13 +114,30 @@
           "resourceName": "jericho"
         }
       ]
+    },
+    "AMPLIFY_storage_jerichoe5de6882_bucketName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "jerichoe5de6882"
+        }
+      ]
+    },
+    "AMPLIFY_storage_jerichoe5de6882_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "jerichoe5de6882"
+        }
+      ]
     }
   },
   "storage": {
-    "jerichos3": {
-      "dependsOn": [],
+    "jerichoe5de6882": {
+      "service": "S3",
+      "serviceType": "imported",
       "providerPlugin": "awscloudformation",
-      "service": "S3"
+      "dependsOn": []
     }
   }
 }

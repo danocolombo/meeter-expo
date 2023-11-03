@@ -16,6 +16,7 @@ import LandingScreen from '../screens/LandingScreen';
 import DefaultGroupsScreen from '../screens/DefaultGroupsScreen';
 import AccessScreen from '../screens/AccessScreen';
 import HeroMessageScreen from '../screens/HeroMessage';
+import StorageTestScreen from '../screens/StorageTestScreen';
 import { printObject } from '../utils/helpers';
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -231,6 +232,28 @@ const AuthDrawer = (navigation) => {
                         ),
                     })}
                     component={HeroMessageScreen}
+                />
+            )}
+            {perms?.includes('manage') && (
+                <Stack.Screen
+                    name='Storage'
+                    options={({ navigation }) => ({
+                        title: 'Storage Test',
+                        headerTitle: meeter.appName,
+                        headerStyle: {
+                            backgroundColor: mtrTheme.colors.background,
+                        },
+                        headerTintColor: 'white',
+
+                        drawerIcon: ({ color }) => (
+                            <MaterialCommunityIcons
+                                name='message-outline'
+                                size={24}
+                                color={color}
+                            />
+                        ),
+                    })}
+                    component={StorageTestScreen}
                 />
             )}
             {/* <Stack.Screen

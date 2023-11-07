@@ -53,6 +53,17 @@ const MeetingDetails = (props) => {
     const meeting = useSelector((state) =>
         state.meetings.meetings.find((m) => m.id === id)
     );
+    const CustomAndroidButton = ({ onPress }) => (
+        <Button
+            title='Edit'
+            onPress={onPress}
+            color={mtrStyles(mtrTheme).backgroundColor}
+            style={{
+                backgroundColor: 'transparent',
+                color: 'blue',
+            }}
+        />
+    );
     const meetingGroups =
         useSelector(
             (state) =>
@@ -98,19 +109,36 @@ const MeetingDetails = (props) => {
             navigation.setOptions({
                 title: meeter.appName || 'Meeter',
                 headerBackTitle: 'Back',
-                headerRight: () => (
-                    <Button
-                        onPress={() =>
-                            navigation.navigate('MeetingEdit', {
-                                id: id,
-                                // handleDelete: handleDeleteRequest,
-                            })
-                        }
-                        // color='red'
-                        color={mtrTheme.colors.lightText}
-                        title='Edit'
-                    />
-                ),
+                headerRight: () => {
+                    if (Platform.OS === 'ios') {
+                        <Button
+                            onPress={() =>
+                                navigation.navigate('MeetingEdit', {
+                                    id: id,
+                                    // handleDelete: handleDeleteRequest,
+                                })
+                            }
+                            // color='red'
+                            color={mtrTheme.colors.lightText}
+                            title='Edit'
+                            style={{
+                                backgroundColor: 'yellow', // Set the background to transparent
+                                color: 'blue', // Set the text color
+                            }}
+                        />;
+                    } else {
+                        return (
+                            <CustomAndroidButton
+                                onPress={() =>
+                                    navigation.navigate('MeetingEdit', {
+                                        id: id,
+                                        // handleDelete: handleDeleteRequest,
+                                    })
+                                }
+                            />
+                        );
+                    }
+                },
             });
         } else {
             navigation.setOptions({

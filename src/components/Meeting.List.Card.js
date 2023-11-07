@@ -51,6 +51,7 @@ const MeetingListCard = ({ meeting, active, handleDelete }) => {
     if (dateValue === null) {
         setDateValue(new Date());
     }
+    console.log('MLC:54-->formattedDate:', formattedDate);
     return (
         <>
             <View style={mtrStyles(mtrTheme).rootContainer}>

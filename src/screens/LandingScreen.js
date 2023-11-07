@@ -125,7 +125,7 @@ const LandingScreen = () => {
                 });
         }
     }
-
+    // printObject('LS:128-->userProfile:\n', userProfile);
     return (
         <>
             <StatusBar style='light' />

@@ -55,7 +55,9 @@ export function setupSubscriptions(dispatch, activeOrgId) {
     ).subscribe({
         next: (data) => {
             try {
+                // console.log('ADS:58-->meetingUpdateSubscription received');
                 const meeting = data?.value?.data?.onUpdateMeeting;
+                // printObject('ADS:60-->meeting\n', meeting);
                 if (meeting?.organizationMeetingsId === activeOrgId) {
                     //need to clean up object before sending to slice
                     dispatch(updateAMeeting(meeting));
@@ -105,7 +107,7 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         next: (data) => {
             const group = data?.value?.data?.onCreateGroup;
             if (group?.organizationGroupsId === activeOrgId) {
-                // console.log('beforeDispatch');
+                console.log('ADS:110-->groupCreateSub received');
                 dispatch(subscriptionCreateGroup(group))
                     .then((results) => {
                         //
@@ -169,7 +171,7 @@ export function setupSubscriptions(dispatch, activeOrgId) {
                 dispatch(subscriptionDeleteGroup({ groupId: group.id }))
                     .then((results) => {
                         //
-                        console.log('group deleted successfully');
+                        console.log('subscriptionDeleteGroup completed ');
                     })
                     .catch((error) => {
                         console.log(

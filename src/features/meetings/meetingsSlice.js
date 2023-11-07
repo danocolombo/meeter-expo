@@ -94,9 +94,11 @@ export const meetingsSlice = createSlice({
             //* * * * * * * * * * * * * * * * * * * * *
             if (action.payload) {
                 try {
+                    // printObject('MS:97-->action.payload:\n', action.payload);
                     const updatedMeeting = { ...action.payload };
                     const newMeetingList = state.meetings.map((m) => {
                         if (m.id === updatedMeeting.id) {
+                            console.log('meeting updated');
                             return updatedMeeting;
                         } else {
                             return m;
@@ -534,7 +536,6 @@ export const meetingsSlice = createSlice({
             })
             .addCase(subscriptionCreateGroup.fulfilled, (state, action) => {
                 const grp = { ...action.payload };
-
                 // Find the meeting in state.meetings that matches the provided meetingGroupsId
                 const mtg = state.meetings.find(
                     (m) => m.id === action.payload.meetingGroupsId
@@ -542,6 +543,8 @@ export const meetingsSlice = createSlice({
                 if (mtg) {
                     //* if meeting found, only add if does not exist
                     if (!mtg.groups.items.find((g) => g.id === grp.id)) {
+                        // printObject('MS:547-->mtg:\n', mtg);
+                        // printObject('MS:548--newGroup:\n', action.payload);
                         const newGroups = [
                             ...mtg?.groups?.items,
                             action.payload,
@@ -605,6 +608,10 @@ export const meetingsSlice = createSlice({
                 //=====================================
                 const updatedMeetings = state.meetings.map((meeting) => {
                     if (meeting.id === newGroup.meetingGroupsId) {
+                        printObject(
+                            'MS:610-->subscriptionUpdateGroup action.payload\n',
+                            action.payload
+                        );
                         // Find and update the group within the meeting's 'groups' array
                         const updatedGroups = meeting.groups.items.map(
                             (group) => {
@@ -651,25 +658,15 @@ export const meetingsSlice = createSlice({
                 //*  remove the group from the meeting
                 //* * * * * * * * * * * * * * * * * * * * *
                 const existingMeetings = state.meetings;
-
+                const idToDelete = action.payload.groupId;
+                //**  NEW CODE */
                 const updatedMeetings = existingMeetings.map((meeting) => {
-                    // Check if this is the meeting where the group needs to be removed
-                    if (meeting.id === action.payload.meetingId) {
-                        // Filter out the group with the specified groupId
-                        const updatedGroups = meeting.groups.items.filter(
-                            (group) => group.id !== action.payload.groupId
+                    if (meeting.groups.items) {
+                        // Use Array.prototype.filter() to remove the item with the specified id
+                        meeting.groups.items = meeting.groups.items.filter(
+                            (item) => item.id !== idToDelete
                         );
-
-                        // Return a new meeting object with the updated groups
-                        return {
-                            ...meeting,
-                            groups: {
-                                items: updatedGroups,
-                            },
-                        };
                     }
-
-                    // If it's not the meeting to be updated, return it as is
                     return meeting;
                 });
 

@@ -265,7 +265,7 @@ export const addMeeting = createAsyncThunk(
                 query: mutations.createMeeting,
                 variables: { input: mtg },
             });
-            // printObject('MT:268-->createMeeting results:\n', results);
+            printObject('MT:268-->createMeeting results:\n', results);
             // Check if the result contains the expected data and return it
             if (results.data.createMeeting.id) {
                 return mtg;

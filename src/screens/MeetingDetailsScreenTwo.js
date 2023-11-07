@@ -424,7 +424,7 @@ const MeetingDetails = (props) => {
                     </View>
                 }
                 showsVerticalScrollIndicator={true}
-                indicatorStyle={mtrTheme.colors.lightGraphic}
+                indicatorStyle={mtrTheme.colors.white}
             />
             {authority && showDefaultsButton && (
                 <View style={mtrStyles(mtrTheme).defaultGroupsButtonContainer}>

@@ -325,7 +325,7 @@ const mtrStyles = (mtrTheme) =>
             flex: 1,
         },
         scrollView: {
-            //whateever
+            paddingHorizontal: 1,
         },
         screenTitleContainer: {
             flexDirection: 'row',
@@ -358,7 +358,7 @@ const mtrStyles = (mtrTheme) =>
         },
         rowLeft: {
             flexDirection: 'column',
-            alignItems: 'left',
+            alignItems: 'flex-start',
         },
         groupSelectorRow: {
             flexDirection: 'column',

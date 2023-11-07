@@ -260,11 +260,12 @@ export const addMeeting = createAsyncThunk(
             // delete mtg.clientId;
 
             // Use await with the GraphQL call to get the results
+            // printObject('MT:263-->graphql inputs:\n', inputs);
             const results = await API.graphql({
                 query: mutations.createMeeting,
                 variables: { input: mtg },
             });
-            // printObject('MT:265-->createMeeting results:\n', results);
+            printObject('MT:268-->createMeeting results:\n', results);
             // Check if the result contains the expected data and return it
             if (results.data.createMeeting.id) {
                 return mtg;
@@ -629,7 +630,7 @@ export const subscriptionUpdateGroup = createAsyncThunk(
         }
     }
 );
-export const subscriptionDeleteGroup = createAsyncThunk(
+export const subscriptionDeleteGroup1 = createAsyncThunk(
     'meetings/subscriptionDeleteGroup',
     async (input, thunkAPI) => {
         try {
@@ -644,29 +645,52 @@ export const subscriptionDeleteGroup = createAsyncThunk(
             //get all the current meetings
             const meetings = state.meetings.meetings;
             let meetingIdFound = null;
-
-            for (const meeting of meetings) {
-                for (const groupItem of meeting.groups.items) {
-                    if (groupItem.id === input.groupId) {
-                        meetingIdFound = meeting.id;
-                        break; // Exit the inner loop once the group is found
-                    }
+            console.log('input.groupId:', input.groupId);
+            const doesExist = meetings.some((meeting) => {
+                if (meeting.groups.items) {
+                    // Use Array.prototype.some() to check if an item with the specified id exists
+                    return meeting.groups.items.some(
+                        (item) => item.id === input.groupId
+                    );
                 }
-                if (meetingIdFound) {
-                    break; // Exit the outer loop if the group is found
-                }
-            }
-            if (meetingIdFound) {
-                return { meetingId: meetingIdFound, groupId: input.groupId };
+                return false;
+            });
+            console.log('group exists: ', doesExist);
+            if (doesExist) {
+                console.log('true if');
+                return { groupId: input.groupId };
             } else {
-                throw new Error('MT:657-->subscriptionDeleteGroup ignored');
+                console.log('false if');
+                throw new Error('MT:661-->subscriptionDeleteGroup ignored');
             }
         } catch (error) {
             printObject(
-                'MT:634-->subscriptionDeleteGroup thunk try failure.\n',
+                'MT:682-->subscriptionDeleteGroup thunk try failure.\n',
                 error
             );
-            throw new Error('MT:637-->Failed to subscriptionDeleteGroup');
+            throw new Error('MT:670-->Failed to subscriptionDeleteGroup');
+        }
+    }
+);
+export const subscriptionDeleteGroup = createAsyncThunk(
+    'meetings/subscriptionDeleteGroup',
+    async (input, thunkAPI) => {
+        const state = thunkAPI.getState();
+        const meetings = state.meetings.meetings;
+
+        const doesExist = meetings.some((meeting) => {
+            if (meeting.groups.items) {
+                return meeting.groups.items.some(
+                    (item) => item.id === input.groupId
+                );
+            }
+            return false;
+        });
+
+        if (doesExist) {
+            return { groupId: input.groupId };
+        } else {
+            throw new Error('MT:661-->subscriptionDeleteGroup ignored');
         }
     }
 );

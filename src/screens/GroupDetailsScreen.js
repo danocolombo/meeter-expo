@@ -43,7 +43,7 @@ const GroupDetailsScreen = ({ route, navigation }) => {
 
     return (
         <>
-            <View style={mtrStyles(mtrTheme).flex}>
+            <View>
                 <Surface style={mtrStyles(mtrTheme).surface}>
                     <View style={mtrStyles(mtrTheme).container}>
                         <View style={mtrStyles(mtrTheme).screenTitleContainer}>

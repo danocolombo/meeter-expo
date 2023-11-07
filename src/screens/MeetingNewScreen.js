@@ -28,7 +28,7 @@ const MeetingNewScreen = ({ route, navigation }) => {
             meeting: { id: newId, ...values },
             orgId: userProfile.activeOrg.id,
         };
-        // printObject('MNS:48-->submitValues:\n', submitValues);
+        // printObject('MNS:31-->submitValues:\n', submitValues);
         dispatch(addMeeting(submitValues));
         navigate.goBack();
     };

@@ -8,6 +8,7 @@ import {
     onCreateGroup,
     onUpdateGroup,
     onDeleteGroup,
+    onCreateAffiliation,
 } from '../jerichoQL/subscriptions';
 import {
     subscriptionCreateGroup,
@@ -19,6 +20,7 @@ import {
     deleteAMeeting,
     updateAMeeting,
 } from '../features/meetings/meetingsSlice';
+import { addNewAffiliation } from '../features/user/userSlice';
 import { printObject } from '../utils/helpers';
 
 // Define a list to store active subscriptions
@@ -53,7 +55,9 @@ export function setupSubscriptions(dispatch, activeOrgId) {
     ).subscribe({
         next: (data) => {
             try {
+                // console.log('ADS:58-->meetingUpdateSubscription received');
                 const meeting = data?.value?.data?.onUpdateMeeting;
+                // printObject('ADS:60-->meeting\n', meeting);
                 if (meeting?.organizationMeetingsId === activeOrgId) {
                     //need to clean up object before sending to slice
                     dispatch(updateAMeeting(meeting));
@@ -103,7 +107,7 @@ export function setupSubscriptions(dispatch, activeOrgId) {
         next: (data) => {
             const group = data?.value?.data?.onCreateGroup;
             if (group?.organizationGroupsId === activeOrgId) {
-                // console.log('beforeDispatch');
+                console.log('ADS:110-->groupCreateSub received');
                 dispatch(subscriptionCreateGroup(group))
                     .then((results) => {
                         //
@@ -167,7 +171,7 @@ export function setupSubscriptions(dispatch, activeOrgId) {
                 dispatch(subscriptionDeleteGroup({ groupId: group.id }))
                     .then((results) => {
                         //
-                        console.log('group deleted successfully');
+                        console.log('subscriptionDeleteGroup completed ');
                     })
                     .catch((error) => {
                         console.log(
@@ -184,12 +188,53 @@ export function setupSubscriptions(dispatch, activeOrgId) {
             console.error('ADS:211-->subscriptionDeleteGroup  error:', error);
         },
     });
+    const affiliationCreateSubscription = API.graphql(
+        graphqlOperation(onCreateAffiliation)
+    ).subscribe({
+        next: (data) => {
+            //* ========================================
+            // new affiliation
+            //* ========================================
+            const affiliation = data?.value?.data?.onCreateAffiliation;
+            // printObject('ADS:195-->affiliation:\n', affiliation);
+            const aff = {
+                id: affiliation.id,
+                role: affiliation.role,
+                status: affiliation.status,
+                userId: affiliation.user.id,
+            };
+            printObject('ADS:204-->aff:\n', aff);
+            return;
+            dispatch(addNewAffiliation(affiliation));
+            // if (affiliation?.organizationGroupsId === activeOrgId) {
+            //     // console.log('beforeDispatch');
+            //     dispatch(subscriptionCreateGroup(group))
+            //         .then((results) => {
+            //             //
+            //             console.log('new group added successfully');
+            //         })
+            //         .catch((error) => {
+            //             console.log(
+            //                 'error from subscriptionCreateGroup dispatch'
+            //             );
+            //             printObject('ADS:118-->error:\n', error);
+            //         });
+            // } else {
+            //     console.log('ADS:121-->subscriptionCreateGroup not ours');
+            // }
+            return;
+        },
+        error: (error) => {
+            console.error('ADS:211-->subscriptionDeleteGroup  error:', error);
+        },
+    });
     activeSubscriptions.push(meetingCreateSubscription);
     activeSubscriptions.push(meetingUpdateSubscription);
     activeSubscriptions.push(meetingDeleteSubscription);
     activeSubscriptions.push(groupCreateSubscription);
     activeSubscriptions.push(groupUpdateSubscription);
     activeSubscriptions.push(groupDeleteSubscription);
+    activeSubscriptions.push(affiliationCreateSubscription);
 }
 
 export function unsubscribeAll() {

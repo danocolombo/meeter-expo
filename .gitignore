@@ -1,6 +1,8 @@
 node_modules/
 .expo/
 dist/
+ios/
+.env
 npm-debug.*
 *.jks
 *.p8

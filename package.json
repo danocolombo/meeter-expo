@@ -1,11 +1,10 @@
 {
   "name": "meeter",
-  "version": "1.0.26",
-  "main": "node_modules/expo/AppEntry.js",
+  "version": "1.0.27",
   "scripts": {
-    "start": "npx expo start -- -c",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll"
   },
@@ -34,7 +33,7 @@
     "aws-sdk": "^2.1261.0",
     "axios": "^1.2.0",
     "date-fns-tz": "^2.0.0",
-    "expo": "~47.0.8",
+    "expo": "~47.0.14",
     "expo-asset": "~8.7.0",
     "expo-camera": "~13.1.0",
     "expo-checkbox": "~2.2.2",
